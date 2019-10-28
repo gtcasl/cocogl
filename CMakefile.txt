@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.2)
+
+project(cocogl VERSION 0.1.0 LANGUAGES CXX)
+
+option(COCOJIT "Enable cocojit." OFF)
+option(CODECOV "Enable code coverage." OFF)
+
+set(DEFAULT_BUILD_TYPE "Release")
+
+# sub-projects
+add_subdirectory(shared)
+add_subdirectory(gltest)
+add_subdirectory(src/EGL)
+add_subdirectory(src/GLES)
