@@ -16,8 +16,8 @@
 #include "context.hpp"
 #include "display.hpp"
 
-thread_local CEGLContext* tls_ctx = nullptr;
-thread_local EGLint tls_error = EGL_SUCCESS;
+thread_local CEGLContext* tls_eglctx = nullptr;
+thread_local EGLint tls_eglerror = EGL_SUCCESS;
 
 CEGLDriver::CEGLDriver() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -87,22 +87,22 @@ EGLint CEGLDriver::Initialize() {
 }
 
 void CEGLDriver::SetCurrentContext(CEGLContext *pContext) {
-  tls_ctx = pContext;
+  tls_eglctx = pContext;
 }
 
 CEGLContext* CEGLDriver::GetCurrentContext() const {
-  return tls_ctx;
+  return tls_eglctx;
 }
 
 
 void CEGLDriver::SetError(EGLint error) {
-  tls_error = error;
+  tls_eglerror = error;
 }
 
 
 EGLint CEGLDriver::GetError() const {
-  const EGLint error = tls_error;
-  tls_error = EGL_SUCCESS;
+  const EGLint error = tls_eglerror;
+  tls_eglerror = EGL_SUCCESS;
   return error;
 }
 
@@ -119,7 +119,11 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
 
   if (EGL_DEFAULT_DISPLAY == display_id) {
     // Set the default display ID
-    display_id = ::GetDefaultDisplay();
+  #if defined(_WIN32)
+    display_id = GetDC(NULL);
+  #elif defined(__linux__)
+    display_id = XOpenDisplay(NULL);
+  #endif
   }
 
   // Look up for an existing display
@@ -128,7 +132,7 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
     if (HANDLE_DISPLAY == enumerator.GetType()) {
       CDisplay *const pDisplay =
           reinterpret_cast<CDisplay *>(enumerator.GetObject());
-      if (display_id == pDisplay->GetDC()) {
+      if (display_id == pDisplay->GetNativeHandle()) {
         *pdwHandle = enumerator.GetHandle();
         return EGL_SUCCESS;
       }

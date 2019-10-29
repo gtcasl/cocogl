@@ -16,20 +16,28 @@
 #include "config.hpp"
 
 
-CDisplay::CDisplay(EGLNativeDisplayType hDC, CHandleTable *pHandles) {
+CDisplay::CDisplay(EGLNativeDisplayType hNative, CHandleTable *pHandles) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   ASSERT(pHandles);
   pHandles->AddRef();
   m_pHandles = pHandles;
 
-  m_hDC = hDC;
+  m_hNative = hNative;
   m_bInitialized = false;
 }
 
 
 CDisplay::~CDisplay() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+
+  if (m_hNative) {
+  #if defined(_WIN32)
+    ReleaseDC(m_hNative);
+  #elif defined(__linux__)    
+    XCloseDisplay(m_hNative);
+  #endif
+  }
 
   CHandleTable::Enumerator enumerator = m_pHandles->GetEnumerator(this);
   while (!enumerator.IsEnd()) {

@@ -23,7 +23,7 @@ class CDisplay : public CObject {
 public:
   typedef TList<CConfig *> ConfigList;
 
-  static EGLint Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC, CHandleTable *pHandles);
+  static EGLint Create(CDisplay **ppDisplay, EGLNativeDisplayType hNative, CHandleTable *pHandles);
 
   EGLint Initialize(EGLint *pMajor, EGLint *pMinor);
 
@@ -32,7 +32,7 @@ public:
   EGLint ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
                       EGLint config_size, EGLint *pNum_config);
 
-  EGLNativeDisplayType GetDC() const { return m_hDC; }
+  EGLNativeDisplayType GetNativeHandle() const { return m_hNative; }
 
   bool IsInitialized() const { return m_bInitialized; }
 
@@ -45,7 +45,7 @@ private:
 
   std::mutex m_CS;
   CHandleTable *m_pHandles;
-  EGLNativeDisplayType m_hDC;
+  EGLNativeDisplayType m_hNative;
   ConfigList m_configs;
   bool m_bInitialized;
 };

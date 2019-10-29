@@ -163,10 +163,9 @@ void CGLContext::TexImage2D(GLenum target, GLint level, GLint internalformat,
   if (pPixels) {
     GLSurfaceDesc srcDesc;
     srcDesc.pBits = reinterpret_cast<uint8_t *>(const_cast<GLvoid *>(pPixels));
-    srcDesc.Width = static_cast<uint16_t>(width);
-    srcDesc.Height = static_cast<uint16_t>(height);
-    srcDesc.Pitch =
-        static_cast<uint16_t>(__align(width * srcBPP, m_unpackAlignment));
+    srcDesc.Width = width;
+    srcDesc.Height = height;
+    srcDesc.Pitch = __align(width * srcBPP, m_unpackAlignment);
     srcDesc.Format = static_cast<uint8_t>(srcFormat);
 
     GLSurfaceDesc dstDesc;
@@ -243,10 +242,9 @@ void CGLContext::TexSubImage2D(GLenum target, GLint level, GLint xoffset,
   if (pPixels) {
     GLSurfaceDesc srcDesc;
     srcDesc.pBits = reinterpret_cast<uint8_t *>(const_cast<GLvoid *>(pPixels));
-    srcDesc.Width = static_cast<uint16_t>(width);
-    srcDesc.Height = static_cast<uint16_t>(height);
-    srcDesc.Pitch =
-        static_cast<uint16_t>(__align(width * srcBPP, m_unpackAlignment));
+    srcDesc.Width = width;
+    srcDesc.Height = height;
+    srcDesc.Pitch = __align(width * srcBPP, m_unpackAlignment);
     srcDesc.Format = static_cast<uint8_t>(srcFormat);
 
     GLSurfaceDesc dstDesc;
@@ -462,9 +460,9 @@ void CGLContext::ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
 
   GLSurfaceDesc dstDesc;
   dstDesc.pBits = reinterpret_cast<uint8_t *>(const_cast<GLvoid *>(pPixels));
-  dstDesc.Width = static_cast<uint16_t>(width);
-  dstDesc.Height = static_cast<uint16_t>(height);
-  dstDesc.Pitch = static_cast<uint16_t>(__align(width * dstBPP, m_unpackAlignment));
+  dstDesc.Width = width;
+  dstDesc.Height = height;
+  dstDesc.Pitch = __align(width * dstBPP, m_unpackAlignment);
   dstDesc.Format = static_cast<uint8_t>(dstFormat);
 
   err = CopyBuffers(dstDesc, 0, 0, width, height, srcDesc, x, y);

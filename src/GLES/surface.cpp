@@ -86,15 +86,14 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
       this->SetAttribute(GL_ALPHA_BITS, 0);
       break;
 
-    /*
-    case FORMAT_R8G8B8:
+    /*case FORMAT_R8G8B8:
         m_pfnColorConv = Format::TConvertTo<FORMAT_B8G8R8>;
         m_pfnColorFill = &CGLSurface::TColorFill<uint24>;
         this->SetAttribute(GL_RED_BITS,   8);
         this->SetAttribute(GL_GREEN_BITS, 8);
         this->SetAttribute(GL_BLUE_BITS,  8);
         this->SetAttribute(GL_ALPHA_BITS, 0);
-        break;
+        break;*/
 
     case FORMAT_A8R8G8B8:
         m_pfnColorConv = Format::TConvertTo<FORMAT_A8B8G8R8>;
@@ -104,7 +103,6 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
         this->SetAttribute(GL_BLUE_BITS,  8);
         this->SetAttribute(GL_ALPHA_BITS, 8);
         break;
-    */
     default:
       __glLogError(
           _T("CGLSurface::Initialize() failed, invalid color format: %d.\r\n"),

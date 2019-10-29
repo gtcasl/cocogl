@@ -39,6 +39,10 @@ public:
 
   __GLContext GetNativeData() const { return m_glContext; }
 
+  bool HasBindings() const {
+    return (m_pSurfDraw || m_pSurfRead);
+  }
+
 private:
   CEGLContext(CDisplay *pDisplay, CConfig *pConfig);
   ~CEGLContext();

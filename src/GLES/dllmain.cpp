@@ -1125,9 +1125,9 @@ const TCHAR *AttributeToString(GLenum pname) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-class DLLInst {
+class GLESDll {
 public:
-  DLLInst() : m_pDriver(nullptr) {
+  GLESDll() : m_pDriver(nullptr) {
 #ifndef NDEBUG
     {
       auto hr = CLogger::Instance().Open(_T("CocoGLES.log"), _T("w"));
@@ -1146,7 +1146,7 @@ public:
     }
   }
 
-  ~DLLInst() {
+  ~GLESDll() {
     __safeRelease(m_pDriver);
   }
 
@@ -1158,7 +1158,7 @@ private:
   CGLDriver* m_pDriver;
 };
 
-static DLLInst g_dll;
+static GLESDll g_dll;
 
 //////////////////////////////////////////////////////////////////////////////
 

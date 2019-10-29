@@ -14,7 +14,6 @@
 #include "stdafx.h"
 #include "config.hpp"
 
-
 CConfig::CConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
                  EGLint depth, EGLint stencil) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));

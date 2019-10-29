@@ -49,6 +49,19 @@ constexpr bool is_detected_v = detail::detector<detail::nonesuch, void, Op, Args
 
 ///////////////////////////////////////////////////////////////////////////////
 
+class scope_exit {
+public:
+  scope_exit(const std::function<void()>& func) : func_(func) {}
+  ~scope_exit() { func_(); }
+  // force stack only allocation!
+  static void *operator new   (size_t) = delete;
+  static void *operator new[] (size_t) = delete;
+protected:
+  std::function<void()> func_;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
 template <class T> inline size_t __countof(const T &a) {
   return (sizeof(a) / sizeof(a[0]));
 }
@@ -122,3 +135,18 @@ inline unsigned int Clz(unsigned int rhs) {
 inline unsigned int Ctz(unsigned int rhs) { 
   return 31 - Clz(rhs & -(int)rhs); 
 }
+
+#ifndef NDEBUG
+#define __debugMsg(level, ...) DbgPrintf(level, __VA_ARGS__);
+#else
+#define __debugMsg(...)
+#endif
+
+#ifdef NDEBUG
+#define __no_default ASSERT(0)
+#else
+#define __no_default ASSERT(false);
+#endif
+
+template <typename... Args>
+void __unreferenced(Args&&...) {}

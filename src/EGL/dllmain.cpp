@@ -76,9 +76,9 @@ const TCHAR *EngineToString(EGLint engine) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-class DLLInst {
+class EGLDll {
 public:
-  DLLInst() : m_pDriver(nullptr) {
+  EGLDll() : m_pDriver(nullptr) {
 #ifndef NDEBUG
     {
       auto hr = CLogger::Instance().Open(_T("CocoEGL.log"), _T("w"));
@@ -97,7 +97,7 @@ public:
     }
   }
 
-  ~DLLInst() {
+  ~EGLDll() {
     __safeRelease(m_pDriver);
   }
 
@@ -109,7 +109,7 @@ private:
   CEGLDriver* m_pDriver;
 };
 
-static DLLInst g_dll;
+static EGLDll g_dll;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -390,7 +390,7 @@ eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
 
   // Create a window surface
   CEGLSurface *pSurface;
-  err = CEGLSurface::CreateWND(&pSurface, EGL_WINDOW_BIT, pConfig, hWnd);
+  err = CEGLSurface::CreateWND(&pSurface, pDisplay, EGL_WINDOW_BIT, pConfig, hWnd);
   if (__eglFailed(err)) {
     __eglError(err, _T("CEGLSurface::Create() failed, err = %d.\r\n"), err);
     return EGL_NO_SURFACE;
@@ -456,7 +456,7 @@ eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
 
   // Create a window surface
   CEGLSurface *pSurface;
-  err = CEGLSurface::CreatePXM(&pSurface, EGL_PIXMAP_BIT, pConfig, pixmap);
+  err = CEGLSurface::CreatePXM(&pSurface, pDisplay, EGL_PIXMAP_BIT, pConfig, pixmap);
   if (__eglFailed(err)) {
     __eglError(err, _T("CEGLSurface::Create() failed, err = %d.\r\n"), err);
     return EGL_NO_SURFACE;
@@ -558,7 +558,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
 
   // Create a window surface
   CEGLSurface *pSurface;
-  err = CEGLSurface::CreatePBF(&pSurface, EGL_PBUFFER_BIT, pConfig, width, height,
+  err = CEGLSurface::CreatePBF(&pSurface, pDisplay, EGL_PBUFFER_BIT, pConfig, width, height,
                             largestPBuffer, texTarget, texFormat, bGenMipMaps);
   if (__eglFailed(err)) {
     __eglError(err, _T("CEGLSurface::Create() failed, err = %d.\r\n"), err);
@@ -1023,8 +1023,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
   auto dwCurThreadID = std::this_thread::get_id();;
 
   if (pContext) {
-    auto dwCtxThreadID = pContext->GetThreadID();
-    if (dwCtxThreadID != dwCurThreadID) {
+    if (pContext->HasBindings() && pContext->GetThreadID() != dwCurThreadID) {
       __eglError(EGL_BAD_ACCESS,
                  _T("The context is current to some other thread.\r\n"));
       return EGL_FALSE;
@@ -1077,7 +1076,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
     }
 
     if (pCtxCurr) {
-      pCtxCurr->MakeCurrent(std::this_thread::get_id(), NULL, NULL);
+      pCtxCurr->MakeCurrent(dwCurThreadID, NULL, NULL);
       pCtxCurr->Release();
     }
 
@@ -1221,7 +1220,9 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative(EGLint engine) {
   CEGLContext *const pContext = driver->GetCurrentContext();
   if (pContext) {
     CEGLSurface *const pSurface = pContext->GetDrawSurface();
-    if (pSurface && !pSurface->IsValid()) {
+    if (!pSurface) {
+       __eglError(EGL_BAD_CURRENT_SURFACE ,
+               _T("eglWaitNative() failed, render surface not valid.\r\n"));
       return EGL_FALSE;
     }
   }
@@ -1267,12 +1268,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
   }
 
   // Blit the surface to the display
-#if defined (_WIN32)
-  ::BitBlt(pDisplay->GetDC(), 0, 0, pSurface->GetWidth(), pSurface->GetHeight(),
-           pSurface->GetDC(), 0, 0, SRCCOPY);
-#elif defined(__linux__)
-  //TODO:
-#endif
+  pSurface->Present();
 
   /*#ifndef NDEBUG
       static int s_fileno = 0;

@@ -17,18 +17,19 @@ class CConfig;
 
 class CEGLSurface : public CObject {
 public:
-  static EGLint CreateWND(CEGLSurface **ppSurface, EGLint surfaceType,
+  static EGLint CreateWND(CEGLSurface **ppSurface, CDisplay* display, EGLint surfaceType,
                        CConfig *pConfig, EGLNativeWindowType hWnd);
 
-  static EGLint CreatePXM(CEGLSurface **ppSurface, EGLint surfaceType,
+  static EGLint CreatePXM(CEGLSurface **ppSurface, CDisplay* display, EGLint surfaceType,
                        CConfig *pConfig, EGLNativePixmapType hPixmap);
 
-  static EGLint CreatePBF(CEGLSurface **ppSurface, EGLint surfaceType,
+  static EGLint CreatePBF(CEGLSurface **ppSurface, CDisplay* display, EGLint surfaceType,
                        CConfig *pConfig, EGLint width, EGLint height,
                        EGLint largestPBuffer, EGLint texTarget,
                        EGLint texFormat, EGLint bGenMipMaps);
 
   EGLint GetAttribute(EGLint *pValue, EGLint name) const;
+
   EGLint SetAttribute(EGLint name, EGLint value);
 
   EGLint CopyBuffer(EGLNativePixmapType hPixmap);
@@ -37,21 +38,15 @@ public:
 
   EGLint GetType() const { return m_surfaceType; }
 
-  EGLNativeDisplayType GetDC() const { return m_hDC; }
-
   __GLSurface GetNativeData() const { return m_glSurface; }
-
-  EGLint GetWidth() const { return m_width; }
-
-  EGLint GetHeight() const { return m_height; }
-
-  bool IsValid() const;
-
+  
   EGLint BindTexture();
 
   EGLint ReleaseTexBound();
 
   GLenum SaveBitmap(LPCTSTR lpszFilename);
+
+  void Present();
 
 private:
   enum {
@@ -59,7 +54,7 @@ private:
     MAX_HEIGHT = 480,
   };
 
-  CEGLSurface(EGLint surfaceType, CConfig *pConfig);
+  CEGLSurface(CDisplay* pDisplay, EGLint surfaceType, CConfig *pConfig);
   ~CEGLSurface();
 
   EGLint InitializeWND(EGLNativeWindowType hWnd);
@@ -74,14 +69,12 @@ private:
   EGLint InitDepthStencil(unsigned width, unsigned height,
                           GLSurfaceDesc *pSurfaceDesc);
 
-  void GetColorDesc(GLSurfaceDesc *pSurfaceDesc);
+  void GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc);
 
-  EGLint GetSurfaceDesc(GLSurfaceDesc *pSurfaceDesc, EGLNativePixmapType hPixmap);
-
+  CDisplay *m_pDisplay;
   CConfig *m_pConfig;
   EGLint m_surfaceType;
-  EGLNativeDisplayType m_hDC;
-
+  
   bool m_bBoundTexture;
   EGLint m_width;
   EGLint m_height;
@@ -91,9 +84,17 @@ private:
   EGLint m_mipTexture;
   EGLint m_mipLevel;
 
-  EGLNativePixmapType m_hPixmap;
-  uint8_t *m_pDepthStencilBits;
+#if defined(_WIN32)
+  HDC m_hDC;
+  HBITMAP m_hBitmap;
   bool m_bExternalBitmap;
+#elif defined (__linux__)
+  XImage* m_pImage;
+  Drawable m_drawable;
+  GC m_gc;
+#endif
+
+  uint8_t *m_pDepthStencilBits;  
   uint8_t **m_ppBuffers;
   unsigned m_mipLevels;
   __GLSurface m_glSurface;

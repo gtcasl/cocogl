@@ -24,9 +24,9 @@ typedef void *__GLSurface;
 struct GLSurfaceDesc {
   uint8_t  Format;
   uint8_t *pBits;
-  uint16_t Width;
-  uint16_t Height;
-  uint16_t Pitch;  
+  uint32_t Width;
+  uint32_t Height;
+  uint32_t Pitch;  
 };
 
 extern GLenum __glCreateSurface(const GLSurfaceDesc *pColorDesc,

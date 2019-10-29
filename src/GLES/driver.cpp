@@ -15,7 +15,7 @@
 #include "stdafx.h"
 #include "driver.hpp"
 
-thread_local CGLContext* tls_ctx = nullptr;
+thread_local CGLContext* tls_glctx = nullptr;
 
 CGLDriver::CGLDriver() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -26,7 +26,7 @@ CGLDriver::CGLDriver() {
 CGLDriver::~CGLDriver() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  __safeRelease(tls_ctx);
+  __safeRelease(tls_glctx);
 
   __safeRelease(m_pRasterCache);
 
@@ -105,7 +105,7 @@ GLenum CGLDriver::Initialize() {
 }
 
 CGLContext *CGLDriver::GetCurrentContext() const {
-    return tls_ctx;
+    return tls_glctx;
   }
 
 void CGLDriver::MakeCurrent(CGLContext *pContext, CGLSurface *pSurfDraw,
@@ -122,7 +122,7 @@ void CGLDriver::MakeCurrent(CGLContext *pContext, CGLSurface *pSurfDraw,
       pCtxCurr->Release();
     }
 
-    tls_ctx = pContext;
+    tls_glctx = pContext;
   }
 
   if (pContext) {

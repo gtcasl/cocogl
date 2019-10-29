@@ -18,28 +18,17 @@
 #include <stdint.h>
 #include <type_traits>
 #include <assert.h>
+#include <functional>
 
 #if defined(_WIN32)
 
 #include <windows.h>
 #include <tchar.h>
 
-HDC GetDefaultDisplay();
-
-void ReleaseDisplay(HDC display);
-
-void DestroyPixmap(HBITMAP pixmap);
-
 #elif defined(__linux__)
 
 #include <unistd.h>
 #include <X11/Xlib.h>
-
-Display* GetDefaultDisplay();
-
-void ReleaseDisplay(Display* display);
-
-void DestroyPixmap(Pixmap pixmap);
 
 #define _T(x) x
 typedef char TCHAR;
@@ -103,26 +92,3 @@ typedef const char *LPCTSTR;
     #define DISABLE_WARNING_UNREFERENCED_FUNCTION
     #define DISABLE_WARNING_ANONYMOUS_STRUCT
 #endif
-
-#define DISABLE_WARNING \
-#define IGNORE_ANONYMOUS_STRUCT \
-  #pragma warning(push) \
-  #pragma warning(disable : 4201)
-
-#define RESTORE_WARNING \
-  #pragma warning(pop) \
-
-#ifndef NDEBUG
-#define __debugMsg(level, ...) DbgPrintf(level, __VA_ARGS__);
-#else
-#define __debugMsg(...)
-#endif
-
-#ifdef NDEBUG
-#define __no_default ASSERT(0)
-#else
-#define __no_default ASSERT(false);
-#endif
-
-template <typename... Args>
-void __unreferenced(Args&&...) {}

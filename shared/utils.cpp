@@ -14,36 +14,6 @@
 #include "stdafx.h"
 #include <stdarg.h>
 
-#if defined(_WIN32)
-
-HDC GetDefaultDisplay() {
-  return ::GetDC(NULL);
-}
-
-void ReleaseDisplay(HDC display) {
-  ::ReleaseDC(display);
-}
-
-void DestroyPixmap(HBITMAP pixmap) {
-  ::DeleteObject(pixmap);
-}
-
-#elif defined(__linux__)
-
-Display* GetDefaultDisplay() {
-  return XOpenDisplay(NULL);
-}
-
-void ReleaseDisplay(Display* display) {
-  XCloseDisplay(display);
-}
-
-void DestroyPixmap(Pixmap pixmap) {
-  //TODO:
-}
-
-#endif
-
 void DbgPrintf(int level, LPCTSTR format, ...) {
   __unreferenced(level);
   va_list args;

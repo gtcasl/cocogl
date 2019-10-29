@@ -1,3 +1,6 @@
+// X11
+#include  <X11/Xlib.h>
+
 // SDL
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
@@ -8,6 +11,9 @@
 // GLES
 #include <GLES/gl.h>
 #include <GLES/glext.h>
+
+Display    *x_display;
+Window      x_win;
 
 EGLDisplay glDisplay;
 EGLConfig glConfig;
@@ -51,8 +57,8 @@ void init_GLES(void) {
       EGL_NONE};
 
   EGLint numConfigs, majorVersion, minorVersion;
-  Uint32 cw_flags = fullscreen ? (SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN) : SDL_WINDOW_OPENGL;
-  glesWindow = SDL_CreateWindow("LOR_GLES_DEMO", 0, 0, screenwidth, screenheight, cw_flags);
+  Uint32 cw_flags = fullscreen ? (SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN) : SDL_WINDOW_OPENGL;  
+  glesWindow = SDL_CreateWindow("LOR_GLES_DEMO", 0, 0, screenwidth, screenheight, SDL_WINDOW_RESIZABLE);
   glDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
   eglInitialize(glDisplay, &majorVersion, &minorVersion);
   eglChooseConfig(glDisplay, egl_config_attr, &glConfig, 1, &numConfigs);
