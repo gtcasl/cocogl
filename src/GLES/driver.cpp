@@ -30,17 +30,21 @@ CGLDriver::~CGLDriver() {
 
   __safeRelease(m_pRasterCache);
 
-  if (m_pHandles) {
-    // Release all generated driver handles
-    CHandleTable::Enumerator enumerator = m_pHandles->GetEnumerator(this);
-    while (!enumerator.IsEnd()) {
-      reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
+  if (m_pHandles) {    
+    {
+      // Release all generated driver handles
+      auto enumerator = m_pHandles->GetEnumerator(this);
+      while (!enumerator.IsEnd()) {
+        reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
+      }
     }
-
-    // Release all other generated handles
-    enumerator = m_pHandles->GetEnumerator(NULL);
-    while (!enumerator.IsEnd()) {
-      reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
+    
+    {
+      // Release all other generated handles
+      auto enumerator = m_pHandles->GetEnumerator(NULL);
+      while (!enumerator.IsEnd()) {
+        reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
+      }
     }
 
     // The handle table should now be empty
