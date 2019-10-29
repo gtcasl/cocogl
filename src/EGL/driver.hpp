@@ -11,7 +11,9 @@
 // OR INDEMNITIES.
 //
 #pragma once
+
 class CEGLContext;
+class CEGLSurface;
 
 
 class CEGLDriver : public CObject {
@@ -51,7 +53,7 @@ public:
     return m_pHandles->FindHandle(pObject, pOwner);
   }
 
-  void SetCurrentContext(CEGLContext *pContext);
+  void MakeCurrent(CEGLContext* pContext, std::thread::id dwThreadID, CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead);
 
   CEGLContext *GetCurrentContext() const;
 

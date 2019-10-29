@@ -26,11 +26,6 @@ CLogger::~CLogger() {
   }
 }
 
-CLogger &CLogger::Instance() {
-  static CLogger instance;
-  return instance;
-}
-
 void CLogger::SetIndent(unsigned indent) { m_indent = indent; }
 
 unsigned CLogger::GetIndent() const { return m_indent; }
@@ -99,14 +94,15 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CProfiler::CProfiler(const TCHAR *pszFunc, ...) {
+CProfiler::CProfiler(CLogger& logger, const TCHAR *pszFunc, ...) 
+ : m_logger(logger) {
   va_list arglist;
   va_start(arglist, pszFunc);
-  CLogger::Instance().Write(pszFunc, arglist);
-  CLogger::Instance().IncrIndent();
+  logger.Write(pszFunc, arglist);
+  logger.IncrIndent();
   va_end(arglist);
 }
 
 CProfiler::~CProfiler() { 
-  CLogger::Instance().DecrIndent(); 
+  m_logger.DecrIndent(); 
 }

@@ -37,7 +37,7 @@
 #define fixedRC TFixed<fixed20::FRAC - fixed8::FRAC>
 #define fixedDDA fixed16
 
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
 #define floatRW TFixed<28, int64_t>
 #define floatQ TFixed<30, int64_t>
 #else

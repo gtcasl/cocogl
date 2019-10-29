@@ -309,7 +309,7 @@ typedef TFixed<26> fixed26;
 typedef TFixed<28> fixed28;
 typedef TFixed<30> fixed30;
 
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
 
 typedef fixed4 float4;
 typedef fixed6 float6;

@@ -81,7 +81,7 @@ public:
   EGLDll() : m_pDriver(nullptr) {
 #ifndef NDEBUG
     {
-      auto hr = CLogger::Instance().Open(_T("CocoEGL.log"), _T("w"));
+      auto hr = eglLogger.Open(_T("CocoEGL.log"), _T("w"));
       if (FAILED(hr)) {
         __eglLogError(_T("CLogger::Open() failed, hr = %x.\r\n"), hr);
         return;
@@ -109,6 +109,7 @@ private:
   CEGLDriver* m_pDriver;
 };
 
+CLogger eglLogger;
 static EGLDll g_dll;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1069,23 +1070,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
   }
 
   // Set the current EGL context
-  CEGLContext *pCtxCurr = driver->GetCurrentContext();
-  if (pCtxCurr != pContext) {
-    if (pContext) {
-      pContext->AddRef();
-    }
-
-    if (pCtxCurr) {
-      pCtxCurr->MakeCurrent(dwCurThreadID, NULL, NULL);
-      pCtxCurr->Release();
-    }
-
-    driver->SetCurrentContext(pContext);
-  }
-
-  if (pContext) {
-    pContext->MakeCurrent(dwCurThreadID, pSurfDraw, pSurfRead);
-  }
+  driver->MakeCurrent(pContext, dwCurThreadID, pSurfDraw, pSurfRead); 
 
   return EGL_TRUE;
 }

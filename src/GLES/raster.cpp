@@ -19,7 +19,7 @@
 #include "rasterop_opt.hpp"
 #include "rastri.inl"
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
 
 
 void IRasterOp::StartProfile(unsigned numPixels) {

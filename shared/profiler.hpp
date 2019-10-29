@@ -14,15 +14,14 @@
 //
 #pragma once
 
+class CLogger;
+
 class CProfiler {
 public:
-  CProfiler(const TCHAR *pszFunc, ...);
+  CProfiler(CLogger& logger, const TCHAR *pszFunc, ...);
 
   ~CProfiler();
-};
 
-#ifdef NDEBUG
-#define __profileAPI(func, ...)
-#else
-#define __profileAPI(func, ...) CProfiler profiler(func, __VA_ARGS__);
-#endif
+private:
+  CLogger& m_logger;
+};

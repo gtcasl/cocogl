@@ -60,7 +60,7 @@ void CRasterizer::RasterLine(unsigned i0, unsigned i1) {
   const fixed4 i4dx = v1.x - v0.x;
   const fixed4 i4dy = v1.y - v0.y;
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
   const int64_t startTime = m_timer.GetTime();
   m_rasterData.pRasterOp->StartProfile(
       Math::TCast<int>(Math::TAbs(i4dx) + Math::TAbs(i4dy)));
@@ -154,7 +154,7 @@ void CRasterizer::RasterLine(unsigned i0, unsigned i1) {
     }
   }
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
   m_rasterData.pRasterOp->EndProfile(m_timer.GetElapsedTime(startTime));
 #endif
 }

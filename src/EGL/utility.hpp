@@ -17,13 +17,20 @@ inline bool __eglFailed(EGLint err) { return err != EGL_SUCCESS; }
 
 inline bool __eglSucceeded(EGLint err) { return err == EGL_SUCCESS; }
 
+#ifndef  COCOGL_API_PROFILE
+#define __profileAPI(func, ...)
+#else
+#define __profileAPI(func, ...) CProfiler profiler(eglLogger, func, __VA_ARGS__);
+#endif
+
+
 #ifndef NDEBUG
-#define __eglLog(...) CLogger::Instance().Write(__VA_ARGS__);
+#define __eglLog(...) eglLogger.Write(__VA_ARGS__);
 
 #define __eglLogError(...)                                              \
-  CLogger::Instance().Write(_T("*** Error in file %s at line %d.\r\n"), \
+  eglLogger.Write(_T("*** Error in file %s at line %d.\r\n"), \
                             _T(__FILE__), __LINE__);                    \
-  CLogger::Instance().Write(__VA_ARGS__);                               \
+  eglLogger.Write(__VA_ARGS__);                               \
   ASSERT(false);
 #else
 #define __eglLog(...)

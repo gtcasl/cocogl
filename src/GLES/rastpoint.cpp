@@ -148,7 +148,7 @@ void CRasterizer::RasterPoint(unsigned index) {
   m_rasterData.fRefX = TConst<fixed4>::Zero();
   m_rasterData.fRefY = TConst<fixed4>::Zero();
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
   const int64_t startTime = m_timer.GetTime();
   m_rasterData.pRasterOp->StartProfile((ymax - ymin) * (xmax - xmin));
 #endif
@@ -158,7 +158,7 @@ void CRasterizer::RasterPoint(unsigned index) {
     (pfnScanline)(m_rasterData, y, xmin, xmax);
   }
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
   m_rasterData.pRasterOp->EndProfile(m_timer.GetElapsedTime(startTime));
 #endif
 }

@@ -15,6 +15,7 @@
 #include "driver.hpp"
 #include "context.hpp"
 #include "display.hpp"
+#include "surface.hpp"
 
 thread_local CEGLContext* tls_eglctx = nullptr;
 thread_local EGLint tls_eglerror = EGL_SUCCESS;
@@ -26,6 +27,9 @@ CEGLDriver::CEGLDriver() {
 
 CEGLDriver::~CEGLDriver() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));  
+
+  __safeRelease(tls_eglctx);
+
   if (m_pHandles) {
     // Release all generated driver handles
     CHandleTable::Enumerator enumerator = m_pHandles->GetEnumerator(this);
@@ -86,14 +90,32 @@ EGLint CEGLDriver::Initialize() {
   return EGL_SUCCESS;
 }
 
-void CEGLDriver::SetCurrentContext(CEGLContext *pContext) {
-  tls_eglctx = pContext;
+void CEGLDriver::MakeCurrent(CEGLContext* pContext, 
+                             std::thread::id dwThreadID,
+                              CEGLSurface *pSurfDraw, 
+                              CEGLSurface *pSurfRead) {
+
+  auto *pCtxCurr = tls_eglctx;
+  if (pCtxCurr != pContext) {
+    if (pContext) {
+      pContext->AddRef();
+    }
+
+    if (pCtxCurr) {
+      pCtxCurr->SetBindings(dwThreadID, NULL, NULL);
+      pCtxCurr->Release();
+    }
+    tls_eglctx = pContext;
+  }
+
+  if (pContext) {
+    pContext->SetBindings(dwThreadID, pSurfDraw, pSurfRead);
+  }  
 }
 
-CEGLContext* CEGLDriver::GetCurrentContext() const {
+CEGLContext *CEGLDriver::GetCurrentContext() const {
   return tls_eglctx;
 }
-
 
 void CEGLDriver::SetError(EGLint error) {
   tls_eglerror = error;

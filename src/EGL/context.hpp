@@ -24,7 +24,7 @@ public:
 
   EGLint GetAttribute(EGLint name, EGLint *pValue);
 
-  void MakeCurrent(std::thread::id dwThreadID, CEGLSurface *pSurfDraw,
+  void SetBindings(std::thread::id dwThreadID, CEGLSurface *pSurfDraw,
                    CEGLSurface *pSurfRead);
 
   CDisplay *GetDisplay() const { return m_pDisplay; }

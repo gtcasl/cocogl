@@ -21,13 +21,8 @@ public:
     MAX_INDENT = 64,
   };
 
-  static CLogger& Instance();
-
+  CLogger();
   virtual ~CLogger();
-
-  long AddRef();
-
-  long Release();
 
   HRESULT Open(LPCTSTR lpszFileName, LPCTSTR lpszMode);
 
@@ -43,8 +38,7 @@ public:
   void DecrIndent();
 
 private:
-  CLogger();
-
+  
   FILE *m_pFile;
   unsigned m_indent;
 };

@@ -124,7 +124,7 @@ EGLint CEGLContext::GetAttribute(EGLint name, EGLint *pValue) {
 }
 
 
-void CEGLContext::MakeCurrent(std::thread::id dwThreadID, CEGLSurface *pSurfDraw,
+void CEGLContext::SetBindings(std::thread::id dwThreadID, CEGLSurface *pSurfDraw,
                               CEGLSurface *pSurfRead) {
   m_dwThreadID = dwThreadID;
 

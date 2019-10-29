@@ -14,6 +14,8 @@
 
 #define GL_GLEXT_PROTOTYPES
 
+//#define COCOGL_API_PROFILE
+
 #include <string.h>
 #include <thread>
 #include <mutex>
@@ -43,3 +45,5 @@
 #include "../GLES/glstub.hpp"
 #include "types.hpp"
 #include "utility.hpp"
+
+extern CLogger eglLogger;

@@ -30,17 +30,23 @@ private:
   T m_value;
 };
 
+#ifndef  COCOGL_API_PROFILE
+#define __profileAPI(func, ...)
+#else
+#define __profileAPI(func, ...) CProfiler profiler(glLogger, func, __VA_ARGS__);
+#endif
+
 inline bool __glFailed(unsigned int err) { return (err != GL_NO_ERROR); }
 
 inline bool __glSucceeded(unsigned int err) { return (err == GL_NO_ERROR); }
 
 #ifndef NDEBUG
-#define __glLog(...) CLogger::Instance().Write(__VA_ARGS__);
+#define __glLog(...) glLogger.Write(__VA_ARGS__);
 
 #define __glLogError(...)                                                \
-  CLogger::Instance().Write(_T("*** Error in file %s at line %d.\r\n"),  \
+  glLogger.Write(_T("*** Error in file %s at line %d.\r\n"),  \
                             _T(__FILE__), __LINE__);                     \
-  CLogger::Instance().Write(__VA_ARGS__);                                \
+  glLogger.Write(__VA_ARGS__);                                \
   ASSERT(false);
 #else
 #define __glLog(...)

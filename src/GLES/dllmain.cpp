@@ -1130,7 +1130,7 @@ public:
   GLESDll() : m_pDriver(nullptr) {
 #ifndef NDEBUG
     {
-      auto hr = CLogger::Instance().Open(_T("CocoGLES.log"), _T("w"));
+      auto hr = glLogger.Open(_T("CocoGLES.log"), _T("w"));
       if (FAILED(hr)) {
         __glLogError(_T("CLogger::Open() failed, hr = %x.\r\n"), hr);
         return;
@@ -1147,7 +1147,7 @@ public:
   }
 
   ~GLESDll() {
-    __safeRelease(m_pDriver);
+    __safeRelease(m_pDriver);    
   }
 
   auto driver() {
@@ -1158,6 +1158,7 @@ private:
   CGLDriver* m_pDriver;
 };
 
+CLogger glLogger;
 static GLESDll g_dll;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1471,7 +1472,7 @@ GL_API void GL_APIENTRY glClipPlanef(GLenum plane, const GLfloat *pEquation) {
   
   auto pContext = driver->GetCurrentContext();
   if (pContext) {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
     pContext->ClipPlane(plane,
                         VECTOR4(floatf(pEquation[0]), floatf(pEquation[1]),
                                 floatf(pEquation[2]), floatf(pEquation[3])));
@@ -1743,7 +1744,7 @@ GL_API void GL_APIENTRY glLoadMatrixf(const GLfloat *pM) {
 
   auto pContext = driver->GetCurrentContext();
   if (pContext) {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
     pContext->LoadMatrix(MATRIX44(
         floatf(pM[0]), floatf(pM[1]), floatf(pM[2]), floatf(pM[3]),
         floatf(pM[4]), floatf(pM[5]), floatf(pM[6]), floatf(pM[7]),
@@ -1802,7 +1803,7 @@ GL_API void GL_APIENTRY glMultMatrixf(const GLfloat *pM) {
 
   auto pContext = driver->GetCurrentContext();
   if (pContext) {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
     pContext->Multiply(MATRIX44(
         floatf(pM[0]), floatf(pM[1]), floatf(pM[2]), floatf(pM[3]),
         floatf(pM[4]), floatf(pM[5]), floatf(pM[6]), floatf(pM[7]),
@@ -2190,7 +2191,7 @@ GL_API void GL_APIENTRY glClipPlanex(GLenum plane, const GLfixed *pEquation) {
 
   auto pContext = driver->GetCurrentContext();
   if (pContext) {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
     pContext->ClipPlane(plane, *reinterpret_cast<const VECTOR4 *>(pEquation));
 #else
     pContext->ClipPlane(
@@ -3038,7 +3039,7 @@ GL_API void GL_APIENTRY glLoadMatrixx(const GLfixed *pM) {
 
   auto pContext = driver->GetCurrentContext();
   if (pContext) {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
     pContext->LoadMatrix(*reinterpret_cast<const MATRIX44 *>(pM));
 #else
     pContext->LoadMatrix(MATRIX44(Math::TCast<floatf>(fixed16::Make(pM[0])),
@@ -3139,7 +3140,7 @@ GL_API void GL_APIENTRY glMultMatrixx(const GLfixed *pM) {
 
   auto pContext = driver->GetCurrentContext();
   if (pContext) {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
     pContext->Multiply(*reinterpret_cast<const MATRIX44 *>(pM));
 #else
     pContext->Multiply(MATRIX44(Math::TCast<floatf>(fixed16::Make(pM[0])),

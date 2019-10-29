@@ -22,7 +22,7 @@ CEGLSurface::CEGLSurface(CDisplay *pDisplay, EGLint surfaceType,
   ASSERT(pDisplay);
   ASSERT(pConfig);
 
-  pDisplay->AddRef();
+  //pDisplay->AddRef(); - prevent cyclic reference with display
   m_pDisplay = pDisplay;
 
   pConfig->AddRef();
@@ -88,7 +88,6 @@ CEGLSurface::~CEGLSurface() {
   }
 #endif
 
-  __safeRelease(m_pDisplay);
   __safeRelease(m_pConfig);
 }
 

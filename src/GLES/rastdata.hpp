@@ -28,7 +28,7 @@ public:
 
   virtual unsigned GetCbSize() const = 0;
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
 public:
   void StartProfile(unsigned numPixels);
   void EndProfile(float elapsedTime);
@@ -62,7 +62,7 @@ public:
       __glLog(_T("*** END MAKE_SCANLINE().\r\n"));
     }
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
     {
       // Copy the cache list
       Cache::List sortedList;
@@ -152,7 +152,7 @@ public:
 private:
   typedef TMap<RASTERID, IRasterOp *, 1> Cache;
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
 
   static bool ProfileCompare(const Cache::List::Type &lhs,
                              const Cache::List::Type &rhs) {

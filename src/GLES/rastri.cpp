@@ -150,7 +150,7 @@ void CRasterizer::RasterTriangle(unsigned i0, unsigned i1, unsigned i2) {
 
   const fixed4 i4Y0Diff = fixed4(y) - (i4y0 - TConst<fixed4>::Half());
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
   const int64_t startTime = m_timer.GetTime();
   m_rasterData.pRasterOp->StartProfile(Math::TCast<int>(Math::TAbs(i8Area)));
 #endif
@@ -223,7 +223,7 @@ void CRasterizer::RasterTriangle(unsigned i0, unsigned i1, unsigned i2) {
     }
   }
 
-#ifdef GL_PROFILE
+#ifdef COCOGL_RASTER_PROFILE
   m_rasterData.pRasterOp->EndProfile(m_timer.GetElapsedTime(startTime));
 #endif
 }

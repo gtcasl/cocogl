@@ -13,9 +13,11 @@
 
 #pragma once
 
-//#define GL_PROFILE
-#define GL_FIXEDPOINT
 #define GL_GLEXT_PROTOTYPES
+
+//#define COCOGL_RASTER_PROFILE
+//#define COCOGL_PIXEDPOINT
+//#define COCOGL_API_PROFILE
 
 #include <string.h>
 #include <mutex>
@@ -48,3 +50,5 @@
 #include "glstub.hpp"
 #include "types.hpp"
 #include "utility.hpp"
+
+extern CLogger glLogger;

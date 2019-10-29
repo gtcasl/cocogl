@@ -39,7 +39,7 @@ protected:
         : fdX0(fdX0_), fdY0(fdY0_), fdX1(fdX1_), fdY1(fdY1_), fRatio(fRatio_) {}
 
     template <class T, class D> T TCalcDeltaX(D delta0, D delta1) const {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
       const int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       const int64_t half = static_cast<int64_t>(1) << (FRAC - 1);
       const int64_t uv0 =
@@ -54,7 +54,7 @@ protected:
     }
 
     template <class T, class D> T TCalcDeltaY(D delta0, D delta1) const {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
       const int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       const int64_t half = static_cast<int64_t>(1) << (FRAC - 1);
       const int64_t uv0 =
@@ -70,7 +70,7 @@ protected:
 
     template <class T> T TCalcDeltaX(int delta0, int delta1) const {
       const fixed4 diff = this->fdY1 * delta0 - this->fdY0 * delta1;
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
       const int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       const int half = 1 << (FRAC - 1);
       return T::Make((diff.GetRaw() * this->fRatio.GetRaw() + half) >> FRAC);
@@ -81,7 +81,7 @@ protected:
 
     template <class T> T TCalcDeltaY(int delta0, int delta1) const {
       const fixed4 diff = this->fdX0 * delta1 - this->fdX1 * delta0;
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
       const int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       const int half = 1 << (FRAC - 1);
       return T::Make((diff.GetRaw() * this->fRatio.GetRaw() + half) >> FRAC);
@@ -95,7 +95,7 @@ protected:
     floatQ fRatio;
 
     template <class T, class D> T TCalcDelta(D delta) const {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
       const int FRAC = D::FRAC + floatQ::FRAC - T::FRAC;
       const int half = 1 << (FRAC - 1);
       return T::Make((delta.GetRaw() * this->fRatio.GetRaw() + half) >> FRAC);
@@ -105,7 +105,7 @@ protected:
     }
 
     template <class T> T TCalcDelta(int delta) const {
-#ifdef GL_FIXEDPOINT
+#ifdef COCOGL_PIXEDPOINT
       const int FRAC = fixed8::FRAC + floatQ::FRAC - T::FRAC;
       const int half = 1 << (FRAC - 1);
       return T::Make((delta * this->fRatio.GetRaw() + half) >> FRAC);
