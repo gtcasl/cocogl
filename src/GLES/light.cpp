@@ -18,7 +18,7 @@
 
 void CGLContext::ActivateLight(GLenum cap, bool bValue) {
   Light *const pLight = m_lights.GetBegin() + (cap - GL_LIGHT0);
-  Light *pPrevLight = NULL;
+  Light *pPrevLight = nullptr;
   Light *pCurLight = m_pActiveLights;
 
   if (bValue) {
@@ -28,7 +28,7 @@ void CGLContext::ActivateLight(GLenum cap, bool bValue) {
       pCurLight = pCurLight->pNext;
     }
 
-    if ((NULL == pCurLight) || (pCurLight > pLight)) {
+    if ((nullptr == pCurLight) || (pCurLight > pLight)) {
       pLight->pNext = pCurLight;
 
       if (pPrevLight) {

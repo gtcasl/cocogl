@@ -170,7 +170,7 @@ public:
   uint8_t EnvMode;
   bool bCoordReplace;
 
-  TexUnit() : m_pTexture(NULL) {}
+  TexUnit() : m_pTexture(nullptr) {}
 
   ~TexUnit() { __safeRelease(m_pTexture); }
 

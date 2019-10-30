@@ -99,8 +99,8 @@ private:
     PFN_GetTexEnvColor pfnGetTexEnvColor;
 
     _Sampler()
-        : pfnGetTexelColorMin(NULL), pfnGetTexelColorMag(NULL),
-          pfnGetTexEnvColor(NULL) {}
+        : pfnGetTexelColorMin(nullptr), pfnGetTexelColorMag(nullptr),
+          pfnGetTexEnvColor(nullptr) {}
   };
 
   GLenum Initialize();

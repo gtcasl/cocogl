@@ -67,7 +67,7 @@ public:
   class cIter;
   class Iter {
   public:
-    Iter() : m_pNode(NULL) {}
+    Iter() : m_pNode(nullptr) {}
 
     Iter &operator=(const Iter &rhs) {
       m_pNode = rhs.m_pNode;
@@ -148,7 +148,7 @@ public:
 
   class cIter {
   public:
-    cIter() : m_pNode(NULL) {}
+    cIter() : m_pNode(nullptr) {}
 
     cIter(const Iter &rhs) : m_pNode(rhs.m_pNode) {}
 
@@ -228,7 +228,7 @@ public:
     const Node *m_pNode;
   };
 
-  TArray() : m_pBuffer(NULL), m_size(0), m_capacity(0) {
+  TArray() : m_pBuffer(nullptr), m_size(0), m_capacity(0) {
     static_assert(GrowBy > 0, "invalid GrowBy value");
   }
 
@@ -359,7 +359,7 @@ public:
         if (m_capacity != InitialCapacity) {
           delete[] m_pBuffer;
         }
-        m_pBuffer = NULL;
+        m_pBuffer = nullptr;
       }
       m_capacity = 0;
     }
@@ -424,7 +424,7 @@ protected:
     return *this;
   }
 
-  HRESULT __Resize(unsigned size, const T *pValue = NULL) {
+  HRESULT __Resize(unsigned size, const T *pValue = nullptr) {
     HRESULT hr;
 
     if (size > m_size) {
@@ -477,7 +477,7 @@ protected:
       pBuffer = m_inlineBuffer.GetBuffer();
     } else {
       pBuffer = new Node[capacity];
-      if (NULL == pBuffer) {
+      if (nullptr == pBuffer) {
         hr = E_OUTOFMEMORY;
         goto Cleanup;
       }

@@ -94,11 +94,11 @@ void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
 bool LoadTGA(LPCTSTR lpszFileName, GLuint *id) {
 
   FILE *f = _tfopen(lpszFileName, _T("rb"));
-  if (NULL == f) {
+  if (nullptr == f) {
     return false;
   }
 
-  GLubyte *pixels = NULL;
+  GLubyte *pixels = nullptr;
 
   uint16_t width = 0, height = 0;
   uint8_t headerLength = 0;

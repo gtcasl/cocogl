@@ -50,7 +50,6 @@ void CRasterizer::RasterLine(unsigned i0, unsigned i1) {
   const RDVECTOR &v0 = pvScreenPos[i0];
   const RDVECTOR &v1 = pvScreenPos[i1];
 
-  const RASTERFLAGS rasterFlags = m_rasterID.Flags;
   const PFN_Scanline pfnScanline = m_rasterData.pRasterOp->GetScanline();
 
   const fixedDDA fLineWidth = Math::TCast<fixedDDA>(m_fLineWidth);

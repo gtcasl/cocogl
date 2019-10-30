@@ -49,7 +49,7 @@ void IRasterOp::LogProfile(const RASTERID &rasterID) {
 //////////////////////////////////////////////////////////////////////////////
 
 GLenum CRasterizer::SetupRasterStates(GLenum mode) {
-  if (NULL == m_rasterData.pColorBits) {
+  if (nullptr == m_rasterData.pColorBits) {
     __glLogError(_T("CRasterizer::SetupRasterStates() failed, missing color ")
                  _T("buffer.\r\n"));
     return GL_INVALID_OPERATION;
@@ -208,7 +208,7 @@ bool CRasterizer::GenerateRasterOp() {
 
   std::lock_guard<std::mutex> lock(m_pRasterCache->GetCS());
 
-  IRasterOp *pRasterOp = NULL;
+  IRasterOp *pRasterOp = nullptr;
   if (!m_pRasterCache->Lookup(&pRasterOp, m_rasterID)) {
 #ifndef NDEBUG
     DbgPrintf(3, _T("RASTERID: %d,%d,%d,%d\r\n"), m_rasterID.Flags.Value,

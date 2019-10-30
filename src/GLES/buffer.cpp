@@ -19,7 +19,7 @@ CBuffer::CBuffer() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   m_dwHandle = 0;
-  m_pBits = NULL;
+  m_pBits = nullptr;
   m_size = 0;
   m_usage = GL_STATIC_DRAW;
 }
@@ -37,7 +37,7 @@ GLenum CBuffer::Create(CBuffer **ppBuffer) {
 
   // Create a new surface object
   CBuffer *pBuffer = new CBuffer();
-  if (NULL == pBuffer) {
+  if (nullptr == pBuffer) {
     __glLogError(_T("CBuffer allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -52,7 +52,7 @@ GLenum CBuffer::Initialize(unsigned size, GLenum usage, const GLvoid *pData) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   uint8_t *const pBits = new uint8_t[size];
-  if (NULL == pBits) {
+  if (nullptr == pBits) {
     __glLogError(_T("CBuffer storage allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }

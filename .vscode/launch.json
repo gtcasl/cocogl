@@ -10,7 +10,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/demo/demo",
-            "args": ["-t5"],
+            "args": ["-t2"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/demo",
             "environment": [{

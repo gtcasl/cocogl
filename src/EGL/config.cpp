@@ -62,7 +62,7 @@ EGLint CConfig::Create(CConfig **ppConfig, EGLint red, EGLint green,
   ASSERT(ppConfig);
 
   CConfig *pConfig = new CConfig(red, green, blue, alpha, depth, stencil);
-  if (NULL == pConfig) {
+  if (nullptr == pConfig) {
     __eglLogError(_T("CConfig allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;
   }

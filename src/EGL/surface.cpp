@@ -40,8 +40,8 @@ CEGLSurface::CEGLSurface(CDisplay *pDisplay, EGLint surfaceType,
   m_bBoundTexture = false;
 
 #if defined(_WIN32)
-  m_hDC = NULL;
-  m_hBitmap = NULL;
+  m_hDC = nullptr;
+  m_hBitmap = nullptr;
   bool m_bExternalBitmap = false;
 #elif defined(__linux__)
   m_pImage = nullptr;
@@ -49,10 +49,10 @@ CEGLSurface::CEGLSurface(CDisplay *pDisplay, EGLint surfaceType,
   m_gc = 0;
 #endif
 
-  m_pDepthStencilBits = NULL;
-  m_ppBuffers = NULL;
+  m_pDepthStencilBits = nullptr;
+  m_ppBuffers = nullptr;
   m_mipLevels = 0;
-  m_glSurface = NULL;
+  m_glSurface = nullptr;
 }
 
 CEGLSurface::~CEGLSurface() {
@@ -102,7 +102,7 @@ EGLint CEGLSurface::CreateWND(CEGLSurface **ppSurface, CDisplay *display,
 
   // Create a new surface object
   CEGLSurface *pSurface = new CEGLSurface(display, surfaceType, pConfig);
-  if (NULL == pSurface) {
+  if (nullptr == pSurface) {
     __eglLogError(_T("CEGLSurface allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;
   }
@@ -133,7 +133,7 @@ EGLint CEGLSurface::CreatePXM(CEGLSurface **ppSurface, CDisplay *display,
 
   // Create a new surface object
   CEGLSurface *pSurface = new CEGLSurface(display, surfaceType, pConfig);
-  if (NULL == pSurface) {
+  if (nullptr == pSurface) {
     __eglLogError(_T("CEGLSurface allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;
   }
@@ -166,7 +166,7 @@ EGLint CEGLSurface::CreatePBF(CEGLSurface **ppSurface, CDisplay *display,
 
   // Create a new surface object
   CEGLSurface *pSurface = new CEGLSurface(display, surfaceType, pConfig);
-  if (NULL == pSurface) {
+  if (nullptr == pSurface) {
     __eglLogError(_T("CEGLSurface allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;
   }
@@ -209,7 +209,7 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   // Retrieve the window device context
   HDC hDC = ::GetWindowDC(hWnd);
   hDC hCompatDC = ::CreateCompatibleDC(hDC);
-  if (NULL == hCompatDC) {
+  if (nullptr == hCompatDC) {
     ::ReleaseDC(hWnd, hDC);
     __eglLogError(_T("::CreateCompatibleDC() failed, hr = %x.\r\n"),
                   HRESULT_FROM_WIN32(::GetLastError()));
@@ -250,8 +250,8 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   void *pBits;
   auto hBitmap =
       ::CreateDIBSection(hCompactDC, reinterpret_cast<BITMAPINFO *>(&bmpInfo),
-                         DIB_RGB_COLORS, &pBits, NULL, 0);
-  if (NULL == hBitmap) {
+                         DIB_RGB_COLORS, &pBits, nullptr, 0);
+  if (nullptr == hBitmap) {
     ::DeleteDC(hCompactDC);
     __eglLogError(_T("::CreateDIBSection() failed, hr = %x.\r\n"),
                   HRESULT_FROM_WIN32(::GetLastError()));
@@ -293,7 +293,7 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
     return EGL_BAD_ALLOC;
   }
 
-  m_gc = XCreateGC(m_pDisplay->GetNativeHandle(), hWnd, 0, NULL);
+  m_gc = XCreateGC(m_pDisplay->GetNativeHandle(), hWnd, 0, nullptr);
   m_drawable = hWnd;
   m_pImage = image;
 
@@ -339,7 +339,7 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   // Retrieve the bitmap properties
   BITMAP bitmap;
   if ((0 == ::GetObject(hPixmap, sizeof(BITMAP), &bitmap)) ||
-      (NULL == bitmap.bmBits)) {
+      (nullptr == bitmap.bmBits)) {
     __eglLogError(_T("::GetObject() failed, invalid pixmap.\r\n"));
     return EGL_BAD_ALLOC;
   }
@@ -352,7 +352,7 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   colorDesc.Height = bitmap.bmHeight;
 
   hDC hCompatDC = ::CreateCompatibleDC(m_pDisplay - GetNativeHandle());
-  if (NULL == hCompatDC) {
+  if (nullptr == hCompatDC) {
     __eglLogError(_T("::CreateCompatibleDC() failed, hr = %x.\r\n"),
                   HRESULT_FROM_WIN32(::GetLastError()));
     return EGL_BAD_ALLOC;
@@ -379,7 +379,7 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
     return EGL_BAD_ALLOC;
   }
 
-  m_gc = XCreateGC(m_pDisplay->GetNativeHandle(), hPixmap, 0, NULL);
+  m_gc = XCreateGC(m_pDisplay->GetNativeHandle(), hPixmap, 0, nullptr);
   m_drawable = hPixmap;
   m_pImage = image;
 
@@ -463,7 +463,7 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
 
     // Allocate mipmap array
     m_ppBuffers = new uint8_t *[m_mipLevels];
-    if (NULL == m_ppBuffers) {
+    if (nullptr == m_ppBuffers) {
       __eglLogError(_T("CEGLSurface::Initialize() failed, out of memory.\r\n"));
       return EGL_BAD_ALLOC;
     }
@@ -474,7 +474,7 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
     for (unsigned i = 0, _width = width, _height = height; i < mipLevels; ++i) {
       // Allocate mipmap level
       m_ppBuffers[i] = new uint8_t[_width * _height * (nBPP / 8)];
-      if (NULL == m_ppBuffers[i]) {
+      if (nullptr == m_ppBuffers[i]) {
         __eglLogError(
             _T("CEGLSurface::Initialize() failed, out of memory.\r\n"));
         return EGL_BAD_ALLOC;
@@ -516,7 +516,7 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
     }
   } else {
     // Create the GL surface
-    err = EGLERROR_FROM_GLERROR(__glCreateSurface(NULL, NULL, &m_glSurface));
+    err = EGLERROR_FROM_GLERROR(__glCreateSurface(nullptr, nullptr, &m_glSurface));
     if (__eglFailed(err)) {
       __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
       return err;
@@ -646,7 +646,7 @@ EGLint CEGLSurface::SetAttribute(EGLint attribute, EGLint value) {
 
       // Update the GL surface
       err = EGLERROR_FROM_GLERROR(
-          __glUpdateSurface(m_glSurface, &surfDesc, NULL));
+          __glUpdateSurface(m_glSurface, &surfDesc, nullptr));
       if (__eglFailed(err)) {
         __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
         return err;
@@ -685,7 +685,7 @@ EGLint CEGLSurface::CopyBuffer(EGLNativePixmapType hPixmap) {
     // Retrieve the bitmap properties
     BITMAP bitmap;
     if ((0 == ::GetObject(m_hBitmap, sizeof(BITMAP), &bitmap)) ||
-        (NULL == bitmap.bmBits)) {
+        (nullptr == bitmap.bmBits)) {
       __eglLogError(_T("::GetObject() failed, invalid pixmap.\r\n"));
       return EGL_BAD_ALLOC;
     }
@@ -711,7 +711,7 @@ EGLint CEGLSurface::CopyBuffer(EGLNativePixmapType hPixmap) {
   // Retrieve the bitmap properties
   BITMAP bitmap;
   if ((0 == ::GetObject(hPixmap, sizeof(BITMAP), &bitmap)) ||
-      (NULL == bitmap.bmBits)) {
+      (nullptr == bitmap.bmBits)) {
     __eglLogError(_T("::GetObject() failed, invalid pixmap.\r\n"));
     return EGL_BAD_ALLOC;
   }
@@ -811,7 +811,7 @@ EGLint CEGLSurface::InitDepthStencil(unsigned width, unsigned height,
   if (pSurfaceDesc->Format != FORMAT_UNKNOWN) {
     m_pDepthStencilBits =
         new uint8_t[stride * pSurfaceDesc->Width * pSurfaceDesc->Height];
-    if (NULL == m_pDepthStencilBits) {
+    if (nullptr == m_pDepthStencilBits) {
       __eglLogError(
           _T("Depth stencil buffer allocation failed, out of memory.\r\n"));
       return EGL_BAD_ALLOC;
@@ -819,7 +819,7 @@ EGLint CEGLSurface::InitDepthStencil(unsigned width, unsigned height,
 
     pSurfaceDesc->pBits = m_pDepthStencilBits;
   } else {
-    pSurfaceDesc->pBits = NULL;
+    pSurfaceDesc->pBits = nullptr;
   }
 
   pSurfaceDesc->Pitch = stride * pSurfaceDesc->Width;

@@ -16,13 +16,13 @@
 #include <sys/mman.h>
 
 CAllocator::CAllocator(bool execute_access) {
-  m_pPages = NULL;
+  m_pPages = nullptr;
   m_execute_access = execute_access;
 }
 
 CAllocator::~CAllocator() {
   // All pages should be released by now
-  ASSERT(NULL == m_pPages);
+  ASSERT(nullptr == m_pPages);
 
   // Free allocated pages
   Page *pCurPage = m_pPages;
@@ -35,13 +35,13 @@ CAllocator::~CAllocator() {
 
 HRESULT
 CAllocator::Create(CAllocator **ppAllocator, bool execute_access) {
-  if (NULL == ppAllocator) {
+  if (nullptr == ppAllocator) {
     __debugMsg(1, _T("CAllocator::Create() failed, invalid arguments.\r\n"));
     return E_INVALIDARG;
   }
 
   CAllocator *pAllocator = new CAllocator(execute_access);
-  if (NULL == pAllocator) {
+  if (nullptr == pAllocator) {
     __debugMsg(1, _T("New CAllocator() failed, out of memory.\r\n"));
     return E_OUTOFMEMORY;
   }
@@ -57,14 +57,14 @@ void *CAllocator::Allocate(uint32_t dwBytes) {
 
   if (0 == dwBytes) {
     __debugMsg(1, _T("Empty size allocation.\r\n"));
-    return NULL;
+    return nullptr;
   }
 
   // Pad allocation size to nearest uint32_t to ensure alignment
   dwBytes = __align(dwBytes, Block::ALIGN_SIZE);
 
   // Walk thru all pages to find a free block
-  Block *pFreeBlock = NULL;
+  Block *pFreeBlock = nullptr;
   Page *pCurPage = m_pPages;
   while (pCurPage) {
     Block *pCurBlock = pCurPage->pFreeSList;
@@ -86,12 +86,12 @@ void *CAllocator::Allocate(uint32_t dwBytes) {
     pCurPage = pCurPage->pNext;
   }
 
-  if (NULL == pFreeBlock) {
+  if (nullptr == pFreeBlock) {
     // Allocate a new page for this request
     pCurPage = this->NewPage(dwBytes);
-    if (NULL == pCurPage) {
+    if (nullptr == pCurPage) {
       __debugMsg(1, _T("CAllocator::NewPage() failed.\r\n"));
-      return NULL;
+      return nullptr;
     }
 
     pFreeBlock = pCurPage->pFreeSList;
@@ -129,14 +129,14 @@ void *CAllocator::Allocate(uint32_t dwBytes) {
 }
 
 void CAllocator::Free(void *ptr) {
-  if (NULL == ptr) {
+  if (nullptr == ptr) {
     return;
   }
 
   std::lock_guard<std::mutex> lock(m_CS);
 
   // Walk all pages to find the pointer
-  Block *pUsedBlock = NULL;
+  Block *pUsedBlock = nullptr;
   Page *pCurPage = m_pPages;
   while (pCurPage) {
     if ((pCurPage->pBuffer < ptr) &&
@@ -157,7 +157,7 @@ void CAllocator::Free(void *ptr) {
     pCurPage = pCurPage->pNext;
   }
 
-  if (NULL == pUsedBlock) {
+  if (nullptr == pUsedBlock) {
     ASSERT(false);
     return;
   }
@@ -217,7 +217,7 @@ void CAllocator::Free(void *ptr) {
   pCurPage->InsertFreeSBlock(pUsedBlock);
 
   // Check if we can free the page
-  if (NULL == pCurPage->pUsedList) {
+  if (nullptr == pCurPage->pUsedList) {
     // Delete the current page
     this->DeletePage(pCurPage);
   }
@@ -234,20 +234,20 @@ CAllocator::Page *CAllocator::NewPage(uint32_t dwCbSize) {
 #ifdef _WIN32
   auto protection = m_execute_access ? PAGE_EXECUTE_READWRITE : PAGE_READWRITE;
   uint8_t *pBuffer = reinterpret_cast<uint8_t *>(
-      ::VirtualAlloc(NULL, dwCbSize, MEM_COMMIT | MEM_RESERVE, protection));
-  if (NULL == pBuffer) {
+      ::VirtualAlloc(nullptr, dwCbSize, MEM_COMMIT | MEM_RESERVE, protection));
+  if (nullptr == pBuffer) {
     __debugMsg(1, _T("VirtualAlloc() failed, error = %d.\r\n"),
                ::GetLastError());
-    return NULL;
+    return nullptr;
   }
 #else
   auto protection = m_execute_access ? (PROT_READ | PROT_WRITE | PROT_EXEC)
                                      : (PROT_READ | PROT_WRITE);
   uint8_t *pBuffer = reinterpret_cast<uint8_t *>(
-      mmap(NULL, dwCbSize, protection, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0));
+      mmap(nullptr, dwCbSize, protection, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0));
   if (pBuffer == MAP_FAILED) {
     __debugMsg(1, _T("mmap() failed. error = %d\r\n"), errno);
-    return NULL;
+    return nullptr;
   }
 #endif
 
@@ -265,7 +265,7 @@ void CAllocator::DeletePage(Page *pPage) {
   ASSERT(pPage);
 
   // Remove the page from the list
-  Page *pPrevPage = NULL;
+  Page *pPrevPage = nullptr;
   Page *pCurPage = m_pPages;
   while (pCurPage) {
     if (pCurPage == pPage) {
@@ -282,10 +282,10 @@ void CAllocator::DeletePage(Page *pPage) {
   }
 
   // The allocated list should be empty by now
-  ASSERT(NULL == pPage->pUsedList);
+  ASSERT(nullptr == pPage->pUsedList);
 
   // The free list should be one
-  ASSERT(pPage->pFreeMList && (NULL == pPage->pFreeMList->pNextFreeM));
+  ASSERT(pPage->pFreeMList && (nullptr == pPage->pFreeMList->pNextFreeM));
 
 // Release allocated virtual memory
 #ifdef _WIN32
@@ -315,8 +315,8 @@ void CAllocator::Page::RemoveUsedBlock(Block *pBlock) {
     pBlock->pNextUsed->pPrevUsed = pBlock->pPrevUsed;
   }
 
-  pBlock->pNextUsed = NULL;
-  pBlock->pPrevUsed = NULL;
+  pBlock->pNextUsed = nullptr;
+  pBlock->pPrevUsed = nullptr;
 }
 
 void CAllocator::Page::InsertUsedBlock(Block *pBlock) {
@@ -342,15 +342,15 @@ void CAllocator::Page::RemoveFreeMBlock(Block *pBlock) {
     pBlock->pNextFreeM->pPrevFreeM = pBlock->pPrevFreeM;
   }
 
-  pBlock->pNextFreeM = NULL;
-  pBlock->pPrevFreeM = NULL;
+  pBlock->pNextFreeM = nullptr;
+  pBlock->pPrevFreeM = nullptr;
 }
 
 void CAllocator::Page::InsertFreeMBlock(Block *pBlock) {
   ASSERT(pBlock);
 
   Block *pCurBlock = this->pFreeMList;
-  Block *pPrevBlock = NULL;
+  Block *pPrevBlock = nullptr;
 
   // Sort the block list by increasing memory addresses
   // to simplify blocks merging when freeing memory.
@@ -386,15 +386,15 @@ void CAllocator::Page::RemoveFreeSBlock(Block *pBlock) {
     pBlock->pNextFreeS->pPrevFreeS = pBlock->pPrevFreeS;
   }
 
-  pBlock->pNextFreeS = NULL;
-  pBlock->pPrevFreeS = NULL;
+  pBlock->pNextFreeS = nullptr;
+  pBlock->pPrevFreeS = nullptr;
 }
 
 void CAllocator::Page::InsertFreeSBlock(Block *pBlock) {
   ASSERT(pBlock);
 
   Block *pCurBlock = this->pFreeSList;
-  Block *pPrevBlock = NULL;
+  Block *pPrevBlock = nullptr;
 
   // Sort the block list by descreasing sizes
   // to simplify the look up when allocating new memory.

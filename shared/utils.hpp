@@ -80,33 +80,33 @@ template <class T> inline void __safeAcquire(T *p) {
 template <class T> inline void __safeRelease(T *&p) {
   if (p) {
     p->Release();
-    p = NULL;
+    p = nullptr;
   }
 }
 
 template <class T> inline void __safeDelete(T *&p) {
   if (p) {
     delete p;
-    p = NULL;
+    p = nullptr;
   }
 }
 
 template <class T> inline void __safeDeleteArray(T *&p) {
   if (p) {
     delete[] p;
-    p = NULL;
+    p = nullptr;
   }
 }
 
 template <class T> inline void __safeFree(T *&p) {
   if (p) {
     free(p);
-    p = NULL;
+    p = nullptr;
   }
 }
 
 template <class T> inline bool __isAligned32(T *ptr) {
-  const size_t offset = ptr - (T *)(NULL);
+  const size_t offset = ptr - (T *)(nullptr);
   return (0 == (offset & 3));
 }
 
@@ -115,8 +115,8 @@ inline size_t __align(size_t offset, size_t alignment) {
 }
 
 template <class T> inline T *__alignPtr(T *ptr, size_t alignment) {
-  const size_t offset = ptr - (T *)(NULL);
-  return (T *)(NULL) + ((offset + alignment - 1) & ~(alignment - 1));
+  const size_t offset = ptr - (T *)(nullptr);
+  return (T *)(nullptr) + ((offset + alignment - 1) & ~(alignment - 1));
 }
 
 template <class T> inline void __swap(T &a, T &b) {

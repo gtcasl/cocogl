@@ -54,7 +54,7 @@ GLenum COptimizedRasterOp::Create(IRasterOp **ppRasterOp,
       // Create an optimized rasterOp object
       COptimizedRasterOp *const pRasterOp =
           new COptimizedRasterOp(l_optimizedScanlines[i].pfnScanline);
-      if (NULL == pRasterOp) {
+      if (nullptr == pRasterOp) {
         __glLogError(
             _T("COptimizedRasterOp allocation failed, out of memory.\r\n"));
         return GL_OUT_OF_MEMORY;

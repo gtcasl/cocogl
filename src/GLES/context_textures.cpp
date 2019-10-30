@@ -59,18 +59,18 @@ void CGLContext::BindTexture(GLenum target, GLuint texture) {
     return;
   }
 
-  CTexture *pTexture = NULL;
+  CTexture *pTexture = nullptr;
   if (texture) {
     // First lookup owned textures
     pTexture =
         reinterpret_cast<CTexture *>(m_pHandles->GetObject(texture, this));
-    if ((NULL == pTexture) && m_pCtxShared) {
+    if ((nullptr == pTexture) && m_pCtxShared) {
       // Second lookup the shared context textures
       pTexture = reinterpret_cast<CTexture *>(
           m_pHandles->GetObject(texture, m_pCtxShared));
     }
 
-    if (NULL == pTexture) {
+    if (nullptr == pTexture) {
       __glError(GL_INVALID_VALUE, _T("CGLContext::BindTexture() failed, ")
                                   _T("Invalid texture parameter: %d\r\n"),
                 texture);
@@ -468,7 +468,7 @@ void CGLContext::ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
   /*#ifndef NDEBUG
       static int s_fileno = 0;
       TCHAR szFilePath[MAX_PATH];
-      ::GetModuleFileName( NULL, szFilePath, MAX_PATH );
+      ::GetModuleFileName( nullptr, szFilePath, MAX_PATH );
       PathRemoveFileSpec( szFilePath );
       _sntprintf( szFilePath, MAX_PATH, _T("%s%s%d.bmp"), szFilePath,
   _T("CocoGLESv1_cm"), s_fileno++ );

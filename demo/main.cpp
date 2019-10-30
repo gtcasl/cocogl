@@ -27,7 +27,7 @@ EGLConfig glConfig;
 EGLContext glContext;
 EGLSurface glSurface;
 
-SDL_Window *glesWindow = NULL;
+SDL_Window *glesWindow = nullptr;
 
 static void init_GLES(void) {
   EGLint egl_config_attr[] = {
@@ -44,7 +44,7 @@ static void init_GLES(void) {
   SDL_SysWMinfo sysInfo;
   SDL_VERSION(&sysInfo.version); // Set SDL version
   SDL_GetWindowWMInfo(glesWindow, &sysInfo);
-  glContext = eglCreateContext(glDisplay, glConfig, EGL_NO_CONTEXT, NULL);
+  glContext = eglCreateContext(glDisplay, glConfig, EGL_NO_CONTEXT, nullptr);
   glSurface = eglCreateWindowSurface(
       glDisplay, glConfig, (EGLNativeWindowType)sysInfo.info.x11.window,
       0); // X11?

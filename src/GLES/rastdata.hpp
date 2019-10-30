@@ -42,25 +42,19 @@ private:
 class CRasterCache : public CObject {
 public:
   ~CRasterCache() {
+#ifndef NDEBUG    
     if (m_slowRasterIDs.GetSize()) {
       __glLog(_T("*** BEGIN MAKE_SCANLINE().\r\n"));
-
       for (TList<RASTERID>::Iter iter = m_slowRasterIDs.GetBegin(),
                                  iterEnd = m_slowRasterIDs.GetEnd();
            iter != iterEnd; ++iter) {
-#ifndef NDEBUG
-        DbgPrintf(3, _T("MAKE_SCANLINE(%d,%d,%d,%d),\r\n"), iter->Flags.Value,
-                  iter->States.Value, iter->Textures[0].Value,
-                  iter->Textures[1].Value);
-#endif
         __glLog(_T("MAKE_SCANLINE(%d,%d,%d,%d),\r\n"), iter->Flags.Value,
                 iter->States.Value, iter->Textures[0].Value,
                 iter->Textures[1].Value);
       }
-
       __glLog(_T("*** END MAKE_SCANLINE().\r\n"));
     }
-
+#endif
 #ifdef COCOGL_RASTER_PROFILE
     {
       // Copy the cache list
@@ -123,7 +117,7 @@ public:
 
     // Create a new raster cache
     CRasterCache *pRasterCache = new CRasterCache();
-    if (NULL == pRasterCache) {
+    if (nullptr == pRasterCache) {
       __glLogError(_T("CRasterCache allocation failed, out of memory.\r\n"));
       return GL_OUT_OF_MEMORY;
     }
@@ -209,5 +203,5 @@ struct RasterData {
 
   IRasterOp *pRasterOp;
 
-  RasterData() : pRasterOp(NULL) {}
+  RasterData() : pRasterOp(nullptr) {}
 };

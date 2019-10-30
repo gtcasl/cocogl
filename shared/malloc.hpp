@@ -41,8 +41,8 @@ private:
     unsigned Size;
 
     Block(uint8_t *pMem, unsigned size)
-        : pNextFreeS(NULL), pPrevFreeS(NULL), pNextFreeM(NULL),
-          pPrevFreeM(NULL), pNextUsed(NULL), pPrevUsed(NULL), pMem(pMem),
+        : pNextFreeS(nullptr), pPrevFreeS(nullptr), pNextFreeM(nullptr),
+          pPrevFreeM(nullptr), pNextUsed(nullptr), pPrevUsed(nullptr), pMem(pMem),
           Size(size) {}
   };
 
@@ -59,7 +59,7 @@ private:
     unsigned BufferSize;
 
     Page(uint8_t *pBuffer_, unsigned bufferSize)
-        : pNext(NULL), pUsedList(NULL), pBuffer(pBuffer_),
+        : pNext(nullptr), pUsedList(nullptr), pBuffer(pBuffer_),
           BufferSize(bufferSize) {
       //
       // Allocate the first free block

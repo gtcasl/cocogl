@@ -31,7 +31,7 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
     const unsigned stride = GLSizeOf(type);
     const unsigned size = pBufElements->GetSize();
     const unsigned offset = static_cast<const uint8_t *>(pvIndices) -
-                            static_cast<const uint8_t *>(NULL);
+                            static_cast<const uint8_t *>(nullptr);
     if ((offset + stride * count) <= size) {
       pvIndices = pBits + offset;
     } else {
@@ -39,8 +39,8 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
       return GL_INVALID_OPERATION;
     }
   } else {
-    if (NULL == pvIndices) {
-      __glLogError(_T("The indices buffer is NULL.\r\n"));
+    if (nullptr == pvIndices) {
+      __glLogError(_T("The indices buffer is nullptr.\r\n"));
       return GL_INVALID_OPERATION;
     }
   }

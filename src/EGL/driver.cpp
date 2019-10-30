@@ -22,7 +22,7 @@ thread_local EGLint tls_eglerror = EGL_SUCCESS;
 
 CEGLDriver::CEGLDriver() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
-  m_pHandles = NULL;
+  m_pHandles = nullptr;
 }
 
 CEGLDriver::~CEGLDriver() {
@@ -53,7 +53,7 @@ EGLint CEGLDriver::Create(CEGLDriver **ppDriver) {
   ASSERT(ppDriver);
 
   CEGLDriver *pDriver = new CEGLDriver();
-  if (NULL == pDriver) {
+  if (nullptr == pDriver) {
     __eglLogError(_T("CEGLDriver allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;
   }
@@ -99,7 +99,7 @@ void CEGLDriver::MakeCurrent(CEGLContext *pContext, std::thread::id dwThreadID,
     }
 
     if (pCtxCurr) {
-      pCtxCurr->SetBindings(dwThreadID, NULL, NULL);
+      pCtxCurr->SetBindings(dwThreadID, nullptr, nullptr);
       pCtxCurr->Release();
     }
     tls_eglctx = pContext;
@@ -133,9 +133,9 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
   if (EGL_DEFAULT_DISPLAY == display_id) {
 // Set the default display ID
 #if defined(_WIN32)
-    display_id = GetDC(NULL);
+    display_id = GetDC(nullptr);
 #elif defined(__linux__)
-    display_id = XOpenDisplay(NULL);
+    display_id = XOpenDisplay(nullptr);
 #endif
   }
 
@@ -158,7 +158,7 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
 
   // Create a new display object
   err = CDisplay::Create(&pDisplay, display_id, m_pHandles);
-  if (NULL == pDisplay) {
+  if (nullptr == pDisplay) {
     __eglLogError(_T("CDisplay::Create() failed, err = %d.\r\n"), err);
     return err;
   }

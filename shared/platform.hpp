@@ -50,9 +50,9 @@ typedef const char *LPCTSTR;
 #endif
 #endif
 
-#define HRESULT int
-#define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
-#define FAILED(hr) (((HRESULT)(hr)) < 0)
+#define HRESULT uint32_t
+#define SUCCEEDED(hr) (0 == ((hr) >> 31))
+#define FAILED(hr) (0 != ((hr) >> 31))
 
 #define S_OK 0x00000000
 #define S_FALSE 0x00000001
@@ -68,7 +68,7 @@ typedef const char *LPCTSTR;
   if (FAILED(hr = (x)))                                                        \
     goto L_EXIT;
 #define __exitOnOOM(x)                                                         \
-  if (NULL == (x)) {                                                           \
+  if (nullptr == (x)) {                                                        \
     hr = E_OUTOFMEMORY;                                                        \
     goto L_EXIT;                                                               \
   }
@@ -82,6 +82,7 @@ typedef const char *LPCTSTR;
   __pragma(warning(disable : 4100))
 #define DISABLE_WARNING_UNREFERENCED_FUNCTION __pragma(warning(disable : 4505))
 #define DISABLE_WARNING_ANONYMOUS_STRUCT __pragma(warning(disable : 4201))
+#define DISABLE_WARNING_UNUSED_VARIABLE __pragma(warning(disable : 4189))
 #elif defined(__GNUC__)
 #define DISABLE_WARNING_PUSH _Pragma("GCC diagnostic push")
 #define DISABLE_WARNING_POP _Pragma("GCC diagnostic pop")
@@ -91,6 +92,8 @@ typedef const char *LPCTSTR;
   _Pragma("GCC diagnostic ignored \"-Wunused-function\"")
 #define DISABLE_WARNING_ANONYMOUS_STRUCT                                       \
   _Pragma("GCC diagnostic ignored \"-Wpedantic\"")
+#define DISABLE_WARNING_UNUSED_VARIABLE                                        \
+  _Pragma("GCC diagnostic ignored \"-Wunused-but-set-variable\"")
 #elif defined(__clang__)
 #define DISABLE_WARNING_PUSH _Pragma("clang diagnostic push")
 #define DISABLE_WARNING_POP _Pragma("clang diagnostic pop")
@@ -100,6 +103,8 @@ typedef const char *LPCTSTR;
   _Pragma("clang diagnostic ignored \"-Wunused-function\"")
 #define DISABLE_WARNING_ANONYMOUS_STRUCT                                       \
   _Pragma("clang diagnostic ignored \"-Wgnu-anonymous-struct\"")
+#define DISABLE_WARNING_UNUSED_VARIABLE                                        \
+  _Pragma("clang diagnostic ignored \"-Wunused-but-set-variable\"")
 #else
 #define DISABLE_WARNING_PUSH
 #define DISABLE_WARNING_POP

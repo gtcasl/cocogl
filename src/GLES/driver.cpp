@@ -19,7 +19,7 @@ thread_local CGLContext *tls_glctx = nullptr;
 
 CGLDriver::CGLDriver() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
-  m_pHandles = NULL;
+  m_pHandles = nullptr;
 }
 
 CGLDriver::~CGLDriver() {
@@ -40,7 +40,7 @@ CGLDriver::~CGLDriver() {
 
     {
       // Release all other generated handles
-      auto enumerator = m_pHandles->GetEnumerator(NULL);
+      auto enumerator = m_pHandles->GetEnumerator(nullptr);
       while (!enumerator.IsEnd()) {
         reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
       }
@@ -62,7 +62,7 @@ GLenum CGLDriver::Create(CGLDriver **ppDriver) {
   ASSERT(ppDriver);
 
   CGLDriver *pDriver = new CGLDriver();
-  if (NULL == pDriver) {
+  if (nullptr == pDriver) {
     __glLogError(_T("CGLDriver allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -116,8 +116,8 @@ void CGLDriver::MakeCurrent(CGLContext *pContext, CGLSurface *pSurfDraw,
     }
 
     if (pCtxCurr) {
-      pCtxCurr->SetDrawSurface(NULL);
-      pCtxCurr->SetReadSurface(NULL);
+      pCtxCurr->SetDrawSurface(nullptr);
+      pCtxCurr->SetReadSurface(nullptr);
       pCtxCurr->Release();
     }
 

@@ -153,7 +153,7 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, unsigned count) {
 
   m_clipVerticesBaseIndex = count;
 
-  uint8_t *pbVertexData = NULL;
+  uint8_t *pbVertexData = nullptr;
 
   m_pbVertexData[VERTEXDATA_FLAGS] = pbVertexData;
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(uint16_t), 4);
@@ -207,7 +207,7 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, unsigned count) {
     this->UpdateFog(&pbVertexData, first, count);
   }
 
-  const unsigned buffSize = pbVertexData - (uint8_t *)NULL;
+  const unsigned buffSize = pbVertexData - (uint8_t *)nullptr;
 
   err = GLERROR_FROM_HRESULT(m_vertexBuffer.Resize(buffSize));
   if (__glFailed(err)) {
@@ -217,7 +217,7 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, unsigned count) {
 
   // Update vertex buffer offsets
   {
-    const unsigned offset = m_vertexBuffer.GetBegin() - (uint8_t *)NULL;
+    const unsigned offset = m_vertexBuffer.GetBegin() - (uint8_t *)nullptr;
     for (unsigned i = 0; i < VERTEXDATA_SIZE; ++i) {
       m_pbVertexData[i] += offset;
     }
@@ -855,7 +855,7 @@ GLenum CTNL::UpdatePoints(uint8_t **ppbVertexData, int first, unsigned count) {
       return err;
     }
   } else {
-    m_pointSizeDecode.pBits = NULL;
+    m_pointSizeDecode.pBits = nullptr;
   }
 
   if (!Math::TIsZero(m_pointParams.vAttenuation.y) ||
@@ -896,7 +896,7 @@ GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, unsigned count) {
       return err;
     }
   } else {
-    m_colorDecode.pBits = NULL;
+    m_colorDecode.pBits = nullptr;
   }
 
   m_pbVertexData[VERTEXDATA_FRONTCOLOR] = *ppbVertexData;
@@ -942,7 +942,7 @@ GLenum CTNL::UpdateLighting(uint8_t **ppbVertexData, int first,
       return err;
     }
   } else {
-    m_normalDecode.pBits = NULL;
+    m_normalDecode.pBits = nullptr;
   }
 
   if (m_normalDecode.pBits) {
@@ -1015,7 +1015,7 @@ GLenum CTNL::UpdateTexcoords(uint8_t **ppbVertexData, int first,
           return err;
         }
       } else {
-        m_texCoordDecodes[i].pBits = NULL;
+        m_texCoordDecodes[i].pBits = nullptr;
       }
 
       m_pbVertexData[VERTEXDATA_TEXCOORD0 + j++] = *ppbVertexData;
@@ -1190,20 +1190,20 @@ void CTNL::UpdateMaterial() {
 }
 
 void CTNL::SetupLights() {
-  m_pActiveLights = NULL;
-  Light *pLight = NULL;
+  m_pActiveLights = nullptr;
+  Light *pLight = nullptr;
 
   for (unsigned i = 0, activeMask = m_caps.Lights; activeMask;
        ++i, activeMask >>= 1) {
     if (activeMask & 1) {
-      if (NULL == pLight) {
+      if (nullptr == pLight) {
         m_pActiveLights = pLight = &m_lights[i];
       } else {
         pLight->pNext = &m_lights[i];
         pLight = pLight->pNext;
       }
 
-      pLight->pNext = NULL;
+      pLight->pNext = nullptr;
     }
   }
 

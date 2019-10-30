@@ -70,7 +70,7 @@ public:
       if (m_pHandles) {
         m_pHandles->Unlock();
         m_pHandles->Release();
-        m_pHandles = NULL;
+        m_pHandles = nullptr;
       }
 
       return true;
@@ -95,7 +95,7 @@ public:
         return pObject;
       }
 
-      return NULL;
+      return nullptr;
     }
 
     void operator=(const Enumerator &rhs) {
@@ -132,24 +132,24 @@ public:
 
   static HRESULT Create(CHandleTable **ppCHandleTable);
 
-  void *GetObject(uint32_t dwHandle, const void *pOwner = NULL);
+  void *GetObject(uint32_t dwHandle, const void *pOwner = nullptr);
 
-  uint8_t GetType(uint32_t dwHandle, const void *pOwner = NULL);
+  uint8_t GetType(uint32_t dwHandle, const void *pOwner = nullptr);
 
   HRESULT Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
-                 void *pOwner = NULL);
+                 void *pOwner = nullptr);
 
-  void *Delete(uint32_t dwHandle, const void *pOwner = NULL);
+  void *Delete(uint32_t dwHandle, const void *pOwner = nullptr);
 
   void Optimize();
 
-  Enumerator GetEnumerator(const void *pOwner = NULL) {
+  Enumerator GetEnumerator(const void *pOwner = nullptr) {
     return Enumerator(this, pOwner);
   }
 
   unsigned GetNumHandles() const { return m_nHandleCount; }
 
-  uint32_t FindHandle(const void *pObject, const void *pOwner = NULL) {
+  uint32_t FindHandle(const void *pObject, const void *pOwner = nullptr) {
     CHandleTable::Enumerator enumerator = this->GetEnumerator(pOwner);
     while (!enumerator.IsEnd()) {
       if (pObject == enumerator.GetObject()) {
@@ -189,7 +189,7 @@ private:
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   Entry *DeleteEntry(Entry *pEntry);

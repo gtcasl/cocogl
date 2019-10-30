@@ -58,18 +58,18 @@ void CGLContext::BindBuffer(GLenum target, GLuint buffer) {
     return;
   }
 
-  CBuffer *pBuffer = NULL;
+  CBuffer *pBuffer = nullptr;
   if (buffer) {
     // First, lookup buffers from the current context
     pBuffer = reinterpret_cast<CBuffer *>(m_pHandles->GetObject(buffer, this));
-    if (NULL == pBuffer) {
+    if (nullptr == pBuffer) {
       if (m_pCtxShared) {
         // Else, lookup buffers from the shared context
         pBuffer = reinterpret_cast<CBuffer *>(
             m_pHandles->GetObject(buffer, m_pCtxShared));
       }
 
-      if (NULL == pBuffer) {
+      if (nullptr == pBuffer) {
         __glError(GL_INVALID_VALUE, _T("CGLContext::BindBuffer() failed, ")
                                     _T("Invalid buffer parameter: %d\r\n"),
                   buffer);

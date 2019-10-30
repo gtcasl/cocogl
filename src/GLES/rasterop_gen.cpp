@@ -432,12 +432,12 @@ CGenericRasterOp::CGenericRasterOp(const RASTERID &rasterID) {
   m_rasterID = rasterID;
   m_colorStride = 0;
   m_depthStencilStride = 0;
-  m_pfnAlphaTest = NULL;
-  m_pfnStencilTest = NULL;
-  m_pfnDepthTest = NULL;
-  m_pfnBlend = NULL;
-  m_pfnWriteColor = NULL;
-  m_pfnScanline = NULL;
+  m_pfnAlphaTest = nullptr;
+  m_pfnStencilTest = nullptr;
+  m_pfnDepthTest = nullptr;
+  m_pfnBlend = nullptr;
+  m_pfnWriteColor = nullptr;
+  m_pfnScanline = nullptr;
 }
 
 CGenericRasterOp::~CGenericRasterOp() {
@@ -454,7 +454,7 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
 
   // Create a new rasterOp object
   CGenericRasterOp *const pRasterOp = new CGenericRasterOp(rasterID);
-  if (NULL == pRasterOp) {
+  if (nullptr == pRasterOp) {
     __glLogError(_T("CGenericRasterOp allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -604,7 +604,6 @@ void CGenericRasterOp::SelectTexEnvFunc() {
 }
 
 void CGenericRasterOp::SelectAlphaTestFunc() {
-  const RASTERFLAGS rasterFlags = m_rasterID.Flags;
   const RASTERSTATES rasterStates = m_rasterID.States;
 
   const unsigned index = rasterStates.AlphaFunc;
@@ -626,8 +625,8 @@ void CGenericRasterOp::SelectWriteColorFunc() {
   const RASTERSTATES rasterStates = m_rasterID.States;
 
   const bool bColorWriteMask = rasterFlags.ColorWriteMask;
-  const unsigned logicFunc =
-      rasterFlags.LogicOp ? rasterStates.LogicFunc : LOGICOP_COPY;
+  const uint32_t logicFunc =
+      (rasterFlags.LogicOp ? rasterStates.LogicFunc : static_cast<uint32_t>(LOGICOP_COPY));
   const unsigned index = 1 * logicFunc + LOGICOP_SIZE_ * bColorWriteMask;
 
   ASSERT(index < __countof(s_pfnWriteColorTable));

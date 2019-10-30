@@ -36,7 +36,7 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height,
 
   const uint8_t nBPP = Format::GetInfo(format).BytePerPixel;
   uint8_t *const pbBits = new uint8_t[nBPP * width * height];
-  if (NULL == pbBits) {
+  if (nullptr == pbBits) {
     __glLogError(_T("CSurface2D::Initialize() failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -115,7 +115,7 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height,
   const unsigned paletteSize = 1 << formatInfo.PaletteBits;
 
   Color4 *const pColorTable = new Color4[paletteSize];
-  if (NULL == pColorTable) {
+  if (nullptr == pColorTable) {
     __glLogError(_T("CSurface2D::Initialize() failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -129,7 +129,7 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height,
 
   const unsigned surfaceSize = width * height;
   uint8_t *const pbBits = new uint8_t[nBPP * surfaceSize];
-  if (NULL == pbBits) {
+  if (nullptr == pbBits) {
     delete[] pColorTable;
     __glLogError(_T("CSurface2D::Initialize() failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
@@ -186,7 +186,7 @@ void CSurface2D::Destroy() {
 }
 
 void CSurface2D::Clear() {
-  m_pbBits = NULL;
+  m_pbBits = nullptr;
   m_logWidth = 0;
   m_logHeight = 0;
   m_pitch = 0;
@@ -199,11 +199,11 @@ void CSurface2D::Clear() {
 CTexture::CTexture() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  m_pbMipBuffer = NULL;
+  m_pbMipBuffer = nullptr;
   m_bIsDirty = true;
   m_dwHandle = 0;
   m_maxMipLevel = 0;
-  m_pBoundSurface = NULL;
+  m_pBoundSurface = nullptr;
 
   this->Params.MinFilter = TexFilterFromEnum(GL_NEAREST_MIPMAP_LINEAR);
   this->Params.MagFilter = TexFilterFromEnum(GL_LINEAR);
@@ -224,7 +224,7 @@ GLenum CTexture::Create(CTexture **ppTexture) {
 
   // Create a new texture object
   CTexture *pTexture = new CTexture();
-  if (NULL == pTexture) {
+  if (nullptr == pTexture) {
     __glLogError(_T("CTexture allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -322,7 +322,7 @@ GLenum CTexture::GenerateMipmaps() {
   __safeDeleteArray(m_pbMipBuffer);
 
   m_pbMipBuffer = new uint8_t[cbSize];
-  if (NULL == m_pbMipBuffer) {
+  if (nullptr == m_pbMipBuffer) {
     __glLogError(_T("Mipmap buffer allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -561,7 +561,9 @@ GLenum CTexture::GenerateMipmaps() {
       }
     }
 
-    break;
+    break;    
+    default:
+      break;
     }
   }
 

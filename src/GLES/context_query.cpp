@@ -42,7 +42,7 @@ const GLubyte *CGLContext::GetString(GLenum name) {
         GL_INVALID_ENUM,
         _T("CGLContext::GetString() failed, invalid name parameter: %d.\r\n"),
         name);
-    return NULL;
+    return nullptr;
   }
 }
 

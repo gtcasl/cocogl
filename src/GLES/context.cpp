@@ -35,20 +35,20 @@ CGLContext::CGLContext(CHandleTable *pHandles, CRasterCache *pRasterCache,
 
   m_pCtxShared = pCtxShared;
 
-  m_pSurfDraw = NULL;
-  m_pSurfRead = NULL;
+  m_pSurfDraw = nullptr;
+  m_pSurfRead = nullptr;
 
-  m_pTexDefault = NULL;
-  m_pBufDefault = NULL;
+  m_pTexDefault = nullptr;
+  m_pBufDefault = nullptr;
 
   m_error = GL_NO_ERROR;
 
   for (unsigned i = 0; i < BUFFER_OBJECTS_SIZE; ++i) {
-    m_bufferObjects[i] = NULL;
+    m_bufferObjects[i] = nullptr;
   }
 
 #ifdef GL_COCOJIT
-  m_pCGAssembler = NULL;
+  m_pCGAssembler = nullptr;
 #endif
 }
 
@@ -96,7 +96,7 @@ GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
 
   // Create a new context object
   CGLContext *pContext = new CGLContext(pHandles, pRasterCache, pCtxShared);
-  if (NULL == pContext) {
+  if (nullptr == pContext) {
     __glLogError(_T("CGLContext allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -209,21 +209,21 @@ GLenum CGLContext::Initialize() {
   this->BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   this->ClientState(GL_VERTEX_ARRAY, false);
-  this->VertexPointer(4, GL_FLOAT, 0, NULL);
+  this->VertexPointer(4, GL_FLOAT, 0, nullptr);
 
   this->ClientState(GL_NORMAL_ARRAY, false);
-  this->NormalPointer(GL_FLOAT, 0, NULL);
+  this->NormalPointer(GL_FLOAT, 0, nullptr);
 
   this->ClientState(GL_COLOR_ARRAY, false);
-  this->ColorPointer(4, GL_FLOAT, 0, NULL);
+  this->ColorPointer(4, GL_FLOAT, 0, nullptr);
 
   this->ClientState(GL_POINT_SIZE_ARRAY_OES, false);
-  this->PointSizePointerOES(GL_FLOAT, 0, NULL);
+  this->PointSizePointerOES(GL_FLOAT, 0, nullptr);
 
   for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
     this->ClientActiveTexture(GL_TEXTURE0 + i);
     this->ClientState(GL_TEXTURE_COORD_ARRAY, false);
-    this->TexCoordPointer(4, GL_FLOAT, 0, NULL);
+    this->TexCoordPointer(4, GL_FLOAT, 0, nullptr);
   }
 
   this->Normal(fZERO, fZERO, fONE);
@@ -426,11 +426,11 @@ void CGLContext::SetDrawSurface(CGLSurface *pSurface) {
     m_rasterData.DepthStencilFormat = depthStencilDesc.Format;
     m_rasterData.DepthStencilPitch = depthStencilDesc.Pitch;
   } else {
-    m_rasterData.pColorBits = NULL;
+    m_rasterData.pColorBits = nullptr;
     m_rasterData.ColorFormat = FORMAT_UNKNOWN;
     m_rasterData.ColorPitch = 0;
 
-    m_rasterData.pDepthStencilBits = NULL;
+    m_rasterData.pDepthStencilBits = nullptr;
     m_rasterData.DepthStencilFormat = FORMAT_UNKNOWN;
     m_rasterData.DepthStencilPitch = 0;
   }

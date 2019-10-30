@@ -90,7 +90,7 @@ GetConvertTo(unsigned pixelFormat) {
     return &TConvertTo<FORMAT_X8S8D16>;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 PFN_CONVERTFROM
@@ -159,7 +159,7 @@ GetConvertFrom(unsigned pixelFormat, bool bForceAlpha) {
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 const FormatInfo &GetInfo(unsigned pixelFormat) {

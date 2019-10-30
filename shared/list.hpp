@@ -33,7 +33,7 @@ protected:
     Node *pNext;
     Node *pPrev;
 
-    Node(const T &data) : Data(data), pNext(NULL), pPrev(NULL) {}
+    Node(const T &data) : Data(data), pNext(nullptr), pPrev(nullptr) {}
   };
 
 public:
@@ -42,7 +42,7 @@ public:
   class cIter;
   class Iter {
   public:
-    Iter() : m_pNode(NULL) {}
+    Iter() : m_pNode(nullptr) {}
 
     Iter &operator=(const Iter &rhs) {
       m_pNode = rhs.m_pNode;
@@ -134,7 +134,7 @@ public:
 
   class cIter {
   public:
-    cIter() : m_pNode(NULL) {}
+    cIter() : m_pNode(nullptr) {}
 
     cIter(const Iter &rhs) : m_pNode(rhs.m_pNode) {}
 
@@ -256,7 +256,7 @@ public:
 
   HRESULT PushBack(const T &item) {
     Node *const pNew = new Node(item);
-    if (NULL == pNew) {
+    if (nullptr == pNew) {
       return E_OUTOFMEMORY;
     }
 
@@ -272,7 +272,7 @@ public:
 
   HRESULT PushFront(const T &item) {
     Node *const pNew = new Node(item);
-    if (NULL == pNew) {
+    if (nullptr == pNew) {
       return E_OUTOFMEMORY;
     }
 
@@ -313,7 +313,7 @@ public:
   // Insert an item before the given iterator
   HRESULT Insert(const Iter &iter, const T &item) {
     Node *const pNew = new Node(item);
-    if (NULL == pNew) {
+    if (nullptr == pNew) {
       return E_OUTOFMEMORY;
     }
 

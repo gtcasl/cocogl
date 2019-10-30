@@ -16,8 +16,8 @@
 
 CHandleTable::CHandleTable() {
   m_dwSize = 0;
-  m_pEntries = NULL;
-  m_pActiveList = NULL;
+  m_pEntries = nullptr;
+  m_pActiveList = nullptr;
   m_nHandleCount = 0;
 }
 
@@ -34,7 +34,7 @@ CHandleTable::Create(CHandleTable **ppCHandleTable) {
 
   // Allocate a new handle table
   CHandleTable *pHandleTable = new CHandleTable();
-  if (NULL == pHandleTable) {
+  if (nullptr == pHandleTable) {
     return E_OUTOFMEMORY;
   }
 
@@ -50,11 +50,11 @@ void *CHandleTable::GetObject(uint32_t dwHandle, const void *pOwner) {
 
   // Retrieve the corresponding table entry
   Entry *pEntry = this->GetEntry(dwHandle);
-  if (pEntry && ((NULL == pOwner) || (pEntry->pOwner == pOwner))) {
+  if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
     return pEntry->pObject;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 uint8_t CHandleTable::GetType(uint32_t dwHandle, const void *pOwner) {
@@ -62,7 +62,7 @@ uint8_t CHandleTable::GetType(uint32_t dwHandle, const void *pOwner) {
 
   // Retrieve the corresponding table entry
   Entry *pEntry = this->GetEntry(dwHandle);
-  if (pEntry && ((NULL == pOwner) || (pEntry->pOwner == pOwner))) {
+  if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
     return pEntry->Type;
   }
 
@@ -74,7 +74,7 @@ CHandleTable::Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
                      void *pOwner) {
   std::lock_guard<std::mutex> lock(m_CS);
 
-  if ((NULL == pObject) || (0 == type) || (NULL == pdwHandle)) {
+  if ((nullptr == pObject) || (0 == type) || (nullptr == pdwHandle)) {
     return E_FAIL;
   }
 
@@ -98,7 +98,7 @@ CHandleTable::Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
     // Reallocate the table's buffer
     Entry *pEntries = reinterpret_cast<Entry *>(
         realloc(m_pEntries, dwNewSize * sizeof(Entry)));
-    if (NULL == pEntries) {
+    if (nullptr == pEntries) {
       return E_OUTOFMEMORY;
     }
 
@@ -123,11 +123,11 @@ CHandleTable::Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
     // Reset newly allocated entries
     for (unsigned i = m_dwSize; i < dwNewSize; ++i) {
       Entry &entry = pEntries[i];
-      entry.pOwner = NULL;
+      entry.pOwner = nullptr;
       entry.Type = 0;
       entry.Reuse = 0;
-      entry.pObject = NULL;
-      entry.pNext = NULL;
+      entry.pObject = nullptr;
+      entry.pNext = nullptr;
     }
 
     m_pEntries = pEntries;
@@ -140,10 +140,10 @@ CHandleTable::Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
   pEntryNew->Type = static_cast<uint8_t>(type);
   pEntryNew->pObject = pObject;
   ++pEntryNew->Reuse;
-  pEntryNew->pNext = NULL;
+  pEntryNew->pNext = nullptr;
 
   // Add the entry to the active list ( sorted by address )
-  Entry *pPrevEntry = NULL;
+  Entry *pPrevEntry = nullptr;
   Entry *pCurEntry = m_pActiveList;
   while (pCurEntry && (pCurEntry < pEntryNew)) {
     pPrevEntry = pCurEntry;
@@ -173,7 +173,7 @@ CHandleTable::Entry *CHandleTable::DeleteEntry(Entry *pEntry) {
   Entry *const pNextEntry = pEntry->pNext;
 
   // Remove the entry from the active list
-  Entry *pPrevEntry = NULL;
+  Entry *pPrevEntry = nullptr;
   Entry *pCurEntry = m_pActiveList;
   while (pCurEntry) {
     if (pCurEntry == pEntry) {
@@ -191,10 +191,10 @@ CHandleTable::Entry *CHandleTable::DeleteEntry(Entry *pEntry) {
   }
 
   // Reset the entry
-  pEntry->pOwner = NULL;
+  pEntry->pOwner = nullptr;
   pEntry->Type = 0;
-  pEntry->pObject = NULL;
-  pEntry->pNext = NULL;
+  pEntry->pObject = nullptr;
+  pEntry->pNext = nullptr;
 
   // Update the handle count
   --m_nHandleCount;
@@ -208,7 +208,7 @@ void *CHandleTable::Delete(uint32_t dwHandle, const void *pOwner) {
 
   // Retrieve the corresponding table entry
   Entry *pEntry = this->GetEntry(dwHandle);
-  if (pEntry && ((NULL == pOwner) || (pEntry->pOwner == pOwner))) {
+  if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
     // Get the object pointer
     void *const pObject = pEntry->pObject;
 
@@ -219,7 +219,7 @@ void *CHandleTable::Delete(uint32_t dwHandle, const void *pOwner) {
     return pObject;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void CHandleTable::Optimize() {
@@ -251,7 +251,7 @@ void CHandleTable::Optimize() {
     } else {
       // Destroy table's buffer
       free(m_pEntries);
-      m_pEntries = NULL;
+      m_pEntries = nullptr;
     }
   }
 }

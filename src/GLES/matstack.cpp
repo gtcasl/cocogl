@@ -16,7 +16,7 @@
 #include "matstack.hpp"
 
 CMatrixStack::CMatrixStack()
-    : m_curIndex(0), m_size(0), m_pMatrices(NULL), m_identityMask(0) {
+    : m_pMatrices(nullptr), m_identityMask(0), m_curIndex(0), m_size(0) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 }
 
@@ -35,7 +35,7 @@ GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
 
   // Create a new object
   CMatrixStack *pMatrixStack = new CMatrixStack();
-  if (NULL == pMatrixStack) {
+  if (nullptr == pMatrixStack) {
     __glLogError(_T("CMatrixStack() allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -61,7 +61,7 @@ GLenum CMatrixStack::Initialize(uint8_t size) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   m_pMatrices = new MATRIX44[size];
-  if (NULL == m_pMatrices) {
+  if (nullptr == m_pMatrices) {
     __glLogError(_T("MATRIX44() allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }

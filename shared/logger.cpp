@@ -16,7 +16,7 @@
 #include <stdarg.h>
 
 CLogger::CLogger() {
-  m_pFile = NULL;
+  m_pFile = nullptr;
   m_indent = 0;
 }
 
@@ -41,12 +41,12 @@ void CLogger::DecrIndent() {
 }
 
 HRESULT CLogger::Open(LPCTSTR lpszFileName, LPCTSTR lpszMode) {
-  if ((NULL == lpszFileName) || (NULL == lpszMode)) {
+  if ((nullptr == lpszFileName) || (nullptr == lpszMode)) {
     return E_INVALIDARG;
   }
 
   m_pFile = _tfopen(lpszFileName, lpszMode);
-  if (NULL == m_pFile) {
+  if (nullptr == m_pFile) {
     return E_FAIL;
   }
 
@@ -54,7 +54,7 @@ HRESULT CLogger::Open(LPCTSTR lpszFileName, LPCTSTR lpszMode) {
 }
 
 HRESULT CLogger::Write(const TCHAR *pszFormat, ...) {
-  if ((NULL == pszFormat) || (0 == *pszFormat)) {
+  if ((nullptr == pszFormat) || (0 == *pszFormat)) {
     return S_OK;
   }
 
@@ -76,7 +76,7 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, ...) {
 }
 
 HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
-  if ((NULL == pszFormat) || (0 == *pszFormat)) {
+  if ((nullptr == pszFormat) || (0 == *pszFormat)) {
     return S_OK;
   }
 

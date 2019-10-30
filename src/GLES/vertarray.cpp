@@ -17,7 +17,7 @@
 #include "buffer.hpp"
 
 uint32_t VertexArray::GetBufferHandle() const {
-  return pBuffer ? pBuffer->GetHandle() : HANDLE_NONE;
+  return (pBuffer ? pBuffer->GetHandle() : static_cast<uint32_t>(HANDLE_NONE));
 }
 
 GLenum VertexArray::Prepare(VertexDecoder *pDecoder, int first,
@@ -28,8 +28,7 @@ GLenum VertexArray::Prepare(VertexDecoder *pDecoder, int first,
   const uint8_t *const pBits = this->pBuffer->GetBits();
   if (pBits) {
     pDecoder->pBits = pBits;
-    offset += reinterpret_cast<const uint8_t *>(this->pPointer) -
-              reinterpret_cast<const uint8_t *>(NULL);
+    offset += reinterpret_cast<uintptr_t>(this->pPointer);
     const unsigned dataSize = VertexDataSize(this->Format);
     const int padding = this->Stride - offset - dataSize;
     const unsigned bufSize = count * this->Stride - padding;

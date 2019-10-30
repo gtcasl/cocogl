@@ -44,7 +44,7 @@ GLenum CGLSurface::Create(CGLSurface **ppSurface,
 
   // Create a new surface object
   CGLSurface *pSurface = new CGLSurface();
-  if (NULL == pSurface) {
+  if (nullptr == pSurface) {
     __glLogError(_T("CGLSurface allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
@@ -159,7 +159,7 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
 GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
   // Open the file for writing bytes
   FILE *const pFile = _tfopen(lpszFilename, _T("wb"));
-  if (NULL == pFile) {
+  if (nullptr == pFile) {
     return GL_INVALID_OPERATION;
   }
 
@@ -195,7 +195,7 @@ GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
 
   // Write the file header
   BITMAPFILEHEADER header;
-  header.bfType = 'MB';
+  header.bfType = 0x4D42; // 'BM'
   header.bfSize = size;
   header.bfReserved1 = 0;
   header.bfReserved2 = 0;

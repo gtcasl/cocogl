@@ -169,7 +169,7 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
   case GL_DIFFUSE:
   case GL_AMBIENT_AND_DIFFUSE:
     m_dirtyFlags.ScaledAmbient = 1;
-
+    [[fallthrough]];
   case GL_SPECULAR:
   case GL_EMISSION: {
     vParam.x = Math::TCast<floatf>(pParams[0]);
@@ -244,7 +244,7 @@ inline void CGLContext::TFog(GLenum pname, const T *pParams) {
   case GL_FOG_START:
   case GL_FOG_END:
     m_dirtyFlags.FogRatio = 1;
-
+    [[fallthrough]];
   case GL_FOG_DENSITY:
     m_fog.SetFactor(pname, Math::TCast<floatf>(pParams[0]));
     break;

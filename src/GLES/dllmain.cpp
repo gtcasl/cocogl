@@ -1168,8 +1168,8 @@ GL_API GLenum GL_APIENTRY __glCreateSurface(
 
   auto driver = g_dll.driver();
 
-  if (NULL == pGLSurface) {
-    __glLogError(_T("__glCreateSurface() failed, pGLSurface is NULL.\r\n"));
+  if (nullptr == pGLSurface) {
+    __glLogError(_T("__glCreateSurface() failed, pGLSurface is nullptr.\r\n"));
     return GL_INVALID_VALUE;
   }
 
@@ -1203,7 +1203,7 @@ __glUpdateSurface(__GLSurface surface, const GLSurfaceDesc *pColorDesc,
   auto driver = g_dll.driver();
 
   CGLSurface *const pSurface = driver->TGetObject<CGLSurface *>(surface);
-  if (NULL == pSurface) {
+  if (nullptr == pSurface) {
     __glLogError(_T("__glUpdateSurface() failed, invalid surface handle.\r\n"));
     return GL_INVALID_VALUE;
   }
@@ -1224,7 +1224,7 @@ GL_API GLenum GL_APIENTRY __glDestroySurface(__GLSurface surface) {
 
   // Remove the surface object from the handle table
   CGLSurface *const pSurface = driver->TDeleteObject<CGLSurface *>(surface);
-  if (NULL == pSurface) {
+  if (nullptr == pSurface) {
     __glLogError(_T("Invalid surface handle.\r\n"));
     return GL_INVALID_VALUE;
   }
@@ -1243,15 +1243,15 @@ GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
 
   auto driver = g_dll.driver();
 
-  if (NULL == pGLContext) {
-    __glLogError(_T("__glCreateContext() failed, pGLContext is NULL.\r\n"));
+  if (nullptr == pGLContext) {
+    __glLogError(_T("__glCreateContext() failed, pGLContext is nullptr.\r\n"));
     return GL_INVALID_VALUE;
   }
 
-  CGLContext *pCtxShared = NULL;
+  CGLContext *pCtxShared = nullptr;
   if (shared_context) {
     pCtxShared = driver->TGetObject<CGLContext *>(shared_context);
-    if (NULL == pCtxShared) {
+    if (nullptr == pCtxShared) {
       __glLogError(_T("Invalid context handle.\r\n"));
       return GL_INVALID_VALUE;
     }
@@ -1285,7 +1285,7 @@ GL_API GLenum GL_APIENTRY __glDestroyContext(__GLContext context) {
 
   // Remove the context object from the handle table
   auto pContext = driver->TDeleteObject<CGLContext *>(context);
-  if (NULL == pContext) {
+  if (nullptr == pContext) {
     __glLogError(_T("Invalid context handle.\r\n"));
     return GL_INVALID_VALUE;
   }
@@ -1302,28 +1302,28 @@ GL_API GLenum GL_APIENTRY __glMakeCurrent(__GLContext context, __GLSurface draw,
 
   auto driver = g_dll.driver();
 
-  CGLContext *pContext = NULL;
+  CGLContext *pContext = nullptr;
   if (context) {
     pContext = driver->TGetObject<CGLContext *>(context);
-    if (NULL == pContext) {
+    if (nullptr == pContext) {
       __glLogError(_T("Invalid context handle.\r\n"));
       return GL_INVALID_VALUE;
     }
   }
 
-  CGLSurface *pSurfDraw = NULL;
+  CGLSurface *pSurfDraw = nullptr;
   if (draw) {
     pSurfDraw = driver->TGetObject<CGLSurface *>(draw);
-    if (NULL == pSurfDraw) {
+    if (nullptr == pSurfDraw) {
       __glLogError(_T("Invalid surface handle.\r\n"));
       return GL_INVALID_VALUE;
     }
   }
 
-  CGLSurface *pSurfRead = NULL;
+  CGLSurface *pSurfRead = nullptr;
   if (read) {
     pSurfRead = driver->TGetObject<CGLSurface *>(read);
-    if (NULL == pSurfRead) {
+    if (nullptr == pSurfRead) {
       __glLogError(_T("Invalid surface handle.\r\n"));
       return GL_INVALID_VALUE;
     }
@@ -1352,7 +1352,7 @@ GL_API GLenum GL_APIENTRY __glBindTexImage(__GLSurface surface,
     CGLSurface *const pSurface = driver->TGetObject<CGLSurface *>(surface);
     if (pSurface) {
       auto pContext = driver->GetCurrentContext();
-      if (NULL == pContext) {
+      if (nullptr == pContext) {
         __glLogError(_T("__glBindTexImage() failed, no active context.\r\n"));
         return GL_INVALID_OPERATION;
       }
@@ -1374,7 +1374,7 @@ GL_API GLenum GL_APIENTRY __glReleaseTexImage(__GLSurface surface) {
     CGLSurface *const pSurface = driver->TGetObject<CGLSurface *>(surface);
     if (pSurface) {
       auto pContext = driver->GetCurrentContext();
-      if (NULL == pContext) {
+      if (nullptr == pContext) {
         __glLogError(_T("__glBindTexImage() failed, no active context.\r\n"));
         return GL_INVALID_OPERATION;
       }
@@ -1447,7 +1447,7 @@ GL_API void GL_APIENTRY glClipPlanef(GLenum plane, const GLfloat *pEquation) {
   __profileAPI(_T(" - %s( plane=%s, pEquation=0x%p )\n"), _T(__FUNCTION__),
                PlaneToString(plane), pEquation);
 
-  if (NULL == pEquation)
+  if (nullptr == pEquation)
     return;
 
   auto driver = g_dll.driver();
@@ -1505,7 +1505,7 @@ GL_API void GL_APIENTRY glFogfv(GLenum pname, const GLfloat *pParams) {
   __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
                FogParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1547,7 +1547,7 @@ GL_API void GL_APIENTRY glGetFloatv(GLenum pname, GLfloat *pParams) {
   __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
                AttributeToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1564,7 +1564,7 @@ GL_API void GL_APIENTRY glGetLightfv(GLenum light, GLenum pname,
                _T(__FUNCTION__), LightToString(light),
                LightParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1581,7 +1581,7 @@ GL_API void GL_APIENTRY glGetMaterialfv(GLenum face, GLenum pname,
                _T(__FUNCTION__), MaterialFaceToString(face),
                MaterialParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1598,7 +1598,7 @@ GL_API void GL_APIENTRY glGetTexEnvfv(GLenum env, GLenum pname,
                _T(__FUNCTION__), TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1615,7 +1615,7 @@ GL_API void GL_APIENTRY glGetTexParameterfv(GLenum target, GLenum pname,
                _T(__FUNCTION__), TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1643,7 +1643,7 @@ GL_API void GL_APIENTRY glLightModelfv(GLenum pname, const GLfloat *pParams) {
                _T(__FUNCTION__), LightModelToString(pname), pParams[0],
                pParams[1], pParams[2], pParams[3]);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1673,7 +1673,7 @@ GL_API void GL_APIENTRY glLightfv(GLenum light, GLenum pname,
                LightParamToString(pname), pParams[0], pParams[1], pParams[2],
                pParams[3]);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1702,7 +1702,7 @@ GL_API void GL_APIENTRY glLoadMatrixf(const GLfloat *pM) {
                pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
                pM[14], pM[15]);
 
-  if (NULL == pM)
+  if (nullptr == pM)
     return;
 
   auto driver = g_dll.driver();
@@ -1740,7 +1740,7 @@ GL_API void GL_APIENTRY glMaterialfv(GLenum face, GLenum pname,
                MaterialParamToString(pname), pParams[0], pParams[1], pParams[2],
                pParams[3]);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1758,7 +1758,7 @@ GL_API void GL_APIENTRY glMultMatrixf(const GLfloat *pM) {
                pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
                pM[14], pM[15]);
 
-  if (NULL == pM)
+  if (nullptr == pM)
     return;
 
   auto driver = g_dll.driver();
@@ -1836,7 +1836,7 @@ GL_API void GL_APIENTRY glPointParameterfv(GLenum pname,
 
   auto driver = g_dll.driver();
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto pContext = driver->GetCurrentContext();
@@ -1910,7 +1910,7 @@ GL_API void GL_APIENTRY glTexEnvfv(GLenum env, GLenum pname,
                _T(__FUNCTION__), TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -1941,7 +1941,7 @@ GL_API void GL_APIENTRY glTexParameterfv(GLenum target, GLenum pname,
                _T(__FUNCTION__), TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2044,7 +2044,7 @@ GL_API void GL_APIENTRY glBufferSubData(GLenum target, GLintptr offset,
   __profileAPI(_T(" - %s( target=%s, offset=%d, size=%d, pData=0x%p )\n"),
                _T(__FUNCTION__), BufferToString(target), offset, size, pData);
 
-  if (NULL == pData)
+  if (nullptr == pData)
     return;
 
   auto driver = g_dll.driver();
@@ -2120,7 +2120,7 @@ GL_API void GL_APIENTRY glClipPlanex(GLenum plane, const GLfixed *pEquation) {
   __profileAPI(_T(" - %s( plane=%d, pEquation=0x%p )\n"), _T(__FUNCTION__),
                plane, pEquation);
 
-  if (NULL == pEquation)
+  if (nullptr == pEquation)
     return;
 
   auto driver = g_dll.driver();
@@ -2207,7 +2207,7 @@ GL_API void GL_APIENTRY glCompressedTexImage2D(GLenum target, GLint level,
                FormatToString(internalformat), width, height, border, imageSize,
                pData);
 
-  if (NULL == pData)
+  if (nullptr == pData)
     return;
 
   auto driver = g_dll.driver();
@@ -2228,7 +2228,7 @@ GL_API void GL_APIENTRY glCompressedTexSubImage2D(
       _T(__FUNCTION__), TextureTypeToString(target), level, xoffset, yoffset,
       width, height, FormatToString(format), imageSize, pData);
 
-  if (NULL == pData)
+  if (nullptr == pData)
     return;
 
   auto driver = g_dll.driver();
@@ -2292,7 +2292,7 @@ GL_API void GL_APIENTRY glDeleteBuffers(GLsizei n, const GLuint *pBuffers) {
   __profileAPI(_T(" - %s( n=%d, pBuffers=0x%p )\n"), _T(__FUNCTION__), n,
                pBuffers);
 
-  if (NULL == pBuffers)
+  if (nullptr == pBuffers)
     return;
 
   auto driver = g_dll.driver();
@@ -2307,7 +2307,7 @@ GL_API void GL_APIENTRY glDeleteTextures(GLsizei n, const GLuint *pTextures) {
   __profileAPI(_T(" - %s( n=%d, pTextures=0x%p )\n"), _T(__FUNCTION__), n,
                pTextures);
 
-  if (NULL == pTextures)
+  if (nullptr == pTextures)
     return;
 
   auto driver = g_dll.driver();
@@ -2463,7 +2463,7 @@ GL_API void GL_APIENTRY glFogxv(GLenum pname, const GLfixed *pParams) {
   __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
                FogToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2509,7 +2509,7 @@ GL_API void GL_APIENTRY glGetBooleanv(GLenum pname, GLboolean *pParams) {
   __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
                AttributeToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2526,7 +2526,7 @@ GL_API void GL_APIENTRY glGetBufferParameteriv(GLenum target, GLenum pname,
                _T(__FUNCTION__), BufferToString(target),
                BufferParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2553,7 +2553,7 @@ GL_API void GL_APIENTRY glGenBuffers(GLsizei n, GLuint *pBuffers) {
   __profileAPI(_T(" - %s( n=%d, pBuffers=0x%p )\n"), _T(__FUNCTION__), n,
                pBuffers);
 
-  if (NULL == pBuffers)
+  if (nullptr == pBuffers)
     return;
 
   auto driver = g_dll.driver();
@@ -2568,7 +2568,7 @@ GL_API void GL_APIENTRY glGenTextures(GLsizei n, GLuint *pTextures) {
   __profileAPI(_T(" - %s( n=%d, pTextures=0x%p )\n"), _T(__FUNCTION__), n,
                pTextures);
 
-  if (NULL == pTextures)
+  if (nullptr == pTextures)
     return;
 
   auto driver = g_dll.driver();
@@ -2600,7 +2600,7 @@ GL_API void GL_APIENTRY glGetFixedv(GLenum pname, GLfixed *pParams) {
   __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
                AttributeToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2615,7 +2615,7 @@ GL_API void GL_APIENTRY glGetIntegerv(GLenum pname, GLint *pParams) {
   __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
                AttributeToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2632,7 +2632,7 @@ GL_API void GL_APIENTRY glGetLightxv(GLenum light, GLenum pname,
                _T(__FUNCTION__), LightToString(light),
                LightParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2650,7 +2650,7 @@ GL_API void GL_APIENTRY glGetMaterialxv(GLenum face, GLenum pname,
                _T(__FUNCTION__), MaterialFaceToString(face),
                MaterialParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2666,7 +2666,7 @@ GL_API void GL_APIENTRY glGetPointerv(GLenum pname, GLvoid **ppParams) {
   __profileAPI(_T(" - %s( pname=%s, ppParams=0x%p )\n"), _T(__FUNCTION__),
                PointerToString(pname), ppParams);
 
-  if (NULL == ppParams)
+  if (nullptr == ppParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2688,7 +2688,7 @@ GL_API const GLubyte *GL_APIENTRY glGetString(GLenum name) {
     return pContext->GetString(name);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 GL_API void GL_APIENTRY glGetTexEnviv(GLenum env, GLenum pname,
@@ -2697,7 +2697,7 @@ GL_API void GL_APIENTRY glGetTexEnviv(GLenum env, GLenum pname,
                _T(__FUNCTION__), TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2714,7 +2714,7 @@ GL_API void GL_APIENTRY glGetTexEnvxv(GLenum env, GLenum pname,
                _T(__FUNCTION__), TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2732,7 +2732,7 @@ GL_API void GL_APIENTRY glGetTexParameteriv(GLenum target, GLenum pname,
                _T(__FUNCTION__), TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2749,7 +2749,7 @@ GL_API void GL_APIENTRY glGetTexParameterxv(GLenum target, GLenum pname,
                _T(__FUNCTION__), TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2842,7 +2842,7 @@ GL_API void GL_APIENTRY glLightModelxv(GLenum pname, const GLfixed *pParams) {
                _T(__FUNCTION__), LightModelToString(pname), pParams[0],
                pParams[1], pParams[2], pParams[3]);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2874,7 +2874,7 @@ GL_API void GL_APIENTRY glLightxv(GLenum light, GLenum pname,
       _T(__FUNCTION__), LightToString(light), LightParamToString(pname),
       pParams[0], pParams[1], pParams[2], pParams[3]);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -2915,7 +2915,7 @@ GL_API void GL_APIENTRY glLoadMatrixx(const GLfixed *pM) {
                pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
                pM[14], pM[15]);
 
-  if (NULL == pM)
+  if (nullptr == pM)
     return;
 
   auto driver = g_dll.driver();
@@ -2978,7 +2978,7 @@ GL_API void GL_APIENTRY glMaterialxv(GLenum face, GLenum pname,
       MaterialParamToString(pname), pParams[0], pParams[1], pParams[2],
       pParams[3]);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -3011,7 +3011,7 @@ GL_API void GL_APIENTRY glMultMatrixx(const GLfixed *pM) {
                pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
                pM[14], pM[15]);
 
-  if (NULL == pM)
+  if (nullptr == pM)
     return;
 
   auto driver = g_dll.driver();
@@ -3133,7 +3133,7 @@ GL_API void GL_APIENTRY glPointParameterxv(GLenum pname,
   __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
                PointParameterToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -3199,7 +3199,7 @@ GL_API void GL_APIENTRY glReadPixels(GLint x, GLint y, GLsizei width,
                _T(__FUNCTION__), x, y, width, height, FormatToString(format),
                TypeToString(type), pPixels);
 
-  if (NULL == pPixels)
+  if (nullptr == pPixels)
     return;
 
   auto driver = g_dll.driver();
@@ -3371,7 +3371,7 @@ GL_API void GL_APIENTRY glTexEnviv(GLenum env, GLenum pname,
                _T(__FUNCTION__), TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -3388,7 +3388,7 @@ GL_API void GL_APIENTRY glTexEnvxv(GLenum env, GLenum pname,
                _T(__FUNCTION__), TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -3455,7 +3455,7 @@ GL_API void GL_APIENTRY glTexParameteriv(GLenum target, GLenum pname,
                _T(__FUNCTION__), TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();
@@ -3472,7 +3472,7 @@ GL_API void GL_APIENTRY glTexParameterxv(GLenum target, GLenum pname,
                _T(__FUNCTION__), TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
-  if (NULL == pParams)
+  if (nullptr == pParams)
     return;
 
   auto driver = g_dll.driver();

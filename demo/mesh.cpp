@@ -51,7 +51,7 @@ bool CMesh::OnInitialize(LPCTSTR lpszFileName) {
     GSDHeader header;
 
     auto file = _tfopen(lpszFileName, _T("rb"));
-    if (NULL == file)
+    if (nullptr == file)
       break;
 
     // load file header

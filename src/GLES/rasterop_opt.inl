@@ -88,8 +88,6 @@ void TGetTexEnvColor(Color4 *pInOut, unsigned texture, ColorARGB cEnvColor) {
     constexpr(NativeColor) {
       if
         constexpr(EnvMode == ENVMODE_REPLACE) {
-          __unreferenced(cEnvColor);
-
           if
             constexpr(FormatSize::RGB) { pInOut->b = texture; }
           if
@@ -198,25 +196,16 @@ private:
 
     if
       constexpr(BlendOp == BLEND_ZERO) {
-        __unreferenced(inColor);
-        __unreferenced(srcColor);
-        __unreferenced(srcAlpha);
-        __unreferenced(dstColor);
         return 0;
       }
 
     if
       constexpr(BlendOp == BLEND_ONE) {
-        __unreferenced(srcColor);
-        __unreferenced(srcAlpha);
-        __unreferenced(dstColor);
         return inColor;
       }
 
     if
       constexpr(BlendOp == BLEND_SRC_ALPHA) {
-        __unreferenced(srcColor);
-        __unreferenced(dstColor);
         const unsigned alpha =
             srcAlpha >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const TColorNative<FORMAT_R5G6B5> c0(inColor);
@@ -225,8 +214,6 @@ private:
 
     if
       constexpr(BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
-        __unreferenced(srcColor);
-        __unreferenced(dstColor);
         const unsigned alpha =
             (0xff - srcAlpha) >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const TColorNative<FORMAT_R5G6B5> c0(inColor);
@@ -316,14 +303,13 @@ void TWriteColor(unsigned color, unsigned dstColor, unsigned writeMask,
     constexpr(ColorWriteMask) {
       result = (result & writeMask) | (dstColor & ~writeMask);
     }
-  else {
-    __unreferenced(writeMask);
-    __unreferenced(dstColor);
-  }
 
   *reinterpret_cast<typename FormatInfo::TYPE *>(pCB) =
       static_cast<typename FormatInfo::TYPE>(result);
 }
+
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_UNUSED_VARIABLE
 
 template <unsigned Flags, unsigned States, unsigned Texture0, unsigned Texture1>
 class TOptimizedScanlineA {
@@ -742,7 +728,7 @@ public:
 
         // Write output color
         TWriteColor<ColorFormat,
-                    (LogicOp ? LogicFunc : static_cast<uint32_t>(LOGICOP_COPY)),
+                    (LogicOp ? LogicFunc : LOGICOP_COPY),
                     ColorWriteMask>(color, dstColor, colorWriteMask, pCB);
         break;
       }
@@ -782,6 +768,7 @@ public:
     } while (pCB < pCBEnd);
   }
 };
+DISABLE_WARNING_POP
 
 template <unsigned Flags, unsigned States, unsigned Texture0, unsigned Texture1>
 class TOptimizedScanlineP {
@@ -2480,12 +2467,6 @@ public:
                   rasterData, y, lx, rx);
             }
           }
-        else {
-          __unreferenced(rasterData);
-          __unreferenced(y);
-          __unreferenced(lx);
-          __unreferenced(rx);
-        }
       }
     else {
       if

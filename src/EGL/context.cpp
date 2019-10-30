@@ -28,10 +28,10 @@ CEGLContext::CEGLContext(CDisplay *pDisplay, CConfig *pConfig) {
   pConfig->AddRef();
   m_pConfig = pConfig;
 
-  m_pSurfDraw = NULL;
-  m_pSurfRead = NULL;
+  m_pSurfDraw = nullptr;
+  m_pSurfRead = nullptr;
 
-  m_glContext = NULL;
+  m_glContext = nullptr;
 }
 
 CEGLContext::~CEGLContext() {
@@ -57,7 +57,7 @@ EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
 
   // Create a new context object
   CEGLContext *pContext = new CEGLContext(pDisplay, pConfig);
-  if (NULL == pContext) {
+  if (nullptr == pContext) {
     __eglLogError(_T("CEGLContext allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;
   }
@@ -87,7 +87,7 @@ EGLint CEGLContext::Initialize(CEGLContext *pCtxShared) {
     err = EGLERROR_FROM_GLERROR(
         __glCreateContext(pCtxShared->m_glContext, &m_glContext));
   } else {
-    err = EGLERROR_FROM_GLERROR(__glCreateContext(NULL, &m_glContext));
+    err = EGLERROR_FROM_GLERROR(__glCreateContext(nullptr, &m_glContext));
   }
 
   if (__eglFailed(err)) {

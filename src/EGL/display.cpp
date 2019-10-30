@@ -53,7 +53,7 @@ EGLint CDisplay::Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC,
 
   // Create a new display object
   CDisplay *const pDisplay = new CDisplay(hDC, pHandles);
-  if (NULL == pDisplay) {
+  if (nullptr == pDisplay) {
     __eglLogError(_T("CDisplay allocation failed, out of memory"));
     return EGL_BAD_ALLOC;
   }
@@ -213,7 +213,7 @@ EGLint CDisplay::ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
     return EGL_NOT_INITIALIZED;
   }
 
-  if (NULL == pConfigs) {
+  if (nullptr == pConfigs) {
     // Allow all config objects to be evaluated
     config_size = m_configs.GetSize();
   }

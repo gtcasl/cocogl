@@ -24,7 +24,7 @@ struct VertexArray {
   CBuffer *pBuffer;
 
   VertexArray()
-      : Format(VERTEX_UNKNOWN), Stride(0), pPointer(NULL), pBuffer(NULL) {}
+      : Format(VERTEX_UNKNOWN), Stride(0), pPointer(nullptr), pBuffer(nullptr) {}
 
   ~VertexArray() {}
 
