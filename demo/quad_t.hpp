@@ -82,8 +82,8 @@ public:
     GLubyte colorArray[16] = {0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00,
                               0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00};
 
-    static GLfloat texCoords[] = {0.0f, 0.0f, 1.0f, 0.0f,
-                                  0.0f, 1.0f, 1.0f, 1.0f};
+    static GLfloat texCoords[] = {0.0f, 1.0f, 1.0f, 1.0f,
+                                  0.0f, 0.0f, 1.0f, 0.0f};
 
     const float matrixAffine[16] = {1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
                                     0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
