@@ -14,7 +14,6 @@
 //
 #include "stdafx.h"
 
-
 class CBlitTable {
 public:
   typedef GLenum (*PFN_COPY)(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
@@ -205,10 +204,12 @@ private:
 
     while (copyHeight--) {
       const typename TFormatInfo<SrcFormat>::TYPE *pSrc =
-          reinterpret_cast<const typename TFormatInfo<SrcFormat>::TYPE *>(pbSrc);
+          reinterpret_cast<const typename TFormatInfo<SrcFormat>::TYPE *>(
+              pbSrc);
 
       for (typename TFormatInfo<DstFormat>::TYPE *
-               pDst = reinterpret_cast<typename TFormatInfo<DstFormat>::TYPE *>(pbDst),
+               pDst = reinterpret_cast<typename TFormatInfo<DstFormat>::TYPE *>(
+                  pbDst),
               *const pEnd = pDst + copyWidth;
            pDst != pEnd; ++pDst, ++pSrc) {
         Format::TConvertFrom<SrcFormat, true>(&tmp, pSrc);
@@ -265,7 +266,6 @@ private:
   PFN_COPY m_copyFuncs[FORMAT_COLOR_SIZE_][FORMAT_COLOR_SIZE_];
 };
 
-
 GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
                    unsigned dstOffsetY, unsigned copyWidth, unsigned copyHeight,
                    const GLSurfaceDesc &srcDesc, unsigned srcOffsetX,
@@ -300,7 +300,6 @@ GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 unsigned GLSizeOf(GLenum type) {
   switch (type) {
   default:
@@ -325,7 +324,6 @@ unsigned GLSizeOf(GLenum type) {
   }
 }
 
-
 eVertexFormat ToVertexFormat(GLenum type, GLint size) {
   switch (type) {
   default:
@@ -346,7 +344,6 @@ eVertexFormat ToVertexFormat(GLenum type, GLint size) {
     return (eVertexFormat)(VERTEX_FIXED + size - 1);
   }
 }
-
 
 unsigned VertexDataSize(eVertexFormat format) {
   switch (format) {
@@ -381,7 +378,6 @@ unsigned VertexDataSize(eVertexFormat format) {
   }
 }
 
-
 GLenum DecodeDataType(eVertexFormat format) {
   switch (format) {
   default:
@@ -414,7 +410,6 @@ GLenum DecodeDataType(eVertexFormat format) {
     return GL_UNSIGNED_BYTE;
   }
 }
-
 
 GLint DecodeDataSize(eVertexFormat format) {
   switch (format) {
@@ -449,7 +444,6 @@ GLint DecodeDataSize(eVertexFormat format) {
   }
 }
 
-
 GLenum GLERROR_FROM_HRESULT(HRESULT hr) {
   if (SUCCEEDED(hr)) {
     return GL_NO_ERROR;
@@ -461,7 +455,6 @@ GLenum GLERROR_FROM_HRESULT(HRESULT hr) {
 
   return GL_INVALID_OPERATION;
 }
-
 
 GLenum ToPixelFormat(ePixelFormat *pOut, unsigned *pBPP, GLenum format,
                      GLenum type) {
@@ -529,7 +522,6 @@ GLenum ToPixelFormat(ePixelFormat *pOut, unsigned *pBPP, GLenum format,
   return GL_NO_ERROR;
 }
 
-
 GLenum ToPixelFormat(ePixelFormat *pOut, GLint format) {
   ASSERT(pOut);
 
@@ -564,7 +556,6 @@ GLenum ToPixelFormat(ePixelFormat *pOut, GLint format) {
   return GL_NO_ERROR;
 }
 
-
 eCompare Reverse(eCompare compare) {
   switch (compare) {
   default:
@@ -596,12 +587,9 @@ eCompare Reverse(eCompare compare) {
   }
 }
 
-
 unsigned CompareFuncFromEnum(GLenum func) { return (func - GL_NEVER); }
 
-
 GLenum EnumFromCompareFunc(unsigned func) { return (GL_NEVER + func); }
-
 
 unsigned StencilOpFromEnum(GLenum op) {
   if (GL_ZERO == op) {
@@ -613,7 +601,6 @@ unsigned StencilOpFromEnum(GLenum op) {
   }
 }
 
-
 GLenum EnumFromStencilOp(unsigned op) {
   if (STENCIL_ZERO == op) {
     return GL_ZERO;
@@ -623,7 +610,6 @@ GLenum EnumFromStencilOp(unsigned op) {
     return (GL_KEEP + op);
   }
 }
-
 
 unsigned BlendFuncFromEnum(GLenum func) {
   switch (func) {
@@ -636,7 +622,6 @@ unsigned BlendFuncFromEnum(GLenum func) {
   }
 }
 
-
 GLenum EnumFromBlendFunc(unsigned func) {
   switch (func) {
   case BLEND_ZERO:
@@ -648,12 +633,9 @@ GLenum EnumFromBlendFunc(unsigned func) {
   }
 }
 
-
 unsigned LogicOpFromEnum(GLenum op) { return (op - GL_CLEAR); }
 
-
 GLenum EnumFromLogicOp(unsigned op) { return (GL_CLEAR + op); }
-
 
 unsigned FogModeFromEnum(GLenum mode) {
   switch (mode) {
@@ -669,7 +651,6 @@ unsigned FogModeFromEnum(GLenum mode) {
   }
 }
 
-
 GLenum EnumFromFogMode(unsigned mode) {
   switch (mode) {
   case FogLinear:
@@ -684,7 +665,6 @@ GLenum EnumFromFogMode(unsigned mode) {
   }
 }
 
-
 unsigned ShadeModelFromEnum(GLenum mode) {
   switch (mode) {
   case GL_FLAT:
@@ -697,7 +677,6 @@ unsigned ShadeModelFromEnum(GLenum mode) {
   }
 }
 
-
 GLenum EnumFromShadeModel(unsigned mode) {
   switch (mode) {
   case SHADE_FLAT:
@@ -709,7 +688,6 @@ GLenum EnumFromShadeModel(unsigned mode) {
     break;
   }
 }
-
 
 unsigned CullFaceFromEnum(GLenum mode) {
   switch (mode) {
@@ -725,7 +703,6 @@ unsigned CullFaceFromEnum(GLenum mode) {
   }
 }
 
-
 GLenum EnumFromCullFace(unsigned mode) {
   switch (mode) {
   case CULL_FRONT:
@@ -740,7 +717,6 @@ GLenum EnumFromCullFace(unsigned mode) {
   }
 }
 
-
 unsigned FrontFaceFromEnum(GLenum mode) {
   switch (mode) {
   case GL_CW:
@@ -751,7 +727,6 @@ unsigned FrontFaceFromEnum(GLenum mode) {
     return CULL_CCW;
   }
 }
-
 
 GLenum EnumFromFrontFace(unsigned mode) {
   switch (mode) {
@@ -764,12 +739,9 @@ GLenum EnumFromFrontFace(unsigned mode) {
   }
 }
 
-
 unsigned HintFromEnum(GLenum mode) { return (mode - GL_DONT_CARE); }
 
-
 GLenum EnumFromHint(unsigned mode) { return (GL_DONT_CARE + mode); }
-
 
 unsigned TexFilterFromEnum(GLenum param) {
   switch (param) {
@@ -794,7 +766,6 @@ unsigned TexFilterFromEnum(GLenum param) {
   }
 }
 
-
 GLenum EnumFromTexFilter(unsigned param) {
   switch (param) {
   case FILTER_NEAREST:
@@ -818,7 +789,6 @@ GLenum EnumFromTexFilter(unsigned param) {
   }
 }
 
-
 unsigned TexAddressFromEnum(GLenum param) {
   switch (param) {
   case GL_CLAMP_TO_EDGE:
@@ -830,7 +800,6 @@ unsigned TexAddressFromEnum(GLenum param) {
   }
 }
 
-
 GLenum EnumFromTexAddress(unsigned param) {
   switch (param) {
   case ADDRESS_CLAMP:
@@ -841,7 +810,6 @@ GLenum EnumFromTexAddress(unsigned param) {
     return GL_REPEAT;
   }
 }
-
 
 eEnvMode TexEnvFromEnum(GLenum param) {
   switch (param) {
@@ -862,7 +830,6 @@ eEnvMode TexEnvFromEnum(GLenum param) {
     return ENVMODE_DECAL;
   }
 }
-
 
 GLenum EnumFromTexEnv(unsigned param) {
   switch (param) {

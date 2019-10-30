@@ -3,8 +3,7 @@
 
 /* $Id: glplatform.h 4585 2007-11-30 09:49:39Z markc $ */
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*
@@ -49,12 +48,12 @@ extern "C"
 #ifdef __GL_EXPORTS
 #define GL_API
 #else
-#define GL_API  extern
+#define GL_API extern
 #endif
 #define GL_APIENTRY
 
 #ifndef APIENTRY
-#define APIENTRY    GL_APIENTRY
+#define APIENTRY GL_APIENTRY
 #endif
 #ifdef __cplusplus
 }

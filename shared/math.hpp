@@ -16,9 +16,7 @@
 
 #include <math.h>
 
-
 template <class T> struct TConst {};
-
 
 template <> struct TConst<float> {
   inline static float Zero() { return 0.0f; }
@@ -51,7 +49,6 @@ template <> struct TConst<float> {
 
   inline static float LogE() { return 1.442695041f; }
 };
-
 
 template <unsigned int F, typename T> struct TConst<TFixed<F, T>> {
   inline static TFixed<F, T> Zero() { return TFixed<F, T>::Make(0); }
@@ -111,10 +108,9 @@ template <unsigned int F, typename T> struct TConst<TFixed<F, T>> {
   }
 };
 
-
 template <class T> struct TVector1 {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 1 };
   union {
     struct {
@@ -124,7 +120,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       T m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   TVector1() {}
 
@@ -133,10 +129,9 @@ DISABLE_WARNING_POP
   TVector1(const TVector1 &rhs) { this->x = rhs.x; }
 };
 
-
 template <class T> struct TVector2 {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 2 };
   union {
     struct {
@@ -146,7 +141,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       T m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   TVector2() {}
 
@@ -158,10 +153,9 @@ DISABLE_WARNING_POP
   }
 };
 
-
 template <class T> struct TVector3 {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 3 };
   union {
     struct {
@@ -171,7 +165,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       T m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   TVector3() {}
 
@@ -184,10 +178,9 @@ DISABLE_WARNING_POP
   }
 };
 
-
 template <class T> struct TVector4 {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 4 };
   union {
     struct {
@@ -197,7 +190,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       T m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   TVector4() {}
 
@@ -211,10 +204,9 @@ DISABLE_WARNING_POP
   }
 };
 
-
 template <class T> struct TMatrix44 {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       T _11, _12, _13, _14;
@@ -230,7 +222,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
     };
   };
 
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   TMatrix44() {}
 
@@ -293,7 +285,6 @@ DISABLE_WARNING_POP
   }
 };
 
-
 typedef TFixed<4> fixed4;
 typedef TFixed<4> fixed6;
 typedef TFixed<8> fixed8;
@@ -349,7 +340,6 @@ typedef TVector3<floatf> VECTOR3;
 typedef TVector4<floatf> VECTOR4;
 typedef TMatrix44<floatf> MATRIX44;
 
-
 #define fZERO TConst<floatf>::Zero()
 #define fHALF TConst<floatf>::Half()
 #define fONE TConst<floatf>::One()
@@ -361,7 +351,6 @@ typedef TMatrix44<floatf> MATRIX44;
 #define f02 TConst<floatf>::F02()
 #define f08 TConst<floatf>::F08()
 #define fEPS TConst<floatf>::Epsilon()
-
 
 namespace Math {
 unsigned int iLog2(unsigned int rhs);

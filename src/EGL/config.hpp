@@ -13,7 +13,6 @@
 //
 #pragma once
 
-
 class CConfig : public CObject {
 public:
   enum {

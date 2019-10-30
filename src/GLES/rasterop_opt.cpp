@@ -24,7 +24,6 @@
     , TOptimizedScanline<flags, states, texture0, texture1>::Execute           \
   }
 
-
 static const struct ScanlineRasterID {
   RASTERID RasterID;
   PFN_Scanline pfnScanline;
@@ -34,17 +33,14 @@ l_optimizedScanlines[] = {
     MAKE_SCANLINE(0, 0, 0, 0),
 };
 
-
 COptimizedRasterOp::COptimizedRasterOp(PFN_Scanline pfnScanline) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
   m_pfnScanline = pfnScanline;
 }
 
-
 COptimizedRasterOp::~COptimizedRasterOp() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 }
-
 
 GLenum COptimizedRasterOp::Create(IRasterOp **ppRasterOp,
                                   const RASTERID &rasterID) {

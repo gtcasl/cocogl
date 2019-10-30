@@ -48,7 +48,6 @@ GLenum CBuffer::Create(CBuffer **ppBuffer) {
   return GL_NO_ERROR;
 }
 
-
 GLenum CBuffer::Initialize(unsigned size, GLenum usage, const GLvoid *pData) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -70,7 +69,6 @@ GLenum CBuffer::Initialize(unsigned size, GLenum usage, const GLvoid *pData) {
 
   return GL_NO_ERROR;
 }
-
 
 GLenum CBuffer::GetParameter(GLenum pname, GLint *pParams) {
   GLint params;

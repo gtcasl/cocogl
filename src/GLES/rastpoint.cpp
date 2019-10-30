@@ -16,7 +16,8 @@
 #include "raster.hpp"
 
 void CRasterizer::DrawPoint(unsigned index) {
-  const uint16_t *const pwFlags = (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
+  const uint16_t *const pwFlags =
+      (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
   const unsigned flags = pwFlags[index];
 
   // Check if the vertex is clipped
@@ -27,7 +28,6 @@ void CRasterizer::DrawPoint(unsigned index) {
   // Raster the point
   this->RasterPoint(index);
 }
-
 
 void CRasterizer::RasterPoint(unsigned index) {
   const RDVECTOR *const pvScreenPos =
@@ -68,9 +68,9 @@ void CRasterizer::RasterPoint(unsigned index) {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
 
   if (rasterFlags.DepthTest) {
-    pRegisters->fM[0] = TConst<fixedRX>::Zero();
-    pRegisters->fM[1] = TConst<fixedRX>::Zero();
-    pRegisters->fM[2] = static_cast<fixedRX>(vertex.z);
+    pRegisters->m[0] = TConst<fixedRX>::Zero();
+    pRegisters->m[1] = TConst<fixedRX>::Zero();
+    pRegisters->m[2] = static_cast<fixedRX>(vertex.z);
     ++pRegisters;
   }
 
@@ -78,21 +78,21 @@ void CRasterizer::RasterPoint(unsigned index) {
     const ColorARGB *const pcColors = (const ColorARGB *)m_pbVertexColor;
     const ColorARGB cColor = pcColors[index];
 
-    pRegisters[0].fM[0] = TConst<fixedRX>::Zero();
-    pRegisters[0].fM[1] = TConst<fixedRX>::Zero();
-    pRegisters[0].fM[2] = static_cast<fixedRX>(cColor.b) >> fixed8::FRAC;
+    pRegisters[0].m[0] = TConst<fixedRX>::Zero();
+    pRegisters[0].m[1] = TConst<fixedRX>::Zero();
+    pRegisters[0].m[2] = static_cast<fixedRX>(cColor.b) >> fixed8::FRAC;
 
-    pRegisters[1].fM[0] = TConst<fixedRX>::Zero();
-    pRegisters[1].fM[1] = TConst<fixedRX>::Zero();
-    pRegisters[1].fM[2] = static_cast<fixedRX>(cColor.g) >> fixed8::FRAC;
+    pRegisters[1].m[0] = TConst<fixedRX>::Zero();
+    pRegisters[1].m[1] = TConst<fixedRX>::Zero();
+    pRegisters[1].m[2] = static_cast<fixedRX>(cColor.g) >> fixed8::FRAC;
 
-    pRegisters[2].fM[0] = TConst<fixedRX>::Zero();
-    pRegisters[2].fM[1] = TConst<fixedRX>::Zero();
-    pRegisters[2].fM[2] = static_cast<fixedRX>(cColor.r) >> fixed8::FRAC;
+    pRegisters[2].m[0] = TConst<fixedRX>::Zero();
+    pRegisters[2].m[1] = TConst<fixedRX>::Zero();
+    pRegisters[2].m[2] = static_cast<fixedRX>(cColor.r) >> fixed8::FRAC;
 
-    pRegisters[3].fM[0] = TConst<fixedRX>::Zero();
-    pRegisters[3].fM[1] = TConst<fixedRX>::Zero();
-    pRegisters[3].fM[2] = static_cast<fixedRX>(cColor.a) >> fixed8::FRAC;
+    pRegisters[3].m[0] = TConst<fixedRX>::Zero();
+    pRegisters[3].m[1] = TConst<fixedRX>::Zero();
+    pRegisters[3].m[2] = static_cast<fixedRX>(cColor.a) >> fixed8::FRAC;
 
     pRegisters += 4;
   }
@@ -108,25 +108,25 @@ void CRasterizer::RasterPoint(unsigned index) {
       ASSERT(i < MAX_TEXTURES);
 
       if (m_caps.PointSprite && m_texUnits[i].bCoordReplace) {
-        pRegisters[0].fM[0] = fDelta;
-        pRegisters[0].fM[1] = TConst<fixedRX>::Zero();
-        pRegisters[0].fM[2] = (fDelta >> 1) - fDelta * xmin;
+        pRegisters[0].m[0] = fDelta;
+        pRegisters[0].m[1] = TConst<fixedRX>::Zero();
+        pRegisters[0].m[2] = (fDelta >> 1) - fDelta * xmin;
 
-        pRegisters[1].fM[0] = TConst<fixedRX>::Zero();
-        pRegisters[1].fM[1] = fDelta;
-        pRegisters[1].fM[2] = (fDelta >> 1) - fDelta * ymin;
+        pRegisters[1].m[0] = TConst<fixedRX>::Zero();
+        pRegisters[1].m[1] = fDelta;
+        pRegisters[1].m[2] = (fDelta >> 1) - fDelta * ymin;
       } else {
         const TEXCOORD2 *const vTexCoords =
             (const TEXCOORD2 *)m_pbVertexData[VERTEXDATA_TEXCOORD0 + i];
         const TEXCOORD2 &vTexCoord = vTexCoords[index];
 
-        pRegisters[0].fM[0] = TConst<fixedRX>::Zero();
-        pRegisters[0].fM[1] = TConst<fixedRX>::Zero();
-        pRegisters[0].fM[2] = static_cast<fixedRX>(vTexCoord.m[0]);
+        pRegisters[0].m[0] = TConst<fixedRX>::Zero();
+        pRegisters[0].m[1] = TConst<fixedRX>::Zero();
+        pRegisters[0].m[2] = static_cast<fixedRX>(vTexCoord.m[0]);
 
-        pRegisters[1].fM[0] = TConst<fixedRX>::Zero();
-        pRegisters[1].fM[1] = TConst<fixedRX>::Zero();
-        pRegisters[1].fM[2] = static_cast<fixedRX>(vTexCoord.m[1]);
+        pRegisters[1].m[0] = TConst<fixedRX>::Zero();
+        pRegisters[1].m[1] = TConst<fixedRX>::Zero();
+        pRegisters[1].m[2] = static_cast<fixedRX>(vTexCoord.m[1]);
       }
 
       pRegisters += 2;
@@ -138,9 +138,9 @@ void CRasterizer::RasterPoint(unsigned index) {
         (const float20 *)m_pbVertexData[VERTEXDATA_FOG];
     const float20 fFog = pfFogs[index];
 
-    pRegisters->fM[0] = TConst<fixedRX>::Zero();
-    pRegisters->fM[1] = TConst<fixedRX>::Zero();
-    pRegisters->fM[2] = static_cast<fixedRX>(fFog);
+    pRegisters->m[0] = TConst<fixedRX>::Zero();
+    pRegisters->m[1] = TConst<fixedRX>::Zero();
+    pRegisters->m[2] = static_cast<fixedRX>(fFog);
     ++pRegisters;
   }
 
@@ -149,7 +149,7 @@ void CRasterizer::RasterPoint(unsigned index) {
   m_rasterData.fRefY = TConst<fixed4>::Zero();
 
 #ifdef COCOGL_RASTER_PROFILE
-  const int64_t startTime = m_timer.GetTime();
+  auto start_time = std::chrono::high_resolution_clock::now();
   m_rasterData.pRasterOp->StartProfile((ymax - ymin) * (xmax - xmin));
 #endif
 
@@ -159,6 +159,9 @@ void CRasterizer::RasterPoint(unsigned index) {
   }
 
 #ifdef COCOGL_RASTER_PROFILE
-  m_rasterData.pRasterOp->EndProfile(m_timer.GetElapsedTime(startTime));
+  auto end_time = std::chrono::high_resolution_clock::now();
+  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(
+      end_time - start_time);
+  m_rasterData.pRasterOp->EndProfile(elapsed_time.count());
 #endif
 }

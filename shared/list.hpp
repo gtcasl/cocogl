@@ -451,7 +451,7 @@ public:
       for (TList::Iter iterCur = this->GetBegin(); iterCur != iterNext;
            ++iterCur) {
         if (compare(*iterNext, *iterCur)) {
-          this->Splice(iterCur, this, iterNext);
+          this->Splice(iterCur, *this, iterNext);
           break;
         }
       }

@@ -53,7 +53,6 @@
   "GL_OES_single_precision "                                                   \
   "GL_OES_read_format "
 
-
 #define __enum_bitfield_begin enum { __offset0 = 0,
 
 #define __enum_bitfield_end                                                    \
@@ -71,7 +70,6 @@
 #define __set_bitfield(mask, prefix, value)                                    \
     mask = (((unsigned)(value) << (prefix##_SHIFT)) | (mask & ~(prefix##_MASK))))
 
-
 enum eHANDLETYPE {
   HANDLE_NONE = 0,
   HANDLE_DISPLAY = 1,
@@ -82,12 +80,11 @@ enum eHANDLETYPE {
   HANDLE_TEXTURE = 6,
 };
 
-
 struct VECTOR2B {
   enum { DIM = 2 };
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       GLbyte x;
@@ -97,7 +94,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       GLbyte m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   VECTOR2B(const VECTOR2B &rhs) {
     this->x = rhs.x;
@@ -105,12 +102,11 @@ DISABLE_WARNING_POP
   }
 };
 
-
 struct VECTOR2S {
   enum { DIM = 2 };
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       GLshort x;
@@ -120,7 +116,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       GLshort m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   VECTOR2S(const VECTOR2S &rhs) {
     this->x = rhs.x;
@@ -128,12 +124,11 @@ DISABLE_WARNING_POP
   }
 };
 
-
 struct VECTOR3B {
   enum { DIM = 3 };
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       GLbyte x;
@@ -144,7 +139,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       GLbyte m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   VECTOR3B(const VECTOR3B &rhs) {
     this->x = rhs.x;
@@ -153,12 +148,11 @@ DISABLE_WARNING_POP
   }
 };
 
-
 struct VECTOR3S {
   enum { DIM = 3 };
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       GLshort x;
@@ -169,7 +163,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       GLshort m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   VECTOR3S(const VECTOR3S &rhs) {
     this->x = rhs.x;
@@ -178,12 +172,11 @@ DISABLE_WARNING_POP
   }
 };
 
-
 struct VECTOR4B {
   enum { DIM = 4 };
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       GLbyte x;
@@ -195,7 +188,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       GLbyte m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   VECTOR4B(const VECTOR4B &rhs) {
     this->x = rhs.x;
@@ -205,12 +198,11 @@ DISABLE_WARNING_POP
   }
 };
 
-
 struct VECTOR4S {
   enum { DIM = 4 };
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       GLshort x;
@@ -222,7 +214,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       GLshort m[DIM];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   VECTOR4S(const VECTOR4S &rhs) {
     this->x = rhs.x;
@@ -231,7 +223,6 @@ DISABLE_WARNING_POP
     this->w = rhs.w;
   }
 };
-
 
 struct TEXCOORD2 {
   enum { DIM = 2 };
@@ -244,12 +235,11 @@ struct TEXCOORD2 {
     this->m[1] = rhs.m[1];
   }
 
-  auto& u() const { return m[0]; }
-  auto& u() { return m[0]; }
-  auto& v() const { return m[1]; }
-  auto& v() { return m[1]; }
+  auto &u() const { return m[0]; }
+  auto &u() { return m[0]; }
+  auto &v() const { return m[1]; }
+  auto &v() { return m[1]; }
 };
-
 
 enum eVERTEXDATA {
   VERTEXDATA_FLAGS,
@@ -267,7 +257,6 @@ enum eVERTEXDATA {
   VERTEXDATA_FOG,
   VERTEXDATA_SIZE,
 };
-
 
 enum eVertexFormat {
   VERTEX_UNKNOWN,
@@ -293,7 +282,6 @@ enum eVertexFormat {
   VERTEX_RGBA,
 };
 
-
 struct Viewport {
   int Left;
   int Top;
@@ -301,24 +289,20 @@ struct Viewport {
   int Height;
 };
 
-
 struct DepthRange {
   floatf fNear;
   floatf fFar;
 };
-
 
 struct SampleCoverage {
   floatf fValue;
   bool bInvert;
 };
 
-
 struct PolygonOffset {
   floatf fFactor;
   floatf fUnits;
 };
-
 
 struct ScreenXform {
   fixed4 fMinX;
@@ -331,13 +315,11 @@ struct ScreenXform {
   floatf fScaleZ;
 };
 
-
 enum eFogMode {
   FogLinear,
   FogExp,
   FogExp2,
 };
-
 
 struct Fog {
   enum {
@@ -365,7 +347,6 @@ public:
   fixedRF fRatio;
 };
 
-
 struct PointParams {
   enum {
     PARAMS_FIRST = GL_POINT_SIZE_MIN,
@@ -389,17 +370,15 @@ private:
   floatf m_params[PARAMS_SIZE];
 };
 
-
 enum eHint {
   HINT_DONTCARE,
   HINT_FASTEST,
   HINT_NICEST,
 };
 
-
 struct HINTS {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     unsigned Value;
     struct {
@@ -410,11 +389,10 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       unsigned GenerateMipmap : 2;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   HINTS() : Value(0) { static_assert(sizeof(HINTS) == sizeof(Value)); }
 };
-
 
 enum eTexFilter {
   FILTER_NONE,
@@ -427,13 +405,11 @@ enum eTexFilter {
   FILTER_SIZE_,
 };
 
-
 enum eTexAddress {
   ADDRESS_WRAP,
   ADDRESS_CLAMP,
   ADDRESS_SIZE_,
 };
-
 
 enum eEnvMode {
   ENVMODE_ADD,
@@ -443,7 +419,6 @@ enum eEnvMode {
   ENVMODE_DECAL,
   ENVMODE_SIZE_,
 };
-
 
 enum eCompare {
   COMPARE_NEVER,
@@ -457,7 +432,6 @@ enum eCompare {
   COMPARE_SIZE_,
 };
 
-
 enum eStencilOp {
   STENCIL_KEEP,
   STENCIL_REPLACE,
@@ -467,7 +441,6 @@ enum eStencilOp {
   STENCIL_INVERT,
   STENCIL_SIZE_,
 };
-
 
 enum eBlendOp {
   BLEND_ZERO,
@@ -483,7 +456,6 @@ enum eBlendOp {
   BLEND_SRC_ALPHA_SATURATE,
   BLEND_SIZE_,
 };
-
 
 enum eLogicOp {
   LOGICOP_CLEAR,
@@ -505,19 +477,16 @@ enum eLogicOp {
   LOGICOP_SIZE_,
 };
 
-
 enum eCullFace {
   CULL_BACK,
   CULL_FRONT,
   CULL_FRONT_AND_BACK,
 };
 
-
 enum eCullMode {
   CULL_CCW,
   CULL_CW,
 };
-
 
 struct CullStates {
   bool bCullFaceEnabled;
@@ -526,16 +495,14 @@ struct CullStates {
   uint8_t CullFace;
 };
 
-
 enum eShadeModel {
   SHADE_FLAT,
   SHADE_SMOOTH,
 };
 
-
 struct TexParams {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     unsigned Value;
     struct {
@@ -545,7 +512,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       unsigned AddressV : 2;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
   TexParams() : Value(0) { static_assert(sizeof(TexParams) == sizeof(Value)); }
 
   TexParams(unsigned value) { this->Value = value; }
@@ -555,10 +522,9 @@ DISABLE_WARNING_POP
   }
 };
 
-
 struct DirtyFlags {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     unsigned Value;
     struct {
@@ -580,14 +546,15 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       unsigned FogColor : 1;
     };
   };
-DISABLE_WARNING_POP
-  DirtyFlags() : Value(0) { static_assert(sizeof(DirtyFlags) == sizeof(Value)); }
+  DISABLE_WARNING_POP
+  DirtyFlags() : Value(0) {
+    static_assert(sizeof(DirtyFlags) == sizeof(Value));
+  }
 };
 
-
 struct DirtyLights {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     unsigned Value;
     struct {
@@ -600,10 +567,11 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       uint8_t Position;
     };
   };
-DISABLE_WARNING_POP
-  DirtyLights() : Value(0) { static_assert(sizeof(DirtyLights) == sizeof(Value)); }
+  DISABLE_WARNING_POP
+  DirtyLights() : Value(0) {
+    static_assert(sizeof(DirtyLights) == sizeof(Value));
+  }
 };
-
 
 struct RDVECTOR {
   fixed4 x;
@@ -613,7 +581,6 @@ struct RDVECTOR {
 
   RDVECTOR() {}
 };
-
 
 enum eClipFlags {
   CLIP_LEFT,
@@ -632,17 +599,15 @@ enum eClipFlags {
   CLIPPING_MASK = (1 << CLIP_PLANES) - 1,
 };
 
-
 enum eTextureUnit {
   TEXTURE_UNIT0 = 1 << 0,
   TEXTURE_UNIT1 = 1 << 1,
   TEXTURE_UNIT11 = TEXTURE_UNIT0 | TEXTURE_UNIT1
 };
 
-
 struct VertexStates {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     unsigned Value;
     struct {
@@ -653,15 +618,16 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       unsigned PointSize : 1;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
-  VertexStates() : Value(0) { static_assert(sizeof(VertexStates) == sizeof(Value)); }
+  VertexStates() : Value(0) {
+    static_assert(sizeof(VertexStates) == sizeof(Value));
+  }
 };
 
-
 struct GLCAPS {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     unsigned Flags1;
     struct {
@@ -699,13 +665,12 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       uint8_t Lights;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   GLCAPS() : Flags1(0), Flags2(0) {
     static_assert(sizeof(GLCAPS) == sizeof(Flags1) + sizeof(Flags2));
   }
 };
-
 
 struct RASTERSTATES {
   __enum_bitfield_begin __enum_bitfield(0, 1, DEPTHFUNC, 3),
@@ -715,9 +680,8 @@ struct RASTERSTATES {
       __enum_bitfield(5, 6, STENCILFAIL, 3),
       __enum_bitfield(6, 7, STENCILZFAIL, 3),
       __enum_bitfield(7, 8, STENCILPASS, 3),
-      __enum_bitfield(8, 9, LOGICFUNC, 4), __enum_bitfield_end
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+      __enum_bitfield(8, 9, LOGICFUNC, 4),
+      __enum_bitfield_end DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT
       union {
     unsigned Value;
     struct {
@@ -732,9 +696,11 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       unsigned LogicFunc : 4;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
-  RASTERSTATES() : Value(0) { static_assert(sizeof(RASTERSTATES) == sizeof(Value)); }
+  RASTERSTATES() : Value(0) {
+    static_assert(sizeof(RASTERSTATES) == sizeof(Value));
+  }
 
   RASTERSTATES(unsigned value) : Value(value) {
     static_assert(sizeof(RASTERSTATES) == sizeof(Value));
@@ -744,7 +710,6 @@ DISABLE_WARNING_POP
     return (this->Value == rhs.Value);
   }
 };
-
 
 struct RASTERFLAGS {
   __enum_bitfield_begin __enum_bitfield(0, 1, DEPTHTEST, 1),
@@ -765,9 +730,7 @@ struct RASTERFLAGS {
       __enum_bitfield(18, 19, INTERPOLATEMIPS, MAX_TEXTURES),
       __enum_bitfield(19, 20, INTERPOLATEFOG, 1), __enum_bitfield_end
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
-      union {
+      DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT union {
     unsigned Value;
     struct {
       unsigned DepthTest : 1;
@@ -792,9 +755,11 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       unsigned InterpolateFog : 1;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
-  RASTERFLAGS() : Value(0) { static_assert(sizeof(RASTERFLAGS) == sizeof(Value)); }
+  RASTERFLAGS() : Value(0) {
+    static_assert(sizeof(RASTERFLAGS) == sizeof(Value));
+  }
 
   RASTERFLAGS(unsigned value) : Value(value) {
     static_assert(sizeof(RASTERFLAGS) == sizeof(Value));
@@ -805,30 +770,22 @@ DISABLE_WARNING_POP
   }
 
   void DebugPrint() const {
-    DbgPrintf(
-        3, 
-        _T("Z%d C%d A%d P%d T%d M%d B%d A%d F%d"),
-        this->DepthTest + this->InterpolateDepth,
-        this->Color + this->InterpolateColor,
-        this->Color + this->InterpolateAlpha, 
-        this->Perspective,
-        this->NumTextures, 
-        (this->TextureMips << 2) + this->InterpolateMips,
-        this->Blend, 
-        this->AlphaTest, 
-        this->Fog + this->InterpolateFog);
+    DbgPrintf(3, _T("Z%d C%d A%d P%d T%d M%d B%d A%d F%d"),
+              this->DepthTest + this->InterpolateDepth,
+              this->Color + this->InterpolateColor,
+              this->Color + this->InterpolateAlpha, this->Perspective,
+              this->NumTextures,
+              (this->TextureMips << 2) + this->InterpolateMips, this->Blend,
+              this->AlphaTest, this->Fog + this->InterpolateFog);
   }
 };
-
 
 struct TEXTURESTATES {
   __enum_bitfield_begin __enum_bitfield(0, 1, MIPFILTER, 2),
       __enum_bitfield(1, 2, MINFILTER, 2), __enum_bitfield(2, 3, MAGFILTER, 2),
       __enum_bitfield(3, 4, ADDRESSS, 2), __enum_bitfield(4, 5, ADDRESST, 2),
       __enum_bitfield(5, 6, ENVMODE, 8), __enum_bitfield(6, 7, FORMAT, 8),
-      __enum_bitfield_end
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+      __enum_bitfield_end DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT
       union {
     unsigned Value;
     struct {
@@ -841,7 +798,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       unsigned Format : 8;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   TEXTURESTATES() : Value(0) {
     static_assert(sizeof(TEXTURESTATES) == sizeof(Value));
@@ -853,7 +810,6 @@ DISABLE_WARNING_POP
     return (this->Value == rhs.Value);
   }
 };
-
 
 struct RASTERID {
   RASTERFLAGS Flags;
@@ -875,16 +831,14 @@ struct RASTERID {
   operator unsigned() const { return this->Flags.Value; }
 };
 
-
 struct TNLFLAGS {
   __enum_bitfield_begin __enum_bitfield(0, 1, USERCLIPPLANES, 1),
       __enum_bitfield(1, 2, EYESPACE, 1), __enum_bitfield(2, 3, EYESPACEZ, 1),
       __enum_bitfield(3, 4, COLOR, 1), __enum_bitfield(4, 5, NORMALIZE, 1),
       __enum_bitfield(5, 6, TEXCOORDS, MAX_TEXTURES_MASK),
       __enum_bitfield(6, 7, FOG, 1), __enum_bitfield(7, 8, POINTSIZE, 1),
-      __enum_bitfield(8, 9, POINTATTENUATE, 1), __enum_bitfield_end
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+      __enum_bitfield(8, 9, POINTATTENUATE, 1),
+      __enum_bitfield_end DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT
       union {
     unsigned Value;
     struct {
@@ -899,15 +853,14 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       unsigned PointSizeQAttn : 1;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   TNLFLAGS() : Value(0) { static_assert(sizeof(TNLFLAGS) == sizeof(Value)); }
 };
 
-
 struct LIGHTFLAGS {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     unsigned Value;
     struct {
@@ -916,11 +869,12 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       unsigned SpotLight : 1;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
-  LIGHTFLAGS() : Value(0) { static_assert(sizeof(LIGHTFLAGS) == sizeof(Value)); }
+  LIGHTFLAGS() : Value(0) {
+    static_assert(sizeof(LIGHTFLAGS) == sizeof(Value));
+  }
 };
-
 
 struct ProfileCounter {
   unsigned Invocations;

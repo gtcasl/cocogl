@@ -12,21 +12,25 @@
 // OR INDEMNITIES.
 //
 #pragma once
-class CConfig;
 
+class CConfig;
+class CDisplay;
 
 class CEGLSurface : public CObject {
 public:
-  static EGLint CreateWND(CEGLSurface **ppSurface, CDisplay* display, EGLint surfaceType,
-                       CConfig *pConfig, EGLNativeWindowType hWnd);
+  static EGLint CreateWND(CEGLSurface **ppSurface, CDisplay *display,
+                          EGLint surfaceType, CConfig *pConfig,
+                          EGLNativeWindowType hWnd);
 
-  static EGLint CreatePXM(CEGLSurface **ppSurface, CDisplay* display, EGLint surfaceType,
-                       CConfig *pConfig, EGLNativePixmapType hPixmap);
+  static EGLint CreatePXM(CEGLSurface **ppSurface, CDisplay *display,
+                          EGLint surfaceType, CConfig *pConfig,
+                          EGLNativePixmapType hPixmap);
 
-  static EGLint CreatePBF(CEGLSurface **ppSurface, CDisplay* display, EGLint surfaceType,
-                       CConfig *pConfig, EGLint width, EGLint height,
-                       EGLint largestPBuffer, EGLint texTarget,
-                       EGLint texFormat, EGLint bGenMipMaps);
+  static EGLint CreatePBF(CEGLSurface **ppSurface, CDisplay *display,
+                          EGLint surfaceType, CConfig *pConfig, EGLint width,
+                          EGLint height, EGLint largestPBuffer,
+                          EGLint texTarget, EGLint texFormat,
+                          EGLint bGenMipMaps);
 
   EGLint GetAttribute(EGLint *pValue, EGLint name) const;
 
@@ -39,7 +43,7 @@ public:
   EGLint GetType() const { return m_surfaceType; }
 
   __GLSurface GetNativeData() const { return m_glSurface; }
-  
+
   EGLint BindTexture();
 
   EGLint ReleaseTexBound();
@@ -54,7 +58,7 @@ private:
     MAX_HEIGHT = 480,
   };
 
-  CEGLSurface(CDisplay* pDisplay, EGLint surfaceType, CConfig *pConfig);
+  CEGLSurface(CDisplay *pDisplay, EGLint surfaceType, CConfig *pConfig);
   ~CEGLSurface();
 
   EGLint InitializeWND(EGLNativeWindowType hWnd);
@@ -62,7 +66,7 @@ private:
   EGLint InitializePXM(EGLNativePixmapType hPixmap);
 
   EGLint InitializePBF(EGLint width, EGLint height, EGLint largestPBuffer,
-                    EGLint texTarget, EGLint texFormat, EGLint bGenMipMaps);
+                       EGLint texTarget, EGLint texFormat, EGLint bGenMipMaps);
 
   static uint8_t GetColorFormat(unsigned cBitsPerPixel);
 
@@ -74,7 +78,7 @@ private:
   CDisplay *m_pDisplay;
   CConfig *m_pConfig;
   EGLint m_surfaceType;
-  
+
   bool m_bBoundTexture;
   EGLint m_width;
   EGLint m_height;
@@ -88,13 +92,13 @@ private:
   HDC m_hDC;
   HBITMAP m_hBitmap;
   bool m_bExternalBitmap;
-#elif defined (__linux__)
-  XImage* m_pImage;
+#elif defined(__linux__)
+  XImage *m_pImage;
   Drawable m_drawable;
   GC m_gc;
 #endif
 
-  uint8_t *m_pDepthStencilBits;  
+  uint8_t *m_pDepthStencilBits;
   uint8_t **m_ppBuffers;
   unsigned m_mipLevels;
   __GLSurface m_glSurface;

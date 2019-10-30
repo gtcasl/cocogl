@@ -20,7 +20,6 @@ extern const GLint g_compressedFormats[] = {
     GL_PALETTE8_RGBA8_OES,  GL_PALETTE8_R5_G6_B5_OES, GL_PALETTE8_RGBA4_OES,
     GL_PALETTE8_RGB5_A1_OES};
 
-
 template <class T>
 inline void CGLContext::TGetClipPlane(GLenum plane, T eqn[4]) {
   if ((plane - GL_CLIP_PLANE0) >= MAX_CLIPPLANES) {
@@ -37,7 +36,6 @@ inline void CGLContext::TGetClipPlane(GLenum plane, T eqn[4]) {
   eqn[2] = Math::TCast<T>(m_vClipPlanesES[index].z);
   eqn[3] = Math::TCast<T>(m_vClipPlanesES[index].w);
 }
-
 
 template <class T>
 inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
@@ -100,7 +98,6 @@ inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
   }
 }
 
-
 template <class T>
 inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
   ASSERT(pParams);
@@ -141,7 +138,6 @@ inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
   }
 }
 
-
 template <class T>
 inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
   ASSERT(pParams);
@@ -179,7 +175,6 @@ inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
     return;
   }
 }
-
 
 template <class T>
 inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
@@ -225,7 +220,6 @@ inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
   }
 }
 
-
 template <> inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
   ASSERT(pParams);
 
@@ -260,7 +254,6 @@ template <> inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
     return;
   }
 }
-
 
 template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
   ASSERT(pParams);
@@ -572,7 +565,6 @@ template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
   }
 }
 
-
 template <class T> inline void CGLContext::TGet(GLenum pname, T *pParams) {
   ASSERT(pParams);
 
@@ -703,7 +695,6 @@ template <class T> inline void CGLContext::TGet(GLenum pname, T *pParams) {
     return;
   }
 }
-
 
 template <class T>
 inline GLbitfield CGLContext::TQueryMatrix(T *pMantissa, GLint exponent[16]) {

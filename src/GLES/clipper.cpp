@@ -21,14 +21,12 @@ template <class R> inline float TScalar(float lhs, float rhs) {
   return static_cast<R>(lhs / (lhs - rhs));
 }
 
-
 template <class R, unsigned int T>
 inline R TScalar(TFixed<T> lhs, TFixed<T> rhs) {
   ASSERT(lhs.GetRaw() != rhs.GetRaw());
   const int diff = lhs.GetRaw() - rhs.GetRaw();
   return R::Make((static_cast<int64_t>(lhs.GetRaw()) << R::FRAC) / diff);
 }
-
 
 template <unsigned int T>
 inline int CullSign(TFixed<T> x0, TFixed<T> y0, TFixed<T> w0, TFixed<T> x1,
@@ -55,7 +53,6 @@ inline int CullSign(TFixed<T> x0, TFixed<T> y0, TFixed<T> w0, TFixed<T> x1,
   return 0;
 }
 
-
 inline int CullSign(float x0, float y0, float w0, float x1, float y1, float w1,
                     float x2, float y2, float w2) {
   const float sign = (w0 * (x1 * y2 - x2 * y1) - w1 * (x0 * y2 - x2 * y0) +
@@ -69,7 +66,6 @@ inline int CullSign(float x0, float y0, float w0, float x1, float y1, float w1,
 
   return 0;
 }
-
 
 bool CRasterizer::CullClipSpaceTriangle(unsigned i0, unsigned i1, unsigned i2) {
   bool bIsCulled;
@@ -118,12 +114,12 @@ bool CRasterizer::CullClipSpaceTriangle(unsigned i0, unsigned i1, unsigned i2) {
   return true;
 }
 
-
 void CRasterizer::RasterClippedLine(unsigned i0, unsigned i1,
                                     unsigned clipUnion) {
   const VECTOR4 *const pvClipPos =
       (const VECTOR4 *)m_pbVertexData[VERTEXDATA_CLIPPOS];
-  const uint16_t *const pwFlags = (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
+  const uint16_t *const pwFlags =
+      (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
   RDVECTOR *const pvScreenPos =
       (RDVECTOR *)m_pbVertexData[VERTEXDATA_SCREENPOS];
 
@@ -213,12 +209,12 @@ void CRasterizer::RasterClippedLine(unsigned i0, unsigned i1,
   this->RasterLine(iFrom, iTo);
 }
 
-
 void CRasterizer::RasterClippedTriangle(unsigned i0, unsigned i1, unsigned i2,
                                         unsigned clipUnion) {
   const VECTOR4 *const pvClipPos =
       (const VECTOR4 *)m_pbVertexData[VERTEXDATA_CLIPPOS];
-  const uint16_t *const pwFlags = (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
+  const uint16_t *const pwFlags =
+      (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
   RDVECTOR *const pvScreenPos =
       (RDVECTOR *)m_pbVertexData[VERTEXDATA_SCREENPOS];
 
@@ -308,7 +304,6 @@ void CRasterizer::RasterClippedTriangle(unsigned i0, unsigned i1, unsigned i2,
   }
 }
 
-
 unsigned CRasterizer::UserClipTriangle(unsigned plane, unsigned nNumVertices,
                                        unsigned *pSrc, unsigned *pDst,
                                        unsigned *pTmp) {
@@ -354,7 +349,6 @@ unsigned CRasterizer::UserClipTriangle(unsigned plane, unsigned nNumVertices,
 
   return nClipVertices;
 }
-
 
 void CRasterizer::InterpolateVertex(unsigned i0, unsigned i1, floatf fDistA,
                                     floatf fDistB, unsigned i2) {

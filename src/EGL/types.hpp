@@ -13,7 +13,6 @@
 //
 #pragma once
 
-
 #define SZ_EGL_VENDOR "Blaise Tine"
 #define EGL_VERSION_MAJOR 1
 #define EGL_VERSION_MINOR 1
@@ -27,7 +26,6 @@
   (MAX_PBUFFER_MIPLEVELS * MAX_PBUFFER_WIDTH * MAX_PBUFFER_HEIGHT)
 
 typedef void (*PFN_EGL_API)();
-
 
 enum eHANDLETYPE {
   HANDLE_NONE = 0,

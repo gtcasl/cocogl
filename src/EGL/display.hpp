@@ -18,12 +18,12 @@
 
 class CConfig;
 
-
 class CDisplay : public CObject {
 public:
   typedef TList<CConfig *> ConfigList;
 
-  static EGLint Create(CDisplay **ppDisplay, EGLNativeDisplayType hNative, CHandleTable *pHandles);
+  static EGLint Create(CDisplay **ppDisplay, EGLNativeDisplayType hNative,
+                       CHandleTable *pHandles);
 
   EGLint Initialize(EGLint *pMajor, EGLint *pMinor);
 

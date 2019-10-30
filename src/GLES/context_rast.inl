@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 template <class T>
 inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
                                       const T *pParams) {
@@ -115,7 +114,6 @@ inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
   }
 }
 
-
 template <class T>
 inline void CGLContext::TTexEnv(GLenum env, GLenum pname, const T *pParams) {
   ASSERT(pParams);
@@ -184,7 +182,6 @@ inline void CGLContext::TTexEnv(GLenum env, GLenum pname, const T *pParams) {
     return;
   }
 }
-
 
 template <class T>
 inline void CGLContext::TPointParameter(GLenum pname, const T *pParams) {

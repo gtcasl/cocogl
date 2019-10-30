@@ -15,7 +15,6 @@
 #pragma once
 #include "device.hpp"
 
-
 class CInputAssembler : public CDevice {
 public:
   GLenum PrepareIndices(GLenum type, const GLvoid **ppvIndices, unsigned count,

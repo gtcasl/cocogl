@@ -17,7 +17,6 @@
 #include "buffer.hpp"
 #include "vertarray.hpp"
 
-
 GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
                                        unsigned count, unsigned *pMin,
                                        unsigned *pMax) {
@@ -31,8 +30,8 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
   if (pBits) {
     const unsigned stride = GLSizeOf(type);
     const unsigned size = pBufElements->GetSize();
-    const unsigned offset =
-        static_cast<const uint8_t *>(pvIndices) - static_cast<const uint8_t *>(NULL);
+    const unsigned offset = static_cast<const uint8_t *>(pvIndices) -
+                            static_cast<const uint8_t *>(NULL);
     if ((offset + stride * count) <= size) {
       pvIndices = pBits + offset;
     } else {
@@ -51,7 +50,8 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
 
   switch (type) {
   case GL_UNSIGNED_SHORT: {
-    const uint16_t *const pwIndices = reinterpret_cast<const uint16_t *>(pvIndices);
+    const uint16_t *const pwIndices =
+        reinterpret_cast<const uint16_t *>(pvIndices);
     for (unsigned i = 0; i < count; ++i) {
       const unsigned value = pwIndices[i];
       if (value < min) {
@@ -67,7 +67,8 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
   break;
 
   case GL_UNSIGNED_BYTE: {
-    const uint8_t *const pbIndices = reinterpret_cast<const uint8_t *>(pvIndices);
+    const uint8_t *const pbIndices =
+        reinterpret_cast<const uint8_t *>(pvIndices);
     for (unsigned i = 0; i < count; ++i) {
       const unsigned value = pbIndices[i];
       if (value < min) {

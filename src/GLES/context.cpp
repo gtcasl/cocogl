@@ -52,7 +52,6 @@ CGLContext::CGLContext(CHandleTable *pHandles, CRasterCache *pRasterCache,
 #endif
 }
 
-
 CGLContext::~CGLContext() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -87,7 +86,6 @@ CGLContext::~CGLContext() {
 #endif
 }
 
-
 GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
                           CRasterCache *pRasterCache, CGLContext *pCtxShared) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -117,7 +115,6 @@ GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
 
   return GL_NO_ERROR;
 }
-
 
 GLenum CGLContext::Initialize() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -395,7 +392,6 @@ GLenum CGLContext::Initialize() {
   return GL_NO_ERROR;
 }
 
-
 void CGLContext::SetDrawSurface(CGLSurface *pSurface) {
   if (pSurface) {
     pSurface->AddRef();
@@ -439,7 +435,6 @@ void CGLContext::SetDrawSurface(CGLSurface *pSurface) {
     m_rasterData.DepthStencilPitch = 0;
   }
 }
-
 
 void CGLContext::SetReadSurface(CGLSurface *pSurface) {
   if (pSurface) {

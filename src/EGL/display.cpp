@@ -15,7 +15,6 @@
 #include "display.hpp"
 #include "config.hpp"
 
-
 CDisplay::CDisplay(EGLNativeDisplayType hNative, CHandleTable *pHandles) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -27,16 +26,15 @@ CDisplay::CDisplay(EGLNativeDisplayType hNative, CHandleTable *pHandles) {
   m_bInitialized = false;
 }
 
-
 CDisplay::~CDisplay() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   if (m_hNative) {
-  #if defined(_WIN32)
+#if defined(_WIN32)
     ReleaseDC(m_hNative);
-  #elif defined(__linux__)    
+#elif defined(__linux__)
     XCloseDisplay(m_hNative);
-  #endif
+#endif
   }
 
   CHandleTable::Enumerator enumerator = m_pHandles->GetEnumerator(this);
@@ -47,8 +45,8 @@ CDisplay::~CDisplay() {
   __safeRelease(m_pHandles);
 }
 
-
-EGLint CDisplay::Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC, CHandleTable *pHandles) {
+EGLint CDisplay::Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC,
+                        CHandleTable *pHandles) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   ASSERT(pHandles && ppDisplay);
@@ -67,7 +65,6 @@ EGLint CDisplay::Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC, CHandleT
   return EGL_SUCCESS;
 }
 
-
 EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
   std::lock_guard<std::mutex> lock(m_CS);
 
@@ -76,6 +73,7 @@ EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
   EGLint err;
 
   if (!m_bInitialized) {
+  #if defined(COCOGL_RASTER_R5G6B5)
     err = this->CreateConfig(5, 6, 5, 0, 0, 0);
     if (__eglFailed(err)) {
       __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
@@ -93,6 +91,25 @@ EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
       __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
       return err;
     }
+  #elif defined (COCOGL_RASTER_A8R8G8B8)
+    err = this->CreateConfig(8, 8, 8, 8, 0, 0);
+    if (__eglFailed(err)) {
+      __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
+      return err;
+    }
+
+    err = this->CreateConfig(8, 8, 8, 8, 16, 0);
+    if (__eglFailed(err)) {
+      __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
+      return err;
+    }
+
+    err = this->CreateConfig(8, 8, 8, 8, 16, 8);
+    if (__eglFailed(err)) {
+      __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
+      return err;
+    }
+  #endif
 
     m_bInitialized = true;
   }
@@ -107,7 +124,6 @@ EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
 
   return EGL_SUCCESS;
 }
-
 
 EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
                               EGLint alpha, EGLint depth, EGLint stencil) {
@@ -157,7 +173,6 @@ EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
   return EGL_SUCCESS;
 }
 
-
 EGLint CDisplay::QueryString(LPCSTR *plpValue, EGLint name) {
   ASSERT(plpValue);
 
@@ -187,7 +202,6 @@ EGLint CDisplay::QueryString(LPCSTR *plpValue, EGLint name) {
 
   return EGL_SUCCESS;
 }
-
 
 EGLint CDisplay::ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
                               EGLint config_size, EGLint *pNum_config) {

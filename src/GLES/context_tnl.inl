@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 template <class T>
 inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
   ASSERT(pParams);
@@ -126,7 +125,6 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
   }
 }
 
-
 template <class T>
 inline void CGLContext::TLightModel(GLenum pname, const T *pParams) {
   ASSERT(pParams);
@@ -151,7 +149,6 @@ inline void CGLContext::TLightModel(GLenum pname, const T *pParams) {
     return;
   }
 }
-
 
 template <class T>
 inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
@@ -218,7 +215,6 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
     return;
   }
 }
-
 
 template <class T>
 inline void CGLContext::TFog(GLenum pname, const T *pParams) {

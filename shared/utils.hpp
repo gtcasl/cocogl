@@ -21,41 +21,46 @@ void DbgPrintf(int level, LPCTSTR format, ...);
 namespace detail {
 struct nonesuch {
   ~nonesuch() = delete;
-  nonesuch(nonesuch const&) = delete;
-  void operator=(nonesuch const&) = delete;
+  nonesuch(nonesuch const &) = delete;
+  void operator=(nonesuch const &) = delete;
 };
 
-template <class Default, class Void, template<class...> class Op, class... Args>
+template <class Default, class Void, template <class...> class Op,
+          class... Args>
 struct detector {
   using value_t = std::false_type;
   using type = Default;
 };
 
-template <class Default, template<class...> class Op, class... Args>
+template <class Default, template <class...> class Op, class... Args>
 struct detector<Default, std::void_t<Op<Args...>>, Op, Args...> {
   using value_t = std::true_type;
   using type = Op<Args...>;
 };
 }
 
-template <template<class...> class Op, class... Args>
-using detected_t = typename detail::detector<detail::nonesuch, void, Op, Args...>::type;
+template <template <class...> class Op, class... Args>
+using detected_t =
+    typename detail::detector<detail::nonesuch, void, Op, Args...>::type;
 
-template <class Default, template<class...> class Op, class... Args>
-using detected_or_t = typename detail::detector<Default, void, Op, Args...>::type;
+template <class Default, template <class...> class Op, class... Args>
+using detected_or_t =
+    typename detail::detector<Default, void, Op, Args...>::type;
 
-template<template<class...> class Op, class... Args>
-constexpr bool is_detected_v = detail::detector<detail::nonesuch, void, Op, Args...>::value_t::value;
+template <template <class...> class Op, class... Args>
+constexpr bool is_detected_v =
+    detail::detector<detail::nonesuch, void, Op, Args...>::value_t::value;
 
 ///////////////////////////////////////////////////////////////////////////////
 
 class scope_exit {
 public:
-  scope_exit(const std::function<void()>& func) : func_(func) {}
+  scope_exit(const std::function<void()> &func) : func_(func) {}
   ~scope_exit() { func_(); }
   // force stack only allocation!
-  static void *operator new   (size_t) = delete;
-  static void *operator new[] (size_t) = delete;
+  static void *operator new(size_t) = delete;
+  static void *operator new[](size_t) = delete;
+
 protected:
   std::function<void()> func_;
 };
@@ -124,17 +129,11 @@ template <unsigned long N> struct __countbits {
   static const unsigned nbits = __countbits<(N >> 1)>::nbits + 1;
 };
 
-template <> struct __countbits<0> { 
-  static const unsigned nbits = 0; 
-};
+template <> struct __countbits<0> { static const unsigned nbits = 0; };
 
-inline unsigned int Clz(unsigned int rhs) {
-  return __builtin_clz(rhs);
-}
+inline unsigned int Clz(unsigned int rhs) { return __builtin_clz(rhs); }
 
-inline unsigned int Ctz(unsigned int rhs) { 
-  return 31 - Clz(rhs & -(int)rhs); 
-}
+inline unsigned int Ctz(unsigned int rhs) { return 31 - Clz(rhs & -(int)rhs); }
 
 #ifndef NDEBUG
 #define __debugMsg(level, ...) DbgPrintf(level, __VA_ARGS__);
@@ -148,5 +147,4 @@ inline unsigned int Ctz(unsigned int rhs) {
 #define __no_default ASSERT(false);
 #endif
 
-template <typename... Args>
-void __unreferenced(Args&&...) {}
+template <typename... Args> void __unreferenced(Args &&...) {}

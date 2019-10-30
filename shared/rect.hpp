@@ -21,7 +21,7 @@ struct Rect {
   int bottom;
 };
 
-inline bool IntersectRect(Rect* pDst, const Rect *pSrc1, const Rect *pSrc2) {
+inline bool IntersectRect(Rect *pDst, const Rect *pSrc1, const Rect *pSrc2) {
   if (pDst) {
     auto left = std::max(pSrc1->left, pSrc2->left);
     auto top = std::max(pSrc1->top, pSrc2->top);
@@ -29,9 +29,9 @@ inline bool IntersectRect(Rect* pDst, const Rect *pSrc1, const Rect *pSrc2) {
     auto bottom = std::max(pSrc1->bottom, pSrc2->bottom);
     if (left >= right || top >= bottom)
       return false;
-    pDst->left   = left;
-    pDst->top    = top;
-    pDst->right  = right;
+    pDst->left = left;
+    pDst->top = top;
+    pDst->right = right;
     pDst->bottom = bottom;
     return true;
   } else {

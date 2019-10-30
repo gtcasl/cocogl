@@ -20,13 +20,11 @@ CMatrixStack::CMatrixStack()
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 }
 
-
 CMatrixStack::~CMatrixStack() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   __safeDeleteArray(m_pMatrices);
 }
-
 
 GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -56,7 +54,6 @@ GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
 
   return GL_NO_ERROR;
 }
-
 
 GLenum CMatrixStack::Initialize(uint8_t size) {
   ASSERT(size <= 16);

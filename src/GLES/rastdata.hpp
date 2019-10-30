@@ -21,7 +21,6 @@ struct Register;
 typedef void (*PFN_Scanline)(const RasterData &rasterData, int y, int lx,
                              int rx);
 
-
 class IRasterOp : public CObject {
 public:
   virtual PFN_Scanline GetScanline() const = 0;
@@ -40,7 +39,6 @@ private:
 #endif
 };
 
-
 class CRasterCache : public CObject {
 public:
   ~CRasterCache() {
@@ -51,12 +49,13 @@ public:
                                  iterEnd = m_slowRasterIDs.GetEnd();
            iter != iterEnd; ++iter) {
 #ifndef NDEBUG
-        DbgPrintf(3, _T("MAKE_SCANLINE(%d,%d,%d,%d),\r\n"),
-                  iter->Flags.Value, iter->States.Value, iter->Textures[0].Value,
+        DbgPrintf(3, _T("MAKE_SCANLINE(%d,%d,%d,%d),\r\n"), iter->Flags.Value,
+                  iter->States.Value, iter->Textures[0].Value,
                   iter->Textures[1].Value);
 #endif
         __glLog(_T("MAKE_SCANLINE(%d,%d,%d,%d),\r\n"), iter->Flags.Value,
-                iter->States.Value, iter->Textures[0].Value, iter->Textures[1].Value);
+                iter->States.Value, iter->Textures[0].Value,
+                iter->Textures[1].Value);
       }
 
       __glLog(_T("*** END MAKE_SCANLINE().\r\n"));
@@ -74,7 +73,7 @@ public:
         for (Cache::Iter iter = sortedList.GetBegin(),
                          iterEnd = sortedList.GetEnd();
              iter != iterEnd; ++iter) {
-          iter->Value->LogProfile(iter->Key);
+          iter->Second->LogProfile(iter->First);
         }
       }
     }
@@ -156,7 +155,7 @@ private:
 
   static bool ProfileCompare(const Cache::List::Type &lhs,
                              const Cache::List::Type &rhs) {
-    return (lhs.Value->GetProfile() < rhs.Value->GetProfile());
+    return (lhs.Second->GetProfile() < rhs.Second->GetProfile());
   }
 
 #endif
@@ -177,12 +176,10 @@ private:
   unsigned m_cbTotalSize;
 };
 
-
 struct Register {
   enum { DIM = 3 };
-  fixedRX fM[DIM];
+  fixedRX m[DIM];
 };
-
 
 struct RasterData {
   fixed4 fRefX;

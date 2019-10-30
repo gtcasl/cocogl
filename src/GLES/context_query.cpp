@@ -23,7 +23,6 @@ GLenum CGLContext::GetError() const {
   return error;
 }
 
-
 const GLubyte *CGLContext::GetString(GLenum name) {
   switch (name) {
   case GL_VENDOR:
@@ -46,7 +45,6 @@ const GLubyte *CGLContext::GetString(GLenum name) {
     return NULL;
   }
 }
-
 
 void CGLContext::GetPointer(void **ppParams, GLenum pname) {
   ASSERT(ppParams);
@@ -81,7 +79,6 @@ void CGLContext::GetPointer(void **ppParams, GLenum pname) {
     return;
   }
 }
-
 
 bool CGLContext::IsEnabled(GLenum cap) {
   switch (cap) {
@@ -190,11 +187,9 @@ bool CGLContext::IsEnabled(GLenum cap) {
   }
 }
 
-
 bool CGLContext::IsBuffer(GLuint buffer) {
   return (HANDLE_BUFFER == m_pHandles->GetType(buffer));
 }
-
 
 bool CGLContext::IsTexture(GLuint texture) {
   return (HANDLE_TEXTURE == m_pHandles->GetType(texture));

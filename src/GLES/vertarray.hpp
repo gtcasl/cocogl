@@ -17,7 +17,6 @@
 class CBuffer;
 struct VertexDecoder;
 
-
 struct VertexArray {
   eVertexFormat Format;
   unsigned Stride;
@@ -33,7 +32,6 @@ struct VertexArray {
 
   GLenum Prepare(VertexDecoder *pDecoder, int first, unsigned count);
 };
-
 
 struct VertexDecoder {
   const uint8_t *pBits;

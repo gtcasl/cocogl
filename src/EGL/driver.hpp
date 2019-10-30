@@ -15,7 +15,6 @@
 class CEGLContext;
 class CEGLSurface;
 
-
 class CEGLDriver : public CObject {
 public:
   static EGLint Create(CEGLDriver **ppDriver);
@@ -53,11 +52,13 @@ public:
     return m_pHandles->FindHandle(pObject, pOwner);
   }
 
-  void MakeCurrent(CEGLContext* pContext, std::thread::id dwThreadID, CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead);
+  void MakeCurrent(CEGLContext *pContext, std::thread::id dwThreadID,
+                   CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead);
 
   CEGLContext *GetCurrentContext() const;
 
-  EGLint AddObject(uint32_t *pdwHandle, void *pObject, uint8_t type, void *pOwner) {
+  EGLint AddObject(uint32_t *pdwHandle, void *pObject, uint8_t type,
+                   void *pOwner) {
     return EGLERROR_FROM_HRESULT(
         m_pHandles->Insert(pdwHandle, pObject, type, pOwner));
   }
@@ -65,7 +66,6 @@ public:
   std::mutex &GetCS() { return m_CS; }
 
 private:
-
   CEGLDriver();
   ~CEGLDriver();
 

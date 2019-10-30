@@ -14,9 +14,7 @@
 //
 #pragma once
 
-
 template <class T> GLenum TToGLenum(T param);
-
 
 template <class T> class TAddressOf {
 public:
@@ -30,7 +28,7 @@ private:
   T m_value;
 };
 
-#ifndef  COCOGL_API_PROFILE
+#ifndef COCOGL_API_PROFILE
 #define __profileAPI(func, ...)
 #else
 #define __profileAPI(func, ...) CProfiler profiler(glLogger, func, __VA_ARGS__);
@@ -43,17 +41,17 @@ inline bool __glSucceeded(unsigned int err) { return (err == GL_NO_ERROR); }
 #ifndef NDEBUG
 #define __glLog(...) glLogger.Write(__VA_ARGS__);
 
-#define __glLogError(...)                                                \
-  glLogger.Write(_T("*** Error in file %s at line %d.\r\n"),  \
-                            _T(__FILE__), __LINE__);                     \
-  glLogger.Write(__VA_ARGS__);                                \
+#define __glLogError(...)                                                      \
+  glLogger.Write(_T("*** Error in file %s at line %d.\r\n"), _T(__FILE__),     \
+                 __LINE__);                                                    \
+  glLogger.Write(__VA_ARGS__);                                                 \
   ASSERT(false);
 #else
 #define __glLog(...)
 #define __glLogError(...)
 #endif
-#define __glError(error, ...)                                            \
-  __glLogError(__VA_ARGS__);                                             \
+#define __glError(error, ...)                                                  \
+  __glLogError(__VA_ARGS__);                                                   \
   this->SetError(error);
 
 void memset16(void *dst, int fill, int cwCount);
@@ -119,21 +117,17 @@ GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
                    const GLSurfaceDesc &srcDesc, unsigned srcOffsetX,
                    unsigned srcOffsetY);
 
-
 template <> inline GLenum TToGLenum<float>(float param) {
   return static_cast<GLenum>(param);
 }
-
 
 template <> inline GLenum TToGLenum<fixed16>(fixed16 param) {
   return *reinterpret_cast<const GLenum *>(&param);
 }
 
-
 template <> inline GLenum TToGLenum<int>(int param) {
   return static_cast<GLenum>(param);
 }
-
 
 template <class T, unsigned BITS> class TBitPtr {
 public:

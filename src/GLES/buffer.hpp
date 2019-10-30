@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 class CBuffer : public CObject {
 public:
   static GLenum Create(CBuffer **ppBuffer);

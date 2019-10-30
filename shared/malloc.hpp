@@ -19,7 +19,7 @@ public:
   static HRESULT Create(CAllocator **ppAllocator, bool execute_access = false);
 
   virtual void *Allocate(uint32_t dwBytes);
-  virtual void Free(void* ptr);
+  virtual void Free(void *ptr);
 
 private:
   struct Block {
@@ -37,7 +37,7 @@ private:
     Block *pNextUsed;
     Block *pPrevUsed;
 
-    uint8_t* pMem;
+    uint8_t *pMem;
     unsigned Size;
 
     Block(uint8_t *pMem, unsigned size)
@@ -59,10 +59,8 @@ private:
     unsigned BufferSize;
 
     Page(uint8_t *pBuffer_, unsigned bufferSize)
-        : pNext(NULL)
-        , pUsedList(NULL)
-        , pBuffer(pBuffer_)        
-        , BufferSize(bufferSize) {
+        : pNext(NULL), pUsedList(NULL), pBuffer(pBuffer_),
+          BufferSize(bufferSize) {
       //
       // Allocate the first free block
       //

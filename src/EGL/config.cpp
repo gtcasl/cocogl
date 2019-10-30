@@ -52,9 +52,7 @@ CConfig::CConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
   this->SetAttribute(EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT);
 }
 
-
 CConfig::~CConfig() { __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__)); }
-
 
 EGLint CConfig::Create(CConfig **ppConfig, EGLint red, EGLint green,
                        EGLint blue, EGLint alpha, EGLint depth,
@@ -76,7 +74,6 @@ EGLint CConfig::Create(CConfig **ppConfig, EGLint red, EGLint green,
   return EGL_SUCCESS;
 }
 
-
 EGLint CConfig::GetAtttribute(EGLint name, EGLint *pValue) const {
   ASSERT(pValue);
 
@@ -90,7 +87,6 @@ EGLint CConfig::GetAtttribute(EGLint name, EGLint *pValue) const {
 
   return EGL_SUCCESS;
 }
-
 
 EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
   EGLint err;
@@ -255,7 +251,6 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
 
   return EGL_SUCCESS;
 }
-
 
 int CConfig::Compare(const CConfig *pConfigA, const CConfig *pConfigB) {
   ASSERT(pConfigA && pConfigB);

@@ -13,8 +13,8 @@
 // INDEMNITIES.
 //
 #pragma once
-#include "raster.hpp"
 
+#include "raster.hpp"
 
 class CGLContext : public CRasterizer {
 public:

@@ -18,10 +18,10 @@ class CLogger;
 
 class CProfiler {
 public:
-  CProfiler(CLogger& logger, const TCHAR *pszFunc, ...);
+  CProfiler(CLogger &logger, const TCHAR *pszFunc, ...);
 
   ~CProfiler();
 
 private:
-  CLogger& m_logger;
+  CLogger &m_logger;
 };

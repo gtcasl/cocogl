@@ -17,9 +17,9 @@
 #include "buffer.hpp"
 #include "light.hpp"
 #include "matstack.hpp"
+#include "vertarray.hpp"
 #include "surface.hpp"
 #include "texture.hpp"
-#include "vertarray.hpp"
 #include "rastdata.hpp"
 
 class CDevice : public CObject {

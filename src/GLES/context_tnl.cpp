@@ -34,14 +34,12 @@ void CGLContext::ClipPlane(GLenum plane, const VECTOR4 &equation) {
   m_dirtyFlags.ClipPlanesCS |= (1 << index);
 }
 
-
 void CGLContext::DepthRange(floatf zNear, floatf zFar) {
   m_depthRange.fNear = Math::TSat(zNear);
   m_depthRange.fFar = Math::TSat(zFar);
 
   m_dirtyFlags.ScreenXform = 1;
 }
-
 
 void CGLContext::Viewport(GLint x, GLint y, GLsizei width, GLsizei height) {
   if ((width < 0) || (height < 0)) {

@@ -21,42 +21,32 @@
 
 #ifdef COCOGL_RASTER_PROFILE
 
-
 void IRasterOp::StartProfile(unsigned numPixels) {
   m_profile.Invocations += 1;
   m_profile.DrawnPixels += numPixels;
 }
 
-
 void IRasterOp::EndProfile(float elapsedTime) {
   m_profile.RenderTime += elapsedTime;
 }
 
-
 void IRasterOp::LogProfile(const RASTERID &rasterID) {
-  TCHAR szBuff[512];
 
   const float fRenderTime = m_profile.RenderTime;
   const float fMPs = m_profile.DrawnPixels / fRenderTime;
 
-  _sntprintf(szBuff, __countof(szBuff), _T("Profile_PS(%d,%d,%d,%d): ")
-                                        _T("Calls=%ld, Pixels=%ld, Time=%.6f ")
-                                        _T("ms, MPs=%.6f - "),
-             rasterID.Flags.Value, rasterID.States.Value,
-             rasterID.Textures[0].Value, rasterID.Textures[1].Value,
-             m_profile.Invocations, m_profile.DrawnPixels, fRenderTime, fMPs);
-
-  ::OutputDebugString(szBuff);
-
+  DbgPrintf(1, _T("Profile_PS(%d,%d,%d,%d): Calls=%ld, Pixels=%ld, Time=%.6f ")
+               _T("ms, MPs=%.6f - "),
+            rasterID.Flags.Value, rasterID.States.Value,
+            rasterID.Textures[0].Value, rasterID.Textures[1].Value,
+            m_profile.Invocations, m_profile.DrawnPixels, fRenderTime, fMPs);
   rasterID.Flags.DebugPrint();
-
-  ::OutputDebugString(_T("\r\n"));
+  DbgPrintf(1, _T("\r\n"));
 }
 
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
-
 
 GLenum CRasterizer::SetupRasterStates(GLenum mode) {
   if (NULL == m_rasterData.pColorBits) {
@@ -201,7 +191,6 @@ GLenum CRasterizer::SetupRasterStates(GLenum mode) {
   return GL_NO_ERROR;
 }
 
-
 void CRasterizer::UpdateScissorRect() {
   if (m_caps.ScissorTest) {
     Rect rect;
@@ -213,7 +202,6 @@ void CRasterizer::UpdateScissorRect() {
 
   m_dirtyFlags.ScissorRECT = 0;
 }
-
 
 bool CRasterizer::GenerateRasterOp() {
   GLenum err;
@@ -271,12 +259,10 @@ bool CRasterizer::GenerateRasterOp() {
   return true;
 }
 
-
 void CRasterizer::PostRender() {
   // Free the rasterop
   __safeRelease(m_rasterData.pRasterOp);
 }
-
 
 GLenum CRasterizer::RenderPrimitive(GLenum mode, unsigned count) {
   switch (mode) {

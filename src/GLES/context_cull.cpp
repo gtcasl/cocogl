@@ -31,7 +31,6 @@ void CGLContext::FrontFace(GLenum mode) {
   }
 }
 
-
 void CGLContext::CullFace(GLenum mode) {
   switch (mode) {
   case GL_FRONT:

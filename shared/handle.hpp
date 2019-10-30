@@ -19,15 +19,15 @@
 class CHandleTable : public CObject {
 private:
   enum {
-    GROW_INCREMENT      = 64,
-    HANDLE_INDEX_MASK   = 0x0000ffff,
-    HANDLE_SERIAL_MASK  = 0xffff0000,
+    GROW_INCREMENT = 64,
+    HANDLE_INDEX_MASK = 0x0000ffff,
+    HANDLE_SERIAL_MASK = 0xffff0000,
     HANDLE_SERIAL_SHIFT = 16,
   };
 
   struct Entry {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+    DISABLE_WARNING_PUSH
+    DISABLE_WARNING_ANONYMOUS_STRUCT
     union {
       struct {
         uint8_t Type;  // Object type
@@ -35,9 +35,9 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       };
       uint16_t Serial; // Serial number
     };
-DISABLE_WARNING_POP
-    void* pObject; // Object pointer
-    void* pOwner;  // Object owner
+    DISABLE_WARNING_POP
+    void *pObject; // Object pointer
+    void *pOwner;  // Object owner
     Entry *pNext;  // Next active entry
   };
 
@@ -53,13 +53,13 @@ public:
 
     uint8_t GetType() const { return m_pList->Type; }
 
-    void* GetObject() const { return m_pList->pObject; }
+    void *GetObject() const { return m_pList->pObject; }
 
-    void* GetOwner() const { return m_pList->pOwner; }
+    void *GetOwner() const { return m_pList->pOwner; }
 
     uint32_t GetHandle() const {
-      return (m_pList->Serial << HANDLE_SERIAL_SHIFT) 
-            | ((m_pList - m_pHandles->m_pEntries) & HANDLE_INDEX_MASK);
+      return (m_pList->Serial << HANDLE_SERIAL_SHIFT) |
+             ((m_pList - m_pHandles->m_pEntries) & HANDLE_INDEX_MASK);
     }
 
     bool IsEnd() {
@@ -84,9 +84,9 @@ public:
       }
     }
 
-    void* RemoveNext() {
+    void *RemoveNext() {
       if (m_pList) {
-        void* pObject = m_pList->pObject;
+        void *pObject = m_pList->pObject;
         m_pList = m_pHandles->DeleteEntry(m_pList);
         while (m_pList && m_pOwner && (m_pList->pOwner != m_pOwner)) {
           m_pList = m_pList->pNext;
@@ -132,14 +132,14 @@ public:
 
   static HRESULT Create(CHandleTable **ppCHandleTable);
 
-  void* GetObject(uint32_t dwHandle, const void *pOwner = NULL);
+  void *GetObject(uint32_t dwHandle, const void *pOwner = NULL);
 
   uint8_t GetType(uint32_t dwHandle, const void *pOwner = NULL);
 
-  HRESULT Insert(uint32_t *pdwHandle, void* pObject, uint8_t type,
-              void* pOwner = NULL);
+  HRESULT Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
+                 void *pOwner = NULL);
 
-  void* Delete(uint32_t dwHandle, const void *pOwner = NULL);
+  void *Delete(uint32_t dwHandle, const void *pOwner = NULL);
 
   void Optimize();
 

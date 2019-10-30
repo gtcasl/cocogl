@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 template <unsigned int F, typename T = int> class TFixed {
 public:
   typedef T Type;
@@ -202,7 +201,6 @@ private:
 
   template <unsigned int F2, typename T2> friend class TFixedTypeCaster;
 };
-
 
 int FloatToFixed(unsigned int base, float fValue);
 float FixedToFloat(unsigned int base, int value);

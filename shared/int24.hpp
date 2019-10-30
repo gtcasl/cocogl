@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 struct uint24 {
   uint8_t m[3];
 

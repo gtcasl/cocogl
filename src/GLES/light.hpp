@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 struct Light {
   enum {
     COLORS_FIRST = GL_AMBIENT,
@@ -66,7 +65,6 @@ private:
 public:
   Light *pNext;
 };
-
 
 struct Material {
 public:

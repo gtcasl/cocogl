@@ -17,7 +17,8 @@
 #include "raster.inl"
 
 void CRasterizer::DrawTriangle(unsigned i0, unsigned i1, unsigned i2) {
-  const uint16_t *const pwFlags = (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
+  const uint16_t *const pwFlags =
+      (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
   const unsigned flags0 = pwFlags[i0];
   const unsigned flags1 = pwFlags[i1];
   const unsigned flags2 = pwFlags[i2];
@@ -42,7 +43,6 @@ void CRasterizer::DrawTriangle(unsigned i0, unsigned i1, unsigned i2) {
     }
   }
 }
-
 
 bool CRasterizer::CullScreenSpaceTriangle(unsigned i0, unsigned i1,
                                           unsigned i2) {
@@ -86,7 +86,6 @@ bool CRasterizer::CullScreenSpaceTriangle(unsigned i0, unsigned i1,
 
   return true;
 }
-
 
 void CRasterizer::RasterTriangle(unsigned i0, unsigned i1, unsigned i2) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -151,7 +150,7 @@ void CRasterizer::RasterTriangle(unsigned i0, unsigned i1, unsigned i2) {
   const fixed4 i4Y0Diff = fixed4(y) - (i4y0 - TConst<fixed4>::Half());
 
 #ifdef COCOGL_RASTER_PROFILE
-  const int64_t startTime = m_timer.GetTime();
+  auto start_time = std::chrono::high_resolution_clock::now();
   m_rasterData.pRasterOp->StartProfile(Math::TCast<int>(Math::TAbs(i8Area)));
 #endif
 
@@ -224,10 +223,12 @@ void CRasterizer::RasterTriangle(unsigned i0, unsigned i1, unsigned i2) {
   }
 
 #ifdef COCOGL_RASTER_PROFILE
-  m_rasterData.pRasterOp->EndProfile(m_timer.GetElapsedTime(startTime));
+  auto end_time = std::chrono::high_resolution_clock::now();
+  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(
+      end_time - start_time);
+  m_rasterData.pRasterOp->EndProfile(elapsed_time.count());
 #endif
 }
-
 
 bool CRasterizer::SetupTriangleAttributes(unsigned i0, unsigned i1,
                                           unsigned i2) {
@@ -301,7 +302,6 @@ bool CRasterizer::SetupTriangleAttributes(unsigned i0, unsigned i1,
   return true;
 }
 
-
 Register *CRasterizer::DepthGradient(Register *pRegister,
                                      const TriangleGradient &gradient,
                                      const RDVECTOR &v0, const RDVECTOR &v1,
@@ -312,15 +312,15 @@ Register *CRasterizer::DepthGradient(Register *pRegister,
 
   if ((fixed16(Math::TAbs(delta[0])) > TConst<fixed16>::Epsilon()) ||
       (fixed16(Math::TAbs(delta[1])) > TConst<fixed16>::Epsilon())) {
-    pRegister->fM[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
-    pRegister->fM[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
+    pRegister->m[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
+    pRegister->m[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
     m_rasterID.Flags.InterpolateDepth = 1;
   } else {
-    pRegister->fM[0] = TConst<fixedRX>::Zero();
-    pRegister->fM[1] = TConst<fixedRX>::Zero();
+    pRegister->m[0] = TConst<fixedRX>::Zero();
+    pRegister->m[1] = TConst<fixedRX>::Zero();
   }
 
-  pRegister->fM[2] = static_cast<fixedRX>(v0.z);
+  pRegister->m[2] = static_cast<fixedRX>(v0.z);
 
   if (m_caps.PolygonOffsetFill) {
     this->ApplyPolygonOffset(pRegister);
@@ -329,20 +329,18 @@ Register *CRasterizer::DepthGradient(Register *pRegister,
   return pRegister + 1;
 }
 
-
 void CRasterizer::ApplyPolygonOffset(Register *pRegister) {
   ASSERT(pRegister);
 
   const float20 fSlope = Math::TCast<float20>(
-      Math::TMax(Math::TAbs(pRegister->fM[0]), Math::TAbs(pRegister->fM[1])));
+      Math::TMax(Math::TAbs(pRegister->m[0]), Math::TAbs(pRegister->m[1])));
 
   const floatf fOffset = static_cast<floatf>(
       (m_polygonOffset.fFactor * fSlope) + m_polygonOffset.fUnits * fEPS);
 
-  pRegister->fM[2] = static_cast<fixedRX>(
-      Math::TSat(Math::TCast<floatf>(pRegister->fM[2]) + fOffset));
+  pRegister->m[2] = static_cast<fixedRX>(
+      Math::TSat(Math::TCast<floatf>(pRegister->m[2]) + fOffset));
 }
-
 
 Register *CRasterizer::ColorGradient(Register *pRegister,
                                      const TriangleGradient &gradient,
@@ -362,36 +360,22 @@ Register *CRasterizer::ColorGradient(Register *pRegister,
   if (interpolateMask) {
     for (unsigned i = 0; i < 4; ++i) {
       const int delta[2] = {c1.m[i] - c0.m[i], c2.m[i] - c0.m[i]};
-
-      /*if ((Math::TAbs(delta[0]) > 1)
-       || (Math::TAbs(delta[1]) > 1))*/
-      {
-        pRegister[i].fM[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
-        pRegister[i].fM[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
-      }
-      /*else
-      {
-          pRegister[i].fM[0] = TConst<fixedRX>::Zero();
-          pRegister[i].fM[1] = TConst<fixedRX>::Zero();
-          interpolateMask &= ~(1 << i);
-      }*/
-
-      pRegister[i].fM[2] = static_cast<fixedRX>(c0.m[i]) >> fixed8::FRAC;
+      pRegister[i].m[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[2] = static_cast<fixedRX>(c0.m[i]) >> fixed8::FRAC;
     }
-
     m_rasterID.Flags.InterpolateColor = (interpolateMask & 0x7) ? 1 : 0;
     m_rasterID.Flags.InterpolateAlpha = interpolateMask >> 3;
   } else {
     for (unsigned i = 0; i < 4; ++i) {
-      pRegister[i].fM[0] = TConst<fixedRX>::Zero();
-      pRegister[i].fM[1] = TConst<fixedRX>::Zero();
-      pRegister[i].fM[2] = static_cast<fixedRX>(c2.m[i]) >> fixed8::FRAC;
+      pRegister[i].m[0] = TConst<fixedRX>::Zero();
+      pRegister[i].m[1] = TConst<fixedRX>::Zero();
+      pRegister[i].m[2] = static_cast<fixedRX>(c2.m[i]) >> fixed8::FRAC;
     }
   }
 
   return pRegister + 4;
 }
-
 
 Register *CRasterizer::AffineTextureGradient(Register *pRegister,
                                              const TriangleGradient &gradient,
@@ -414,9 +398,9 @@ Register *CRasterizer::AffineTextureGradient(Register *pRegister,
     for (unsigned i = 0; i < 2; ++i) {
       const float20 delta[2] = {uv1.m[i] - uv0.m[i], uv2.m[i] - uv0.m[i]};
 
-      pRegister[i].fM[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
-      pRegister[i].fM[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
-      pRegister[i].fM[2] = static_cast<fixedRX>(uv0.m[i]);
+      pRegister[i].m[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[2] = static_cast<fixedRX>(uv0.m[i]);
     }
 
     pRegister += 2;
@@ -430,7 +414,6 @@ Register *CRasterizer::AffineTextureGradient(Register *pRegister,
 
   return pRegister;
 }
-
 
 Register *
 CRasterizer::PerspectiveTextureGradient(Register *pRegister,
@@ -460,9 +443,9 @@ CRasterizer::PerspectiveTextureGradient(Register *pRegister,
 
   const floatRW delta[2] = {rhws[1] - rhws[0], rhws[2] - rhws[0]};
 
-  pRegister->fM[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
-  pRegister->fM[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
-  pRegister->fM[2] = static_cast<fixedRX>(rhws[0]);
+  pRegister->m[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
+  pRegister->m[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
+  pRegister->m[2] = static_cast<fixedRX>(rhws[0]);
 
   ++pRegister;
 
@@ -480,9 +463,9 @@ CRasterizer::PerspectiveTextureGradient(Register *pRegister,
 
       const float20 delta[2] = {uvw1 - uvw0, uvw2 - uvw0};
 
-      pRegister[i].fM[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
-      pRegister[i].fM[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
-      pRegister[i].fM[2] = static_cast<fixedRX>(uvw0);
+      pRegister[i].m[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[2] = static_cast<fixedRX>(uvw0);
     }
 
     pRegister += 2;
@@ -498,7 +481,6 @@ CRasterizer::PerspectiveTextureGradient(Register *pRegister,
   return pRegister;
 }
 
-
 Register *CRasterizer::AffineTextureMipmapGradient(Register *pRegister) {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
   const unsigned numTextures = rasterFlags.NumTextures;
@@ -513,7 +495,7 @@ Register *CRasterizer::AffineTextureMipmapGradient(Register *pRegister) {
 
       for (unsigned i = 0; i < 2; ++i) {
         fMaxDm[i] = Math::TCast<float20>(
-            Math::TMax(Math::TAbs(pCur[i].fM[0]), Math::TAbs(pCur[i].fM[1])));
+            Math::TMax(Math::TAbs(pCur[i].m[0]), Math::TAbs(pCur[i].m[1])));
       }
 
       Sampler &sampler = m_rasterData.Samplers[j];
@@ -540,9 +522,9 @@ Register *CRasterizer::AffineTextureMipmapGradient(Register *pRegister) {
             fM = static_cast<floatf>(1 << sampler.MaxMipLevel);
           }
 
-          pRegister->fM[2] = fixedRX::Make(static_cast<fixed16>(fM).GetRaw());
-          pRegister->fM[0] = TConst<fixedRX>::Zero();
-          pRegister->fM[1] = TConst<fixedRX>::Zero();
+          pRegister->m[2] = fixedRX::Make(static_cast<fixed16>(fM).GetRaw());
+          pRegister->m[0] = TConst<fixedRX>::Zero();
+          pRegister->m[1] = TConst<fixedRX>::Zero();
           ++pRegister;
         }
       } else {
@@ -556,7 +538,6 @@ Register *CRasterizer::AffineTextureMipmapGradient(Register *pRegister) {
 
   return pRegister;
 }
-
 
 Register *CRasterizer::PerspectiveTextureMipmapGradient(
     Register *pRegister, const TriangleGradient &gradient, const RDVECTOR &v0,
@@ -575,9 +556,9 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
 
   const Register *pCur = pRegister - 2 * numTextures - 1;
 
-  const float20 fRhwdA = Math::TCast<float20>(pCur->fM[0]);
-  const float20 fRhwdB = Math::TCast<float20>(pCur->fM[1]);
-  const float20 fRhwdC = Math::TCast<float20>(pCur->fM[2]);
+  const float20 fRhwdA = Math::TCast<float20>(pCur->m[0]);
+  const float20 fRhwdB = Math::TCast<float20>(pCur->m[1]);
+  const float20 fRhwdC = Math::TCast<float20>(pCur->m[2]);
 
   ++pCur;
 
@@ -588,9 +569,9 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
       float20 fMaxDms[3][2];
 
       for (unsigned i = 0; i < 2; ++i) {
-        const float20 fA = Math::TCast<float20>(pCur[i].fM[0]);
-        const float20 fB = Math::TCast<float20>(pCur[i].fM[1]);
-        const float20 fC = Math::TCast<float20>(pCur[i].fM[2]);
+        const float20 fA = Math::TCast<float20>(pCur[i].m[0]);
+        const float20 fB = Math::TCast<float20>(pCur[i].m[1]);
+        const float20 fC = Math::TCast<float20>(pCur[i].m[2]);
 
         const float24 fK1 = Math::TMulSub<float24>(fA, fRhwdB, fB, fRhwdA);
         const float20 fK2 = Math::TMulSub<float20>(fA, fRhwdC, fRhwdA, fC);
@@ -629,11 +610,11 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
           if ((fixed16(Math::TAbs(delta[0])) > TConst<fixed16>::Epsilon()) ||
               (fixed16(Math::TAbs(delta[1])) > TConst<fixed16>::Epsilon())) {
             m_rasterID.Flags.InterpolateMips |= (1 << j);
-            pRegister->fM[2] =
+            pRegister->m[2] =
                 fixedRX::Make(static_cast<fixed16>(fMs[0]).GetRaw());
-            pRegister->fM[0] = fixedRX::Make(
+            pRegister->m[0] = fixedRX::Make(
                 gradient.TCalcDeltaX<fixed16>(delta[0], delta[1]).GetRaw());
-            pRegister->fM[1] = fixedRX::Make(
+            pRegister->m[1] = fixedRX::Make(
                 gradient.TCalcDeltaY<fixed16>(delta[0], delta[1]).GetRaw());
             ++pRegister;
           } else {
@@ -658,10 +639,10 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
                   fM = static_cast<floatf>(1 << sampler.MaxMipLevel);
                 }
 
-                pRegister->fM[2] =
+                pRegister->m[2] =
                     fixedRX::Make(static_cast<fixed16>(fM).GetRaw());
-                pRegister->fM[0] = TConst<fixedRX>::Zero();
-                pRegister->fM[1] = TConst<fixedRX>::Zero();
+                pRegister->m[0] = TConst<fixedRX>::Zero();
+                pRegister->m[1] = TConst<fixedRX>::Zero();
                 ++pRegister;
               }
             } else {
@@ -681,10 +662,10 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
             // Use nearest mipmap filtering
             m_rasterID.Textures[j].MipFilter = FILTER_NEAREST;
             m_rasterID.Textures[j].MagFilter = m_rasterID.Textures[j].MinFilter;
-            pRegister->fM[2] =
+            pRegister->m[2] =
                 fixedRX::Make(fixed16(1 << sampler.MaxMipLevel).GetRaw());
-            pRegister->fM[0] = TConst<fixedRX>::Zero();
-            pRegister->fM[1] = TConst<fixedRX>::Zero();
+            pRegister->m[0] = TConst<fixedRX>::Zero();
+            pRegister->m[1] = TConst<fixedRX>::Zero();
             ++pRegister;
           }
         }
@@ -700,7 +681,6 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
   return pRegister;
 }
 
-
 Register *CRasterizer::FogGradient(Register *pRegister,
                                    const TriangleGradient &gradient,
                                    unsigned i0, unsigned i1, unsigned i2) {
@@ -715,15 +695,15 @@ Register *CRasterizer::FogGradient(Register *pRegister,
 
   if ((fixed8(Math::TAbs(delta[0])) > TConst<fixed8>::Epsilon()) ||
       (fixed8(Math::TAbs(delta[1])) > TConst<fixed8>::Epsilon())) {
-    pRegister->fM[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
-    pRegister->fM[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
+    pRegister->m[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
+    pRegister->m[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
     m_rasterID.Flags.InterpolateFog = 1;
   } else {
-    pRegister->fM[0] = TConst<fixedRX>::Zero();
-    pRegister->fM[1] = TConst<fixedRX>::Zero();
+    pRegister->m[0] = TConst<fixedRX>::Zero();
+    pRegister->m[1] = TConst<fixedRX>::Zero();
   }
 
-  pRegister->fM[2] = static_cast<fixedRX>(fFog0);
+  pRegister->m[2] = static_cast<fixedRX>(fFog0);
 
   return pRegister + 1;
 }

@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 class COptimizedRasterOp : public IRasterOp {
 public:
   COptimizedRasterOp(PFN_Scanline pfnScanline);

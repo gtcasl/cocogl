@@ -50,7 +50,6 @@ void CGLContext::GenBuffers(GLsizei n, GLuint *pBuffers) {
   }
 }
 
-
 void CGLContext::BindBuffer(GLenum target, GLuint buffer) {
   if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER)) {
     __glError(GL_INVALID_ENUM, _T("CGLContext::BindBuffer() failed, invalid ")
@@ -83,7 +82,6 @@ void CGLContext::BindBuffer(GLenum target, GLuint buffer) {
 
   this->SetBufferObject(target, pBuffer);
 }
-
 
 void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
                             GLenum usage) {
@@ -122,7 +120,6 @@ void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
   }
 }
 
-
 void CGLContext::BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
                                const GLvoid *pData) {
   ASSERT(pData);
@@ -155,7 +152,6 @@ void CGLContext::BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
   pBuffer->CopyData(offset, size, pData);
 }
 
-
 void CGLContext::GetBufferParameter(GLenum target, GLenum pname,
                                     GLint *pParams) {
   GLenum err;
@@ -178,7 +174,6 @@ void CGLContext::GetBufferParameter(GLenum target, GLenum pname,
     return;
   }
 }
-
 
 void CGLContext::DeleteBuffers(GLsizei n, const GLuint *pBuffers) {
   ASSERT(pBuffers);

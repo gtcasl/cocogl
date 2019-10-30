@@ -20,7 +20,6 @@ CAllocator::CAllocator(bool execute_access) {
   m_execute_access = execute_access;
 }
 
-
 CAllocator::~CAllocator() {
   // All pages should be released by now
   ASSERT(NULL == m_pPages);
@@ -33,7 +32,6 @@ CAllocator::~CAllocator() {
     pCurPage = pNextPage;
   }
 }
-
 
 HRESULT
 CAllocator::Create(CAllocator **ppAllocator, bool execute_access) {
@@ -53,7 +51,6 @@ CAllocator::Create(CAllocator **ppAllocator, bool execute_access) {
 
   return S_OK;
 }
-
 
 void *CAllocator::Allocate(uint32_t dwBytes) {
   std::lock_guard<std::mutex> lock(m_CS);
@@ -131,7 +128,6 @@ void *CAllocator::Allocate(uint32_t dwBytes) {
   return pFreeBlock->pMem;
 }
 
-
 void CAllocator::Free(void *ptr) {
   if (NULL == ptr) {
     return;
@@ -179,7 +175,7 @@ void CAllocator::Free(void *ptr) {
   if (pUsedBlock->pPrevFreeM) {
     // Calculate the previous memory end address
     uint8_t *const pPrevMem = pUsedBlock->pPrevFreeM->pMem +
-                           pUsedBlock->pPrevFreeM->Size + cbBlockSize;
+                              pUsedBlock->pPrevFreeM->Size + cbBlockSize;
 
     if (pUsedBlock->pMem == pPrevMem) {
       Block *const pMergedBlock = pUsedBlock->pPrevFreeM;
@@ -227,7 +223,6 @@ void CAllocator::Free(void *ptr) {
   }
 }
 
-
 CAllocator::Page *CAllocator::NewPage(uint32_t dwCbSize) {
   // Increase buffer size to include the page and first block size
   // also add padding to ensure page aligment
@@ -235,30 +230,26 @@ CAllocator::Page *CAllocator::NewPage(uint32_t dwCbSize) {
       __align(sizeof(Page) + sizeof(Block), Block::ALIGN_SIZE);
   dwCbSize = __align(dwCbSize + cbPlacementSize, Page::ALIGN_SIZE);
 
-  // Allocate virtual memory
+// Allocate virtual memory
 #ifdef _WIN32
   auto protection = m_execute_access ? PAGE_EXECUTE_READWRITE : PAGE_READWRITE;
   uint8_t *pBuffer = reinterpret_cast<uint8_t *>(
       ::VirtualAlloc(NULL, dwCbSize, MEM_COMMIT | MEM_RESERVE, protection));
-      if (NULL == pBuffer) {
-    __debugMsg(1, _T("VirtualAlloc() failed, error = %d.\r\n"), ::GetLastError());
+  if (NULL == pBuffer) {
+    __debugMsg(1, _T("VirtualAlloc() failed, error = %d.\r\n"),
+               ::GetLastError());
     return NULL;
   }
 #else
-  auto protection = m_execute_access ? (PROT_READ | PROT_WRITE | PROT_EXEC) : (PROT_READ | PROT_WRITE);
-  uint8_t *pBuffer = reinterpret_cast<uint8_t *>(mmap(
-       NULL,
-       dwCbSize,
-       protection,
-       MAP_ANONYMOUS | MAP_PRIVATE,
-       0,
-       0));
+  auto protection = m_execute_access ? (PROT_READ | PROT_WRITE | PROT_EXEC)
+                                     : (PROT_READ | PROT_WRITE);
+  uint8_t *pBuffer = reinterpret_cast<uint8_t *>(
+      mmap(NULL, dwCbSize, protection, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0));
   if (pBuffer == MAP_FAILED) {
     __debugMsg(1, _T("mmap() failed. error = %d\r\n"), errno);
     return NULL;
   }
 #endif
-  
 
   // Allocate the page
   Page *const pNewPage = new (pBuffer) Page(pBuffer, dwCbSize);
@@ -269,7 +260,6 @@ CAllocator::Page *CAllocator::NewPage(uint32_t dwCbSize) {
 
   return pNewPage;
 }
-
 
 void CAllocator::DeletePage(Page *pPage) {
   ASSERT(pPage);
@@ -297,10 +287,11 @@ void CAllocator::DeletePage(Page *pPage) {
   // The free list should be one
   ASSERT(pPage->pFreeMList && (NULL == pPage->pFreeMList->pNextFreeM));
 
-  // Release allocated virtual memory
+// Release allocated virtual memory
 #ifdef _WIN32
   if (!::VirtualFree(pPage->pBuffer, 0, MEM_RELEASE)) {
-    __debugMsg(1, _T("VirtualFree() failed, error = %d.\r\n"), ::GetLastError());
+    __debugMsg(1, _T("VirtualFree() failed, error = %d.\r\n"),
+               ::GetLastError());
   }
 #else
   if (0 != munmap(pPage->pBuffer, pPage->BufferSize)) {
@@ -310,7 +301,6 @@ void CAllocator::DeletePage(Page *pPage) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
 
 void CAllocator::Page::RemoveUsedBlock(Block *pBlock) {
   ASSERT(pBlock);
@@ -329,7 +319,6 @@ void CAllocator::Page::RemoveUsedBlock(Block *pBlock) {
   pBlock->pPrevUsed = NULL;
 }
 
-
 void CAllocator::Page::InsertUsedBlock(Block *pBlock) {
   ASSERT(pBlock);
 
@@ -339,7 +328,6 @@ void CAllocator::Page::InsertUsedBlock(Block *pBlock) {
   }
   this->pUsedList = pBlock;
 }
-
 
 void CAllocator::Page::RemoveFreeMBlock(Block *pBlock) {
   ASSERT(pBlock);
@@ -357,7 +345,6 @@ void CAllocator::Page::RemoveFreeMBlock(Block *pBlock) {
   pBlock->pNextFreeM = NULL;
   pBlock->pPrevFreeM = NULL;
 }
-
 
 void CAllocator::Page::InsertFreeMBlock(Block *pBlock) {
   ASSERT(pBlock);
@@ -386,7 +373,6 @@ void CAllocator::Page::InsertFreeMBlock(Block *pBlock) {
   }
 }
 
-
 void CAllocator::Page::RemoveFreeSBlock(Block *pBlock) {
   ASSERT(pBlock);
 
@@ -403,7 +389,6 @@ void CAllocator::Page::RemoveFreeSBlock(Block *pBlock) {
   pBlock->pNextFreeS = NULL;
   pBlock->pPrevFreeS = NULL;
 }
-
 
 void CAllocator::Page::InsertFreeSBlock(Block *pBlock) {
   ASSERT(pBlock);

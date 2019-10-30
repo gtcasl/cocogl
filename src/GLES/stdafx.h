@@ -7,26 +7,23 @@
 // you did not accept the terms of the license agreement, you are not
 // authorized to use this sample source code. For the terms of the license,
 // please see the license agreement between you and Microsoft or, if applicable,
-// see the LICENSE.RTF on your install media or the root of your tools installation.
-// THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES OR INDEMNITIES.
+// see the LICENSE.RTF on your install media or the root of your tools
+// installation.
+// THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES OR
+// INDEMNITIES.
 //
 
 #pragma once
 
-#define GL_GLEXT_PROTOTYPES
-
-//#define COCOGL_RASTER_PROFILE
-//#define COCOGL_PIXEDPOINT
-//#define COCOGL_API_PROFILE
-
-#include <string.h>
-#include <mutex>
 #include <chrono>
 #include <climits>
+#include <mutex>
+#include <string.h>
 
-#include <GLES/gl.h>
-#include <GLES/glext.h>
 #include <platform.hpp>
+#include <GLES/gl.h>
+#include "glcommon.hpp"
+#include <GLES/glext.h>
 #include <utils.hpp>
 #include <object.hpp>
 #include <malloc.hpp>
@@ -47,7 +44,6 @@
 #include <fixed.inl>
 #include <format.inl>
 #include <math.inl>
-#include "glstub.hpp"
 #include "types.hpp"
 #include "utility.hpp"
 

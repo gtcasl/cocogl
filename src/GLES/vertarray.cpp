@@ -16,11 +16,9 @@
 #include "vertarray.hpp"
 #include "buffer.hpp"
 
-uint32_t
-VertexArray::GetBufferHandle() const {
+uint32_t VertexArray::GetBufferHandle() const {
   return pBuffer ? pBuffer->GetHandle() : HANDLE_NONE;
 }
-
 
 GLenum VertexArray::Prepare(VertexDecoder *pDecoder, int first,
                             unsigned count) {

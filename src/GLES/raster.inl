@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 template <eClipFlags ClipPlane>
 inline unsigned CRasterizer::TClipTriangle(unsigned nNumVertices,
                                            unsigned *pSrc, unsigned *pDst,
@@ -31,31 +30,33 @@ inline unsigned CRasterizer::TClipTriangle(unsigned nNumVertices,
 
   unsigned nClipVertices = 0;
 
-  if constexpr (Signed) {
-    for (floatf fDistA, fDistB = pvClipPos[iVB].w - pvClipPos[iVB].m[coord];
-         nNumVertices--; iVB = iVA, fDistB = fDistA) {
-      iVA = *pSrc++;
-      fDistA = pvClipPos[iVA].w - pvClipPos[iVA].m[coord];
+  if
+    constexpr(Signed) {
+      for (floatf fDistA, fDistB = pvClipPos[iVB].w - pvClipPos[iVB].m[coord];
+           nNumVertices--; iVB = iVA, fDistB = fDistA) {
+        iVA = *pSrc++;
+        fDistA = pvClipPos[iVA].w - pvClipPos[iVA].m[coord];
 
-      if (fDistB >= fZERO) {
-        // Add vertex to the current list
-        ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
-        pDst[nClipVertices++] = iVB;
-        if (fDistA >= fZERO) {
+        if (fDistB >= fZERO) {
+          // Add vertex to the current list
+          ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
+          pDst[nClipVertices++] = iVB;
+          if (fDistA >= fZERO) {
+            continue;
+          }
+        } else if (fDistA < fZERO) {
           continue;
         }
-      } else if (fDistA < fZERO) {
-        continue;
+
+        // Compute the intersecting vertex
+        this->InterpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
+
+        // Add the new vertex to the current list
+        ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
+        pDst[nClipVertices++] = iTmp++;
       }
-
-      // Compute the intersecting vertex
-      this->InterpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
-
-      // Add the new vertex to the current list
-      ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
-      pDst[nClipVertices++] = iTmp++;
     }
-  } else {
+  else {
     for (floatf fDistA, fDistB = pvClipPos[iVB].w + pvClipPos[iVB].m[coord];
          nNumVertices--; iVB = iVA, fDistB = fDistA) {
       iVA = *pSrc++;
@@ -85,7 +86,6 @@ inline unsigned CRasterizer::TClipTriangle(unsigned nNumVertices,
 
   return nClipVertices;
 }
-
 
 template <class T>
 inline GLenum

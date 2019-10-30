@@ -21,14 +21,12 @@ CHandleTable::CHandleTable() {
   m_nHandleCount = 0;
 }
 
-
 CHandleTable::~CHandleTable() {
   // Free allocated memory
   if (m_pEntries) {
     free(m_pEntries);
   }
 }
-
 
 HRESULT
 CHandleTable::Create(CHandleTable **ppCHandleTable) {
@@ -47,9 +45,7 @@ CHandleTable::Create(CHandleTable **ppCHandleTable) {
   return S_OK;
 }
 
-
-void*
-CHandleTable::GetObject(uint32_t dwHandle, const void *pOwner) {
+void *CHandleTable::GetObject(uint32_t dwHandle, const void *pOwner) {
   std::lock_guard<std::mutex> lock(m_CS);
 
   // Retrieve the corresponding table entry
@@ -61,9 +57,7 @@ CHandleTable::GetObject(uint32_t dwHandle, const void *pOwner) {
   return NULL;
 }
 
-
-uint8_t
-CHandleTable::GetType(uint32_t dwHandle, const void *pOwner) {
+uint8_t CHandleTable::GetType(uint32_t dwHandle, const void *pOwner) {
   std::lock_guard<std::mutex> lock(m_CS);
 
   // Retrieve the corresponding table entry
@@ -75,10 +69,9 @@ CHandleTable::GetType(uint32_t dwHandle, const void *pOwner) {
   return 0;
 }
 
-
 HRESULT
-CHandleTable::Insert(uint32_t *pdwHandle, void* pObject, uint8_t type,
-                     void* pOwner) {
+CHandleTable::Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
+                     void *pOwner) {
   std::lock_guard<std::mutex> lock(m_CS);
 
   if ((NULL == pObject) || (0 == type) || (NULL == pdwHandle)) {
@@ -173,7 +166,6 @@ CHandleTable::Insert(uint32_t *pdwHandle, void* pObject, uint8_t type,
   return S_OK;
 }
 
-
 CHandleTable::Entry *CHandleTable::DeleteEntry(Entry *pEntry) {
   ASSERT(pEntry);
 
@@ -211,9 +203,7 @@ CHandleTable::Entry *CHandleTable::DeleteEntry(Entry *pEntry) {
   return pNextEntry;
 }
 
-
-void*
-CHandleTable::Delete(uint32_t dwHandle, const void *pOwner) {
+void *CHandleTable::Delete(uint32_t dwHandle, const void *pOwner) {
   std::lock_guard<std::mutex> lock(m_CS);
 
   // Retrieve the corresponding table entry
@@ -231,7 +221,6 @@ CHandleTable::Delete(uint32_t dwHandle, const void *pOwner) {
 
   return NULL;
 }
-
 
 void CHandleTable::Optimize() {
   std::lock_guard<std::mutex> lock(m_CS);

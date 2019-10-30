@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 class CGLSurface : public CObject {
 public:
   enum {

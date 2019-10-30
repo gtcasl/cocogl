@@ -16,7 +16,6 @@
 #include "surface.hpp"
 #include "surface.inl"
 
-
 CGLSurface::CGLSurface() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -32,9 +31,7 @@ CGLSurface::CGLSurface() {
   }
 }
 
-
 CGLSurface::~CGLSurface() { __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__)); }
-
 
 GLenum CGLSurface::Create(CGLSurface **ppSurface,
                           const GLSurfaceDesc *pColorDesc,
@@ -67,7 +64,6 @@ GLenum CGLSurface::Create(CGLSurface **ppSurface,
   return GL_NO_ERROR;
 }
 
-
 GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
                               const GLSurfaceDesc *pDepthStencilDesc) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -96,13 +92,13 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
         break;*/
 
     case FORMAT_A8R8G8B8:
-        m_pfnColorConv = Format::TConvertTo<FORMAT_A8B8G8R8>;
-        m_pfnColorFill = &CGLSurface::TColorFill<uint32_t>;
-        this->SetAttribute(GL_RED_BITS,   8);
-        this->SetAttribute(GL_GREEN_BITS, 8);
-        this->SetAttribute(GL_BLUE_BITS,  8);
-        this->SetAttribute(GL_ALPHA_BITS, 8);
-        break;
+      m_pfnColorConv = Format::TConvertTo<FORMAT_A8B8G8R8>;
+      m_pfnColorFill = &CGLSurface::TColorFill<uint32_t>;
+      this->SetAttribute(GL_RED_BITS, 8);
+      this->SetAttribute(GL_GREEN_BITS, 8);
+      this->SetAttribute(GL_BLUE_BITS, 8);
+      this->SetAttribute(GL_ALPHA_BITS, 8);
+      break;
     default:
       __glLogError(
           _T("CGLSurface::Initialize() failed, invalid color format: %d.\r\n"),
@@ -159,7 +155,6 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
 
   return GL_NO_ERROR;
 }
-
 
 GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
   // Open the file for writing bytes

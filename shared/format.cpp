@@ -14,19 +14,18 @@
 //
 #include "stdafx.h"
 
-#define __formatInfo(format) { \
-    TFormatInfo<format>::CBSIZE, \
-    TFormatSize<TFormatInfo<format>>::RED, \
-    TFormatSize<TFormatInfo<format>>::GREEN, \
-    TFormatSize<TFormatInfo<format>>::BLUE, \
-    TFormatSize<TFormatInfo<format>>::ALPHA, \
-    TFormatSize<TFormatInfo<format>>::LUMINANCE, \
-    TFormatSize<TFormatInfo<format>>::DEPTH, \
-    TFormatSize<TFormatInfo<format>>::STENCIL, \
-    TFormatSize<TFormatInfo<format>>::PALETTE, \
-    TFormatSize<TFormatInfo<format>>::LERP \
+#define __formatInfo(format)                                                   \
+  {                                                                            \
+    TFormatInfo<format>::CBSIZE, TFormatSize<TFormatInfo<format>>::RED,        \
+        TFormatSize<TFormatInfo<format>>::GREEN,                               \
+        TFormatSize<TFormatInfo<format>>::BLUE,                                \
+        TFormatSize<TFormatInfo<format>>::ALPHA,                               \
+        TFormatSize<TFormatInfo<format>>::LUMINANCE,                           \
+        TFormatSize<TFormatInfo<format>>::DEPTH,                               \
+        TFormatSize<TFormatInfo<format>>::STENCIL,                             \
+        TFormatSize<TFormatInfo<format>>::PALETTE,                             \
+        TFormatSize<TFormatInfo<format>>::LERP                                 \
   }
-
 
 static const FormatInfo l_formatInfos[FORMAT_SIZE_] = {
     __formatInfo(FORMAT_UNKNOWN),
@@ -57,7 +56,6 @@ static const FormatInfo l_formatInfos[FORMAT_SIZE_] = {
 };
 
 namespace Format {
-
 
 PFN_CONVERTTO
 GetConvertTo(unsigned pixelFormat) {
@@ -94,7 +92,6 @@ GetConvertTo(unsigned pixelFormat) {
 
   return NULL;
 }
-
 
 PFN_CONVERTFROM
 GetConvertFrom(unsigned pixelFormat, bool bForceAlpha) {
@@ -165,12 +162,10 @@ GetConvertFrom(unsigned pixelFormat, bool bForceAlpha) {
   return NULL;
 }
 
-
 const FormatInfo &GetInfo(unsigned pixelFormat) {
   ASSERT(pixelFormat < FORMAT_SIZE_);
   return l_formatInfos[pixelFormat];
 }
-
 
 unsigned GetNativeFormat(unsigned pixelFormat) {
   switch (pixelFormat) {

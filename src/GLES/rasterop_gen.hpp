@@ -14,8 +14,6 @@
 //
 #pragma once
 
-
-
 typedef bool (*PFN_Compare)(unsigned a, unsigned b);
 
 typedef void (*PFN_GetTexelColor)(Color4 *pOut, const SurfaceDesc &surface,
@@ -34,7 +32,6 @@ typedef void (*PFN_Blend)(Color4 *pInOut, const uint8_t *pCB);
 
 typedef void (*PFN_WriteColor)(const RasterData &rasterData,
                                const Color4 &cSrcColor, uint8_t *pCB);
-
 
 class CGenericRasterOp : public IRasterOp {
 public:

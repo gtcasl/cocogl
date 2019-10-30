@@ -22,7 +22,7 @@ static const uint16_t __fp_sin_table[] = {
 
 // 1 / 4x - domain 0.5 .. 1.0-1/16
 static const uint16_t __rcp_tab[] = {0x8000, 0x71c7, 0x6666, 0x5d17,
-                                 0x5555, 0x4ec4, 0x4924, 0x4444};
+                                     0x5555, 0x4ec4, 0x4924, 0x4444};
 
 // 1 / ( 2 * sqrt( x ) ) - extra divide by 2 to scale to 16 bits
 static const uint16_t __rsq_tab[] = {
@@ -32,11 +32,11 @@ static const uint16_t __rsq_tab[] = {
 
 // -ln(x)/ln(2) with x = N/16, N=[8...16]
 static const uint16_t __log_tab[] = {0xffff, 0xd47f, 0xad96, 0x8a62, 0x6a3f,
-                                 0x4caf, 0x3151, 0x17d6, 0x0000};
+                                     0x4caf, 0x3151, 0x17d6, 0x0000};
 
 // domain [0 - 1.0]
 static uint16_t __alog_tab[] = {0xffff, 0xeac0, 0xd744, 0xc567, 0xb504,
-                            0xa5fe, 0x9837, 0x8b95, 0x8000};
+                                0xa5fe, 0x9837, 0x8b95, 0x8000};
 
 // table[i] = round(2^31*exp2(a)) where a=(i+0.5)/32
 static uint32_t __exp2_tab[] = {
@@ -48,12 +48,13 @@ static uint32_t __exp2_tab[] = {
     0xf7d0df73, 0xfd3e0c0d,
 };
 
-#define __fpmul(a, b) \
+#define __fpmul(a, b)                                                          \
   static_cast<int>((static_cast<int64_t>(a) * static_cast<int64_t>(b)) >> 16)
 
 #define smull(a, b) ((static_cast<int64_t>(a) * static_cast<int64_t>(b)) >> 32)
 
-#define umull(a, b) ((static_cast<uint64_t>(a) * static_cast<uint64_t>(b)) >> 32)
+#define umull(a, b)                                                            \
+  ((static_cast<uint64_t>(a) * static_cast<uint64_t>(b)) >> 32)
 
 // By Ken Turkowski's Fixed Point Square Root from "Graphics Gems V".
 unsigned int iSqrt(unsigned int rhs) {
@@ -74,8 +75,7 @@ unsigned int iSqrt(unsigned int rhs) {
 }
 
 // By Ken Turkowski's Inverse Square Root from "Graphics Gems V".
-template <>
-fixed16 TInvSqrt(fixed16 rhs) {
+template <> fixed16 TInvSqrt(fixed16 rhs) {
   const int value = rhs.GetRaw();
 
   ASSERT(value > 0);
@@ -111,8 +111,7 @@ fixed16 TInvSqrt(fixed16 rhs) {
 }
 
 //--
-template <>
-fixed16 TPow(fixed16 lhs, fixed16 rhs) {
+template <> fixed16 TPow(fixed16 lhs, fixed16 rhs) {
   // prerequisite: 0 <= x <= 1, and y >=0
   // pow(x,y) = 2^(y*log2(x))
   // =  2^(y*log2(x*(2^exp)*(2^-exp))))
@@ -152,8 +151,7 @@ fixed16 TPow(fixed16 lhs, fixed16 rhs) {
 }
 
 //--
-template <>
-fixed16 TPow2(fixed16 rhs) {
+template <> fixed16 TPow2(fixed16 rhs) {
   ASSERT((rhs.To<int>() >= 0) && (rhs.To<int>() < 32));
 
   const unsigned x5log2 = 0xb17217f8; // round(2^32*log(2))
@@ -200,8 +198,7 @@ fixed16 TPow2(fixed16 rhs) {
 }
 
 //--
-template <>
-fixed16 TSin(fixed16 rhs) {
+template <> fixed16 TSin(fixed16 rhs) {
   const int TWOPI = 411775;
   const int INVTWOPI = 10430;
 
@@ -221,8 +218,7 @@ fixed16 TSin(fixed16 rhs) {
 }
 
 // By Ken Turkowski's Fixed Point Square Root from "Graphics Gems V".
-template <>
-fixed16 TCos(fixed16 rhs) {
+template <> fixed16 TCos(fixed16 rhs) {
   const int TWOPI = 411775;
   const int INVTWOPI = 10430;
 

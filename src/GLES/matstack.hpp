@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 class CMatrixStack : public CObject {
 public:
   ~CMatrixStack();

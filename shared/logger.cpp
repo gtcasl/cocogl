@@ -94,8 +94,8 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CProfiler::CProfiler(CLogger& logger, const TCHAR *pszFunc, ...) 
- : m_logger(logger) {
+CProfiler::CProfiler(CLogger &logger, const TCHAR *pszFunc, ...)
+    : m_logger(logger) {
   va_list arglist;
   va_start(arglist, pszFunc);
   logger.Write(pszFunc, arglist);
@@ -103,6 +103,4 @@ CProfiler::CProfiler(CLogger& logger, const TCHAR *pszFunc, ...)
   va_end(arglist);
 }
 
-CProfiler::~CProfiler() { 
-  m_logger.DecrIndent(); 
-}
+CProfiler::~CProfiler() { m_logger.DecrIndent(); }

@@ -18,7 +18,6 @@
 class CGLSurface;
 class CSurface2D;
 
-
 class SurfaceDesc {
 public:
   const uint8_t *GetBits() const { return m_pbBits; }
@@ -36,8 +35,8 @@ public:
 protected:
   uint8_t *m_pbBits;
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     uint16_t m_logWidth_logHeight;
     struct {
@@ -45,7 +44,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       uint8_t m_logHeight;
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   friend class CGSurface;
 };
@@ -53,8 +52,8 @@ DISABLE_WARNING_POP
 struct Sampler {
   const CSurface2D *pMipLevels;
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       unsigned cEnvColor_MaxMipLevel;
@@ -64,9 +63,8 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       uint8_t MaxMipLevel; // cEnvColor alpha channel
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 };
-
 
 class CSurface2D : public SurfaceDesc {
 public:
@@ -104,7 +102,6 @@ private:
   uint8_t m_format;
   bool m_bOwnedBuffer;
 };
-
 
 class CTexture : public CObject {
 public:
@@ -166,7 +163,6 @@ private:
   uint8_t m_maxMipLevel;
   bool m_bIsDirty;
 };
-
 
 struct TexUnit {
 public:

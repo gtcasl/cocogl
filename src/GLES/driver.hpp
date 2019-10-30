@@ -14,7 +14,6 @@
 #pragma once
 #include "context.hpp"
 
-
 class CGLDriver : public CObject {
 public:
   static GLenum Create(CGLDriver **ppDriver);
@@ -48,7 +47,8 @@ public:
         m_pHandles->Delete(reinterpret_cast<intptr_t>(object), pOwner));
   }
 
-  GLenum AddObject(void *pObject, uint8_t type, void *pOwner, uint32_t *pdwHandle) {
+  GLenum AddObject(void *pObject, uint8_t type, void *pOwner,
+                   uint32_t *pdwHandle) {
     return GLERROR_FROM_HRESULT(
         m_pHandles->Insert(pdwHandle, pObject, type, pOwner));
   }

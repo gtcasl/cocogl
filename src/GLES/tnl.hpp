@@ -18,7 +18,6 @@
 typedef void (*PFN_DECODEPOSITION)(VECTOR4 *pOut, const uint8_t *pbIn,
                                    unsigned stride, unsigned count);
 
-
 class CTNL : public CInputAssembler {
 public:
   typedef void (CTNL::*PFN_VERTEXDECODE)(unsigned count);

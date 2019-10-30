@@ -20,20 +20,20 @@ include<wingdi.h>
 
 // file header
 struct BITMAPFILEHEADER {
-  unsigned short bfType;      // magic number 
-  unsigned int bfSize;        
-  unsigned short bfReserved1; 
-  unsigned short bfReserved2; 
-  unsigned int bfOffBits;     // offset to data
+  unsigned short bfType; // magic number
+  unsigned int bfSize;
+  unsigned short bfReserved1;
+  unsigned short bfReserved2;
+  unsigned int bfOffBits; // offset to data
 };
 
 #define BF_TYPE 0x4D42
 
 // file info
-struct BITMAPINFOHEADER {  
-  unsigned int biSize;         
-  int biWidth;                 
-  int biHeight;                
+struct BITMAPINFOHEADER {
+  unsigned int biSize;
+  int biWidth;
+  int biHeight;
   unsigned short biPlanes;     // number of color planes
   unsigned short biBitCount;   // number of bits per pixel
   unsigned int biCompression;  // type of compression to use
@@ -45,20 +45,20 @@ struct BITMAPINFOHEADER {
 };
 
 #define BI_RGB 0       // no compression
-#define BI_RLE8 1      // 8-bit run-length compression 
+#define BI_RLE8 1      // 8-bit run-length compression
 #define BI_RLE4 2      // 4-bit run-length compression
 #define BI_BITFIELDS 3 // with RGB masks
 
 struct RGBQUAD {
-  unsigned char rgbBlue;     
-  unsigned char rgbGreen;    
-  unsigned char rgbRed;      
-  unsigned char rgbReserved; 
+  unsigned char rgbBlue;
+  unsigned char rgbGreen;
+  unsigned char rgbRed;
+  unsigned char rgbReserved;
 };
 
-struct BITMAPINFO { 
+struct BITMAPINFO {
   BITMAPINFOHEADER bmiHeader;
-  RGBQUAD bmiColors[256];    
-} ;
+  RGBQUAD bmiColors[256];
+};
 
 #endif

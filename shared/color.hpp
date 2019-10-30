@@ -14,10 +14,9 @@
 //
 #pragma once
 
-
 struct ColorARGB {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       unsigned value;
@@ -29,7 +28,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       uint8_t m[4];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   ColorARGB();
   ColorARGB(int a, int r, int g, int b);
@@ -37,10 +36,9 @@ DISABLE_WARNING_POP
   ColorARGB(int value);
 };
 
-
 struct Color4 {
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       int b, g, r, a;
@@ -49,7 +47,7 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       int m[4];
     };
   };
-DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
 
   Color4();
   Color4(int a, int r, int g, int b);

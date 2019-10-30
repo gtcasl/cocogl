@@ -14,11 +14,9 @@
 //
 #pragma once
 
-
 inline ColorARGB::ColorARGB() {
   //--
 }
-
 
 inline ColorARGB::ColorARGB(int a, int r, int g, int b) {
   ASSERT((a >= 0) && (a <= 0xff));
@@ -32,7 +30,6 @@ inline ColorARGB::ColorARGB(int a, int r, int g, int b) {
   this->a = static_cast<uint8_t>(a);
 }
 
-
 inline ColorARGB::ColorARGB(int r, int g, int b) {
   ASSERT((r >= 0) && (r <= 0xff));
   ASSERT((g >= 0) && (g <= 0xff));
@@ -43,21 +40,17 @@ inline ColorARGB::ColorARGB(int r, int g, int b) {
   this->r = static_cast<uint8_t>(r);
 }
 
-
 inline ColorARGB::ColorARGB(int value) { this->value = value; }
 
 //////////////////////////////////////////////////////////////////////////////
-
 
 inline Color4::Color4() {
   //--
 }
 
-
 inline Color4::~Color4() {
   //--
 }
-
 
 inline Color4::Color4(int a, int r, int g, int b) {
   ASSERT((a >= 0) && (a <= 0xff));
@@ -71,7 +64,6 @@ inline Color4::Color4(int a, int r, int g, int b) {
   this->a = a;
 }
 
-
 inline Color4::Color4(int r, int g, int b) {
   ASSERT((r >= 0) && (r <= 0xff));
   ASSERT((g >= 0) && (g <= 0xff));
@@ -82,7 +74,6 @@ inline Color4::Color4(int r, int g, int b) {
   this->r = r;
 }
 
-
 inline Color4::Color4(const ColorARGB color) {
   this->b = color.b;
   this->g = color.g;
@@ -90,12 +81,10 @@ inline Color4::Color4(const ColorARGB color) {
   this->a = color.a;
 }
 
-
 inline Color4::Color4(int a, int rgb) {
   this->b = rgb;
   this->a = a;
 }
-
 
 inline void Color4::operator=(const Color4 &rhs) {
   this->b = rhs.b;

@@ -15,13 +15,12 @@
 #include "stdafx.h"
 #include "driver.hpp"
 
-thread_local CGLContext* tls_glctx = nullptr;
+thread_local CGLContext *tls_glctx = nullptr;
 
 CGLDriver::CGLDriver() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
   m_pHandles = NULL;
 }
-
 
 CGLDriver::~CGLDriver() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -30,7 +29,7 @@ CGLDriver::~CGLDriver() {
 
   __safeRelease(m_pRasterCache);
 
-  if (m_pHandles) {    
+  if (m_pHandles) {
     {
       // Release all generated driver handles
       auto enumerator = m_pHandles->GetEnumerator(this);
@@ -38,7 +37,7 @@ CGLDriver::~CGLDriver() {
         reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
       }
     }
-    
+
     {
       // Release all other generated handles
       auto enumerator = m_pHandles->GetEnumerator(NULL);
@@ -54,7 +53,6 @@ CGLDriver::~CGLDriver() {
     m_pHandles->Release();
   }
 }
-
 
 GLenum CGLDriver::Create(CGLDriver **ppDriver) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -85,7 +83,6 @@ GLenum CGLDriver::Create(CGLDriver **ppDriver) {
   return GL_NO_ERROR;
 }
 
-
 GLenum CGLDriver::Initialize() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -108,9 +105,7 @@ GLenum CGLDriver::Initialize() {
   return GL_NO_ERROR;
 }
 
-CGLContext *CGLDriver::GetCurrentContext() const {
-    return tls_glctx;
-  }
+CGLContext *CGLDriver::GetCurrentContext() const { return tls_glctx; }
 
 void CGLDriver::MakeCurrent(CGLContext *pContext, CGLSurface *pSurfDraw,
                             CGLSurface *pSurfRead) {

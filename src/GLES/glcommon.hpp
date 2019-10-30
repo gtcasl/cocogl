@@ -14,6 +14,16 @@
 //
 #pragma once
 
+#define GL_GLEXT_PROTOTYPES
+
+#define COCOGL_PIXEDPOINT
+
+#define COCOGL_RASTER_A8R8G8B8
+//#define COCOGL_RASTER_R5G6B5
+
+//#define COCOGL_RASTER_PROFILE
+//#define COCOGL_API_PROFILE
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -22,11 +32,11 @@ typedef void *__GLContext;
 typedef void *__GLSurface;
 
 struct GLSurfaceDesc {
-  uint8_t  Format;
+  uint8_t Format;
   uint8_t *pBits;
   uint32_t Width;
   uint32_t Height;
-  uint32_t Pitch;  
+  uint32_t Pitch;
 };
 
 extern GLenum __glCreateSurface(const GLSurfaceDesc *pColorDesc,

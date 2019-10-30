@@ -51,7 +51,6 @@ void CGLContext::GenTextures(GLsizei n, GLuint *pTextures) {
   }
 }
 
-
 void CGLContext::BindTexture(GLenum target, GLuint texture) {
   if (target != GL_TEXTURE_2D) {
     __glError(GL_INVALID_ENUM, _T("CGLContext::BindTexture() failed, invalid ")
@@ -83,7 +82,6 @@ void CGLContext::BindTexture(GLenum target, GLuint texture) {
 
   this->SetTexture(m_activeTexture, pTexture);
 }
-
 
 void CGLContext::TexImage2D(GLenum target, GLint level, GLint internalformat,
                             GLsizei width, GLsizei height, GLint border,
@@ -190,7 +188,6 @@ void CGLContext::TexImage2D(GLenum target, GLint level, GLint internalformat,
   pTexture->Invalidate();
 }
 
-
 void CGLContext::TexSubImage2D(GLenum target, GLint level, GLint xoffset,
                                GLint yoffset, GLsizei width, GLsizei height,
                                GLenum format, GLenum type,
@@ -268,7 +265,6 @@ void CGLContext::TexSubImage2D(GLenum target, GLint level, GLint xoffset,
 
   pTexture->Invalidate();
 }
-
 
 void CGLContext::CopyTexImage2D(GLenum target, GLint level,
                                 GLenum internalformat, GLint x, GLint y,
@@ -354,7 +350,6 @@ void CGLContext::CopyTexImage2D(GLenum target, GLint level,
   pTexture->Invalidate();
 }
 
-
 void CGLContext::CopyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
                                    GLint yoffset, GLint x, GLint y,
                                    GLsizei width, GLsizei height) {
@@ -417,7 +412,6 @@ void CGLContext::CopyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
 
   pTexture->Invalidate();
 }
-
 
 void CGLContext::ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
                             GLenum format, GLenum type, GLvoid *pPixels) {
@@ -483,7 +477,6 @@ void CGLContext::ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
   #endif*/
 }
 
-
 void CGLContext::PixelStorei(GLenum pname, GLint param) {
   switch (pname) {
   case GL_PACK_ALIGNMENT:
@@ -530,7 +523,6 @@ void CGLContext::PixelStorei(GLenum pname, GLint param) {
   }
 }
 
-
 void CGLContext::DeleteTextures(GLsizei n, const GLuint *pTextures) {
   ASSERT(pTextures);
 
@@ -562,7 +554,6 @@ void CGLContext::DeleteTextures(GLsizei n, const GLuint *pTextures) {
   }
 }
 
-
 GLenum CGLContext::BindTexImage(CGLSurface *pSurface, bool bGenMipMaps) {
   GLenum err;
 
@@ -580,7 +571,6 @@ GLenum CGLContext::BindTexImage(CGLSurface *pSurface, bool bGenMipMaps) {
   return GL_NO_ERROR;
 }
 
-
 GLenum CGLContext::ReleaseTexImage(CGLSurface *pSurface) {
   GLenum err;
 
@@ -595,7 +585,6 @@ GLenum CGLContext::ReleaseTexImage(CGLSurface *pSurface) {
 
   return GL_NO_ERROR;
 }
-
 
 void CGLContext::CompressedTexImage2D(GLenum target, GLint level,
                                       GLenum internalformat, GLsizei width,
@@ -756,7 +745,6 @@ void CGLContext::CompressedTexImage2D(GLenum target, GLint level,
     }
   }
 }
-
 
 void CGLContext::CompressedTexSubImage2D(GLenum target, GLint level,
                                          GLint xoffset, GLint yoffset,

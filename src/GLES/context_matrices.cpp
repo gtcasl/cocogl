@@ -43,7 +43,6 @@ void CGLContext::MatrixMode(GLenum mode) {
   m_matrixMode = mode;
 }
 
-
 void CGLContext::PushMatrix() {
   if (!m_pMatrixStack->Push()) {
     __glError(GL_STACK_OVERFLOW, _T("CGLContext::PushMatrix() failed, the ")
@@ -51,7 +50,6 @@ void CGLContext::PushMatrix() {
     return;
   }
 }
-
 
 void CGLContext::PopMatrix() {
   if (!m_pMatrixStack->Pop()) {
@@ -64,7 +62,6 @@ void CGLContext::PopMatrix() {
   this->UpdateMatrixDirtyFlags();
 }
 
-
 void CGLContext::LoadIdentity() {
   if (!m_pMatrixStack->IsIdentity()) {
     m_pMatrixStack->ToIdentity();
@@ -72,12 +69,10 @@ void CGLContext::LoadIdentity() {
   }
 }
 
-
 void CGLContext::LoadMatrix(const MATRIX44 &matrix) {
   m_pMatrixStack->SetMatrix(matrix);
   this->UpdateMatrixDirtyFlags();
 }
-
 
 void CGLContext::Frustum(floatf left, floatf right, floatf bottom, floatf top,
                          floatf zNear, floatf zFar) {
@@ -113,7 +108,6 @@ void CGLContext::Frustum(floatf left, floatf right, floatf bottom, floatf top,
   this->Multiply(matTmp);
 }
 
-
 void CGLContext::Ortho(floatf left, floatf right, floatf bottom, floatf top,
                        floatf zNear, floatf zFar) {
   MATRIX44 matTmp;
@@ -121,13 +115,11 @@ void CGLContext::Ortho(floatf left, floatf right, floatf bottom, floatf top,
   this->Multiply(matTmp);
 }
 
-
 void CGLContext::Scale(floatf x, floatf y, floatf z) {
   MATRIX44 matTmp;
   Math::Scale(&matTmp, x, y, z);
   this->Multiply(matTmp);
 }
-
 
 void CGLContext::Translate(floatf x, floatf y, floatf z) {
   MATRIX44 matrix, matTmp;
@@ -137,13 +129,11 @@ void CGLContext::Translate(floatf x, floatf y, floatf z) {
   this->UpdateMatrixDirtyFlags();
 }
 
-
 void CGLContext::Rotate(floatf angle, floatf x, floatf y, floatf z) {
   MATRIX44 matTmp;
   Math::Rotate(&matTmp, Math::DegToRad(angle), x, y, z);
   this->Multiply(matTmp);
 }
-
 
 void CGLContext::Multiply(const MATRIX44 &matrix) {
   MATRIX44 matTmp;

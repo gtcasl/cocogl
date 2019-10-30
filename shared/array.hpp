@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 template <bool Active, class T, unsigned Size, class Allocator>
 class TInlineArrayBuffer : public Allocator {
 public:
@@ -24,7 +23,7 @@ public:
 template <class T, unsigned Size, class Allocator>
 class TInlineArrayBuffer<false, T, Size, Allocator> : public Allocator {
 public:
-  T *GetBuffer() { return NULL; }
+  T *GetBuffer() { return nullptr; }
 };
 
 template <class T, unsigned Size, class Allocator>
@@ -35,7 +34,6 @@ public:
 private:
   T m_buffer[Size];
 };
-
 
 template <class T, unsigned GrowBy = 1, unsigned InitialCapacity = 0,
           class Allocator = StdAllocator>
@@ -53,8 +51,8 @@ protected:
 #endif
   };
 
-  template<typename U>
-  using detect_Copy_t = decltype(std::declval<U&>().Copy(std::declval<T&>()));
+  template <typename U>
+  using detect_Copy_t = decltype(std::declval<U &>().Copy(std::declval<T &>()));
 
   typedef TInlineArrayBuffer<((InitialCapacity > 0) &&
                               ((InitialCapacity * sizeof(Node)) < CACHE_LINE))
@@ -230,7 +228,9 @@ public:
     const Node *m_pNode;
   };
 
-  TArray() : m_pBuffer(NULL), m_size(0), m_capacity(0) { static_assert(GrowBy > 0, "invalid GrowBy value"); }
+  TArray() : m_pBuffer(NULL), m_size(0), m_capacity(0) {
+    static_assert(GrowBy > 0, "invalid GrowBy value");
+  }
 
   virtual ~TArray() { this->Clear(true); }
 
@@ -307,13 +307,15 @@ public:
     hr = this->Resize(rhs.m_size);
     if (SUCCEEDED(hr)) {
       for (unsigned i = 0, n = rhs.m_size; i < n; ++i) {
-        if constexpr (is_detected_v<detect_Copy_t, T>) {
-          hr = m_pBuffer[i].Data.Copy(rhs.m_pBuffer[i].Data);
-          if (FAILED(hr)) {
-            return hr;
+        if
+          constexpr(is_detected_v<detect_Copy_t, T>) {
+            hr = m_pBuffer[i].Data.Copy(rhs.m_pBuffer[i].Data);
+            if (FAILED(hr)) {
+              return hr;
+            }
           }
-        } else {
-          m_pBuffer[i].Data = rhs.m_pBuffer[i].Data; 
+        else {
+          m_pBuffer[i].Data = rhs.m_pBuffer[i].Data;
         }
       }
     }
@@ -435,13 +437,15 @@ protected:
 
       if (pValue) {
         for (unsigned i = m_size; i < size; ++i) {
-          if constexpr (is_detected_v<detect_Copy_t, T>) {
-            hr = m_pBuffer[i].Data.Copy(*pValue);
-            if (FAILED(hr)) {
-              return hr;
+          if
+            constexpr(is_detected_v<detect_Copy_t, T>) {
+              hr = m_pBuffer[i].Data.Copy(*pValue);
+              if (FAILED(hr)) {
+                return hr;
+              }
             }
-          } else { 
-            m_pBuffer[i].Data = *pValue; 
+          else {
+            m_pBuffer[i].Data = *pValue;
           }
         }
       }
@@ -481,13 +485,15 @@ protected:
 
     if (m_pBuffer) {
       for (unsigned i = 0, n = m_size; i < n; ++i) {
-        if constexpr (is_detected_v<detect_Copy_t, T>) {
-          hr = pBuffer[i].Data.Copy(m_pBuffer[i].Data);
-          if (FAILED(hr)) {
-            goto Cleanup;
+        if
+          constexpr(is_detected_v<detect_Copy_t, T>) {
+            hr = pBuffer[i].Data.Copy(m_pBuffer[i].Data);
+            if (FAILED(hr)) {
+              goto Cleanup;
+            }
           }
-        } else { 
-          pBuffer[i].Data = m_pBuffer[i].Data; 
+        else {
+          pBuffer[i].Data = m_pBuffer[i].Data;
         }
       }
 

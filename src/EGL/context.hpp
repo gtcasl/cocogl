@@ -16,7 +16,6 @@ class CDisplay;
 class CConfig;
 class CEGLSurface;
 
-
 class CEGLContext : public CObject {
 public:
   static EGLint Create(CEGLContext **ppContext, CDisplay *pDisplay,
@@ -39,9 +38,7 @@ public:
 
   __GLContext GetNativeData() const { return m_glContext; }
 
-  bool HasBindings() const {
-    return (m_pSurfDraw || m_pSurfRead);
-  }
+  bool HasBindings() const { return (m_pSurfDraw || m_pSurfRead); }
 
 private:
   CEGLContext(CDisplay *pDisplay, CConfig *pConfig);

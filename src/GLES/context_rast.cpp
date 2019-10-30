@@ -31,7 +31,6 @@ void CGLContext::ShadeModel(GLenum mode) {
   }
 }
 
-
 void CGLContext::Scissor(GLint x, GLint y, GLsizei width, GLsizei height) {
   if ((width < 0) || (height < 0)) {
     __glError(GL_INVALID_VALUE, _T("CGLContext::Scissor() failed, invalid ")
@@ -48,18 +47,15 @@ void CGLContext::Scissor(GLint x, GLint y, GLsizei width, GLsizei height) {
   m_dirtyFlags.ScissorRECT = 1;
 }
 
-
 void CGLContext::SampleCoverage(floatf value, GLboolean invert) {
   m_sampleCoverage.fValue = Math::TSat(value);
   m_sampleCoverage.bInvert = invert ? true : false;
 }
 
-
 void CGLContext::PolygonOffset(floatf factor, floatf units) {
   m_polygonOffset.fFactor = factor;
   m_polygonOffset.fUnits = units;
 }
-
 
 void CGLContext::PointSize(floatf size) {
   if (size <= fZERO) {
@@ -73,7 +69,6 @@ void CGLContext::PointSize(floatf size) {
   m_fPointSize = size;
 }
 
-
 void CGLContext::LineWidth(floatf width) {
   if (width <= fZERO) {
     __glError(
@@ -86,7 +81,6 @@ void CGLContext::LineWidth(floatf width) {
   m_fLineWidth = width;
 }
 
-
 void CGLContext::AlphaFunc(GLenum func, floatf ref) {
   switch (func) {
   case GL_NEVER:
@@ -98,7 +92,8 @@ void CGLContext::AlphaFunc(GLenum func, floatf ref) {
   case GL_GEQUAL:
   case GL_ALWAYS:
     m_rasterStates.AlphaFunc = CompareFuncFromEnum(func);
-    m_rasterData.AlphaRef = static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(ref)));
+    m_rasterData.AlphaRef =
+        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(ref)));
     break;
 
   default:
@@ -109,7 +104,6 @@ void CGLContext::AlphaFunc(GLenum func, floatf ref) {
     return;
   }
 }
-
 
 void CGLContext::StencilFunc(GLenum func, GLint ref, GLuint mask) {
   switch (func) {
@@ -134,7 +128,6 @@ void CGLContext::StencilFunc(GLenum func, GLint ref, GLuint mask) {
     return;
   }
 }
-
 
 void CGLContext::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
 #ifndef NDEBUG
@@ -169,7 +162,6 @@ void CGLContext::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
   m_rasterStates.StencilZPass = results[2];
 }
 
-
 void CGLContext::DepthFunc(GLenum func) {
   switch (func) {
   case GL_NEVER:
@@ -191,7 +183,6 @@ void CGLContext::DepthFunc(GLenum func) {
     return;
   }
 }
-
 
 void CGLContext::BlendFunc(GLenum sfactor, GLenum dfactor) {
   switch (sfactor) {
@@ -233,7 +224,6 @@ void CGLContext::BlendFunc(GLenum sfactor, GLenum dfactor) {
     return;
   }
 }
-
 
 void CGLContext::LogicOp(GLenum opcode) {
   switch (opcode) {

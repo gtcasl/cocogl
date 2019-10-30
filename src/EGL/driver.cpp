@@ -17,7 +17,7 @@
 #include "display.hpp"
 #include "surface.hpp"
 
-thread_local CEGLContext* tls_eglctx = nullptr;
+thread_local CEGLContext *tls_eglctx = nullptr;
 thread_local EGLint tls_eglerror = EGL_SUCCESS;
 
 CEGLDriver::CEGLDriver() {
@@ -26,7 +26,7 @@ CEGLDriver::CEGLDriver() {
 }
 
 CEGLDriver::~CEGLDriver() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));  
+  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   __safeRelease(tls_eglctx);
 
@@ -74,7 +74,6 @@ EGLint CEGLDriver::Create(CEGLDriver **ppDriver) {
   return EGL_SUCCESS;
 }
 
-
 EGLint CEGLDriver::Initialize() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -90,10 +89,8 @@ EGLint CEGLDriver::Initialize() {
   return EGL_SUCCESS;
 }
 
-void CEGLDriver::MakeCurrent(CEGLContext* pContext, 
-                             std::thread::id dwThreadID,
-                              CEGLSurface *pSurfDraw, 
-                              CEGLSurface *pSurfRead) {
+void CEGLDriver::MakeCurrent(CEGLContext *pContext, std::thread::id dwThreadID,
+                             CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead) {
 
   auto *pCtxCurr = tls_eglctx;
   if (pCtxCurr != pContext) {
@@ -110,24 +107,18 @@ void CEGLDriver::MakeCurrent(CEGLContext* pContext,
 
   if (pContext) {
     pContext->SetBindings(dwThreadID, pSurfDraw, pSurfRead);
-  }  
+  }
 }
 
-CEGLContext *CEGLDriver::GetCurrentContext() const {
-  return tls_eglctx;
-}
+CEGLContext *CEGLDriver::GetCurrentContext() const { return tls_eglctx; }
 
-void CEGLDriver::SetError(EGLint error) {
-  tls_eglerror = error;
-}
-
+void CEGLDriver::SetError(EGLint error) { tls_eglerror = error; }
 
 EGLint CEGLDriver::GetError() const {
   const EGLint error = tls_eglerror;
   tls_eglerror = EGL_SUCCESS;
   return error;
 }
-
 
 EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
                               EGLNativeDisplayType display_id) {
@@ -140,12 +131,12 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
   ASSERT(pdwHandle);
 
   if (EGL_DEFAULT_DISPLAY == display_id) {
-    // Set the default display ID
-  #if defined(_WIN32)
+// Set the default display ID
+#if defined(_WIN32)
     display_id = GetDC(NULL);
-  #elif defined(__linux__)
+#elif defined(__linux__)
     display_id = XOpenDisplay(NULL);
-  #endif
+#endif
   }
 
   // Look up for an existing display

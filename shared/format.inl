@@ -16,12 +16,10 @@
 
 namespace Format {
 
-
 template <> inline unsigned TConvertToNative<FORMAT_UNKNOWN>(const Color4 &in) {
   __unreferenced(in);
   return 0;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_UNKNOWN, false>(Color4 *pOut,
@@ -29,7 +27,6 @@ inline void TConvertFromNative<FORMAT_UNKNOWN, false>(Color4 *pOut,
   __unreferenced(pOut);
   __unreferenced(in);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_UNKNOWN, true>(Color4 *pOut,
@@ -40,11 +37,9 @@ inline void TConvertFromNative<FORMAT_UNKNOWN, true>(Color4 *pOut,
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <> inline unsigned TConvertToNative<FORMAT_R5G6B5>(const Color4 &in) {
   return ((in.r & 0xf8) << 8) | ((in.g & 0xfc) << 3) | (in.b >> 3);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_R5G6B5, false>(Color4 *pOut,
@@ -54,7 +49,6 @@ inline void TConvertFromNative<FORMAT_R5G6B5, false>(Color4 *pOut,
   pOut->g = ((in >> 3) & 0xfc) | ((in >> 9) & 0x3);
   pOut->b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_R5G6B5, true>(Color4 *pOut, unsigned in) {
@@ -67,13 +61,11 @@ inline void TConvertFromNative<FORMAT_R5G6B5, true>(Color4 *pOut, unsigned in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <>
 inline unsigned TConvertToNative<FORMAT_A1R5G5B5>(const Color4 &in) {
   return (in.a ? 0x8000 : 0) | ((in.r & 0xf8) << 7) | ((in.g & 0xf8) << 2) |
          (in.b >> 3);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A1R5G5B5, false>(Color4 *pOut,
@@ -84,7 +76,6 @@ inline void TConvertFromNative<FORMAT_A1R5G5B5, false>(Color4 *pOut,
   pOut->g = ((in >> 2) & 0xf8) | ((in >> 7) & 7);
   pOut->b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A1R5G5B5, true>(Color4 *pOut,
@@ -98,13 +89,11 @@ inline void TConvertFromNative<FORMAT_A1R5G5B5, true>(Color4 *pOut,
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <>
 inline unsigned TConvertToNative<FORMAT_R5G5B5A1>(const Color4 &in) {
   return ((in.r & 0xf8) << 8) | ((in.g & 0xf8) << 3) | ((in.b & 0xf8) >> 2) |
          (in.a ? 0x1 : 0);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_R5G5B5A1, false>(Color4 *pOut,
@@ -115,7 +104,6 @@ inline void TConvertFromNative<FORMAT_R5G5B5A1, false>(Color4 *pOut,
   pOut->g = ((in >> 3) & 0xf8) | ((in >> 8) & 7);
   pOut->b = ((in & 0x3e) << 2) | ((in & 0x3e) >> 3);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_R5G5B5A1, true>(Color4 *pOut,
@@ -129,13 +117,11 @@ inline void TConvertFromNative<FORMAT_R5G5B5A1, true>(Color4 *pOut,
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <>
 inline unsigned TConvertToNative<FORMAT_A4R4G4B4>(const Color4 &in) {
   return ((in.a & 0xf0) << 8) | ((in.r & 0xf0) << 4) | ((in.g & 0xf0) << 0) |
          (in.b >> 4);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A4R4G4B4, false>(Color4 *pOut,
@@ -146,7 +132,6 @@ inline void TConvertFromNative<FORMAT_A4R4G4B4, false>(Color4 *pOut,
   pOut->g = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
   pOut->b = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A4R4G4B4, true>(Color4 *pOut,
@@ -160,13 +145,11 @@ inline void TConvertFromNative<FORMAT_A4R4G4B4, true>(Color4 *pOut,
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <>
 inline unsigned TConvertToNative<FORMAT_R4G4B4A4>(const Color4 &in) {
   return ((in.r & 0xf0) << 8) | ((in.g & 0xf0) << 4) | ((in.b & 0xf0) << 0) |
          (in.a >> 4);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_R4G4B4A4, false>(Color4 *pOut,
@@ -177,7 +160,6 @@ inline void TConvertFromNative<FORMAT_R4G4B4A4, false>(Color4 *pOut,
   pOut->g = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
   pOut->b = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_R4G4B4A4, true>(Color4 *pOut,
@@ -191,11 +173,9 @@ inline void TConvertFromNative<FORMAT_R4G4B4A4, true>(Color4 *pOut,
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <> inline unsigned TConvertToNative<FORMAT_R8G8B8>(const Color4 &in) {
   return (in.r << 16) | (in.g << 8) | in.b;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_R8G8B8, false>(Color4 *pOut,
@@ -205,7 +185,6 @@ inline void TConvertFromNative<FORMAT_R8G8B8, false>(Color4 *pOut,
   pOut->g = (in >> 8) & 0xff;
   pOut->b = in & 0xff;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_R8G8B8, true>(Color4 *pOut, unsigned in) {
@@ -218,11 +197,9 @@ inline void TConvertFromNative<FORMAT_R8G8B8, true>(Color4 *pOut, unsigned in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <> inline unsigned TConvertToNative<FORMAT_B8G8R8>(const Color4 &in) {
   return (in.b << 16) | (in.g << 8) | in.r;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_B8G8R8, false>(Color4 *pOut,
@@ -232,7 +209,6 @@ inline void TConvertFromNative<FORMAT_B8G8R8, false>(Color4 *pOut,
   pOut->g = (in >> 8) & 0xff;
   pOut->b = in >> 16;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_B8G8R8, true>(Color4 *pOut, unsigned in) {
@@ -245,12 +221,10 @@ inline void TConvertFromNative<FORMAT_B8G8R8, true>(Color4 *pOut, unsigned in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <>
 inline unsigned TConvertToNative<FORMAT_A8R8G8B8>(const Color4 &in) {
   return (in.a << 24) | (in.r << 16) | (in.g << 8) | in.b;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A8R8G8B8, false>(Color4 *pOut,
@@ -261,7 +235,6 @@ inline void TConvertFromNative<FORMAT_A8R8G8B8, false>(Color4 *pOut,
   pOut->g = (in >> 8) & 0xff;
   pOut->b = in & 0xff;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A8R8G8B8, true>(Color4 *pOut,
@@ -275,12 +248,10 @@ inline void TConvertFromNative<FORMAT_A8R8G8B8, true>(Color4 *pOut,
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <>
 inline unsigned TConvertToNative<FORMAT_A8B8G8R8>(const Color4 &in) {
   return (in.a << 24) | (in.b << 16) | (in.g << 8) | in.r;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A8B8G8R8, false>(Color4 *pOut,
@@ -291,7 +262,6 @@ inline void TConvertFromNative<FORMAT_A8B8G8R8, false>(Color4 *pOut,
   pOut->g = (in >> 8) & 0xff;
   pOut->b = (in >> 16) & 0xff;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A8B8G8R8, true>(Color4 *pOut,
@@ -305,18 +275,15 @@ inline void TConvertFromNative<FORMAT_A8B8G8R8, true>(Color4 *pOut,
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <> inline unsigned TConvertToNative<FORMAT_A8>(const Color4 &in) {
   return in.a;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A8, false>(Color4 *pOut, unsigned in) {
   ASSERT(pOut);
   pOut->a = in;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A8, true>(Color4 *pOut, unsigned in) {
@@ -326,11 +293,9 @@ inline void TConvertFromNative<FORMAT_A8, true>(Color4 *pOut, unsigned in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <> inline unsigned TConvertToNative<FORMAT_L8>(const Color4 &in) {
   return in.r;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_L8, false>(Color4 *pOut, unsigned in) {
@@ -339,7 +304,6 @@ inline void TConvertFromNative<FORMAT_L8, false>(Color4 *pOut, unsigned in) {
   pOut->g = in;
   pOut->b = in;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_L8, true>(Color4 *pOut, unsigned in) {
@@ -352,11 +316,9 @@ inline void TConvertFromNative<FORMAT_L8, true>(Color4 *pOut, unsigned in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <> inline unsigned TConvertToNative<FORMAT_A8L8>(const Color4 &in) {
   return (in.a << 8) | in.r;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A8L8, false>(Color4 *pOut, unsigned in) {
@@ -366,7 +328,6 @@ inline void TConvertFromNative<FORMAT_A8L8, false>(Color4 *pOut, unsigned in) {
   pOut->g = in & 0xff;
   pOut->b = in & 0xff;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_A8L8, true>(Color4 *pOut, unsigned in) {
@@ -379,11 +340,9 @@ inline void TConvertFromNative<FORMAT_A8L8, true>(Color4 *pOut, unsigned in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <> inline unsigned TConvertToNative<FORMAT_D16>(const Color4 &in) {
   return in.b;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_D16, false>(Color4 *pOut, unsigned in) {
@@ -393,11 +352,9 @@ inline void TConvertFromNative<FORMAT_D16, false>(Color4 *pOut, unsigned in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 template <> inline unsigned TConvertToNative<FORMAT_X8S8D16>(const Color4 &in) {
   return in.b;
 }
-
 
 template <>
 inline void TConvertFromNative<FORMAT_X8S8D16, false>(Color4 *pOut,

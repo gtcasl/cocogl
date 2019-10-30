@@ -27,12 +27,9 @@ protected:
   virtual ~IObject() {}
 };
 
-
 class CObject : public IObject {
 public:
-  virtual long AddRef() const { 
-    return ++m_lRefCount; 
-  }
+  virtual long AddRef() const { return ++m_lRefCount; }
 
   virtual long Release() const {
     ASSERT(m_lRefCount > 0);

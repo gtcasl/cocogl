@@ -55,7 +55,6 @@ void CGLContext::ClientState(GLenum array, bool bValue) {
   }
 }
 
-
 void CGLContext::ClientActiveTexture(GLenum texture) {
   const unsigned index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
@@ -68,7 +67,6 @@ void CGLContext::ClientActiveTexture(GLenum texture) {
   m_clientActiveTexture = index;
 }
 
-
 void CGLContext::ActiveTexture(GLenum texture) {
   const unsigned index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
@@ -80,7 +78,6 @@ void CGLContext::ActiveTexture(GLenum texture) {
 
   m_activeTexture = index;
 }
-
 
 void CGLContext::VertexPointer(GLint size, GLenum type, GLsizei stride,
                                const GLvoid *pPointer) {
@@ -116,7 +113,6 @@ void CGLContext::VertexPointer(GLint size, GLenum type, GLsizei stride,
   m_positionArray.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
 }
 
-
 void CGLContext::NormalPointer(GLenum type, GLsizei stride,
                                const GLvoid *pPointer) {
   const GLint size = 3;
@@ -145,7 +141,6 @@ void CGLContext::NormalPointer(GLenum type, GLsizei stride,
   m_normalArray.pPointer = pPointer;
   m_normalArray.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
 }
-
 
 void CGLContext::ColorPointer(GLint size, GLenum type, GLsizei stride,
                               const GLvoid *pPointer) {
@@ -179,7 +174,6 @@ void CGLContext::ColorPointer(GLint size, GLenum type, GLsizei stride,
   m_colorArray.pPointer = pPointer;
   m_colorArray.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
 }
-
 
 void CGLContext::TexCoordPointer(GLint size, GLenum type, GLsizei stride,
                                  const GLvoid *pPointer) {
@@ -217,7 +211,6 @@ void CGLContext::TexCoordPointer(GLint size, GLenum type, GLsizei stride,
   texCoordArray.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
 }
 
-
 void CGLContext::PointSizePointerOES(GLenum type, GLsizei stride,
                                      const GLvoid *pPointer) {
   const GLint size = 1;
@@ -246,7 +239,6 @@ void CGLContext::PointSizePointerOES(GLenum type, GLsizei stride,
   m_pointSizeArray.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
 }
 
-
 void CGLContext::Color(floatf red, floatf green, floatf blue, floatf alpha) {
   m_vColor.x = red;
   m_vColor.y = green;
@@ -258,7 +250,6 @@ void CGLContext::Color(floatf red, floatf green, floatf blue, floatf alpha) {
       Math::TIsZero(green - fONE) && Math::TIsZero(blue - fONE);
 }
 
-
 void CGLContext::Normal(floatf nx, floatf ny, floatf nz) {
   m_vNormal.x = nx;
   m_vNormal.y = ny;
@@ -266,7 +257,6 @@ void CGLContext::Normal(floatf nx, floatf ny, floatf nz) {
 
   m_dirtyFlags.NormalizeNormal = 1;
 }
-
 
 void CGLContext::MultiTexCoord(GLenum target, floatf s, floatf t, floatf /*r*/,
                                floatf q) {

@@ -55,7 +55,6 @@ void CGLContext::Hint(GLenum target, GLenum mode) {
   }
 }
 
-
 void CGLContext::Activate(GLenum cap, bool bValue) {
   switch (cap) {
   case GL_FOG:

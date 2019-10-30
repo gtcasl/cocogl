@@ -125,7 +125,6 @@ static const CTNL::PFN_VERTEXDECODE g_processFog[] = {
     &CTNL::TProcessFog<FogExp2>,
 };
 
-
 GLenum CTNL::SetupTNLStates(GLenum mode, int first, unsigned count) {
   GLenum err;
 
@@ -228,7 +227,6 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, unsigned count) {
   return GL_NO_ERROR;
 }
 
-
 void CTNL::ProcessVertices(unsigned count) {
   const TNLFLAGS flags = m_TNLFlags;
 
@@ -296,7 +294,6 @@ void CTNL::ProcessVertices(unsigned count) {
   }
 }
 
-
 unsigned CTNL::CalcClipFlags(const VECTOR4 &vPosition) {
   const floatf cx = vPosition.x;
   const floatf cy = vPosition.y;
@@ -321,7 +318,6 @@ unsigned CTNL::CalcClipFlags(const VECTOR4 &vPosition) {
 
   return clipFlags;
 }
-
 
 unsigned CTNL::CalcUserClipFlags(unsigned count) {
   unsigned clipUnion = 0;
@@ -349,7 +345,6 @@ unsigned CTNL::CalcUserClipFlags(unsigned count) {
 
   return clipUnion;
 }
-
 
 void CTNL::XformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
                             unsigned count) {
@@ -385,7 +380,6 @@ void CTNL::XformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
   }
 }
 
-
 void CTNL::XformEyeSpace(unsigned count) {
   const MATRIX44 &matEyeXform = m_pMsModelView->GetMatrix();
 
@@ -404,7 +398,6 @@ void CTNL::XformEyeSpace(unsigned count) {
     }
   }
 }
-
 
 void CTNL::ProcessPointSize(unsigned count) {
   VECTOR3 *const pvEyePos = (VECTOR3 *)m_pbVertexData[VERTEXDATA_EYEPOS];
@@ -436,22 +429,20 @@ void CTNL::ProcessPointSize(unsigned count) {
   }
 }
 
-
 void CTNL::ProcessColor(unsigned count) {
   ColorARGB *const pcFrontColors =
       (ColorARGB *)m_pbVertexData[VERTEXDATA_FRONTCOLOR];
 
   // Clamp the color
   const ColorARGB cColor(Math::TToUNORM8(Math::TSat(m_vColor.w)),
-                         Math::TToUNORM8(Math::TSat(m_vColor.z)),
+                         Math::TToUNORM8(Math::TSat(m_vColor.x)),
                          Math::TToUNORM8(Math::TSat(m_vColor.y)),
-                         Math::TToUNORM8(Math::TSat(m_vColor.x)));
+                         Math::TToUNORM8(Math::TSat(m_vColor.z)));
 
   for (unsigned i = 0; i < count; ++i) {
     pcFrontColors[i] = cColor;
   }
 }
-
 
 void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal,
@@ -541,7 +532,6 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-
 void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal) {
   for (const Light *pLight = m_pActiveLights; pLight; pLight = pLight->pNext) {
@@ -627,7 +617,6 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
     pvOut->z += vFrontDS.z * fAtt;
   }
 }
-
 
 void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal,
@@ -735,7 +724,6 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-
 void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal) {
   for (const Light *pLight = m_pActiveLights; pLight; pLight = pLight->pNext) {
@@ -840,7 +828,6 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-
 void CTNL::ProcessTexCoords(unsigned dstIndex, unsigned srcIndex,
                             unsigned count) {
   TEXCOORD2 *const pvTexCoords =
@@ -857,7 +844,6 @@ void CTNL::ProcessTexCoords(unsigned dstIndex, unsigned srcIndex,
     pvTexCoords[k].m[1] = Math::TCast<float20>(vIn.y);
   }
 }
-
 
 GLenum CTNL::UpdatePoints(uint8_t **ppbVertexData, int first, unsigned count) {
   GLenum err;
@@ -900,7 +886,6 @@ GLenum CTNL::UpdatePoints(uint8_t **ppbVertexData, int first, unsigned count) {
   return GL_NO_ERROR;
 }
 
-
 GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, unsigned count) {
   GLenum err;
 
@@ -942,8 +927,8 @@ GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, unsigned count) {
   return GL_NO_ERROR;
 }
 
-
-GLenum CTNL::UpdateLighting(uint8_t **ppbVertexData, int first, unsigned count) {
+GLenum CTNL::UpdateLighting(uint8_t **ppbVertexData, int first,
+                            unsigned count) {
   GLenum err;
 
   if (m_dirtyFlags.ModelViewInvT33) {
@@ -1017,8 +1002,8 @@ GLenum CTNL::UpdateLighting(uint8_t **ppbVertexData, int first, unsigned count) 
   return GL_NO_ERROR;
 }
 
-
-GLenum CTNL::UpdateTexcoords(uint8_t **ppbVertexData, int first, unsigned count) {
+GLenum CTNL::UpdateTexcoords(uint8_t **ppbVertexData, int first,
+                             unsigned count) {
   GLenum err;
 
   for (unsigned i = 0, j = 0, mask = m_caps.Texture2D; mask; mask >>= 1, ++i) {
@@ -1061,7 +1046,6 @@ GLenum CTNL::UpdateTexcoords(uint8_t **ppbVertexData, int first, unsigned count)
   return GL_NO_ERROR;
 }
 
-
 void CTNL::UpdateFog(uint8_t **ppbVertexData, int /*first*/, unsigned count) {
   m_TNLFlags.Fog = 1;
   m_TNLFlags.EyeSpaceZ = 1;
@@ -1088,7 +1072,6 @@ void CTNL::UpdateFog(uint8_t **ppbVertexData, int /*first*/, unsigned count) {
   m_pfnFog = g_processFog[uiFunc];
 }
 
-
 void CTNL::UpdateModelViewInvT44() {
   MATRIX44 matTmp;
   Math::Inverse(&matTmp, m_pMsModelView->GetMatrix());
@@ -1101,14 +1084,12 @@ void CTNL::UpdateModelViewInvT44() {
   }
 }
 
-
 void CTNL::UpdateModelViewProj() {
   Math::Mul(&m_mModelViewProj, m_pMsProjection->GetMatrix(),
             m_pMsModelView->GetMatrix());
 
   m_dirtyFlags.ModelViewProj = 0;
 }
-
 
 void CTNL::UpdateScreenXform() {
   m_screenXform.fMinX =
@@ -1125,7 +1106,6 @@ void CTNL::UpdateScreenXform() {
 
   m_dirtyFlags.ScreenXform = 0;
 }
-
 
 void CTNL::UpdateClipPlanes() {
   m_TNLFlags.UserClipPlanes = 1;
@@ -1148,7 +1128,6 @@ void CTNL::UpdateClipPlanes() {
   }
 }
 
-
 void CTNL::UpdateProjectionInvT() {
   MATRIX44 matTmp;
   Math::Inverse(&matTmp, m_pMsProjection->GetMatrix());
@@ -1156,7 +1135,6 @@ void CTNL::UpdateProjectionInvT() {
 
   m_dirtyFlags.ProjectionInvT = 0;
 }
-
 
 void CTNL::UpdateModelViewInvT33() {
   MATRIX44 matTmp;
@@ -1189,7 +1167,6 @@ void CTNL::UpdateModelViewInvT33() {
   m_dirtyFlags.NormalizeNormal = 1;
 }
 
-
 void CTNL::UpdateNormal() {
   // Transform the normal to world space
   Math::Mul(&m_vNormNormal, m_vNormal, m_mModelViewInvT);
@@ -1199,7 +1176,6 @@ void CTNL::UpdateNormal() {
 
   m_dirtyFlags.NormalizeNormal = 0;
 }
-
 
 void CTNL::UpdateMaterial() {
   const VECTOR4 &vMaterialAmbient = m_material.GetColor(GL_AMBIENT);
@@ -1212,7 +1188,6 @@ void CTNL::UpdateMaterial() {
 
   m_dirtyFlags.ScaledAmbient = 0;
 }
-
 
 void CTNL::SetupLights() {
   m_pActiveLights = NULL;
@@ -1234,7 +1209,6 @@ void CTNL::SetupLights() {
 
   m_dirtyFlags.Lights = 0;
 }
-
 
 void CTNL::UpdateLights() {
   const VECTOR4 &vMaterialAmbient = m_material.GetColor(GL_AMBIENT);
@@ -1300,7 +1274,6 @@ void CTNL::UpdateLights() {
 
   m_dirtyLights.Value = 0;
 }
-
 
 void CTNL::UpdateMatrixDirtyFlags() {
   if (m_pMatrixStack == m_pMsModelView) {

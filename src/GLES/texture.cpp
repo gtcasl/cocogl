@@ -16,7 +16,6 @@
 #include "texture.hpp"
 #include "surface.hpp"
 
-
 GLenum CSurface2D::Initialize(unsigned width, unsigned height,
                               ePixelFormat format) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -56,7 +55,6 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height,
   return GL_NO_ERROR;
 }
 
-
 GLenum CSurface2D::Initialize(unsigned width, unsigned height, unsigned pitch,
                               ePixelFormat format, GLvoid *pPixels) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -88,7 +86,6 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height, unsigned pitch,
 
   return GL_NO_ERROR;
 }
-
 
 GLenum CSurface2D::Initialize(unsigned width, unsigned height,
                               ePixelFormat format, const GLvoid *pPixels) {
@@ -178,7 +175,6 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height,
   return GL_NO_ERROR;
 }
 
-
 void CSurface2D::Destroy() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -188,7 +184,6 @@ void CSurface2D::Destroy() {
 
   this->Clear();
 }
-
 
 void CSurface2D::Clear() {
   m_pbBits = NULL;
@@ -200,7 +195,6 @@ void CSurface2D::Clear() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
 
 CTexture::CTexture() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -218,12 +212,10 @@ CTexture::CTexture() {
   this->bGenMipMaps = false;
 }
 
-
 CTexture::~CTexture() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
   this->FreeSurfaces();
 }
-
 
 GLenum CTexture::Create(CTexture **ppTexture) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -242,7 +234,6 @@ GLenum CTexture::Create(CTexture **ppTexture) {
 
   return GL_NO_ERROR;
 }
-
 
 GLenum CTexture::BindSurface(CGLSurface *pSurface, bool bGenMipMaps) {
   GLenum err;
@@ -278,7 +269,6 @@ GLenum CTexture::BindSurface(CGLSurface *pSurface, bool bGenMipMaps) {
   return GL_NO_ERROR;
 }
 
-
 GLenum CTexture::ReleaseSurface(CGLSurface *pSurface) {
   if (m_pBoundSurface != pSurface) {
     return GL_INVALID_VALUE;
@@ -289,7 +279,6 @@ GLenum CTexture::ReleaseSurface(CGLSurface *pSurface) {
   return GL_NO_ERROR;
 }
 
-
 void CTexture::FreeSurfaces() {
   for (unsigned i = 0; i < MAX_TEXTURE_LEVELS; ++i) {
     m_surfaces[i].Destroy();
@@ -299,7 +288,6 @@ void CTexture::FreeSurfaces() {
 
   __safeRelease(m_pBoundSurface);
 }
-
 
 GLenum CTexture::GenerateMipmaps() {
   GLenum err;
@@ -580,7 +568,6 @@ GLenum CTexture::GenerateMipmaps() {
   return GL_NO_ERROR;
 }
 
-
 bool CTexture::Validate() {
   const CSurface2D &surface0 = this->GetSurface(0);
 
@@ -619,7 +606,6 @@ bool CTexture::Validate() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
 
 bool TexUnit::Prepare(Sampler *pSampler, TEXTURESTATES *pStates) {
   ASSERT(pSampler && pStates);

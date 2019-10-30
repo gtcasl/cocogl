@@ -14,7 +14,6 @@
 //
 #pragma once
 
-
 class CLogger {
 public:
   enum {
@@ -38,7 +37,6 @@ public:
   void DecrIndent();
 
 private:
-  
   FILE *m_pFile;
   unsigned m_indent;
 };

@@ -26,7 +26,6 @@
 #define EXPBIAS 127
 #define EXPSHIFT 8
 
-
 int FloatToFixed(unsigned int base, float fValue) {
   const unsigned uiFloat = *reinterpret_cast<unsigned *>(&fValue);
   const unsigned sign = (uiFloat & FLOATSIGNMASK) >> FLOATSIGNSHIFT;
@@ -88,7 +87,6 @@ int FloatToFixed(unsigned int base, float fValue) {
     }
   }
 }
-
 
 float FixedToFloat(unsigned int base, int value) {
   if (0 == value) {

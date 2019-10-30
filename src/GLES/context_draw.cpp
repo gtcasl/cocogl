@@ -26,16 +26,13 @@ void CGLContext::ClearColor(floatf red, floatf green, floatf blue,
   m_dirtyFlags.ClearColor = 1;
 }
 
-
 void CGLContext::ClearDepth(floatf depth) {
   m_fClearDepth = depth;
 
   m_dirtyFlags.ClearDepth = 1;
 }
 
-
 void CGLContext::ClearStencil(GLint stencil) { m_clearStencil = stencil; }
-
 
 void CGLContext::ColorMask(GLboolean red, GLboolean green, GLboolean blue,
                            GLboolean alpha) {
@@ -47,14 +44,11 @@ void CGLContext::ColorMask(GLboolean red, GLboolean green, GLboolean blue,
   m_dirtyFlags.ColorWriteMask = 1;
 }
 
-
 void CGLContext::DepthMask(GLboolean flag) {
   m_depthWriteMask = flag ? 0xffff : 0;
 }
 
-
 void CGLContext::StencilMask(GLuint mask) { m_stencilWriteMask = mask; }
-
 
 void CGLContext::Clear(GLbitfield mask) {
   if (mask &
@@ -104,7 +98,6 @@ void CGLContext::Clear(GLbitfield mask) {
   }
 }
 
-
 void CGLContext::DrawArrays(GLenum mode, GLint first, GLsizei count) {
   GLenum err;
 
@@ -148,7 +141,6 @@ L_EXIT:
   this->PostRender();
 }
 
-
 void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
                               const GLvoid *pIndices) {
   {
@@ -165,7 +157,7 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
     err = this->SetupRasterStates(mode);
     if (__glFailed(err)) {
       __glLogError(_T("CRasterizer::SetupRasterStates() failed, err = %d.\r\n"),
-                  err);
+                   err);
       goto L_EXIT;
     }
 
@@ -197,9 +189,10 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
       err = this->TRenderIndexedPrimitive<uint16_t>(
           mode, reinterpret_cast<const uint16_t *>(pIndices), count, vmin);
       if (__glFailed(err)) {
-        __glError(err, _T("CRasterizer::TRenderIndexedPrimitive<uint16_t>() failed, ")
-                      _T("err = %d.\r\n"),
-                  err);
+        __glError(
+            err, _T("CRasterizer::TRenderIndexedPrimitive<uint16_t>() failed, ")
+                 _T("err = %d.\r\n"),
+            err);
       }
       break;
 
@@ -208,15 +201,17 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
       err = this->TRenderIndexedPrimitive<uint8_t>(
           mode, reinterpret_cast<const uint8_t *>(pIndices), count, vmin);
       if (__glFailed(err)) {
-        __glError(err, _T("CRasterizer::TRenderIndexedPrimitive<uint8_t>() failed, ")
-                      _T("err = %d.\r\n"),
+        __glError(err,
+                  _T("CRasterizer::TRenderIndexedPrimitive<uint8_t>() failed, ")
+                  _T("err = %d.\r\n"),
                   err);
       }
       break;
 
     default:
-      __glError(GL_INVALID_ENUM, _T("CGLContext::DrawElements() failed, invalid ")
-                                _T("type parameter: %d.\r\n"),
+      __glError(GL_INVALID_ENUM,
+                _T("CGLContext::DrawElements() failed, invalid ")
+                _T("type parameter: %d.\r\n"),
                 type);
     }
   }
@@ -227,11 +222,9 @@ L_EXIT:
   this->PostRender();
 }
 
-
 void CGLContext::Flush() {
   //--
 }
-
 
 void CGLContext::Finish() {
   //--

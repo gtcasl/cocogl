@@ -26,7 +26,6 @@
         TGenericScanlineP<depth, color, texture0, texture1, fog>::Execute      \
   }
 
-
 static const struct ScanlineRasterID {
   PFN_Scanline pfnAffine;
   PFN_Scanline pfnPerspective;
@@ -107,7 +106,6 @@ l_genericScanlines[] = {
     MAKE_SCANLINE(true, 2, 2, true, true),
 };
 
-
 static const PFN_GetTexelColor l_pfnGetTexelColorTable[] = {
     TGetTexelColorPt<FORMAT_A8, ADDRESS_WRAP, ADDRESS_WRAP>,
     TGetTexelColorPt<FORMAT_A8, ADDRESS_WRAP, ADDRESS_CLAMP>,
@@ -153,14 +151,12 @@ static const PFN_GetTexelColor l_pfnGetTexelColorTable[] = {
     TGetTexelColorLn<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
 };
 
-
 static const PFN_Compare s_pfnCompare[] = {
     TCompare<COMPARE_NEVER>,   TCompare<COMPARE_LESS>,
     TCompare<COMPARE_EQUAL>,   TCompare<COMPARE_LEQUAL>,
     TCompare<COMPARE_GREATER>, TCompare<COMPARE_NOTEQUAL>,
     TCompare<COMPARE_GEQUAL>,  TCompare<COMPARE_ALWAYS>,
 };
-
 
 static const PFN_GetTexEnvColor s_pfnGetTexEnvColorTable[] = {
     TGetTexEnvColorA<ENVMODE_ADD>,        TGetTexEnvColorA<ENVMODE_BLEND>,
@@ -176,8 +172,8 @@ static const PFN_GetTexEnvColor s_pfnGetTexEnvColorTable[] = {
     TGetTexEnvColorARGB<ENVMODE_DECAL>,
 };
 
-
 static const PFN_Blend s_pfnBlendTable[] = {
+#if defined(COCOGL_RASTER_R5G6B5)
     TBlend<FORMAT_R5G6B5, BLEND_ZERO, BLEND_ZERO>,
     TBlend<FORMAT_R5G6B5, BLEND_ONE, BLEND_ZERO>,
     TBlend<FORMAT_R5G6B5, BLEND_ZERO, BLEND_ZERO>,
@@ -266,10 +262,100 @@ static const PFN_Blend s_pfnBlendTable[] = {
     TBlend<FORMAT_R5G6B5, BLEND_DST_COLOR, BLEND_ONE_MINUS_DST_ALPHA>,
     TBlend<FORMAT_R5G6B5, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE_MINUS_DST_ALPHA>,
     TBlend<FORMAT_R5G6B5, BLEND_SRC_ALPHA_SATURATE, BLEND_ONE_MINUS_DST_ALPHA>,
+  #elif defined (COCOGL_RASTER_A8R8G8B8)                 
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ONE>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_ONE>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_ONE>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_ONE>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_ONE>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_ONE_MINUS_DST_ALPHA>,
+  #endif
 };
 
-
 static const PFN_WriteColor s_pfnWriteColorTable[] = {
+#if defined(COCOGL_RASTER_R5G6B5)
     TWriteColor<FORMAT_R5G6B5, false, LOGICOP_CLEAR>,
     TWriteColor<FORMAT_R5G6B5, false, LOGICOP_AND>,
     TWriteColor<FORMAT_R5G6B5, false, LOGICOP_AND_REVERSE>,
@@ -302,10 +388,43 @@ static const PFN_WriteColor s_pfnWriteColorTable[] = {
     TWriteColor<FORMAT_R5G6B5, true, LOGICOP_OR_INVERTED>,
     TWriteColor<FORMAT_R5G6B5, true, LOGICOP_NAND>,
     TWriteColor<FORMAT_R5G6B5, true, LOGICOP_SET>,
+  #elif defined(COCOGL_RASTER_A8R8G8B8)
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_CLEAR>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND_REVERSE>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_COPY>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND_INVERTED>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_NOOP>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_XOR>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_OR>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_NOR>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_EQUIV>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_INVERT>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_OR_REVERSE>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_COPY_INVERTED>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_OR_INVERTED>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_NAND>,
+    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_SET>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_CLEAR>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_AND>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_AND_REVERSE>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_COPY>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_AND_INVERTED>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NOOP>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_XOR>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NOR>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_EQUIV>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_INVERT>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR_REVERSE>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_COPY_INVERTED>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR_INVERTED>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NAND>,
+    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_SET>,
+  #endif
 };
 
 //////////////////////////////////////////////////////////////////////////////
-
 
 CGenericRasterOp::CGenericRasterOp(const RASTERID &rasterID) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -321,11 +440,9 @@ CGenericRasterOp::CGenericRasterOp(const RASTERID &rasterID) {
   m_pfnScanline = NULL;
 }
 
-
 CGenericRasterOp::~CGenericRasterOp() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 }
-
 
 GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
                                 const RASTERID &rasterID) {
@@ -357,7 +474,6 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
 
   return GL_NO_ERROR;
 }
-
 
 GLenum CGenericRasterOp::Initialize() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
@@ -412,7 +528,6 @@ GLenum CGenericRasterOp::Initialize() {
   return GL_NO_ERROR;
 }
 
-
 void CGenericRasterOp::SelectDepthStencilFunc() {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
   const RASTERSTATES rasterStates = m_rasterID.States;
@@ -435,7 +550,6 @@ void CGenericRasterOp::SelectDepthStencilFunc() {
   }
 }
 
-
 void CGenericRasterOp::SelectSamplerFunc() {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
   for (unsigned i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
@@ -455,7 +569,6 @@ void CGenericRasterOp::SelectSamplerFunc() {
     m_samplers[i].pfnGetTexelColorMag = l_pfnGetTexelColorTable[magIndex];
   }
 }
-
 
 void CGenericRasterOp::SelectTexEnvFunc() {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
@@ -490,7 +603,6 @@ void CGenericRasterOp::SelectTexEnvFunc() {
   }
 }
 
-
 void CGenericRasterOp::SelectAlphaTestFunc() {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
   const RASTERSTATES rasterStates = m_rasterID.States;
@@ -500,7 +612,6 @@ void CGenericRasterOp::SelectAlphaTestFunc() {
   m_pfnAlphaTest = s_pfnCompare[index];
 }
 
-
 void CGenericRasterOp::SelectBlendFunc() {
   const RASTERSTATES rasterStates = m_rasterID.States;
   const unsigned index =
@@ -509,7 +620,6 @@ void CGenericRasterOp::SelectBlendFunc() {
   ASSERT(index < __countof(s_pfnBlendTable));
   m_pfnBlend = s_pfnBlendTable[index];
 }
-
 
 void CGenericRasterOp::SelectWriteColorFunc() {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
@@ -523,7 +633,6 @@ void CGenericRasterOp::SelectWriteColorFunc() {
   ASSERT(index < __countof(s_pfnWriteColorTable));
   m_pfnWriteColor = s_pfnWriteColorTable[index];
 }
-
 
 bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
                                      unsigned depthValue,
@@ -603,7 +712,6 @@ bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
   return bStencilTest;
 }
 
-
 void CGenericRasterOp::GetSamplerColor(Color4 *pOut, unsigned unit,
                                        const RasterData &rasterData, fixedRX fU,
                                        fixedRX fV, fixedRX fM) const {
@@ -669,7 +777,6 @@ void CGenericRasterOp::GetSamplerColor(Color4 *pOut, unsigned unit,
   }
   }
 }
-
 
 void CGenericRasterOp::ApplyFog(const RasterData &rasterData, Color4 *pInOut,
                                 fixedRX fFactor) {

@@ -17,7 +17,6 @@
 #include "display.hpp"
 #include "surface.hpp"
 
-
 CEGLContext::CEGLContext(CDisplay *pDisplay, CConfig *pConfig) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -35,7 +34,6 @@ CEGLContext::CEGLContext(CDisplay *pDisplay, CConfig *pConfig) {
   m_glContext = NULL;
 }
 
-
 CEGLContext::~CEGLContext() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -48,7 +46,6 @@ CEGLContext::~CEGLContext() {
   __safeRelease(m_pConfig);
   __safeRelease(m_pDisplay);
 }
-
 
 EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
                            CConfig *pConfig, CEGLContext *pCtxShared) {
@@ -80,7 +77,6 @@ EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
   return EGL_SUCCESS;
 }
 
-
 EGLint CEGLContext::Initialize(CEGLContext *pCtxShared) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -102,7 +98,6 @@ EGLint CEGLContext::Initialize(CEGLContext *pCtxShared) {
   return EGL_SUCCESS;
 }
 
-
 EGLint CEGLContext::GetAttribute(EGLint name, EGLint *pValue) {
   EGLint value;
 
@@ -123,9 +118,8 @@ EGLint CEGLContext::GetAttribute(EGLint name, EGLint *pValue) {
   return EGL_SUCCESS;
 }
 
-
-void CEGLContext::SetBindings(std::thread::id dwThreadID, CEGLSurface *pSurfDraw,
-                              CEGLSurface *pSurfRead) {
+void CEGLContext::SetBindings(std::thread::id dwThreadID,
+                              CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead) {
   m_dwThreadID = dwThreadID;
 
   if (pSurfDraw) {

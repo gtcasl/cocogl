@@ -14,15 +14,15 @@
 //
 #pragma once
 
-
 template <>
 inline void CGLSurface::TColorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
-                                         unsigned value, unsigned mask,
-                                         const Rect &rect) {
+                                             unsigned value, unsigned mask,
+                                             const Rect &rect) {
   unsigned width = rect.right - rect.left;
   unsigned height = rect.bottom - rect.top;
   unsigned pitch = surfDesc.Pitch;
-  uint8_t *pbBits = surfDesc.pBits + rect.left * sizeof(uint16_t) + rect.top * pitch;
+  uint8_t *pbBits =
+      surfDesc.pBits + rect.left * sizeof(uint16_t) + rect.top * pitch;
 
   const uint16_t wValue = static_cast<uint16_t>(value);
   const uint16_t wMask = static_cast<uint16_t>(mask);
@@ -84,15 +84,15 @@ inline void CGLSurface::TColorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
   }
 }
 
-
 template <>
 inline void CGLSurface::TColorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
-                                          unsigned value, unsigned mask,
-                                          const Rect &rect) {
+                                             unsigned value, unsigned mask,
+                                             const Rect &rect) {
   unsigned height = rect.bottom - rect.top;
   unsigned width = rect.right - rect.left;
   unsigned pitch = surfDesc.Pitch;
-  uint8_t *pbBits = surfDesc.pBits + rect.left * sizeof(uint32_t) + rect.top * pitch;
+  uint8_t *pbBits =
+      surfDesc.pBits + rect.left * sizeof(uint32_t) + rect.top * pitch;
 
   if (((width * sizeof(uint32_t)) == pitch)) {
     if (0xffffffff == mask) {
