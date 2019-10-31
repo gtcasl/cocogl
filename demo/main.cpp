@@ -68,7 +68,7 @@ static void parse_args(int argc, char **argv) {
     case '?':
     case 'h':
       printf("CocoGL Demo.\n");
-      printf("Usage: [-t: testid] [-h: help]\n");
+      printf("Usage: [-t: testno] [-h: help]\n");
       [[fallthrough]];
     default:
       exit(1);
@@ -125,6 +125,7 @@ int main(int argc, char **argv) {
 
   if (!test->OnInitialize(SCREEN_WIDTH, SCREEN_HEIGHT)) {
     std::cout << "test initiaklization failed" << std::endl;
+    delete test;
     exit(1);
   }
 

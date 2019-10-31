@@ -15,7 +15,7 @@
             "cwd": "${workspaceFolder}/demo",
             "environment": [{
                 "name": "LD_LIBRARY_PATH",
-                "value": "${workspaceFolder}/src/EGL:${workspaceFolder}/src/GLES"
+                "value": "${workspaceFolder}/src/GLES_CM"
             }],
             "externalConsole": false,
             "MIMode": "gdb",

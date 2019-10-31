@@ -15,33 +15,34 @@
 class CEGLContext;
 class CEGLSurface;
 
-class CEGLDriver : public CObject {
+class CEGLDriver {
 public:
-  static EGLint Create(CEGLDriver **ppDriver);
+  CEGLDriver();
+  ~CEGLDriver();
 
   EGLint GetDisplay(uint32_t *pdwHandle, EGLNativeDisplayType display_id);
 
   void SetError(EGLint error);
   EGLint GetError() const;
 
-  template <class T> inline T TGetObject(void *object) const {
+  template <class T> inline T TGetObject(void *handle) const {
     return reinterpret_cast<T>(
-        m_pHandles->GetObject(reinterpret_cast<intptr_t>(object), this));
+        m_pHandles->GetObject(reinterpret_cast<intptr_t>(handle), this));
   }
 
-  template <class T> inline T TDeleteObject(void *object) const {
+  template <class T> inline T UnregisterObject(void *handle) const {
     return reinterpret_cast<T>(
-        m_pHandles->Delete(reinterpret_cast<intptr_t>(object), this));
+        m_pHandles->Delete(reinterpret_cast<intptr_t>(handle), this));
   }
 
-  template <class T> inline T TGetObject(void *object, void *pOwner) const {
+  template <class T> inline T TGetObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        m_pHandles->GetObject(reinterpret_cast<intptr_t>(object), pOwner));
+        m_pHandles->GetObject(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
-  template <class T> inline T TDeleteObject(void *object, void *pOwner) const {
+  template <class T> inline T UnregisterObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        m_pHandles->Delete(reinterpret_cast<intptr_t>(object), pOwner));
+        m_pHandles->Delete(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
   uint32_t GetHandle(const void *pObject) {
@@ -57,20 +58,13 @@ public:
 
   CEGLContext *GetCurrentContext() const;
 
-  EGLint AddObject(uint32_t *pdwHandle, void *pObject, uint8_t type,
+  EGLint RegisterObject(uint32_t *pdwHandle, void *pObject, uint8_t type,
                    void *pOwner) {
     return EGLERROR_FROM_HRESULT(
         m_pHandles->Insert(pdwHandle, pObject, type, pOwner));
   }
 
-  std::mutex &GetCS() { return m_CS; }
-
 private:
-  CEGLDriver();
-  ~CEGLDriver();
 
-  EGLint Initialize();
-
-  std::mutex m_CS;
   CHandleTable *m_pHandles;
 };

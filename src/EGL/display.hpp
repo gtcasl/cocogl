@@ -43,7 +43,6 @@ private:
   EGLint CreateConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
                       EGLint depth, EGLint stencil);
 
-  std::mutex m_CS;
   CHandleTable *m_pHandles;
   EGLNativeDisplayType m_hNative;
   ConfigList m_configs;

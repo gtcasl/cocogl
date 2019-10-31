@@ -21,16 +21,16 @@ inline bool __eglSucceeded(EGLint err) { return err == EGL_SUCCESS; }
 #define __profileAPI(func, ...)
 #else
 #define __profileAPI(func, ...)                                                \
-  CProfiler profiler(eglLogger, func, __VA_ARGS__);
+  CProfiler profiler(g_logger, func, __VA_ARGS__);
 #endif
 
 #ifndef NDEBUG
-#define __eglLog(...) eglLogger.Write(__VA_ARGS__);
+#define __eglLog(...) g_logger.Write(__VA_ARGS__);
 
 #define __eglLogError(...)                                                     \
-  eglLogger.Write(_T("*** Error in file %s at line %d.\r\n"), _T(__FILE__),    \
+  g_logger.Write(_T("*** Error in file %s at line %d.\r\n"), _T(__FILE__),    \
                   __LINE__);                                                   \
-  eglLogger.Write(__VA_ARGS__);                                                \
+  g_logger.Write(__VA_ARGS__);                                                \
   ASSERT(false);
 #else
 #define __eglLog(...)
@@ -39,7 +39,7 @@ inline bool __eglSucceeded(EGLint err) { return err == EGL_SUCCESS; }
 
 #define __eglError(error, ...)                                                 \
   __eglLogError(__VA_ARGS__);                                                  \
-  g_dll.driver()->SetError(error);
+  g_driver.SetError(error);
 
 inline bool __glFailed(GLenum err) { return err != GL_NO_ERROR; }
 

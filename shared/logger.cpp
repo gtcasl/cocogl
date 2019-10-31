@@ -15,9 +15,16 @@
 #include "stdafx.h"
 #include <stdarg.h>
 
-CLogger::CLogger() {
-  m_pFile = nullptr;
-  m_indent = 0;
+CLogger::CLogger(LPCTSTR lpszFileName, LPCTSTR lpszMode) 
+  : m_pFile(nullptr)
+  , m_indent(0) {
+  if (lpszFileName) {
+    auto hr = this->Open(lpszFileName, lpszMode);
+    if FAILED(hr) {
+      _tprintf(_T("error: couldn't open log file: %s"), lpszFileName);
+    }
+
+  }
 }
 
 CLogger::~CLogger() {
@@ -54,6 +61,9 @@ HRESULT CLogger::Open(LPCTSTR lpszFileName, LPCTSTR lpszMode) {
 }
 
 HRESULT CLogger::Write(const TCHAR *pszFormat, ...) {
+  if (nullptr == m_pFile) 
+    return E_FAIL;
+    
   if ((nullptr == pszFormat) || (0 == *pszFormat)) {
     return S_OK;
   }
@@ -70,12 +80,13 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, ...) {
 
   va_end(arglist);
 
-  fflush(m_pFile);
-
   return S_OK;
 }
 
 HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
+  if (nullptr == m_pFile) 
+    return E_FAIL;
+
   if ((nullptr == pszFormat) || (0 == *pszFormat)) {
     return S_OK;
   }
@@ -86,8 +97,6 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
   }
 
   _vftprintf(m_pFile, pszFormat, arglist);
-
-  fflush(m_pFile);
 
   return S_OK;
 }

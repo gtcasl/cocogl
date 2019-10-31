@@ -37,7 +37,7 @@ CDisplay::~CDisplay() {
 #endif
   }
 
-  CHandleTable::Enumerator enumerator = m_pHandles->GetEnumerator(this);
+  auto enumerator = m_pHandles->GetEnumerator(this);
   while (!enumerator.IsEnd()) {
     reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
   }
@@ -52,7 +52,7 @@ EGLint CDisplay::Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC,
   ASSERT(pHandles && ppDisplay);
 
   // Create a new display object
-  CDisplay *const pDisplay = new CDisplay(hDC, pHandles);
+  auto pDisplay = new CDisplay(hDC, pHandles);
   if (nullptr == pDisplay) {
     __eglLogError(_T("CDisplay allocation failed, out of memory"));
     return EGL_BAD_ALLOC;
@@ -66,8 +66,6 @@ EGLint CDisplay::Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC,
 }
 
 EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
-  std::lock_guard<std::mutex> lock(m_CS);
-
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   EGLint err;
@@ -223,7 +221,7 @@ EGLint CDisplay::ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
   for (CDisplay::ConfigList::Iter iter = m_configs.GetBegin(),
                                   iterEnd = m_configs.GetEnd();
        (iter != iterEnd) && (num_config < config_size);) {
-    CConfig *const pConfig = *iter++;
+    auto pConfig = *iter++;
 
     bool bResult;
     err = pConfig->Matches(pAttrib_list, &bResult);

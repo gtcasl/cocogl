@@ -101,7 +101,7 @@ EGLint CEGLSurface::CreateWND(CEGLSurface **ppSurface, CDisplay *display,
   ASSERT(ppSurface);
 
   // Create a new surface object
-  CEGLSurface *pSurface = new CEGLSurface(display, surfaceType, pConfig);
+  auto pSurface = new CEGLSurface(display, surfaceType, pConfig);
   if (nullptr == pSurface) {
     __eglLogError(_T("CEGLSurface allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;
@@ -132,7 +132,7 @@ EGLint CEGLSurface::CreatePXM(CEGLSurface **ppSurface, CDisplay *display,
   ASSERT(ppSurface);
 
   // Create a new surface object
-  CEGLSurface *pSurface = new CEGLSurface(display, surfaceType, pConfig);
+  auto pSurface = new CEGLSurface(display, surfaceType, pConfig);
   if (nullptr == pSurface) {
     __eglLogError(_T("CEGLSurface allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;
@@ -165,7 +165,7 @@ EGLint CEGLSurface::CreatePBF(CEGLSurface **ppSurface, CDisplay *display,
   ASSERT(ppSurface);
 
   // Create a new surface object
-  CEGLSurface *pSurface = new CEGLSurface(display, surfaceType, pConfig);
+  auto pSurface = new CEGLSurface(display, surfaceType, pConfig);
   if (nullptr == pSurface) {
     __eglLogError(_T("CEGLSurface allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;

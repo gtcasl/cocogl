@@ -20,7 +20,7 @@
 
 #include <platform.hpp>
 #include <GLES/gl.h>
-#include "../GLES/glcommon.hpp"
+#include "../GLESv1/glcommon.hpp"
 #include <GLES/glext.h>
 #include <EGL/egl.h>
 #include <utils.hpp>
@@ -44,4 +44,4 @@
 #include "types.hpp"
 #include "utility.hpp"
 
-extern CLogger eglLogger;
+extern CLogger g_logger;

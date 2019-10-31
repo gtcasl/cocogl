@@ -20,10 +20,10 @@ public:
     MAX_INDENT = 64,
   };
 
-  CLogger();
+  CLogger(LPCTSTR lpszFileName = nullptr, LPCTSTR lpszMode = _T("w"));
   virtual ~CLogger();
 
-  HRESULT Open(LPCTSTR lpszFileName, LPCTSTR lpszMode);
+  HRESULT Open(LPCTSTR lpszFileName, LPCTSTR lpszMode = _T("w"));
 
   HRESULT Write(const TCHAR *pszFormat, ...);
 

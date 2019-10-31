@@ -44,13 +44,6 @@ private:
 public:
   class Enumerator {
   public:
-    ~Enumerator() {
-      if (m_pHandles) {
-        m_pHandles->Unlock();
-        m_pHandles->Release();
-      }
-    }
-
     uint8_t GetType() const { return m_pList->Type; }
 
     void *GetObject() const { return m_pList->pObject; }
@@ -63,17 +56,7 @@ public:
     }
 
     bool IsEnd() {
-      if (m_pList) {
-        return false;
-      }
-
-      if (m_pHandles) {
-        m_pHandles->Unlock();
-        m_pHandles->Release();
-        m_pHandles = nullptr;
-      }
-
-      return true;
+       return (nullptr == m_pList);
     }
 
     void MoveNext() {
@@ -91,29 +74,17 @@ public:
         while (m_pList && m_pOwner && (m_pList->pOwner != m_pOwner)) {
           m_pList = m_pList->pNext;
         }
-
         return pObject;
       }
-
       return nullptr;
-    }
-
-    void operator=(const Enumerator &rhs) {
-      this->Copy(rhs.m_pHandles, rhs.m_pOwner);
     }
 
   private:
     Enumerator(CHandleTable *pHandles, const void *pOwner) {
-      this->Copy(pHandles, pOwner);
-    }
-
-    void Copy(CHandleTable *pHandles, const void *pOwner) {
       ASSERT(pHandles);
+      std::lock_guard<std::mutex> lock(pHandles->m_CS);      
 
-      pHandles->AddRef();
       m_pHandles = pHandles;
-      pHandles->Lock();
-
       m_pList = pHandles->m_pActiveList;
       m_pOwner = pOwner;
 
@@ -150,7 +121,7 @@ public:
   unsigned GetNumHandles() const { return m_nHandleCount; }
 
   uint32_t FindHandle(const void *pObject, const void *pOwner = nullptr) {
-    CHandleTable::Enumerator enumerator = this->GetEnumerator(pOwner);
+    auto enumerator = this->GetEnumerator(pOwner);
     while (!enumerator.IsEnd()) {
       if (pObject == enumerator.GetObject()) {
         return enumerator.GetHandle();
@@ -165,10 +136,6 @@ public:
 private:
   CHandleTable();
   ~CHandleTable();
-
-  inline void Lock() { m_CS.lock(); }
-
-  void Unlock() { m_CS.unlock(); }
 
   static unsigned GetHandleIndex(uint32_t dwHandle) {
     return (dwHandle & HANDLE_INDEX_MASK);
