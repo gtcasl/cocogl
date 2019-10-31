@@ -33,6 +33,7 @@ To use CocoGL you must clone the repository and build the sources
     cd demo & make
 
 Testing
+
     cd demo
     ./demo --help
     
