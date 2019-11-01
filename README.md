@@ -41,9 +41,9 @@ To use CocoGL you must clone the repository and build the sources
 
     git clone https://github.com/gtcasl/cocogl.git
     cd cocogl
-    cd shared && make
-    cd src/GLES_CM && make
-    cd demo & make
+    make -C shared
+    make -C src/GLES_CM
+    make -C demo   
 
 Testing
 
