@@ -22,25 +22,32 @@ Other dependencies include:
 Default Build Instructions (Ubuntu Trusty)
 ------------------------------------------
 
-X11 Library Install:
+GCC 7.1 Install:
+  
+  sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+  sudo apt-get update
+  sudo apt-get install gcc-7 g++-7
+  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+
+Xlib 11 Install:
 
   sudo apt install libx11-dev
 
 SDL 2.0 Install:
 
-    sudo apt-get install libsdl2-dev
+  sudo apt-get install libsdl2-dev
 
 To use CocoGL you must clone the repository and build the sources
 
-    git clone https://github.com/gtcasl/cocogl.git
-    cd cocogl
-    cd shared && make
-    cd src/GLES_CM && make
-    cd demo & make
+  git clone https://github.com/gtcasl/cocogl.git
+  cd cocogl
+  cd shared && make
+  cd src/GLES_CM && make
+  cd demo & make
 
 Testing
 
-    cd demo
-    ./demo --help
+  cd demo
+  ./demo --help
     
 ![Screenshot1](screenshot1.png)
