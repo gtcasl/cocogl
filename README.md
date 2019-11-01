@@ -15,10 +15,16 @@ Dependencies
 CocoGL requires C++17 compiler and above.
 
 Other dependencies include:
+
+  - [XLIB 11] (https://www.x.org/wiki/)
   - [SDL 2.0] (https://www.libsdl.org/index.php)
 
 Default Build Instructions (Ubuntu Trusty)
 ------------------------------------------
+
+X11 Library Install:
+
+  sudo apt install libx11-dev
 
 SDL 2.0 Install:
 
