@@ -49,7 +49,7 @@ Testing
 
     cd demo
     source env.sh
-    ./demo --help
+    ./demo -?
     ./demo -t7
     
 ![Screenshot1](screenshot1.png)
