@@ -48,6 +48,8 @@ To use CocoGL you must clone the repository and build the sources
 Testing
 
     cd demo
+    source env.sh
     ./demo --help
+    ./demo -t7
     
 ![Screenshot1](screenshot1.png)
