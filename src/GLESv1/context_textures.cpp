@@ -151,7 +151,7 @@ void CGLContext::TexImage2D(GLenum target, GLint level, GLint internalformat,
   }
 
   ePixelFormat srcFormat;
-  unsigned srcBPP;
+  uint32_t srcBPP;
   err = ToPixelFormat(&srcFormat, &srcBPP, format, type);
   if (__glFailed(err)) {
     __glError(err, _T("ToPixelFormat() failed, err = %d.\r\n"), err);
@@ -220,8 +220,8 @@ void CGLContext::TexSubImage2D(GLenum target, GLint level, GLint xoffset,
   const CSurface2D &surface2D = pTexture->GetSurface(level);
 
   if ((xoffset < 0) || (yoffset < 0) ||
-      (static_cast<unsigned>(xoffset + width) > surface2D.GetWidth()) ||
-      (static_cast<unsigned>(yoffset + height) > surface2D.GetHeight())) {
+      (static_cast<uint32_t>(xoffset + width) > surface2D.GetWidth()) ||
+      (static_cast<uint32_t>(yoffset + height) > surface2D.GetHeight())) {
     __glError(
         GL_INVALID_VALUE,
         _T("CGLContext::TexSubImage2D() failed, invalid input offsets.\r\n"));
@@ -229,7 +229,7 @@ void CGLContext::TexSubImage2D(GLenum target, GLint level, GLint xoffset,
   }
 
   ePixelFormat srcFormat;
-  unsigned srcBPP;
+  uint32_t srcBPP;
   err = ToPixelFormat(&srcFormat, &srcBPP, format, type);
   if (__glFailed(err)) {
     __glError(err, _T("ToPixelFormat() failed, err = %d.\r\n"), err);
@@ -381,8 +381,8 @@ void CGLContext::CopyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
   const CSurface2D &surface2D = pTexture->GetSurface(level);
 
   if ((xoffset < 0) || (yoffset < 0) ||
-      (static_cast<unsigned>(xoffset + width) > surface2D.GetWidth()) ||
-      (static_cast<unsigned>(yoffset + height) > surface2D.GetHeight())) {
+      (static_cast<uint32_t>(xoffset + width) > surface2D.GetWidth()) ||
+      (static_cast<uint32_t>(yoffset + height) > surface2D.GetHeight())) {
     __glError(
         GL_INVALID_VALUE,
         _T("CGLContext::TexSubImage2D() failed, invalid input offsets.\r\n"));
@@ -442,7 +442,7 @@ void CGLContext::ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
   }
 
   ePixelFormat dstFormat;
-  unsigned dstBPP;
+  uint32_t dstBPP;
   err = ToPixelFormat(&dstFormat, &dstBPP, format, type);
   if (__glFailed(err)) {
     __glError(err, _T("ToPixelFormat() failed, err = %d.\r\n"), err);
@@ -541,7 +541,7 @@ void CGLContext::DeleteTextures(GLsizei n, const GLuint *phTextures) {
           reinterpret_cast<CTexture *>(m_pHandles->Delete(handle, this));
       if (pTexture) {
         // Unbind the texture if bound.
-        for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
+        for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
           if (pTexture == this->GetTexture(i)) {
             this->SetTexture(i, m_pTexDefault);
           }

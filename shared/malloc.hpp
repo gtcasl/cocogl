@@ -38,9 +38,9 @@ private:
     Block *pPrevUsed;
 
     uint8_t *pMem;
-    unsigned Size;
+    uint32_t Size;
 
-    Block(uint8_t *pMem, unsigned size)
+    Block(uint8_t *pMem, uint32_t size)
         : pNextFreeS(nullptr), pPrevFreeS(nullptr), pNextFreeM(nullptr),
           pPrevFreeM(nullptr), pNextUsed(nullptr), pPrevUsed(nullptr), pMem(pMem),
           Size(size) {}
@@ -56,16 +56,16 @@ private:
     Block *pFreeSList;
     Block *pFreeMList;
     uint8_t *pBuffer;
-    unsigned BufferSize;
+    uint32_t BufferSize;
 
-    Page(uint8_t *pBuffer_, unsigned bufferSize)
+    Page(uint8_t *pBuffer_, uint32_t bufferSize)
         : pNext(nullptr), pUsedList(nullptr), pBuffer(pBuffer_),
           BufferSize(bufferSize) {
       //
       // Allocate the first free block
       //
 
-      const unsigned cbPlacementSize =
+      const uint32_t cbPlacementSize =
           __align(sizeof(Page) + sizeof(Block), Block::ALIGN_SIZE);
 
       this->pFreeSList = this->pFreeMList = new (pBuffer_ + sizeof(Page))

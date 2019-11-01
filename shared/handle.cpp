@@ -78,7 +78,7 @@ CHandleTable::Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
     return E_FAIL;
   }
 
-  unsigned index;
+  uint32_t index;
 
   if (m_nHandleCount < m_dwSize) {
     // Find next free handle entry int he table
@@ -121,7 +121,7 @@ CHandleTable::Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
     }
 
     // Reset newly allocated entries
-    for (unsigned i = m_dwSize; i < dwNewSize; ++i) {
+    for (uint32_t i = m_dwSize; i < dwNewSize; ++i) {
       Entry &entry = pEntries[i];
       entry.pOwner = nullptr;
       entry.Type = 0;
@@ -230,7 +230,7 @@ void CHandleTable::Optimize() {
     return;
   }
 
-  unsigned freeSlots = 0;
+  uint32_t freeSlots = 0;
 
   // Calculate the size of consecutive free slots starting at the end
   for (uint32_t dw = m_dwSize; dw--;) {

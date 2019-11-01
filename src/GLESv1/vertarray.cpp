@@ -21,7 +21,7 @@ uint32_t VertexArray::GetBufferHandle() const {
 }
 
 GLenum VertexArray::Prepare(VertexDecoder *pDecoder, int first,
-                            unsigned count) {
+                            uint32_t count) {
   ASSERT(pDecoder);
 
   int offset = first * this->Stride;
@@ -29,9 +29,9 @@ GLenum VertexArray::Prepare(VertexDecoder *pDecoder, int first,
   if (pBits) {
     pDecoder->pBits = pBits;
     offset += reinterpret_cast<uintptr_t>(this->pPointer);
-    const unsigned dataSize = VertexDataSize(this->Format);
+    const uint32_t dataSize = VertexDataSize(this->Format);
     const int padding = this->Stride - offset - dataSize;
-    const unsigned bufSize = count * this->Stride - padding;
+    const uint32_t bufSize = count * this->Stride - padding;
     if (bufSize <= this->pBuffer->GetSize()) {
       pDecoder->pBits = pBits;
     } else {

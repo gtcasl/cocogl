@@ -16,7 +16,7 @@
 #include "texture.hpp"
 #include "surface.hpp"
 
-GLenum CSurface2D::Initialize(unsigned width, unsigned height,
+GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
                               ePixelFormat format) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -55,7 +55,7 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height,
   return GL_NO_ERROR;
 }
 
-GLenum CSurface2D::Initialize(unsigned width, unsigned height, unsigned pitch,
+GLenum CSurface2D::Initialize(uint32_t width, uint32_t height, int32_t pitch,
                               ePixelFormat format, GLvoid *pPixels) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -80,14 +80,14 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height, unsigned pitch,
   m_logWidth = static_cast<uint8_t>(Math::iLog2(width));
   m_logHeight = static_cast<uint8_t>(Math::iLog2(height));
   m_pbBits = reinterpret_cast<uint8_t *>(pPixels);
-  m_pitch = static_cast<uint16_t>(pitch);
+  m_pitch = pitch;
   m_format = static_cast<uint8_t>(format);
   m_bOwnedBuffer = false;
 
   return GL_NO_ERROR;
 }
 
-GLenum CSurface2D::Initialize(unsigned width, unsigned height,
+GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
                               ePixelFormat format, const GLvoid *pPixels) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -107,12 +107,12 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height,
 
   const FormatInfo formatInfo = Format::GetInfo(format);
 
-  const unsigned pixelFormat = Format::GetNativeFormat(format);
+  const uint32_t pixelFormat = Format::GetNativeFormat(format);
   const Format::PFN_CONVERTFROM pfnConvertFrom =
       Format::GetConvertFrom(pixelFormat, false);
   const Format::PFN_CONVERTTO pfnConvertTo = Format::GetConvertTo(pixelFormat);
 
-  const unsigned paletteSize = 1 << formatInfo.PaletteBits;
+  const uint32_t paletteSize = 1 << formatInfo.PaletteBits;
 
   Color4 *const pColorTable = new Color4[paletteSize];
   if (nullptr == pColorTable) {
@@ -122,12 +122,12 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height,
 
   const uint8_t nBPP = formatInfo.BytePerPixel;
   const uint8_t *pbPixels = reinterpret_cast<const uint8_t *>(pPixels);
-  for (unsigned i = 0; i < paletteSize; ++i) {
+  for (uint32_t i = 0; i < paletteSize; ++i) {
     (pfnConvertFrom)(&pColorTable[i], pbPixels);
     pbPixels += nBPP;
   }
 
-  const unsigned surfaceSize = width * height;
+  const uint32_t surfaceSize = width * height;
   uint8_t *const pbBits = new uint8_t[nBPP * surfaceSize];
   if (nullptr == pbBits) {
     delete[] pColorTable;
@@ -139,14 +139,14 @@ GLenum CSurface2D::Initialize(unsigned width, unsigned height,
     TBitPtr<uint8_t, 4> pb4Bits(pbPixels);
 
     uint8_t *_pbBits = pbBits;
-    for (unsigned n = surfaceSize; n--;) {
+    for (uint32_t n = surfaceSize; n--;) {
       (pfnConvertTo)(_pbBits, pColorTable[*pb4Bits]);
       ++pb4Bits;
       _pbBits += nBPP;
     }
   } else if (256 == paletteSize) {
     uint8_t *_pbBits = pbBits;
-    for (unsigned n = surfaceSize; n--;) {
+    for (uint32_t n = surfaceSize; n--;) {
       (pfnConvertTo)(_pbBits, pColorTable[*pbPixels++]);
       _pbBits += nBPP;
     }
@@ -280,7 +280,7 @@ GLenum CTexture::ReleaseSurface(CGLSurface *pSurface) {
 }
 
 void CTexture::FreeSurfaces() {
-  for (unsigned i = 0; i < MAX_TEXTURE_LEVELS; ++i) {
+  for (uint32_t i = 0; i < MAX_TEXTURE_LEVELS; ++i) {
     m_surfaces[i].Destroy();
   }
 
@@ -295,16 +295,16 @@ GLenum CTexture::GenerateMipmaps() {
   CSurface2D &surface = m_surfaces[0];
 
   const ePixelFormat format = surface.GetFormat();
-  const unsigned bpp = Format::GetInfo(format).BytePerPixel;
-  unsigned width = surface.GetWidth();
-  unsigned height = surface.GetHeight();
+  const uint32_t bpp = Format::GetInfo(format).BytePerPixel;
+  uint32_t width = surface.GetWidth();
+  uint32_t height = surface.GetHeight();
 
   //
   // Calculate mipmaps buffer size
   //
-  unsigned cbSize = 0;
+  uint32_t cbSize = 0;
 
-  for (unsigned w = width, h = height; ((w > 1) || (h > 1));) {
+  for (uint32_t w = width, h = height; ((w > 1) || (h > 1));) {
     if (w > 1) {
       w >>= 1;
     }
@@ -334,7 +334,7 @@ GLenum CTexture::GenerateMipmaps() {
 
   uint8_t *pbMipBuffer = m_pbMipBuffer;
 
-  for (unsigned i = 1; ((width > 1) || (height > 1)); ++i) {
+  for (uint32_t i = 1; ((width > 1) || (height > 1)); ++i) {
     CSurface2D &surfaceSrc = m_surfaces[i - 1];
     CSurface2D &surfaceDst = m_surfaces[i];
 
@@ -360,11 +360,11 @@ GLenum CTexture::GenerateMipmaps() {
       const uint8_t *const pSrc = surfaceSrc.GetBits();
       uint8_t *const pDst = surfaceDst.GetBits();
 
-      for (unsigned y = 0; y < height; ++y) {
+      for (uint32_t y = 0; y < height; ++y) {
         const uint8_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
         const uint8_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
-        for (unsigned x = 0; x < width; ++x) {
+        for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A8, false>(&c1, pSrc1 + 2 * x);
           Format::TConvertFrom<FORMAT_A8, false>(&c2, pSrc1 + 2 * x + 1);
           Format::TConvertFrom<FORMAT_A8, false>(&c3, pSrc2 + 2 * x);
@@ -384,11 +384,11 @@ GLenum CTexture::GenerateMipmaps() {
       const uint8_t *const pSrc = surfaceSrc.GetBits();
       uint8_t *const pDst = surfaceDst.GetBits();
 
-      for (unsigned y = 0; y < height; ++y) {
+      for (uint32_t y = 0; y < height; ++y) {
         const uint8_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
         const uint8_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
-        for (unsigned x = 0; x < width; ++x) {
+        for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_L8, false>(&c1, pSrc1 + 2 * x);
           Format::TConvertFrom<FORMAT_L8, false>(&c2, pSrc1 + 2 * x + 1);
           Format::TConvertFrom<FORMAT_L8, false>(&c3, pSrc2 + 2 * x);
@@ -409,11 +409,11 @@ GLenum CTexture::GenerateMipmaps() {
           reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
       uint16_t *const pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
 
-      for (unsigned y = 0; y < height; ++y) {
+      for (uint32_t y = 0; y < height; ++y) {
         const uint16_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
         const uint16_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
-        for (unsigned x = 0; x < width; ++x) {
+        for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A8L8, false>(&c1, pSrc1 + 2 * x);
           Format::TConvertFrom<FORMAT_A8L8, false>(&c2, pSrc1 + 2 * x + 1);
           Format::TConvertFrom<FORMAT_A8L8, false>(&c3, pSrc2 + 2 * x);
@@ -435,11 +435,11 @@ GLenum CTexture::GenerateMipmaps() {
           reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
       uint16_t *const pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
 
-      for (unsigned y = 0; y < height; ++y) {
+      for (uint32_t y = 0; y < height; ++y) {
         const uint16_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
         const uint16_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
-        for (unsigned x = 0; x < width; ++x) {
+        for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_R5G6B5, false>(&c1, pSrc1 + 2 * x);
           Format::TConvertFrom<FORMAT_R5G6B5, false>(&c2, pSrc1 + 2 * x + 1);
           Format::TConvertFrom<FORMAT_R5G6B5, false>(&c3, pSrc2 + 2 * x);
@@ -461,11 +461,11 @@ GLenum CTexture::GenerateMipmaps() {
           reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
       uint16_t *const pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
 
-      for (unsigned y = 0; y < height; ++y) {
+      for (uint32_t y = 0; y < height; ++y) {
         const uint16_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
         const uint16_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
-        for (unsigned x = 0; x < width; ++x) {
+        for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A1R5G5B5, false>(&c1, pSrc1 + 2 * x);
           Format::TConvertFrom<FORMAT_A1R5G5B5, false>(&c2, pSrc1 + 2 * x + 1);
           Format::TConvertFrom<FORMAT_A1R5G5B5, false>(&c3, pSrc2 + 2 * x);
@@ -488,11 +488,11 @@ GLenum CTexture::GenerateMipmaps() {
           reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
       uint16_t *const pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
 
-      for (unsigned y = 0; y < height; ++y) {
+      for (uint32_t y = 0; y < height; ++y) {
         const uint16_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
         const uint16_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
-        for (unsigned x = 0; x < width; ++x) {
+        for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A4R4G4B4, false>(&c1, pSrc1 + 2 * x);
           Format::TConvertFrom<FORMAT_A4R4G4B4, false>(&c2, pSrc1 + 2 * x + 1);
           Format::TConvertFrom<FORMAT_A4R4G4B4, false>(&c3, pSrc2 + 2 * x);
@@ -515,11 +515,11 @@ GLenum CTexture::GenerateMipmaps() {
           reinterpret_cast<const uint24 *>(surfaceSrc.GetBits());
       uint24 *const pDst = reinterpret_cast<uint24 *>(surfaceDst.GetBits());
 
-      for (unsigned y = 0; y < height; ++y) {
+      for (uint32_t y = 0; y < height; ++y) {
         const uint24 *const pSrc1 = pSrc + (2 * y) * (2 * width);
         const uint24 *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
-        for (unsigned x = 0; x < width; ++x) {
+        for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_R8G8B8, false>(&c1, pSrc1 + 2 * x);
           Format::TConvertFrom<FORMAT_R8G8B8, false>(&c2, pSrc1 + 2 * x + 1);
           Format::TConvertFrom<FORMAT_R8G8B8, false>(&c3, pSrc2 + 2 * x);
@@ -541,11 +541,11 @@ GLenum CTexture::GenerateMipmaps() {
           reinterpret_cast<const uint32_t *>(surfaceSrc.GetBits());
       uint32_t *const pDst = reinterpret_cast<uint32_t *>(surfaceDst.GetBits());
 
-      for (unsigned y = 0; y < height; ++y) {
+      for (uint32_t y = 0; y < height; ++y) {
         const uint32_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
         const uint32_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
-        for (unsigned x = 0; x < width; ++x) {
+        for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A8R8G8B8, false>(&c1, pSrc1 + 2 * x);
           Format::TConvertFrom<FORMAT_A8R8G8B8, false>(&c2, pSrc1 + 2 * x + 1);
           Format::TConvertFrom<FORMAT_A8R8G8B8, false>(&c3, pSrc2 + 2 * x);
@@ -578,9 +578,9 @@ bool CTexture::Validate() {
     return false;
   }
 
-  unsigned level = 0;
-  unsigned width = surface0.GetWidth();
-  unsigned height = surface0.GetHeight();
+  uint32_t level = 0;
+  uint32_t width = surface0.GetWidth();
+  uint32_t height = surface0.GetHeight();
 
   for (; ((width > 1) || (height > 1));) {
     if (width > 1) {

@@ -142,7 +142,7 @@ void CGLContext::BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
   CBuffer *const pBuffer = this->GetBufferObject(target);
   ASSERT(pBuffer);
 
-  if (unsigned(offset + size) > pBuffer->GetSize()) {
+  if (uint32_t(offset + size) > pBuffer->GetSize()) {
     __glError(GL_INVALID_VALUE, _T("CGLContext::BufferSubData() failed, size ")
                                 _T("+ offset parameters out of range: %d.\r\n"),
               size + offset);

@@ -21,7 +21,7 @@ public:
 
   PFN_Scanline GetScanline() const { return m_pfnScanline; }
 
-  unsigned GetCbSize() const { return sizeof(PFN_Scanline); }
+  uint32_t GetCbSize() const { return sizeof(PFN_Scanline); }
 
   static GLenum Create(IRasterOp **ppRasterOp, const RASTERID &rasterID);
 

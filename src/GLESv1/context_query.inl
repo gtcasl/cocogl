@@ -29,7 +29,7 @@ inline void CGLContext::TGetClipPlane(GLenum plane, T eqn[4]) {
     return;
   }
 
-  const unsigned index = plane - GL_CLIP_PLANE0;
+  const uint32_t index = plane - GL_CLIP_PLANE0;
 
   eqn[0] = Math::TCast<T>(m_vClipPlanesES[index].x);
   eqn[1] = Math::TCast<T>(m_vClipPlanesES[index].y);
@@ -49,7 +49,7 @@ inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
     return;
   }
 
-  const unsigned index = light - GL_LIGHT0;
+  const uint32_t index = light - GL_LIGHT0;
   Light &_light = m_lights[index];
 
   switch (pname) {
@@ -298,7 +298,7 @@ template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_COMPRESSED_TEXTURE_FORMATS:
-    for (unsigned i = 0; i < __countof(g_compressedFormats); ++i) {
+    for (uint32_t i = 0; i < __countof(g_compressedFormats); ++i) {
       pParams[i] = g_compressedFormats[i];
     }
     break;
@@ -700,7 +700,7 @@ template <class T>
 inline GLbitfield CGLContext::TQueryMatrix(T *pMantissa, GLint exponent[16]) {
   const MATRIX44 &matrix = m_pMatrixStack->GetMatrix();
 
-  for (unsigned i = 0; i < 16; ++i) {
+  for (uint32_t i = 0; i < 16; ++i) {
     pMantissa[i] = static_cast<T>(matrix._m[i]);
     exponent[i] = 0;
   }

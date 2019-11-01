@@ -133,10 +133,10 @@ void CGLContext::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
 #ifndef NDEBUG
   static const LPCTSTR szOperations[3] = {_T("fail"), _T("zfail"), _T("zpass")};
 #endif
-  unsigned results[3];
+  uint32_t results[3];
   const GLenum operations[3] = {fail, zfail, zpass};
 
-  for (unsigned i = 0; i < 3; ++i) {
+  for (uint32_t i = 0; i < 3; ++i) {
     const GLenum op = operations[i];
     switch (op) {
     case GL_ZERO:

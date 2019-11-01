@@ -14,22 +14,22 @@
 //
 #pragma once
 
-template <bool DepthTest, unsigned DepthFunc, bool DepthWrite,
-          unsigned StencilFunc, unsigned StencilPass, unsigned StencilFail,
-          unsigned StencilZFail, bool StencilWrite>
-bool TStencilTest(unsigned depthValue, unsigned stencilRef,
-                  unsigned stencilMask, unsigned stencilWriteMask,
+template <bool DepthTest, uint32_t DepthFunc, bool DepthWrite,
+          uint32_t StencilFunc, uint32_t StencilPass, uint32_t StencilFail,
+          uint32_t StencilZFail, bool StencilWrite>
+bool TStencilTest(uint32_t depthValue, uint32_t stencilRef,
+                  uint32_t stencilMask, uint32_t stencilWriteMask,
                   void *pDSBuffer) {
   ASSERT(pDSBuffer);
 
-  const unsigned depthStencilValue = *reinterpret_cast<uint32_t *>(pDSBuffer);
-  const unsigned stencilValue = depthStencilValue >> 16;
-  const unsigned _depthValue = depthStencilValue & 0xffff;
-  const unsigned _stencilValue = stencilValue & stencilMask;
-  const unsigned _stencilRef = stencilRef & stencilMask;
+  const uint32_t depthStencilValue = *reinterpret_cast<uint32_t *>(pDSBuffer);
+  const uint32_t stencilValue = depthStencilValue >> 16;
+  const uint32_t _depthValue = depthStencilValue & 0xffff;
+  const uint32_t _stencilValue = stencilValue & stencilMask;
+  const uint32_t _stencilRef = stencilRef & stencilMask;
 
-  unsigned stencilResult;
-  unsigned writeMask = 0;
+  uint32_t stencilResult;
+  uint32_t writeMask = 0;
 
   if
     constexpr(StencilWrite) { writeMask = stencilWriteMask << 16; }
@@ -53,7 +53,7 @@ bool TStencilTest(unsigned depthValue, unsigned stencilRef,
 
   if
     constexpr(DepthWrite || StencilWrite) {
-      const unsigned value = ((stencilResult << 16) | depthValue);
+      const uint32_t value = ((stencilResult << 16) | depthValue);
       *reinterpret_cast<uint32_t *>(pDSBuffer) =
           (depthStencilValue & ~writeMask) | (value & writeMask);
     }
@@ -63,16 +63,16 @@ bool TStencilTest(unsigned depthValue, unsigned stencilRef,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned MipFilter, unsigned MinFilter, unsigned MagFilter,
-          unsigned Format, unsigned AddressU, unsigned AddressV>
-inline unsigned TGetSamplerColor(const SurfaceDesc &surface, fixedRX fU,
+template <uint32_t MipFilter, uint32_t MinFilter, uint32_t MagFilter,
+          uint32_t Format, uint32_t AddressU, uint32_t AddressV>
+inline uint32_t TGetSamplerColor(const SurfaceDesc &surface, fixedRX fU,
                                  fixedRX fV) {
   return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(surface, fU, fV);
 }
 
-template <unsigned MipFilter, unsigned MinFilter, unsigned MagFilter,
-          unsigned Format, unsigned AddressU, unsigned AddressV>
-unsigned TGetSamplerColor(const Sampler &sampler, fixedRX fU, fixedRX fV,
+template <uint32_t MipFilter, uint32_t MinFilter, uint32_t MagFilter,
+          uint32_t Format, uint32_t AddressU, uint32_t AddressV>
+uint32_t TGetSamplerColor(const Sampler &sampler, fixedRX fU, fixedRX fV,
                           fixedRX fM) {
   return TGetMipFilterN<MipFilter, MinFilter, MagFilter, Format, AddressU,
                         AddressV>(sampler, fU, fV, fM);
@@ -80,8 +80,8 @@ unsigned TGetSamplerColor(const Sampler &sampler, fixedRX fU, fixedRX fV,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned EnvMode, unsigned Format, bool NativeColor>
-void TGetTexEnvColor(Color4 *pInOut, unsigned texture, ColorARGB cEnvColor) {
+template <uint32_t EnvMode, uint32_t Format, bool NativeColor>
+void TGetTexEnvColor(Color4 *pInOut, uint32_t texture, ColorARGB cEnvColor) {
   typedef TFormatSize<TFormatInfo<Format>> FormatSize;
 
   if
@@ -123,7 +123,7 @@ void TGetTexEnvColor(Color4 *pInOut, unsigned texture, ColorARGB cEnvColor) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned Format, bool NativeColor>
+template <uint32_t Format, bool NativeColor>
 inline void TCalcFog(Color4 *pInOut, ColorARGB cFogColor, fixedRX fFactor) {
 
   const int factor = fFactor.GetRaw();
@@ -152,25 +152,21 @@ inline void TCalcFog(Color4 *pInOut, ColorARGB cFogColor, fixedRX fFactor) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-//----------------------------------------------------------------------------
-// <summary>
-// </summary>
-//----------------------------------------------------------------------------
-template <unsigned AlphaFunc>
-bool TAlphaTest(unsigned alphaValue, unsigned alphaRef) {
+template <uint32_t AlphaFunc>
+bool TAlphaTest(uint32_t alphaValue, uint32_t alphaRef) {
   return TCompare<AlphaFunc>(alphaValue, alphaRef);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned Format, unsigned BlendSrc, unsigned BlendDst,
+template <uint32_t Format, uint32_t BlendSrc, uint32_t BlendDst,
           bool NativeColor>
 class TBlend {
 public:
-  inline static unsigned Execute(const Color4 &cColor, unsigned dstColor);
+  inline static uint32_t Execute(const Color4 &cColor, uint32_t dstColor);
 };
 
-template <unsigned BlendSrc, unsigned BlendDst, bool NativeColor>
+template <uint32_t BlendSrc, uint32_t BlendDst, bool NativeColor>
 class TBlend<FORMAT_R5G6B5, BlendSrc, BlendDst, NativeColor> {
 private:
   enum {
@@ -190,9 +186,9 @@ private:
         ZeroBlendSrc || ZeroBlendDst || AlphaBlendSrc || AlphaBlendDst,
   };
 
-  template <unsigned BlendOp>
-  inline static unsigned GetBlendOp(unsigned inColor, unsigned srcColor,
-                                    unsigned srcAlpha, unsigned dstColor) {
+  template <uint32_t BlendOp>
+  inline static uint32_t GetBlendOp(uint32_t inColor, uint32_t srcColor,
+                                    uint32_t srcAlpha, uint32_t dstColor) {
 
     if
       constexpr(BlendOp == BLEND_ZERO) {
@@ -206,7 +202,7 @@ private:
 
     if
       constexpr(BlendOp == BLEND_SRC_ALPHA) {
-        const unsigned alpha =
+        const uint32_t alpha =
             srcAlpha >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const TColorNative<FORMAT_R5G6B5> c0(inColor);
         return c0.Mul(alpha);
@@ -214,7 +210,7 @@ private:
 
     if
       constexpr(BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
-        const unsigned alpha =
+        const uint32_t alpha =
             (0xff - srcAlpha) >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const TColorNative<FORMAT_R5G6B5> c0(inColor);
         return c0.Mul(alpha);
@@ -222,10 +218,10 @@ private:
   }
 
 public:
-  inline static unsigned Execute(const Color4 &cColor, unsigned dstColor) {
+  inline static uint32_t Execute(const Color4 &cColor, uint32_t dstColor) {
     if
       constexpr(NativeBlend) {
-        unsigned srcColor;
+        uint32_t srcColor;
 
         if
           constexpr(NativeColor) { srcColor = cColor.b; }
@@ -245,7 +241,7 @@ public:
 
         if
           constexpr(AlphaBlendSrc) {
-            const unsigned alpha =
+            const uint32_t alpha =
                 cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
             const TColorNative<FORMAT_R5G6B5> c0(dstColor);
             const TColorNative<FORMAT_R5G6B5> c1(srcColor);
@@ -254,7 +250,7 @@ public:
 
         if
           constexpr(AlphaBlendDst) {
-            const unsigned alpha =
+            const uint32_t alpha =
                 cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
             const TColorNative<FORMAT_R5G6B5> c0(srcColor);
             const TColorNative<FORMAT_R5G6B5> c1(dstColor);
@@ -292,12 +288,12 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned ColorFormat, unsigned LogicFunc, bool ColorWriteMask>
-void TWriteColor(unsigned color, unsigned dstColor, unsigned writeMask,
+template <uint32_t ColorFormat, uint32_t LogicFunc, bool ColorWriteMask>
+void TWriteColor(uint32_t color, uint32_t dstColor, uint32_t writeMask,
                  uint8_t *pCB) {
   typedef TFormatInfo<ColorFormat> FormatInfo;
 
-  unsigned result = TLogicOp<LogicFunc>(color, dstColor);
+  uint32_t result = TLogicOp<LogicFunc>(color, dstColor);
 
   if
     constexpr(ColorWriteMask) {
@@ -311,7 +307,7 @@ void TWriteColor(unsigned color, unsigned dstColor, unsigned writeMask,
 DISABLE_WARNING_PUSH
 DISABLE_WARNING_UNUSED_VARIABLE
 
-template <unsigned Flags, unsigned States, unsigned Texture0, unsigned Texture1>
+template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
 class TOptimizedScanlineA {
 public:
   enum {
@@ -560,14 +556,14 @@ public:
     if
       constexpr(DepthTest || StencilTest) {
         uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-        const unsigned depthStencilPitch = rasterData.DepthStencilPitch;
+        const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
         pDS =
             lx * DepthStencilStride + y * depthStencilPitch + pDepthStencilBits;
       }
 
-    const unsigned colorWriteMask = rasterData.ColorWriteMask;
+    const uint32_t colorWriteMask = rasterData.ColorWriteMask;
     uint8_t *const pColorBits = rasterData.pColorBits;
-    const unsigned colorPitch = rasterData.ColorPitch;
+    const int32_t colorPitch = rasterData.ColorPitch;
     uint8_t *pCB = lx * ColorStride + y * colorPitch + pColorBits;
     uint8_t *const pCBEnd = pCB + (rx - lx) * ColorStride;
 
@@ -575,7 +571,7 @@ public:
 
     do {
       for (;;) {
-        unsigned depthValue = 0;
+        uint32_t depthValue = 0;
 
         if
           constexpr(DepthTest || StencilTest) {
@@ -629,7 +625,7 @@ public:
 
         if
           constexpr(Texture0) {
-            unsigned texture;
+            uint32_t texture;
 
             if
               constexpr(Mip0) {
@@ -705,9 +701,9 @@ public:
             TCalcFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
           }
 
-        unsigned color;
+        uint32_t color;
 
-        const unsigned dstColor =
+        const uint32_t dstColor =
             *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
 
         if
@@ -770,7 +766,7 @@ public:
 };
 DISABLE_WARNING_POP
 
-template <unsigned Flags, unsigned States, unsigned Texture0, unsigned Texture1>
+template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
 class TOptimizedScanlineP {
 public:
   enum {
@@ -1087,23 +1083,23 @@ public:
     if
       constexpr(DepthTest || StencilTest) {
         uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-        const unsigned depthStencilPitch = rasterData.DepthStencilPitch;
+        const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
         pDS =
             lx * DepthStencilStride + y * depthStencilPitch + pDepthStencilBits;
       }
 
-    const unsigned colorWriteMask = rasterData.ColorWriteMask;
+    const uint32_t colorWriteMask = rasterData.ColorWriteMask;
     uint8_t *const pColorBits = rasterData.pColorBits;
-    const unsigned colorPitch = rasterData.ColorPitch;
+    const int32_t colorPitch = rasterData.ColorPitch;
     uint8_t *pCB = lx * ColorStride + y * colorPitch + pColorBits;
     int width = rx - lx;
 
     Color4 cColor(0xff, 0xff, 0xff, 0xff);
 
     do {
-      const unsigned int blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
-      const unsigned int log2width = Math::iLog2(blockWidth1);
-      const unsigned int blockWidth = 1 << log2width;
+      const uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
+      const uint32_t log2width = Math::iLog2(blockWidth1);
+      const uint32_t blockWidth = 1 << log2width;
       width -= blockWidth;
       uint8_t *const pCBEnd = pCB + blockWidth * ColorStride;
 
@@ -1149,7 +1145,7 @@ public:
 
       do {
         for (;;) {
-          unsigned depthValue = 0;
+          uint32_t depthValue = 0;
 
           if
             constexpr(DepthTest || StencilTest) {
@@ -1204,7 +1200,7 @@ public:
           // Execute texture operations
           if
             constexpr(Texture0) {
-              unsigned texture;
+              uint32_t texture;
 
               if
                 constexpr(Mip0) {
@@ -1280,9 +1276,9 @@ public:
               TCalcFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
             }
 
-          unsigned color;
+          uint32_t color;
 
-          const unsigned dstColor =
+          const uint32_t dstColor =
               *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
 
           if
@@ -1350,7 +1346,7 @@ public:
   }
 };
 
-template <unsigned Flags, unsigned States, unsigned Texture0, unsigned Texture1>
+template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
 class TOptimizedScanlineAZ {
 public:
   enum {
@@ -1590,13 +1586,13 @@ public:
           }
       }
 
-    const unsigned colorWriteMask = rasterData.ColorWriteMask;
+    const uint32_t colorWriteMask = rasterData.ColorWriteMask;
     uint8_t *const pColorBits = rasterData.pColorBits;
-    const unsigned colorPitch = rasterData.ColorPitch;
+    const int32_t colorPitch = rasterData.ColorPitch;
     uint8_t *pCB = lx * ColorStride + y * colorPitch + pColorBits;
 
     uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-    const unsigned depthStencilPitch = rasterData.DepthStencilPitch;
+    const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
     uint8_t *pDS =
         lx * DepthStencilStride + y * depthStencilPitch + pDepthStencilBits;
 
@@ -1608,7 +1604,7 @@ public:
       int start = count;
 
       do {
-        unsigned depthValue = 0;
+        uint32_t depthValue = 0;
 
         if
           constexpr(DepthTest) {
@@ -1649,7 +1645,7 @@ public:
       start = count;
 
       do {
-        unsigned depthValue = 0;
+        uint32_t depthValue = 0;
 
         if
           constexpr(DepthTest) {
@@ -1733,7 +1729,7 @@ public:
 
         if
           constexpr(Texture0) {
-            unsigned texture;
+            uint32_t texture;
 
             if
               constexpr(Mip0) {
@@ -1779,9 +1775,9 @@ public:
             TCalcFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
           }
 
-        unsigned color;
+        uint32_t color;
 
-        const unsigned dstColor =
+        const uint32_t dstColor =
             *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
 
         if
@@ -1835,7 +1831,7 @@ public:
   }
 };
 
-template <unsigned Flags, unsigned States, unsigned Texture0, unsigned Texture1>
+template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
 class TOptimizedScanlinePZ {
 public:
   enum {
@@ -2105,13 +2101,13 @@ public:
           }
       }
 
-    const unsigned colorWriteMask = rasterData.ColorWriteMask;
+    const uint32_t colorWriteMask = rasterData.ColorWriteMask;
     uint8_t *const pColorBits = rasterData.pColorBits;
-    const unsigned colorPitch = rasterData.ColorPitch;
+    const int32_t colorPitch = rasterData.ColorPitch;
     uint8_t *pCB = lx * ColorStride + y * colorPitch + pColorBits;
 
     uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-    const unsigned depthStencilPitch = rasterData.DepthStencilPitch;
+    const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
     uint8_t *pDS =
         lx * DepthStencilStride + y * depthStencilPitch + pDepthStencilBits;
 
@@ -2123,7 +2119,7 @@ public:
       int start = count;
 
       do {
-        unsigned depthValue = 0;
+        uint32_t depthValue = 0;
 
         if
           constexpr(DepthTest) {
@@ -2164,7 +2160,7 @@ public:
       start = count;
 
       do {
-        unsigned depthValue = 0;
+        uint32_t depthValue = 0;
 
         if
           constexpr(DepthTest) {
@@ -2275,9 +2271,9 @@ public:
         constexpr(InterpolateFog) { fFog += fFogdA * offset; }
 
       do {
-        const unsigned int blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
-        const unsigned int log2width = Math::iLog2(blockWidth1);
-        const unsigned int blockWidth = 1 << log2width;
+        const uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
+        const uint32_t log2width = Math::iLog2(blockWidth1);
+        const uint32_t blockWidth = 1 << log2width;
         width -= blockWidth;
         uint8_t *const pCBEnd = pCB + blockWidth * ColorStride;
 
@@ -2332,7 +2328,7 @@ public:
           // Execute texture operations
           if
             constexpr(Texture0) {
-              unsigned texture;
+              uint32_t texture;
 
               if
                 constexpr(Mip0) {
@@ -2378,9 +2374,9 @@ public:
               TCalcFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
             }
 
-          unsigned color;
+          uint32_t color;
 
-          const unsigned dstColor =
+          const uint32_t dstColor =
               *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
 
           if
@@ -2441,7 +2437,7 @@ public:
   }
 };
 
-template <unsigned Flags, unsigned States, unsigned Texture0, unsigned Texture1>
+template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
 class TOptimizedScanline {
 private:
   enum {

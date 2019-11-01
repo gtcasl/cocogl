@@ -58,7 +58,7 @@ static const FormatInfo l_formatInfos[FORMAT_SIZE_] = {
 namespace Format {
 
 PFN_CONVERTTO
-GetConvertTo(unsigned pixelFormat) {
+GetConvertTo(uint32_t pixelFormat) {
   switch (pixelFormat) {
   case FORMAT_A8:
     return &TConvertTo<FORMAT_A8>;
@@ -94,7 +94,7 @@ GetConvertTo(unsigned pixelFormat) {
 }
 
 PFN_CONVERTFROM
-GetConvertFrom(unsigned pixelFormat, bool bForceAlpha) {
+GetConvertFrom(uint32_t pixelFormat, bool bForceAlpha) {
   if (bForceAlpha) {
     switch (pixelFormat) {
     case FORMAT_A8:
@@ -162,12 +162,12 @@ GetConvertFrom(unsigned pixelFormat, bool bForceAlpha) {
   return nullptr;
 }
 
-const FormatInfo &GetInfo(unsigned pixelFormat) {
+const FormatInfo &GetInfo(uint32_t pixelFormat) {
   ASSERT(pixelFormat < FORMAT_SIZE_);
   return l_formatInfos[pixelFormat];
 }
 
-unsigned GetNativeFormat(unsigned pixelFormat) {
+uint32_t GetNativeFormat(uint32_t pixelFormat) {
   switch (pixelFormat) {
   case FORMAT_PAL4_B8G8R8:
   case FORMAT_PAL8_B8G8R8:

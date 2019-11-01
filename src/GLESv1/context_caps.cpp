@@ -23,7 +23,7 @@ void CGLContext::Hint(GLenum target, GLenum mode) {
     return;
   }
 
-  const unsigned value = HintFromEnum(mode);
+  const uint32_t value = HintFromEnum(mode);
 
   switch (target) {
   case GL_PERSPECTIVE_CORRECTION_HINT:
@@ -133,7 +133,7 @@ void CGLContext::Activate(GLenum cap, bool bValue) {
   case GL_CLIP_PLANE3:
   case GL_CLIP_PLANE4:
   case GL_CLIP_PLANE5: {
-    const unsigned mask = 1 << (cap - GL_CLIP_PLANE0);
+    const uint32_t mask = 1 << (cap - GL_CLIP_PLANE0);
     if (bValue) {
       m_caps.ClipPlanes |= mask;
     } else {
@@ -151,7 +151,7 @@ void CGLContext::Activate(GLenum cap, bool bValue) {
   case GL_LIGHT5:
   case GL_LIGHT6:
   case GL_LIGHT7: {
-    const unsigned mask = 1 << (cap - GL_LIGHT0);
+    const uint32_t mask = 1 << (cap - GL_LIGHT0);
     if (bValue) {
       m_caps.Lights |= mask;
       m_dirtyLights.Ambient |= mask;

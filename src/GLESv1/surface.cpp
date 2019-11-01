@@ -26,7 +26,7 @@ CGLSurface::CGLSurface() {
   m_pfnColorFill = &CGLSurface::ColorFillNoop;
   m_pfnDepthStencilFill = &CGLSurface::ColorFillNoop;
 
-  for (unsigned i = ATTRIBUTES_FIRST; i <= ATTRIBUTES_LAST; ++i) {
+  for (uint32_t i = ATTRIBUTES_FIRST; i <= ATTRIBUTES_LAST; ++i) {
     this->SetAttribute(i, 0);
   }
 }
@@ -157,64 +157,85 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
 }
 
 GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
-  // Open the file for writing bytes
-  FILE *const pFile = _tfopen(lpszFilename, _T("wb"));
+  BITMAPFILEHEADER header;
+  header.bfSize = 0;
+  header.bfType = BF_TYPE;
+  header.bfReserved1 = 0;
+  header.bfReserved2 = 0;
+  header.bfOffBits = 0;
+
+  struct bmp_info_header_t {
+    BITMAPINFOHEADER bmiHeader;
+    uint32_t bmiColors[3];
+  } bmp_info;
+
+  const uint8_t nBPP = Format::GetInfo(m_pColorDesc.Format).BytePerPixel;
+  
+  bmp_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+  bmp_info.bmiHeader.biWidth = m_pColorDesc.Width;
+  bmp_info.bmiHeader.biHeight = m_pColorDesc.Height;
+  bmp_info.bmiHeader.biPlanes = 1;      
+  bmp_info.bmiHeader.biXPelsPerMeter = 0;
+  bmp_info.bmiHeader.biYPelsPerMeter = 0;
+  bmp_info.bmiHeader.biClrUsed = 0;
+  bmp_info.bmiHeader.biClrImportant = 0;
+
+  uint32_t infoSize;
+
+  if (2 == nBPP) {
+    bmp_info.bmiHeader.biBitCount = 16;
+    bmp_info.bmiHeader.biCompression = BI_BITFIELDS;
+    bmp_info.bmiColors[0] = 0xF800;
+    bmp_info.bmiColors[1] = 0x07E0;
+    bmp_info.bmiColors[2] = 0x001F;
+    infoSize = sizeof(bmp_info_header_t);
+  } if (3 == nBPP || 4 == nBPP) {
+    bmp_info.bmiHeader.biBitCount = 24;
+    bmp_info.bmiHeader.biCompression = BI_RGB;
+    infoSize = sizeof(BITMAPINFOHEADER);
+  } else {
+    return GL_INVALID_OPERATION;
+  }
+
+  bmp_info.bmiHeader.biSizeImage = m_pColorDesc.Height * bmp_info.bmiHeader.biWidth * (bmp_info.bmiHeader.biBitCount / 8);
+  header.bfOffBits = sizeof(BITMAPFILEHEADER) + infoSize;
+  header.bfSize = header.bfOffBits + bmp_info.bmiHeader.biSizeImage;  
+
+  auto pBits = m_pColorDesc.pBits;
+  if (m_pColorDesc.Pitch < 0) {
+    bmp_info.bmiHeader.biHeight *= -1;  
+    int32_t offset = m_pColorDesc.Pitch * (m_pColorDesc.Height  - 1);
+    pBits += offset;
+  }
+
+  auto pFile = _tfopen(lpszFilename, "w");
   if (nullptr == pFile) {
     return GL_INVALID_OPERATION;
   }
 
-  struct BitmapInfo {
-    BITMAPINFOHEADER bmiHeader;
-    uint32_t bmiColors[3];
-  } bmpInfo;
-
-  const uint8_t nBPP = Format::GetInfo(m_pColorDesc.Format).BytePerPixel;
-
-  bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-  bmpInfo.bmiHeader.biWidth = m_pColorDesc.Width;
-  bmpInfo.bmiHeader.biHeight = m_pColorDesc.Height;
-  bmpInfo.bmiHeader.biPlanes = 1;
-  bmpInfo.bmiHeader.biBitCount = nBPP << 3;
-  bmpInfo.bmiHeader.biCompression = BI_RGB;
-  bmpInfo.bmiHeader.biSizeImage = m_pColorDesc.Height * m_pColorDesc.Pitch;
-  bmpInfo.bmiHeader.biXPelsPerMeter = 0;
-  bmpInfo.bmiHeader.biYPelsPerMeter = 0;
-  bmpInfo.bmiHeader.biClrUsed = 0;
-  bmpInfo.bmiHeader.biClrImportant = 0;
-
-  if (2 == nBPP) {
-    bmpInfo.bmiHeader.biCompression = BI_BITFIELDS;
-    bmpInfo.bmiColors[0] = 0xF800;
-    bmpInfo.bmiColors[1] = 0x07E0;
-    bmpInfo.bmiColors[2] = 0x001F;
-  }
-
-  const unsigned bitSize = bmpInfo.bmiHeader.biSizeImage;
-  const unsigned infoSize = sizeof(BitmapInfo);
-  const unsigned size = sizeof(BITMAPFILEHEADER) + infoSize + bitSize;
-
-  // Write the file header
-  BITMAPFILEHEADER header;
-  header.bfType = 0x4D42; // 'BM'
-  header.bfSize = size;
-  header.bfReserved1 = 0;
-  header.bfReserved2 = 0;
-  header.bfOffBits = sizeof(BITMAPFILEHEADER) + infoSize;
-
-  if (fwrite(&header, 1, sizeof(BITMAPFILEHEADER), pFile) <
+  if (fwrite(&header, 1, sizeof(BITMAPFILEHEADER), pFile) !=
       sizeof(BITMAPFILEHEADER)) {
     fclose(pFile);
-    return GL_INVALID_OPERATION;
+    return GL_OUT_OF_MEMORY;
   }
 
-  if (fwrite(&bmpInfo, 1, infoSize, pFile) < infoSize) {
+  if (fwrite(&bmp_info, 1, infoSize, pFile) != infoSize) {
     fclose(pFile);
-    return GL_INVALID_OPERATION;
+    return GL_OUT_OF_MEMORY;
   }
 
-  if (fwrite(m_pColorDesc.pBits, 1, bitSize, pFile) < bitSize) {
-    fclose(pFile);
-    return GL_INVALID_OPERATION;
+  if (4 == nBPP) {
+    for (uint32_t offset = 0; offset < bmp_info.bmiHeader.biSizeImage; offset += 3) {
+      if (fwrite(pBits + (4 * (offset/3)), 1, 3, pFile) != 3) {
+        fclose(pFile);
+        return GL_OUT_OF_MEMORY;
+      }
+    }
+  } else {
+    if (fwrite(pBits, 1, bmp_info.bmiHeader.biSizeImage, pFile) != bmp_info.bmiHeader.biSizeImage) {
+      fclose(pFile);
+      return GL_OUT_OF_MEMORY;
+    }
   }
 
   fclose(pFile);

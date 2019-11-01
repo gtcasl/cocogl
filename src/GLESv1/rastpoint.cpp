@@ -15,10 +15,10 @@
 #include "stdafx.h"
 #include "raster.hpp"
 
-void CRasterizer::DrawPoint(unsigned index) {
+void CRasterizer::DrawPoint(uint32_t index) {
   const uint16_t *const pwFlags =
       (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
-  const unsigned flags = pwFlags[index];
+  const uint32_t flags = pwFlags[index];
 
   // Check if the vertex is clipped
   if (flags & CLIPPING_MASK) {
@@ -29,7 +29,7 @@ void CRasterizer::DrawPoint(unsigned index) {
   this->RasterPoint(index);
 }
 
-void CRasterizer::RasterPoint(unsigned index) {
+void CRasterizer::RasterPoint(uint32_t index) {
   const RDVECTOR *const pvScreenPos =
       (const RDVECTOR *)m_pbVertexData[VERTEXDATA_SCREENPOS];
   const fixed4 *const pfPointSize =
@@ -104,7 +104,7 @@ void CRasterizer::RasterPoint(unsigned index) {
       fDelta = Math::TInv<fixedRX>(fPointSize);
     }
 
-    for (unsigned i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
+    for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
       ASSERT(i < MAX_TEXTURES);
 
       if (m_caps.PointSprite && m_texUnits[i].bCoordReplace) {

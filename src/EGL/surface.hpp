@@ -68,9 +68,9 @@ private:
   EGLint InitializePBF(EGLint width, EGLint height, EGLint largestPBuffer,
                        EGLint texTarget, EGLint texFormat, EGLint bGenMipMaps);
 
-  static uint8_t GetColorFormat(unsigned cBitsPerPixel);
+  static uint8_t GetColorFormat(uint32_t cBitsPerPixel);
 
-  EGLint InitDepthStencil(unsigned width, unsigned height,
+  EGLint InitDepthStencil(uint32_t width, uint32_t height,
                           GLSurfaceDesc *pSurfaceDesc);
 
   void GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc);
@@ -100,6 +100,6 @@ private:
 
   uint8_t *m_pDepthStencilBits;
   uint8_t **m_ppBuffers;
-  unsigned m_mipLevels;
+  uint32_t m_mipLevels;
   __GLSurface m_glSurface;
 };

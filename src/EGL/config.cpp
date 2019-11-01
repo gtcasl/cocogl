@@ -265,7 +265,7 @@ int CConfig::Compare(const CConfig *pConfigA, const CConfig *pConfigB) {
       EGL_ALPHA_MASK_SIZE,    EGL_CONFIG_ID,
   };
 
-  for (unsigned i = 0; i < __countof(sortedList); ++i) {
+  for (uint32_t i = 0; i < __countof(sortedList); ++i) {
     const EGLint name = sortedList[i];
     const EGLint valueA = pConfigA->GetAttribute(name);
     const EGLint valueB = pConfigB->GetAttribute(name);

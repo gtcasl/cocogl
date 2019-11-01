@@ -33,9 +33,9 @@ CLogger::~CLogger() {
   }
 }
 
-void CLogger::SetIndent(unsigned indent) { m_indent = indent; }
+void CLogger::SetIndent(uint32_t indent) { m_indent = indent; }
 
-unsigned CLogger::GetIndent() const { return m_indent; }
+uint32_t CLogger::GetIndent() const { return m_indent; }
 
 void CLogger::IncrIndent() {
   ASSERT(m_indent < MAX_INDENT);
@@ -68,7 +68,7 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, ...) {
     return S_OK;
   }
 
-  unsigned indent = m_indent;
+  uint32_t indent = m_indent;
   while (indent--) {
     _ftprintf(m_pFile, _T("  "));
   }
@@ -91,7 +91,7 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
     return S_OK;
   }
 
-  unsigned indent = m_indent;
+  uint32_t indent = m_indent;
   while (indent--) {
     _ftprintf(m_pFile, _T("  "));
   }

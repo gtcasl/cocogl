@@ -18,11 +18,11 @@
 
 class CRasterizer : public CTNL {
 public:
-  GLenum RenderPrimitive(GLenum mode, unsigned count);
+  GLenum RenderPrimitive(GLenum mode, uint32_t count);
 
   template <class T>
-  GLenum TRenderIndexedPrimitive(GLenum mode, const T *pIndices, unsigned count,
-                                 unsigned startVertex);
+  GLenum TRenderIndexedPrimitive(GLenum mode, const T *pIndices, uint32_t count,
+                                 uint32_t startVertex);
 
   void PostRender();
 
@@ -127,38 +127,38 @@ protected:
 
   void UpdateScissorRect();
 
-  void DrawTriangle(unsigned i0, unsigned i1, unsigned i2);
-  void DrawLine(unsigned i0, unsigned i1);
-  void DrawPoint(unsigned index);
+  void DrawTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
+  void DrawLine(uint32_t i0, uint32_t i1);
+  void DrawPoint(uint32_t index);
 
-  bool CullScreenSpaceTriangle(unsigned i0, unsigned i1, unsigned i2);
+  bool CullScreenSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
 
-  bool CullClipSpaceTriangle(unsigned i0, unsigned i1, unsigned i2);
+  bool CullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
 
-  void RasterClippedTriangle(unsigned i0, unsigned i1, unsigned i2,
-                             unsigned clipUnion);
+  void RasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
+                             uint32_t clipUnion);
 
-  void RasterClippedLine(unsigned i0, unsigned i1, unsigned clipUnion);
+  void RasterClippedLine(uint32_t i0, uint32_t i1, uint32_t clipUnion);
 
   template <eClipFlags ClipFlags>
-  unsigned TClipTriangle(unsigned nNumVertices, unsigned *pSrc, unsigned *pDst,
-                         unsigned *pTmp);
+  uint32_t TClipTriangle(uint32_t nNumVertices, uint32_t *pSrc, uint32_t *pDst,
+                         uint32_t *pTmp);
 
-  unsigned UserClipTriangle(unsigned plane, unsigned nNumVertices,
-                            unsigned *pSrc, unsigned *pDst, unsigned *pTmp);
+  uint32_t UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
+                            uint32_t *pSrc, uint32_t *pDst, uint32_t *pTmp);
 
-  void InterpolateVertex(unsigned i0, unsigned i1, floatf fDistA, floatf fDistB,
-                         unsigned i2);
+  void InterpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA, floatf fDistB,
+                         uint32_t i2);
 
-  void RasterTriangle(unsigned i0, unsigned i1, unsigned i2);
+  void RasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
 
-  void RasterLine(unsigned i0, unsigned i1);
+  void RasterLine(uint32_t i0, uint32_t i1);
 
-  void RasterPoint(unsigned index);
+  void RasterPoint(uint32_t index);
 
-  bool SetupLineAttributes(LineGradient *pGradient, unsigned i0, unsigned i1);
+  bool SetupLineAttributes(LineGradient *pGradient, uint32_t i0, uint32_t i1);
 
-  bool SetupTriangleAttributes(unsigned i0, unsigned i1, unsigned i2);
+  bool SetupTriangleAttributes(uint32_t i0, uint32_t i1, uint32_t i2);
 
   Register *DepthGradient(Register *pRegister, const TriangleGradient &gradient,
                           const RDVECTOR &v0, const RDVECTOR &v1,
@@ -167,15 +167,15 @@ protected:
   void ApplyPolygonOffset(Register *pRegister);
 
   Register *ColorGradient(Register *pRegister, const TriangleGradient &gradient,
-                          unsigned i0, unsigned i1, unsigned i2);
+                          uint32_t i0, uint32_t i1, uint32_t i2);
 
   Register *AffineTextureGradient(Register *pRegister,
-                                  const TriangleGradient &gradient, unsigned i0,
-                                  unsigned i1, unsigned i2);
+                                  const TriangleGradient &gradient, uint32_t i0,
+                                  uint32_t i1, uint32_t i2);
 
   Register *PerspectiveTextureGradient(Register *pRegister,
                                        const TriangleGradient &gradient,
-                                       unsigned i0, unsigned i1, unsigned i2);
+                                       uint32_t i0, uint32_t i1, uint32_t i2);
 
   Register *AffineTextureMipmapGradient(Register *pRegister);
 
@@ -184,7 +184,7 @@ protected:
       const RDVECTOR &v1, const RDVECTOR &v2, floatRW rhws[3]);
 
   Register *FogGradient(Register *pRegister, const TriangleGradient &gradient,
-                        unsigned i0, unsigned i1, unsigned i2);
+                        uint32_t i0, uint32_t i1, uint32_t i2);
 
   void EnsureClearColor() {
     Color4 tmp(Math::TToUNORM8(Math::TSat(m_vClearColor.w)),
@@ -225,10 +225,10 @@ protected:
   RasterData m_rasterData;
 
   ColorARGB m_cColorWriteMask;
-  unsigned m_depthWriteMask;
-  unsigned m_stencilWriteMask;
-  unsigned m_clearColor;
-  unsigned m_clearDepth;
+  uint32_t m_depthWriteMask;
+  uint32_t m_stencilWriteMask;
+  uint32_t m_clearColor;
+  uint32_t m_clearDepth;
 
   int m_clearStencil;
   floatf m_fClearDepth;

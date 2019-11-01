@@ -14,19 +14,19 @@
 //
 #pragma once
 
-template <bool Active, class T, unsigned Size, class Allocator>
+template <bool Active, class T, uint32_t Size, class Allocator>
 class TInlineArrayBuffer : public Allocator {
 public:
   T *GetBuffer();
 };
 
-template <class T, unsigned Size, class Allocator>
+template <class T, uint32_t Size, class Allocator>
 class TInlineArrayBuffer<false, T, Size, Allocator> : public Allocator {
 public:
   T *GetBuffer() { return nullptr; }
 };
 
-template <class T, unsigned Size, class Allocator>
+template <class T, uint32_t Size, class Allocator>
 class TInlineArrayBuffer<true, T, Size, Allocator> : public Allocator {
 public:
   T *GetBuffer() { return m_buffer; }
@@ -35,7 +35,7 @@ private:
   T m_buffer[Size];
 };
 
-template <class T, unsigned GrowBy = 1, unsigned InitialCapacity = 0,
+template <class T, uint32_t GrowBy = 1, uint32_t InitialCapacity = 0,
           class Allocator = StdAllocator>
 class TArray : public Allocator {
 protected:
@@ -234,7 +234,7 @@ public:
 
   virtual ~TArray() { this->Clear(true); }
 
-  HRESULT Reserve(unsigned size) {
+  HRESULT Reserve(uint32_t size) {
     if (size > m_capacity) {
       return this->Allocate(size);
     }
@@ -242,13 +242,13 @@ public:
     return S_OK;
   }
 
-  HRESULT Resize(unsigned size, const T &value) {
+  HRESULT Resize(uint32_t size, const T &value) {
     return __Resize(size, &value);
   }
 
-  HRESULT Resize(unsigned size) { return __Resize(size); }
+  HRESULT Resize(uint32_t size) { return __Resize(size); }
 
-  HRESULT SetAt(unsigned index, const T &value) {
+  HRESULT SetAt(uint32_t index, const T &value) {
     HRESULT hr;
     if (index >= m_size) {
       hr = this->Resize(index + 1);
@@ -262,7 +262,7 @@ public:
     return S_OK;
   }
 
-  HRESULT SetAt(unsigned index, const T &value, const T &defValue) {
+  HRESULT SetAt(uint32_t index, const T &value, const T &defValue) {
     HRESULT hr;
 
     if (index >= m_size) {
@@ -277,7 +277,7 @@ public:
     return S_OK;
   }
 
-  bool GetAt(unsigned index, T *pValue) const {
+  bool GetAt(uint32_t index, T *pValue) const {
     if (index < m_size) {
       if (pValue) {
         *pValue = (*this)[index];
@@ -292,7 +292,7 @@ public:
   HRESULT Add(const T &value) {
     HRESULT hr;
 
-    const unsigned index = m_size;
+    const uint32_t index = m_size;
     hr = this->Resize(index + 1);
     if (SUCCEEDED(hr)) {
       (*this)[index] = value;
@@ -306,7 +306,7 @@ public:
 
     hr = this->Resize(rhs.m_size);
     if (SUCCEEDED(hr)) {
-      for (unsigned i = 0, n = rhs.m_size; i < n; ++i) {
+      for (uint32_t i = 0, n = rhs.m_size; i < n; ++i) {
         if
           constexpr(is_detected_v<detect_Copy_t, T>) {
             hr = m_pBuffer[i].Data.Copy(rhs.m_pBuffer[i].Data);
@@ -323,9 +323,9 @@ public:
     return hr;
   }
 
-  void Erase(unsigned index) {
+  void Erase(uint32_t index) {
     if (index < m_size) {
-      for (unsigned j = index + 1, n = m_size; j < n; ++index, ++j) {
+      for (uint32_t j = index + 1, n = m_size; j < n; ++index, ++j) {
         m_pBuffer[index].Data = m_pBuffer[j].Data;
       }
 
@@ -336,7 +336,7 @@ public:
   void Erase(const Iter &iter) { this->Erase(iter.m_pNode - m_pBuffer); }
 
   void Erase(const T &item) {
-    for (unsigned i = 0; i < m_size; ++i) {
+    for (uint32_t i = 0; i < m_size; ++i) {
       if (m_pBuffer[i].Data == item) {
         this->Erase(i);
       }
@@ -344,7 +344,7 @@ public:
   }
 
   bool Contains(const T &item) const {
-    for (unsigned i = 0; i < m_size; ++i) {
+    for (uint32_t i = 0; i < m_size; ++i) {
       if (m_pBuffer[i].Data == item) {
         return true;
       }
@@ -368,14 +368,14 @@ public:
 
   bool IsEmpty() const { return (0 == m_size); }
 
-  unsigned GetSize() const { return m_size; }
+  uint32_t GetSize() const { return m_size; }
 
-  T &operator[](unsigned index) {
+  T &operator[](uint32_t index) {
     ASSERT(index < m_size);
     return m_pBuffer[index].Data;
   }
 
-  const T &operator[](unsigned index) const {
+  const T &operator[](uint32_t index) const {
     ASSERT(index < m_size);
     return m_pBuffer[index].Data;
   }
@@ -424,7 +424,7 @@ protected:
     return *this;
   }
 
-  HRESULT __Resize(unsigned size, const T *pValue = nullptr) {
+  HRESULT __Resize(uint32_t size, const T *pValue = nullptr) {
     HRESULT hr;
 
     if (size > m_size) {
@@ -436,7 +436,7 @@ protected:
       }
 
       if (pValue) {
-        for (unsigned i = m_size; i < size; ++i) {
+        for (uint32_t i = m_size; i < size; ++i) {
           if
             constexpr(is_detected_v<detect_Copy_t, T>) {
               hr = m_pBuffer[i].Data.Copy(*pValue);
@@ -456,10 +456,10 @@ protected:
     return S_OK;
   }
 
-  HRESULT Allocate(unsigned size) {
+  HRESULT Allocate(uint32_t size) {
     HRESULT hr = S_OK;
 
-    unsigned capacity;
+    uint32_t capacity;
 
     if (size <= InitialCapacity) {
       capacity = InitialCapacity;
@@ -484,7 +484,7 @@ protected:
     }
 
     if (m_pBuffer) {
-      for (unsigned i = 0, n = m_size; i < n; ++i) {
+      for (uint32_t i = 0, n = m_size; i < n; ++i) {
         if
           constexpr(is_detected_v<detect_Copy_t, T>) {
             hr = pBuffer[i].Data.Copy(m_pBuffer[i].Data);
@@ -518,6 +518,6 @@ protected:
 
   InlineBuffer m_inlineBuffer;
   Node *m_pBuffer;
-  unsigned m_size;
-  unsigned m_capacity;
+  uint32_t m_size;
+  uint32_t m_capacity;
 };

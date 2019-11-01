@@ -48,7 +48,7 @@ GLenum CBuffer::Create(CBuffer **ppBuffer) {
   return GL_NO_ERROR;
 }
 
-GLenum CBuffer::Initialize(unsigned size, GLenum usage, const GLvoid *pData) {
+GLenum CBuffer::Initialize(uint32_t size, GLenum usage, const GLvoid *pData) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   uint8_t *const pBits = new uint8_t[size];

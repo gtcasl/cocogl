@@ -61,7 +61,7 @@ CEGLSurface::~CEGLSurface() {
   __safeDeleteArray(m_pDepthStencilBits);
 
   if (m_ppBuffers) {
-    for (unsigned i = 0; i < m_mipLevels; ++i) {
+    for (uint32_t i = 0; i < m_mipLevels; ++i) {
       delete[] m_ppBuffers[i];
     }
 
@@ -280,12 +280,14 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   int32_t x, y;
   uint32_t width, height;
   uint32_t border, depth;
+
   auto status = XGetGeometry(m_pDisplay->GetNativeHandle(), hWnd, &root, &x, &y,
                              &width, &height, &border, &depth);
   if (0 == status) {
     __eglLogError(_T("::XGetGeometry() failed, status=%d.\r\n"), status);
     return EGL_BAD_ALLOC;
   }
+  
   auto image = XGetImage(m_pDisplay->GetNativeHandle(), hWnd, 0, 0, width,
                          height, AllPlanes, ZPixmap);
   if (nullptr == image) {
@@ -298,10 +300,10 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   m_pImage = image;
 
   colorDesc.Format = CEGLSurface::GetColorFormat(image->bits_per_pixel);
-  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data);
+  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data) + image->bytes_per_line * (image->height - 1);
   colorDesc.Width = image->width;
   colorDesc.Height = image->height;
-  colorDesc.Pitch = image->bytes_per_line;
+  colorDesc.Pitch = -image->bytes_per_line;
 #endif
 
   m_width = colorDesc.Width;
@@ -366,12 +368,14 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   int32_t x, y;
   uint32_t width, height;
   uint32_t border, depth;
+
   auto status = XGetGeometry(m_pDisplay->GetNativeHandle(), hPixmap, &root, &x,
                              &y, &width, &height, &border, &depth);
   if (0 == status) {
     __eglLogError(_T("::XGetGeometry() failed, status=%d.\r\n"), status);
     return EGL_BAD_ALLOC;
   }
+  
   auto image = XGetImage(m_pDisplay->GetNativeHandle(), hPixmap, 0, 0, width,
                          height, AllPlanes, ZPixmap);
   if (nullptr == image) {
@@ -384,10 +388,10 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   m_pImage = image;
 
   colorDesc.Format = CEGLSurface::GetColorFormat(image->bits_per_pixel);
-  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data);
+  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data) + image->bytes_per_line * (image->height - 1);;
   colorDesc.Width = image->width;
   colorDesc.Height = image->height;
-  colorDesc.Pitch = image->bytes_per_line;
+  colorDesc.Pitch = -image->bytes_per_line;
 #endif
 
   // Check if the config matches the window bpp
@@ -468,10 +472,10 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
       return EGL_BAD_ALLOC;
     }
 
-    const unsigned nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
-    const unsigned mipLevels = m_mipLevels;
+    const uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
+    const uint32_t mipLevels = m_mipLevels;
 
-    for (unsigned i = 0, _width = width, _height = height; i < mipLevels; ++i) {
+    for (uint32_t i = 0, _width = width, _height = height; i < mipLevels; ++i) {
       // Allocate mipmap level
       m_ppBuffers[i] = new uint8_t[_width * _height * (nBPP / 8)];
       if (nullptr == m_ppBuffers[i]) {
@@ -672,9 +676,9 @@ EGLint CEGLSurface::CopyBuffer(EGLNativePixmapType hPixmap) {
   GLSurfaceDesc srcDesc;
 
   if (m_ppBuffers) {
-    const unsigned mipLevel =
-        Math::TClamp<unsigned>(m_mipLevel, 0, m_mipLevels - 1);
-    const unsigned nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
+    const uint32_t mipLevel =
+        Math::TClamp<uint32_t>(m_mipLevel, 0, m_mipLevels - 1);
+    const uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
     srcDesc.pBits = m_ppBuffers[mipLevel];
     srcDesc.Format = CEGLSurface::GetColorFormat(nBPP);
     srcDesc.Pitch = m_width * (nBPP / 8);
@@ -762,8 +766,7 @@ void CEGLSurface::Present() {
   ::BitBlt(m_pDisplay->GetDGetNativeHandleC(), 0, 0, m_width, m_height, m_hDC,
            0, 0, SRCCOPY);
 #elif defined(__linux__)
-  XPutImage(m_pDisplay->GetNativeHandle(), m_drawable, m_gc, m_pImage, 0, 0, 0,
-            0, m_width, m_height);
+  XPutImage(m_pDisplay->GetNativeHandle(), m_drawable, m_gc, m_pImage, 0, 0, 0, 0, m_width, m_height);
 #endif
 }
 
@@ -771,7 +774,7 @@ GLenum CEGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
   return __glSaveBitmap(m_glSurface, lpszFilename);
 }
 
-uint8_t CEGLSurface::GetColorFormat(unsigned cBitsPerPixel) {
+uint8_t CEGLSurface::GetColorFormat(uint32_t cBitsPerPixel) {
   switch (cBitsPerPixel) {
   case 16:
     return FORMAT_R5G6B5;
@@ -783,7 +786,7 @@ uint8_t CEGLSurface::GetColorFormat(unsigned cBitsPerPixel) {
   return FORMAT_UNKNOWN;
 }
 
-EGLint CEGLSurface::InitDepthStencil(unsigned width, unsigned height,
+EGLint CEGLSurface::InitDepthStencil(uint32_t width, uint32_t height,
                                      GLSurfaceDesc *pSurfaceDesc) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
@@ -792,7 +795,7 @@ EGLint CEGLSurface::InitDepthStencil(unsigned width, unsigned height,
   pSurfaceDesc->Width = width;
   pSurfaceDesc->Height = height;
 
-  unsigned stride = (m_pConfig->GetAttribute(EGL_DEPTH_SIZE) +
+  uint32_t stride = (m_pConfig->GetAttribute(EGL_DEPTH_SIZE) +
                      m_pConfig->GetAttribute(EGL_STENCIL_SIZE)) >>
                     3;
   switch (stride) {
@@ -830,13 +833,13 @@ EGLint CEGLSurface::InitDepthStencil(unsigned width, unsigned height,
 void CEGLSurface::GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc) {
   ASSERT(pSurfaceDesc);
 
-  const unsigned mipLevel =
-      Math::TClamp<unsigned>(m_mipLevel, 0, m_mipLevels - 1);
+  const uint32_t mipLevel =
+      Math::TClamp<uint32_t>(m_mipLevel, 0, m_mipLevels - 1);
 
-  unsigned width = m_width;
-  unsigned height = m_height;
+  uint32_t width = m_width;
+  uint32_t height = m_height;
 
-  for (unsigned i = 0; i < mipLevel; ++i) {
+  for (uint32_t i = 0; i < mipLevel; ++i) {
     if (width > 1) {
       width >>= 1;
     }
@@ -846,7 +849,7 @@ void CEGLSurface::GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc) {
     }
   }
 
-  const unsigned nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
+  const uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
 
   pSurfaceDesc->Format = CEGLSurface::GetColorFormat(nBPP);
   pSurfaceDesc->pBits = m_ppBuffers[mipLevel];

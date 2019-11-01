@@ -22,16 +22,13 @@ public:
   bool OnInitialize(LPCTSTR lpszFileName); 
 
   void OnRender();
-
-  void OnDestroy();
-
 private:
   char m_name[128];
   char m_parentName[128];
   GLshort m_num_indices;
   GLshort m_num_vertices;
   GLshort *m_pIndices;
-  GLfixed *m_pGeometry;
-  GLfixed *m_pNormals;
-  GLfixed *m_pTexCoords;
+  GLfloat *m_pGeometry;
+  GLfloat *m_pNormals;
+  GLfloat *m_pTexCoords;
 };

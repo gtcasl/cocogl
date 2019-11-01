@@ -16,20 +16,20 @@
 #include "raster.hpp"
 #include "raster.inl"
 
-void CRasterizer::DrawLine(unsigned i0, unsigned i1) {
+void CRasterizer::DrawLine(uint32_t i0, uint32_t i1) {
   const uint16_t *const pwFlags =
       (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
-  const unsigned flags0 = pwFlags[i0];
-  const unsigned flags1 = pwFlags[i1];
+  const uint32_t flags0 = pwFlags[i0];
+  const uint32_t flags1 = pwFlags[i1];
 
   // Check if we need to clip vertices
-  const unsigned clipUnion = (flags0 | flags1) & CLIPPING_MASK;
+  const uint32_t clipUnion = (flags0 | flags1) & CLIPPING_MASK;
   if (0 == clipUnion) {
     // Raster the line
     this->RasterLine(i0, i1);
   } else {
     // Discard primitives falling outside of the same plane.
-    const unsigned clipIntersect = (flags0 & flags1) & CLIPPING_MASK;
+    const uint32_t clipIntersect = (flags0 & flags1) & CLIPPING_MASK;
     if (0 == clipIntersect) {
       // Clip and raster the triangle
       this->RasterClippedLine(i0, i1, clipUnion);
@@ -37,7 +37,7 @@ void CRasterizer::DrawLine(unsigned i0, unsigned i1) {
   }
 }
 
-void CRasterizer::RasterLine(unsigned i0, unsigned i1) {
+void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
   LineGradient gradient;
 
   // Setup the line attributes
@@ -161,8 +161,8 @@ void CRasterizer::RasterLine(unsigned i0, unsigned i1) {
 #endif
 }
 
-bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, unsigned i0,
-                                      unsigned i1) {
+bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
+                                      uint32_t i1) {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
   Register *pRegister = m_rasterData.Registers;
 
@@ -174,7 +174,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, unsigned i0,
   const fixed4 i4dx = v1.x - v0.x;
   const fixed4 i4dy = v1.y - v0.y;
 
-  unsigned attribIdx;
+  uint32_t attribIdx;
 
   if (Math::TAbs(i4dx) > Math::TAbs(i4dy)) {
     // Early out for empty lines
@@ -213,10 +213,10 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, unsigned i0,
     const ColorARGB c0 = pcColors[i0];
     const ColorARGB c1 = pcColors[i1];
 
-    unsigned interpolateMask = (rasterFlags.InterpolateColor ? 0x7 : 0) |
+    uint32_t interpolateMask = (rasterFlags.InterpolateColor ? 0x7 : 0) |
                                (rasterFlags.InterpolateAlpha << 3);
     if (interpolateMask) {
-      for (unsigned i = 0; i < 4; ++i) {
+      for (uint32_t i = 0; i < 4; ++i) {
         const int delta = c1.m[i] - c0.m[i];
         if (Math::TAbs(delta) > 1) {
           pRegister[i].m[attribIdx] = pGradient->TCalcDelta<fixedRX>(delta);
@@ -232,7 +232,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, unsigned i0,
       m_rasterID.Flags.InterpolateColor = (interpolateMask & 0x7) ? 1 : 0;
       m_rasterID.Flags.InterpolateAlpha = interpolateMask >> 3;
     } else {
-      for (unsigned i = 0; i < 4; ++i) {
+      for (uint32_t i = 0; i < 4; ++i) {
         pRegister[i].m[0] = TConst<fixedRX>::Zero();
         pRegister[i].m[1] = TConst<fixedRX>::Zero();
         pRegister[i].m[2] = static_cast<fixedRX>(c1.m[i]) >> fixed8::FRAC;
@@ -243,7 +243,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, unsigned i0,
   }
 
   if (rasterFlags.NumTextures) {
-    for (unsigned i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
+    for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
       ASSERT(i < MAX_TEXTURES);
 
       const TEXCOORD2 *const vTexCoords =

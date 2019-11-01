@@ -13,17 +13,18 @@
 //
 #pragma once
 
-///---------------------------------------------------------------------------
-/// <summary>
-/// </summary>
-///---------------------------------------------------------------------------
 class CCubeTest : public CTestBase {
+private:
+  int m_rotation;
+
 public:
+  CCubeTest() : m_rotation(0) {}
+
   bool OnInitialize(uint32_t width, uint32_t height) {
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
     the fixed point version (they finish in 'x'*/
-    glClearColorx(0, 0, 0, 0);
+    glClearColor(0, 0, 0, 0);
 
     // Do not want to see smoothed colors, only a plain color for face
     glShadeModel(GL_FLAT);
@@ -48,16 +49,13 @@ public:
     We use an ortho cube centered at ( 0, 0, 0 ) with 40 units of edge*/
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrthox(FixedFromInt(-20), FixedFromInt(20), FixedFromInt(-20),
-             FixedFromInt(20), FixedFromInt(-20), FixedFromInt(20));
+    glOrthof(-20, 20, -20, 20, -20, 20);
     glMatrixMode(GL_MODELVIEW);
 
     return true;
   }
 
   void OnRender() {
-    static int rotation = 0;
-
     // We are going to draw a cube centered at origin, and with an edge of 10
     // units
     /*
@@ -65,7 +63,7 @@ public:
             +--------------------+
           / |                   /|
         /   |                 /  |
-    3  /     |             2 /    |
+    3 /     |             2 /    |
     +---------------------+      |
     |       |             |      |
     |       |             |      |
@@ -96,8 +94,8 @@ public:
 
     glLoadIdentity();
 
-    glRotatex(FixedFromInt(45), ONE, 0, 0);
-    glRotatex(FixedFromInt(rotation++), 0, ONE, 0);
+    glRotatef(45, 1.f, 0, 0);
+    glRotatef(m_rotation, 0, 1.0f, 0);
 
     // Enable the vertices array
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -106,24 +104,26 @@ public:
     // 3 = XYZ coordinates, GL_SHORT = data type, 0 = 0 stride bytes
     /*We are going to draw the cube, face by face, with different colors for
     each face, using indexed vertex arrays and triangle strips*/
-    glColor4x(ONE, 0, 0, 0);
+    glColor4f(1, 0, 0, 0);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, front);
 
-    glColor4x(0, ONE, 0, 0);
+    glColor4f(0, 1, 0, 0);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, back);
 
-    glColor4x(0, 0, ONE, 0);
+    glColor4f(0, 0, 1, 0);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, top);
 
-    glColor4x(ONE, ONE, 0, 0);
+    glColor4f(1, 1, 0, 0);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, bottom);
 
-    glColor4x(0, ONE, ONE, 0);
+    glColor4f(0, 1, 1, 0);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, left);
 
-    glColor4x(ONE, 0, ONE, 0);
+    glColor4f(1, 0, 1, 0);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, right);
 
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    ++m_rotation;
   }
 };

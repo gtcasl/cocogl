@@ -49,7 +49,7 @@ GLenum COptimizedRasterOp::Create(IRasterOp **ppRasterOp,
   ASSERT(ppRasterOp);
 
   // First lookup the optimized scanline table
-  for (unsigned i = 0; i < __countof(l_optimizedScanlines); ++i) {
+  for (uint32_t i = 0; i < __countof(l_optimizedScanlines); ++i) {
     if (l_optimizedScanlines[i].RasterID == rasterID) {
       // Create an optimized rasterOp object
       COptimizedRasterOp *const pRasterOp =

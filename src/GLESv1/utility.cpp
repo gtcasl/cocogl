@@ -16,19 +16,19 @@
 
 class CBlitTable {
 public:
-  typedef GLenum (*PFN_COPY)(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
-                             unsigned dstOffsetY, unsigned copyWidth,
-                             unsigned copyHeight, const GLSurfaceDesc &srcDesc,
-                             unsigned srcOffsetX, unsigned srcOffsetY);
+  typedef GLenum (*PFN_COPY)(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
+                             uint32_t dstOffsetY, uint32_t copyWidth,
+                             uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
+                             uint32_t srcOffsetX, uint32_t srcOffsetY);
 
   CBlitTable() {
-    for (unsigned s = 0; s < FORMAT_COLOR_SIZE_; ++s) {
-      for (unsigned d = 0; d < FORMAT_COLOR_SIZE_; ++d) {
+    for (uint32_t s = 0; s < FORMAT_COLOR_SIZE_; ++s) {
+      for (uint32_t d = 0; d < FORMAT_COLOR_SIZE_; ++d) {
         m_copyFuncs[s][d] = TCopyNC;
       }
     }
 
-    for (unsigned s = 0; s < FORMAT_COLOR_SIZE_; ++s) {
+    for (uint32_t s = 0; s < FORMAT_COLOR_SIZE_; ++s) {
       switch (s) {
       case FORMAT_A8:
       case FORMAT_L8:
@@ -119,7 +119,7 @@ public:
             TCopy<FORMAT_A8R8G8B8, FORMAT_R5G6B5>;
         m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_R8G8B8] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_R8G8B8>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_A8R8G8B8] = TCopyFast<unsigned>;
+        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_A8R8G8B8] = TCopyFast<uint32_t>;
         m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_R5G5B5A1] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_R5G5B5A1>;
         m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_R4G4B4A4] =
@@ -178,7 +178,7 @@ public:
     }
   }
 
-  PFN_COPY Get(unsigned srcFormat, unsigned dstFormat) const {
+  PFN_COPY Get(uint32_t srcFormat, uint32_t dstFormat) const {
     ASSERT(srcFormat < FORMAT_COLOR_SIZE_);
     ASSERT(dstFormat < FORMAT_COLOR_SIZE_);
     return m_copyFuncs[srcFormat][dstFormat];
@@ -186,14 +186,14 @@ public:
 
 private:
   template <ePixelFormat SrcFormat, ePixelFormat DstFormat>
-  static GLenum TCopy(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
-                      unsigned dstOffsetY, unsigned copyWidth,
-                      unsigned copyHeight, const GLSurfaceDesc &srcDesc,
-                      unsigned srcOffsetX, unsigned srcOffsetY) {
-    const unsigned srcBPP = TFormatInfo<SrcFormat>::CBSIZE;
-    const unsigned dstBPP = TFormatInfo<DstFormat>::CBSIZE;
-    const unsigned srcNextLine = srcDesc.Pitch;
-    const unsigned dstNextLine = dstDesc.Pitch;
+  static GLenum TCopy(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
+                      uint32_t dstOffsetY, uint32_t copyWidth,
+                      uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
+                      uint32_t srcOffsetX, uint32_t srcOffsetY) {
+    const uint32_t srcBPP = TFormatInfo<SrcFormat>::CBSIZE;
+    const uint32_t dstBPP = TFormatInfo<DstFormat>::CBSIZE;
+    const int32_t srcNextLine = srcDesc.Pitch;
+    const int32_t dstNextLine = dstDesc.Pitch;
 
     const uint8_t *pbSrc =
         srcDesc.pBits + srcOffsetX * srcBPP + srcOffsetY * srcDesc.Pitch;
@@ -224,13 +224,13 @@ private:
   }
 
   template <class Type>
-  static GLenum TCopyFast(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
-                          unsigned dstOffsetY, unsigned copyWidth,
-                          unsigned copyHeight, const GLSurfaceDesc &srcDesc,
-                          unsigned srcOffsetX, unsigned srcOffsetY) {
-    const unsigned nBPP = sizeof(Type);
-    const unsigned srcNextLine = srcDesc.Pitch;
-    const unsigned dstNextLine = dstDesc.Pitch;
+  static GLenum TCopyFast(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
+                          uint32_t dstOffsetY, uint32_t copyWidth,
+                          uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
+                          uint32_t srcOffsetX, uint32_t srcOffsetY) {
+    const uint32_t nBPP = sizeof(Type);
+    const int32_t srcNextLine = srcDesc.Pitch;
+    const int32_t dstNextLine = dstDesc.Pitch;
 
     const uint8_t *pbSrc =
         srcDesc.pBits + srcOffsetX * nBPP + srcOffsetY * srcDesc.Pitch;
@@ -253,10 +253,10 @@ private:
   }
 
   static GLenum TCopyNC(const GLSurfaceDesc & /*dstDesc*/,
-                        unsigned /*dstOffsetX*/, unsigned /*dstOffsetY*/,
-                        unsigned /*copyWidth*/, unsigned /*copyHeight*/,
+                        uint32_t /*dstOffsetX*/, uint32_t /*dstOffsetY*/,
+                        uint32_t /*copyWidth*/, uint32_t /*copyHeight*/,
                         const GLSurfaceDesc & /*srcDesc*/,
-                        unsigned /*srcOffsetX*/, unsigned /*srcOffsetY*/
+                        uint32_t /*srcOffsetX*/, uint32_t /*srcOffsetY*/
                         ) {
     __glLogError(_T("CSurface2D::Copy() failed, the source and destination ")
                  _T("formats are not compatible."));
@@ -266,10 +266,10 @@ private:
   PFN_COPY m_copyFuncs[FORMAT_COLOR_SIZE_][FORMAT_COLOR_SIZE_];
 };
 
-GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
-                   unsigned dstOffsetY, unsigned copyWidth, unsigned copyHeight,
-                   const GLSurfaceDesc &srcDesc, unsigned srcOffsetX,
-                   unsigned srcOffsetY) {
+GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
+                   uint32_t dstOffsetY, uint32_t copyWidth, uint32_t copyHeight,
+                   const GLSurfaceDesc &srcDesc, uint32_t srcOffsetX,
+                   uint32_t srcOffsetY) {
   static const CBlitTable s_blitTable;
 
   if ((srcOffsetX >= srcDesc.Width) || (srcOffsetY >= srcDesc.Height) ||
@@ -300,7 +300,7 @@ GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
 
 //////////////////////////////////////////////////////////////////////////////
 
-unsigned GLSizeOf(GLenum type) {
+uint32_t GLSizeOf(GLenum type) {
   switch (type) {
   default:
     __no_default;
@@ -345,7 +345,7 @@ eVertexFormat ToVertexFormat(GLenum type, GLint size) {
   }
 }
 
-unsigned VertexDataSize(eVertexFormat format) {
+uint32_t VertexDataSize(eVertexFormat format) {
   switch (format) {
   default:
     __no_default;
@@ -456,7 +456,7 @@ GLenum GLERROR_FROM_HRESULT(HRESULT hr) {
   return GL_INVALID_OPERATION;
 }
 
-GLenum ToPixelFormat(ePixelFormat *pOut, unsigned *pBPP, GLenum format,
+GLenum ToPixelFormat(ePixelFormat *pOut, uint32_t *pBPP, GLenum format,
                      GLenum type) {
   ASSERT(pOut && pBPP);
 
@@ -587,11 +587,11 @@ eCompare Reverse(eCompare compare) {
   }
 }
 
-unsigned CompareFuncFromEnum(GLenum func) { return (func - GL_NEVER); }
+uint32_t CompareFuncFromEnum(GLenum func) { return (func - GL_NEVER); }
 
-GLenum EnumFromCompareFunc(unsigned func) { return (GL_NEVER + func); }
+GLenum EnumFromCompareFunc(uint32_t func) { return (GL_NEVER + func); }
 
-unsigned StencilOpFromEnum(GLenum op) {
+uint32_t StencilOpFromEnum(GLenum op) {
   if (GL_ZERO == op) {
     return STENCIL_ZERO;
   } else if (GL_INVERT == op) {
@@ -601,7 +601,7 @@ unsigned StencilOpFromEnum(GLenum op) {
   }
 }
 
-GLenum EnumFromStencilOp(unsigned op) {
+GLenum EnumFromStencilOp(uint32_t op) {
   if (STENCIL_ZERO == op) {
     return GL_ZERO;
   } else if (STENCIL_INVERT == op) {
@@ -611,7 +611,7 @@ GLenum EnumFromStencilOp(unsigned op) {
   }
 }
 
-unsigned BlendFuncFromEnum(GLenum func) {
+uint32_t BlendFuncFromEnum(GLenum func) {
   switch (func) {
   case GL_ZERO:
   case GL_ONE:
@@ -622,7 +622,7 @@ unsigned BlendFuncFromEnum(GLenum func) {
   }
 }
 
-GLenum EnumFromBlendFunc(unsigned func) {
+GLenum EnumFromBlendFunc(uint32_t func) {
   switch (func) {
   case BLEND_ZERO:
   case BLEND_ONE:
@@ -633,11 +633,11 @@ GLenum EnumFromBlendFunc(unsigned func) {
   }
 }
 
-unsigned LogicOpFromEnum(GLenum op) { return (op - GL_CLEAR); }
+uint32_t LogicOpFromEnum(GLenum op) { return (op - GL_CLEAR); }
 
-GLenum EnumFromLogicOp(unsigned op) { return (GL_CLEAR + op); }
+GLenum EnumFromLogicOp(uint32_t op) { return (GL_CLEAR + op); }
 
-unsigned FogModeFromEnum(GLenum mode) {
+uint32_t FogModeFromEnum(GLenum mode) {
   switch (mode) {
   case GL_LINEAR:
     return FogLinear;
@@ -651,7 +651,7 @@ unsigned FogModeFromEnum(GLenum mode) {
   }
 }
 
-GLenum EnumFromFogMode(unsigned mode) {
+GLenum EnumFromFogMode(uint32_t mode) {
   switch (mode) {
   case FogLinear:
     return GL_LINEAR;
@@ -665,7 +665,7 @@ GLenum EnumFromFogMode(unsigned mode) {
   }
 }
 
-unsigned ShadeModelFromEnum(GLenum mode) {
+uint32_t ShadeModelFromEnum(GLenum mode) {
   switch (mode) {
   case GL_FLAT:
     return SHADE_FLAT;
@@ -677,7 +677,7 @@ unsigned ShadeModelFromEnum(GLenum mode) {
   }
 }
 
-GLenum EnumFromShadeModel(unsigned mode) {
+GLenum EnumFromShadeModel(uint32_t mode) {
   switch (mode) {
   case SHADE_FLAT:
     return GL_FLAT;
@@ -689,7 +689,7 @@ GLenum EnumFromShadeModel(unsigned mode) {
   }
 }
 
-unsigned CullFaceFromEnum(GLenum mode) {
+uint32_t CullFaceFromEnum(GLenum mode) {
   switch (mode) {
   case GL_FRONT:
     return CULL_FRONT;
@@ -703,7 +703,7 @@ unsigned CullFaceFromEnum(GLenum mode) {
   }
 }
 
-GLenum EnumFromCullFace(unsigned mode) {
+GLenum EnumFromCullFace(uint32_t mode) {
   switch (mode) {
   case CULL_FRONT:
     return GL_FRONT;
@@ -717,7 +717,7 @@ GLenum EnumFromCullFace(unsigned mode) {
   }
 }
 
-unsigned FrontFaceFromEnum(GLenum mode) {
+uint32_t FrontFaceFromEnum(GLenum mode) {
   switch (mode) {
   case GL_CW:
     return CULL_CW;
@@ -728,7 +728,7 @@ unsigned FrontFaceFromEnum(GLenum mode) {
   }
 }
 
-GLenum EnumFromFrontFace(unsigned mode) {
+GLenum EnumFromFrontFace(uint32_t mode) {
   switch (mode) {
   case CULL_CW:
     return GL_CW;
@@ -739,11 +739,11 @@ GLenum EnumFromFrontFace(unsigned mode) {
   }
 }
 
-unsigned HintFromEnum(GLenum mode) { return (mode - GL_DONT_CARE); }
+uint32_t HintFromEnum(GLenum mode) { return (mode - GL_DONT_CARE); }
 
-GLenum EnumFromHint(unsigned mode) { return (GL_DONT_CARE + mode); }
+GLenum EnumFromHint(uint32_t mode) { return (GL_DONT_CARE + mode); }
 
-unsigned TexFilterFromEnum(GLenum param) {
+uint32_t TexFilterFromEnum(GLenum param) {
   switch (param) {
   case GL_NEAREST:
     return FILTER_NEAREST;
@@ -766,7 +766,7 @@ unsigned TexFilterFromEnum(GLenum param) {
   }
 }
 
-GLenum EnumFromTexFilter(unsigned param) {
+GLenum EnumFromTexFilter(uint32_t param) {
   switch (param) {
   case FILTER_NEAREST:
     return GL_NEAREST;
@@ -789,7 +789,7 @@ GLenum EnumFromTexFilter(unsigned param) {
   }
 }
 
-unsigned TexAddressFromEnum(GLenum param) {
+uint32_t TexAddressFromEnum(GLenum param) {
   switch (param) {
   case GL_CLAMP_TO_EDGE:
     return ADDRESS_CLAMP;
@@ -800,7 +800,7 @@ unsigned TexAddressFromEnum(GLenum param) {
   }
 }
 
-GLenum EnumFromTexAddress(unsigned param) {
+GLenum EnumFromTexAddress(uint32_t param) {
   switch (param) {
   case ADDRESS_CLAMP:
     return GL_CLAMP_TO_EDGE;
@@ -831,7 +831,7 @@ eEnvMode TexEnvFromEnum(GLenum param) {
   }
 }
 
-GLenum EnumFromTexEnv(unsigned param) {
+GLenum EnumFromTexEnv(uint32_t param) {
   switch (param) {
   case ENVMODE_ADD:
     return GL_ADD;

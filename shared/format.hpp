@@ -63,7 +63,7 @@ struct FormatInfo {
   uint8_t LerpBits;
 };
 
-template <unsigned PixelFormat> struct TFormatInfo {};
+template <uint32_t PixelFormat> struct TFormatInfo {};
 
 #define DEF_GET_ENUM_VALUE(Name, Default)                                      \
   template <typename T, typename Enable = void> struct enum_get_##Name {       \
@@ -107,29 +107,29 @@ namespace Format {
 typedef void (*PFN_CONVERTFROM)(Color4 *pOut, const void *pIn);
 typedef void (*PFN_CONVERTTO)(void *pOut, const Color4 &in);
 
-template <unsigned PixelFormat> unsigned TConvertToNative(const Color4 &color);
+template <uint32_t PixelFormat> uint32_t TConvertToNative(const Color4 &color);
 
-template <unsigned PixelFormat, bool bForceAlpha>
-void TConvertFromNative(Color4 *pOut, unsigned in);
+template <uint32_t PixelFormat, bool bForceAlpha>
+void TConvertFromNative(Color4 *pOut, uint32_t in);
 
-template <unsigned PixelFormat> void TConvertTo(void *pOut, const Color4 &in) {
+template <uint32_t PixelFormat> void TConvertTo(void *pOut, const Color4 &in) {
   *reinterpret_cast<typename TFormatInfo<PixelFormat>::TYPE *>(pOut) =
       static_cast<typename TFormatInfo<PixelFormat>::TYPE>(
           Format::TConvertToNative<PixelFormat>(in));
 }
 
-template <unsigned PixelFormat, bool bForceAlpha>
+template <uint32_t PixelFormat, bool bForceAlpha>
 void TConvertFrom(Color4 *pOut, const void *pIn) {
   Format::TConvertFromNative<PixelFormat, bForceAlpha>(
       pOut,
       *reinterpret_cast<const typename TFormatInfo<PixelFormat>::TYPE *>(pIn));
 }
 
-PFN_CONVERTTO GetConvertTo(unsigned pixelFormat);
+PFN_CONVERTTO GetConvertTo(uint32_t pixelFormat);
 
-PFN_CONVERTFROM GetConvertFrom(unsigned pixelFormat, bool bForceAlpha);
+PFN_CONVERTFROM GetConvertFrom(uint32_t pixelFormat, bool bForceAlpha);
 
-const FormatInfo &GetInfo(unsigned pixelFormat);
+const FormatInfo &GetInfo(uint32_t pixelFormat);
 
-unsigned GetNativeFormat(unsigned pixelFormat);
+uint32_t GetNativeFormat(uint32_t pixelFormat);
 } // namespace Format

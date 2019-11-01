@@ -57,12 +57,12 @@ static uint32_t __exp2_tab[] = {
   ((static_cast<uint64_t>(a) * static_cast<uint64_t>(b)) >> 32)
 
 // By Ken Turkowski's Fixed Point Square Root from "Graphics Gems V".
-unsigned int iSqrt(unsigned int rhs) {
-  unsigned g = 0;
-  unsigned s = (31 - Clz(rhs)) >> 1;
-  unsigned b = 1 << s;
+uint32_t iSqrt(uint32_t rhs) {
+  uint32_t g = 0;
+  uint32_t s = (31 - Clz(rhs)) >> 1;
+  uint32_t b = 1 << s;
   do {
-    const unsigned tmp = (b + (g << 1)) << s;
+    const uint32_t tmp = (b + (g << 1)) << s;
     if (rhs >= tmp) {
       g += b;
       rhs -= tmp;
@@ -154,7 +154,7 @@ template <> fixed16 TPow(fixed16 lhs, fixed16 rhs) {
 template <> fixed16 TPow2(fixed16 rhs) {
   ASSERT((rhs.To<int>() >= 0) && (rhs.To<int>() < 32));
 
-  const unsigned x5log2 = 0xb17217f8; // round(2^32*log(2))
+  const uint32_t x5log2 = 0xb17217f8; // round(2^32*log(2))
   const int x5d3 = 0x55555555;        // round(2^32/3)
 
   int n, d, q, r;

@@ -23,6 +23,7 @@
 
 //#define COCOGL_RASTER_PROFILE
 //#define COCOGL_API_PROFILE
+//#define COCOGL_SNAPSHOTS 1
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,7 +37,7 @@ struct GLSurfaceDesc {
   uint8_t *pBits;
   uint32_t Width;
   uint32_t Height;
-  uint32_t Pitch;
+  int32_t Pitch;
 };
 
 extern GLenum __glCreateSurface(const GLSurfaceDesc *pColorDesc,

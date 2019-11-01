@@ -16,32 +16,32 @@
 #include "inputasm.hpp"
 
 typedef void (*PFN_DECODEPOSITION)(VECTOR4 *pOut, const uint8_t *pbIn,
-                                   unsigned stride, unsigned count);
+                                   uint32_t stride, uint32_t count);
 
 class CTNL : public CInputAssembler {
 public:
-  typedef void (CTNL::*PFN_VERTEXDECODE)(unsigned count);
-  typedef void (CTNL::*PFN_DECODETEXCOORD)(unsigned dstIndex, unsigned srcIndex,
-                                           unsigned count);
+  typedef void (CTNL::*PFN_VERTEXDECODE)(uint32_t count);
+  typedef void (CTNL::*PFN_DECODETEXCOORD)(uint32_t dstIndex, uint32_t srcIndex,
+                                           uint32_t count);
 
   template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
-  void TProcessPointSize(unsigned count);
+  void TProcessPointSize(uint32_t count);
 
   template <bool ColorMaterial, eVertexFormat ColorFormat,
             eVertexFormat NormalFormat>
-  void TProcessLighting_OneSided(unsigned count);
+  void TProcessLighting_OneSided(uint32_t count);
 
   template <bool ColorMaterial, eVertexFormat ColorFormat,
             eVertexFormat NormalFormat>
-  void TProcessLighting_TwoSided(unsigned count);
+  void TProcessLighting_TwoSided(uint32_t count);
 
   template <eVertexFormat VertexFormat>
-  void TProcessVertexColor(unsigned count);
+  void TProcessVertexColor(uint32_t count);
 
   template <bool Transform, eVertexFormat VertexFormat>
-  void TProcessTexCoords(unsigned dstIndex, unsigned srcIndex, unsigned count);
+  void TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
 
-  template <eFogMode FogMode> void TProcessFog(unsigned count);
+  template <eFogMode FogMode> void TProcessFog(uint32_t count);
 
 protected:
   CTNL() {}
@@ -65,21 +65,21 @@ protected:
     MATRIX44 mProjectionInvT;
   };
 
-  GLenum SetupTNLStates(GLenum mode, int first, unsigned count);
+  GLenum SetupTNLStates(GLenum mode, int first, uint32_t count);
 
-  void ProcessVertices(unsigned count);
+  void ProcessVertices(uint32_t count);
 
-  GLenum UpdatePoints(uint8_t **ppbVertexData, int first, unsigned count);
+  GLenum UpdatePoints(uint8_t **ppbVertexData, int first, uint32_t count);
 
-  GLenum UpdateColor(uint8_t **ppbVertexData, int first, unsigned count);
+  GLenum UpdateColor(uint8_t **ppbVertexData, int first, uint32_t count);
 
-  GLenum UpdateLighting(uint8_t **ppbVertexData, int first, unsigned count);
+  GLenum UpdateLighting(uint8_t **ppbVertexData, int first, uint32_t count);
 
   void UpdateNormal();
 
-  GLenum UpdateTexcoords(uint8_t **ppbVertexData, int first, unsigned count);
+  GLenum UpdateTexcoords(uint8_t **ppbVertexData, int first, uint32_t count);
 
-  void UpdateFog(uint8_t **ppbVertexData, int first, unsigned count);
+  void UpdateFog(uint8_t **ppbVertexData, int first, uint32_t count);
 
   void UpdateModelViewInvT44();
 
@@ -99,18 +99,18 @@ protected:
 
   void UpdateLights();
 
-  static unsigned CalcClipFlags(const VECTOR4 &vPosition);
+  static uint32_t CalcClipFlags(const VECTOR4 &vPosition);
 
-  unsigned CalcUserClipFlags(unsigned count);
+  uint32_t CalcUserClipFlags(uint32_t count);
 
   void XformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
-                        unsigned count);
+                        uint32_t count);
 
-  void XformEyeSpace(unsigned count);
+  void XformEyeSpace(uint32_t count);
 
-  void ProcessPointSize(unsigned count);
+  void ProcessPointSize(uint32_t count);
 
-  void ProcessColor(unsigned count);
+  void ProcessColor(uint32_t count);
 
   void ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                               const VECTOR3 &vNormal,
@@ -126,7 +126,7 @@ protected:
   void ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                               const VECTOR3 &vNormal);
 
-  void ProcessTexCoords(unsigned dstIndex, unsigned srcIndex, unsigned count);
+  void ProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
 
   void UpdateMatrixDirtyFlags();
 
@@ -173,7 +173,7 @@ protected:
 
   uint8_t *m_pbVertexData[VERTEXDATA_SIZE];
   uint8_t *m_pbVertexColor;
-  unsigned m_clipVerticesBaseIndex;
+  uint32_t m_clipVerticesBaseIndex;
 
   TNLFLAGS m_TNLFlags;
 

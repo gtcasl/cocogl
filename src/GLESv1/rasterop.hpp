@@ -14,13 +14,13 @@
 //
 #pragma once
 
-template <unsigned Format> struct TColorNative {
-  unsigned Low;
-  unsigned High;
+template <uint32_t Format> struct TColorNative {
+  uint32_t Low;
+  uint32_t High;
 
   TColorNative() {}
 
-  explicit TColorNative(unsigned value) {
+  explicit TColorNative(uint32_t value) {
     if
       constexpr(Format == FORMAT_A8) { this->Low = value; }
 
@@ -49,7 +49,7 @@ template <unsigned Format> struct TColorNative {
       }
   }
 
-  operator unsigned() const {
+  operator uint32_t() const {
     if
       constexpr(Format == FORMAT_A8) { return this->Low; }
 
@@ -77,7 +77,7 @@ template <unsigned Format> struct TColorNative {
       }
   }
 
-  TColorNative<Format> Mul(unsigned frac) const {
+  TColorNative<Format> Mul(uint32_t frac) const {
     TColorNative<Format> result;
 
     if
@@ -111,7 +111,7 @@ template <unsigned Format> struct TColorNative {
   }
 
   TColorNative<Format> Lerp(const TColorNative<Format> &c1,
-                            unsigned frac) const {
+                            uint32_t frac) const {
     TColorNative<Format> result;
 
     if
@@ -154,7 +154,7 @@ template <unsigned Format> struct TColorNative {
   }
 };
 
-template <unsigned Compare> inline bool TCompare(unsigned a, unsigned b) {
+template <uint32_t Compare> inline bool TCompare(uint32_t a, uint32_t b) {
 
   if
     constexpr(Compare == COMPARE_NEVER) {
@@ -191,8 +191,8 @@ template <unsigned Compare> inline bool TCompare(unsigned a, unsigned b) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned StencilOp>
-inline unsigned TStencilOp(unsigned stencilValue, unsigned stencilRef) {
+template <uint32_t StencilOp>
+inline uint32_t TStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
 
   if
     constexpr(StencilOp == STENCIL_KEEP) {
@@ -234,7 +234,7 @@ inline unsigned TStencilOp(unsigned stencilValue, unsigned stencilRef) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned Address> inline int TAddress(int x) {
+template <uint32_t Address> inline int TAddress(int x) {
 
   if
     constexpr(Address == ADDRESS_WRAP) { return x & fixedRX::MASK; }
@@ -247,26 +247,26 @@ template <unsigned Address> inline int TAddress(int x) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned Format, unsigned AddressU, unsigned AddressV>
-inline unsigned TGetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
+template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
+inline uint32_t TGetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
                                   fixedRX fV) {
   const typename TFormatInfo<Format>::TYPE *const pBits =
       reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
           surface.GetBits());
-  const unsigned logWidth = surface.GetLogWidth();
-  const unsigned logHeight = surface.GetLogHeight();
+  const uint32_t logWidth = surface.GetLogWidth();
+  const uint32_t logHeight = surface.GetLogHeight();
 
-  const unsigned u = TAddress<AddressU>(fU.GetRaw());
-  const unsigned v = TAddress<AddressV>(fV.GetRaw());
+  const uint32_t u = TAddress<AddressU>(fU.GetRaw());
+  const uint32_t v = TAddress<AddressV>(fV.GetRaw());
 
-  const unsigned x = u >> (fixedRX::FRAC - logWidth);
-  const unsigned y = v >> (fixedRX::FRAC - logHeight);
-  const unsigned offset = x + (y << logWidth);
+  const uint32_t x = u >> (fixedRX::FRAC - logWidth);
+  const uint32_t y = v >> (fixedRX::FRAC - logHeight);
+  const uint32_t offset = x + (y << logWidth);
 
   return *(pBits + offset);
 }
 
-template <unsigned Format, unsigned AddressU, unsigned AddressV>
+template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline TColorNative<Format> TGetTexelColorLnX(const SurfaceDesc &surface,
                                               fixedRX fU, fixedRX fV) {
   const int lerpBits = TFormatInfo<Format>::LERP;
@@ -275,36 +275,36 @@ inline TColorNative<Format> TGetTexelColorLnX(const SurfaceDesc &surface,
   const typename TFormatInfo<Format>::TYPE *const pBits =
       reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
           surface.GetBits());
-  const unsigned logWidth = surface.GetLogWidth();
-  const unsigned logHeight = surface.GetLogHeight();
+  const uint32_t logWidth = surface.GetLogWidth();
+  const uint32_t logHeight = surface.GetLogHeight();
 
-  const unsigned v0 =
+  const uint32_t v0 =
       TAddress<AddressV>(fV.GetRaw() - (fixedRX::HALF >> logHeight));
-  const unsigned v1 =
+  const uint32_t v1 =
       TAddress<AddressV>(fV.GetRaw() + (fixedRX::HALF >> logHeight));
-  const unsigned u0 =
+  const uint32_t u0 =
       TAddress<AddressU>(fU.GetRaw() - (fixedRX::HALF >> logWidth));
-  const unsigned u1 =
+  const uint32_t u1 =
       TAddress<AddressU>(fU.GetRaw() + (fixedRX::HALF >> logWidth));
 
-  const unsigned logHeightN = fixedRX::FRAC - (logHeight + lerpBits);
-  const unsigned y1 = v1 >> logHeightN;
-  const unsigned y0 = v0 >> logHeightN;
-  const unsigned beta = y0 & lerpMask;
-  const unsigned y3 = (y1 >> lerpBits) << logWidth;
-  const unsigned y2 = (y0 >> lerpBits) << logWidth;
+  const uint32_t logHeightN = fixedRX::FRAC - (logHeight + lerpBits);
+  const uint32_t y1 = v1 >> logHeightN;
+  const uint32_t y0 = v0 >> logHeightN;
+  const uint32_t beta = y0 & lerpMask;
+  const uint32_t y3 = (y1 >> lerpBits) << logWidth;
+  const uint32_t y2 = (y0 >> lerpBits) << logWidth;
 
-  const unsigned logWidthN = fixedRX::FRAC - (logWidth + lerpBits);
-  const unsigned x1 = u1 >> logWidthN;
-  const unsigned x0 = u0 >> logWidthN;
-  const unsigned alpha = x0 & lerpMask;
-  const unsigned x3 = x1 >> lerpBits;
-  const unsigned x2 = x0 >> lerpBits;
+  const uint32_t logWidthN = fixedRX::FRAC - (logWidth + lerpBits);
+  const uint32_t x1 = u1 >> logWidthN;
+  const uint32_t x0 = u0 >> logWidthN;
+  const uint32_t alpha = x0 & lerpMask;
+  const uint32_t x3 = x1 >> lerpBits;
+  const uint32_t x2 = x0 >> lerpBits;
 
-  const unsigned c0 = pBits[y2 + x2];
-  const unsigned c1 = pBits[y2 + x3];
-  const unsigned c2 = pBits[y3 + x2];
-  const unsigned c3 = pBits[y3 + x3];
+  const uint32_t c0 = pBits[y2 + x2];
+  const uint32_t c1 = pBits[y2 + x3];
+  const uint32_t c2 = pBits[y3 + x2];
+  const uint32_t c3 = pBits[y3 + x3];
 
   TColorNative<Format> nc0(c0);
   TColorNative<Format> nc1(c1);
@@ -319,9 +319,9 @@ inline TColorNative<Format> TGetTexelColorLnX(const SurfaceDesc &surface,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned Filter, unsigned Format, unsigned AddressU,
-          unsigned AddressV>
-inline unsigned TGetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
+template <uint32_t Filter, uint32_t Format, uint32_t AddressU,
+          uint32_t AddressV>
+inline uint32_t TGetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
                                fixedRX fV) {
   if
     constexpr(Filter == FILTER_NEAREST) {
@@ -334,8 +334,8 @@ inline unsigned TGetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
     }
 }
 
-template <unsigned Filter, unsigned Format, unsigned AddressU,
-          unsigned AddressV>
+template <uint32_t Filter, uint32_t Format, uint32_t AddressU,
+          uint32_t AddressV>
 inline TColorNative<Format> TGetMinFilterX(const SurfaceDesc &surface,
                                            fixedRX fU, fixedRX fV) {
   if
@@ -350,9 +350,9 @@ inline TColorNative<Format> TGetMinFilterX(const SurfaceDesc &surface,
     }
 }
 
-template <unsigned MipFilter, unsigned MinFilter, unsigned MagFilter,
-          unsigned Format, unsigned AddressU, unsigned AddressV>
-inline unsigned TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
+template <uint32_t MipFilter, uint32_t MinFilter, uint32_t MagFilter,
+          uint32_t Format, uint32_t AddressU, uint32_t AddressV>
+inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
                                fixedRX fM) {
   if
     constexpr(MipFilter == FILTER_NONE) {
@@ -461,7 +461,7 @@ inline unsigned TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned EnvMode>
+template <uint32_t EnvMode>
 void TGetTexEnvColorA(Color4 *pInOut, const Color4 &cTexture,
                       ColorARGB cEnvColor) {
 
@@ -489,7 +489,7 @@ void TGetTexEnvColorA(Color4 *pInOut, const Color4 &cTexture,
     constexpr(EnvMode == ENVMODE_DECAL) { pInOut->a = cTexture.a; }
 }
 
-template <unsigned EnvMode>
+template <uint32_t EnvMode>
 void TGetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
                         ColorARGB cEnvColor) {
 
@@ -533,7 +533,7 @@ void TGetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
     }
 }
 
-template <unsigned EnvMode>
+template <uint32_t EnvMode>
 void TGetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
                          ColorARGB cEnvColor) {
 
@@ -584,7 +584,7 @@ void TGetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned BlendOp>
+template <uint32_t BlendOp>
 void TGetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
 
   if
@@ -698,8 +698,8 @@ void TGetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned LogicOp>
-unsigned TLogicOp(unsigned srcColor, unsigned dstColor) {
+template <uint32_t LogicOp>
+uint32_t TLogicOp(uint32_t srcColor, uint32_t dstColor) {
 
   if
     constexpr(LogicOp == LOGICOP_CLEAR) {

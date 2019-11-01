@@ -28,7 +28,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
 
   VECTOR4 vParam;
 
-  const unsigned index = light - GL_LIGHT0;
+  const uint32_t index = light - GL_LIGHT0;
   Light &_light = m_lights[index];
 
   switch (pname) {

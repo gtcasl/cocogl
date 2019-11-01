@@ -151,9 +151,9 @@ TDecodeVertex<VECTOR4, TVertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
 //////////////////////////////////////////////////////////////////////////////
 
 template <eVertexFormat VertexFormat>
-void TDecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, unsigned stride,
-                     unsigned count) {
-  for (unsigned i = 0; i < count; ++i) {
+void TDecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, uint32_t stride,
+                     uint32_t count) {
+  for (uint32_t i = 0; i < count; ++i) {
     TDecodeVertex<VECTOR4, TVertexData<VertexFormat>>(&pOut[i],
                                                       pbIn + i * stride);
   }
@@ -163,7 +163,7 @@ void TDecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, unsigned stride,
 
 template <bool ColorMaterial, eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
-inline void CTNL::TProcessLighting_OneSided(unsigned count) {
+inline void CTNL::TProcessLighting_OneSided(uint32_t count) {
 
   VECTOR3 *const pvEyePos = (VECTOR3 *)m_pbVertexData[VERTEXDATA_EYEPOS];
   ColorARGB *const pcFrontColors =
@@ -172,9 +172,9 @@ inline void CTNL::TProcessLighting_OneSided(unsigned count) {
   VECTOR3 vNormal;
   VECTOR4 vVertexColor;
   const uint8_t *pbNormal = nullptr;
-  unsigned normalStride = 0;
+  uint32_t normalStride = 0;
   const uint8_t *pbColor = nullptr;
-  unsigned colorStride = 0;
+  uint32_t colorStride = 0;
 
   if
     constexpr(NormalFormat != VERTEX_UNKNOWN) {
@@ -197,7 +197,7 @@ inline void CTNL::TProcessLighting_OneSided(unsigned count) {
     vVertexColor.w = m_vColor.w;
   }
 
-  for (unsigned i = 0; i < count; ++i) {
+  for (uint32_t i = 0; i < count; ++i) {
     VECTOR4 vResult;
 
     if
@@ -261,7 +261,7 @@ inline void CTNL::TProcessLighting_OneSided(unsigned count) {
 
 template <bool ColorMaterial, eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
-inline void CTNL::TProcessLighting_TwoSided(unsigned count) {
+inline void CTNL::TProcessLighting_TwoSided(uint32_t count) {
 
   VECTOR3 *const pvEyePos = (VECTOR3 *)m_pbVertexData[VERTEXDATA_EYEPOS];
   ColorARGB *const pcFrontColors =
@@ -272,9 +272,9 @@ inline void CTNL::TProcessLighting_TwoSided(unsigned count) {
   VECTOR3 vNormal;
   VECTOR4 vVertexColor;
   const uint8_t *pbNormal;
-  unsigned normalStride;
+  uint32_t normalStride;
   const uint8_t *pbColor;
-  unsigned colorStride;
+  uint32_t colorStride;
 
   if
     constexpr(NormalFormat != VERTEX_UNKNOWN) {
@@ -297,7 +297,7 @@ inline void CTNL::TProcessLighting_TwoSided(unsigned count) {
     vVertexColor.w = m_vColor.w;
   }
 
-  for (unsigned i = 0; i < count; ++i) {
+  for (uint32_t i = 0; i < count; ++i) {
     VECTOR4 vResults[2];
 
     if
@@ -374,14 +374,14 @@ inline void CTNL::TProcessLighting_TwoSided(unsigned count) {
 }
 
 template <eVertexFormat VertexFormat>
-void CTNL::TProcessVertexColor(unsigned count) {
+void CTNL::TProcessVertexColor(uint32_t count) {
   ColorARGB *const pcFrontColors =
       (ColorARGB *)m_pbVertexData[VERTEXDATA_FRONTCOLOR];
 
   const uint8_t *const pbIn = m_colorDecode.pBits;
-  const unsigned stride = m_colorDecode.Stride;
+  const uint32_t stride = m_colorDecode.Stride;
 
-  for (unsigned i = 0; i < count; ++i) {
+  for (uint32_t i = 0; i < count; ++i) {
     VECTOR4 vColor;
 
     TDecodeVertex<VECTOR4, TVertexData<VertexFormat>>(&vColor,
@@ -402,17 +402,17 @@ void CTNL::TProcessVertexColor(unsigned count) {
 }
 
 template <bool Transform, eVertexFormat VertexFormat>
-void CTNL::TProcessTexCoords(unsigned dstIndex, unsigned srcIndex,
-                             unsigned count) {
+void CTNL::TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
+                             uint32_t count) {
   TEXCOORD2 *const pvTexCoords =
       (TEXCOORD2 *)m_pbVertexData[VERTEXDATA_TEXCOORD0 + dstIndex];
 
   const MATRIX44 &transform = m_pMsTexCoords[srcIndex]->GetMatrix();
 
   const uint8_t *const pbIn = m_texCoordDecodes[srcIndex].pBits;
-  const unsigned stride = m_texCoordDecodes[srcIndex].Stride;
+  const uint32_t stride = m_texCoordDecodes[srcIndex].Stride;
 
-  for (unsigned i = 0; i < count; ++i) {
+  for (uint32_t i = 0; i < count; ++i) {
     typename TVertexData<VertexFormat>::Output vIn;
 
     TDecodeVertex<typename TVertexData<VertexFormat>::Output,
@@ -436,7 +436,7 @@ void CTNL::TProcessTexCoords(unsigned dstIndex, unsigned srcIndex,
 }
 
 template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
-void CTNL::TProcessPointSize(unsigned count) {
+void CTNL::TProcessPointSize(uint32_t count) {
   fixed4 *const pfPointSizes = (fixed4 *)m_pbVertexData[VERTEXDATA_POINTSIZE];
 
   const VECTOR3 &vAttenuation = m_pointParams.vAttenuation;
@@ -455,9 +455,9 @@ void CTNL::TProcessPointSize(unsigned count) {
   }
 
   const uint8_t *const pbIn = m_pointSizeDecode.pBits;
-  const unsigned stride = m_pointSizeDecode.Stride;
+  const uint32_t stride = m_pointSizeDecode.Stride;
 
-  for (unsigned i = 0; i < count; ++i) {
+  for (uint32_t i = 0; i < count; ++i) {
     VECTOR1 vPointSize;
 
     TDecodeVertex<VECTOR1, TVertexData<VertexFormat>>(&vPointSize,
@@ -481,7 +481,7 @@ void CTNL::TProcessPointSize(unsigned count) {
   }
 }
 
-template <eFogMode FogMode> void CTNL::TProcessFog(unsigned count) {
+template <eFogMode FogMode> void CTNL::TProcessFog(uint32_t count) {
 
   VECTOR3 *const pvEyePos = (VECTOR3 *)m_pbVertexData[VERTEXDATA_EYEPOS];
   float20 *const pfFogs = (float20 *)m_pbVertexData[VERTEXDATA_FOG];
@@ -491,7 +491,7 @@ template <eFogMode FogMode> void CTNL::TProcessFog(unsigned count) {
       const floatf fFogEnd = m_fog.GetFactor(GL_FOG_END);
       const fixedRF fFogRatio = m_fog.fRatio;
 
-      for (unsigned i = 0; i < count; ++i) {
+      for (uint32_t i = 0; i < count; ++i) {
         const floatf fEyeDist = Math::TAbs(pvEyePos[i].z);
         pfFogs[i] = Math::TSat(fFogRatio * (fFogEnd - fEyeDist));
       }
@@ -500,7 +500,7 @@ template <eFogMode FogMode> void CTNL::TProcessFog(unsigned count) {
     constexpr(FogMode == FogExp) {
       const floatf fFogDensity = m_fog.GetFactor(GL_FOG_DENSITY);
 
-      for (unsigned i = 0; i < count; ++i) {
+      for (uint32_t i = 0; i < count; ++i) {
         const floatf fEyeDist = Math::TAbs(pvEyePos[i].z);
         floatf fTmp = fEyeDist * fFogDensity;
         pfFogs[i] = static_cast<fixedRF>(Math::TSat(Math::TExp(-fTmp)));
@@ -510,7 +510,7 @@ template <eFogMode FogMode> void CTNL::TProcessFog(unsigned count) {
     constexpr(FogMode == FogExp2) {
       const floatf fFogDensity = m_fog.GetFactor(GL_FOG_DENSITY);
 
-      for (unsigned i = 0; i < count; ++i) {
+      for (uint32_t i = 0; i < count; ++i) {
         const floatf fEyeDist = Math::TAbs(pvEyePos[i].z);
         floatf fTmp = fEyeDist * fFogDensity;
         pfFogs[i] =

@@ -14,7 +14,7 @@
 //
 #pragma once
 
-typedef bool (*PFN_Compare)(unsigned a, unsigned b);
+typedef bool (*PFN_Compare)(uint32_t a, uint32_t b);
 
 typedef void (*PFN_GetTexelColor)(Color4 *pOut, const SurfaceDesc &surface,
                                   fixedRX fU, fixedRX fV);
@@ -40,7 +40,7 @@ public:
 
   PFN_Scanline GetScanline() const { return m_pfnScanline; }
 
-  unsigned GetCbSize() const { return sizeof(PFN_Scanline); }
+  uint32_t GetCbSize() const { return sizeof(PFN_Scanline); }
 
   const RASTERID &GetRasterID() const { return m_rasterID; }
 
@@ -48,18 +48,18 @@ public:
 
   uint8_t GetDepthStencilStride() const { return m_depthStencilStride; }
 
-  void GetSamplerColor(Color4 *pOut, unsigned unit,
+  void GetSamplerColor(Color4 *pOut, uint32_t unit,
                        const RasterData &rasterData, fixedRX fU,
                        fixedRX fV) const {
     (m_samplers[unit].pfnGetTexelColorMag)(
         pOut, rasterData.Samplers[unit].pMipLevels[0], fU, fV);
   }
 
-  void GetSamplerColor(Color4 *pOut, unsigned unit,
+  void GetSamplerColor(Color4 *pOut, uint32_t unit,
                        const RasterData &rasterData, fixedRX fU, fixedRX fV,
                        fixedRX fM) const;
 
-  void GetTexEnvColor(Color4 *pInOut, const Color4 &in, unsigned unit,
+  void GetTexEnvColor(Color4 *pInOut, const Color4 &in, uint32_t unit,
                       const RasterData &rasterData) const {
     (m_samplers[unit].pfnGetTexEnvColor)(
         pInOut, in, rasterData.Samplers[unit].cEnvColor_MaxMipLevel);
@@ -69,10 +69,10 @@ public:
     return (m_pfnAlphaTest)(cColor.a, rasterData.AlphaRef);
   }
 
-  bool DoStencilTest(const RasterData &rasterData, unsigned depthValue,
+  bool DoStencilTest(const RasterData &rasterData, uint32_t depthValue,
                      void *pDSBuffer) const;
 
-  bool DoDepthTest(unsigned depthValue, void *pDSBuffer) const {
+  bool DoDepthTest(uint32_t depthValue, void *pDSBuffer) const {
     ASSERT(pDSBuffer);
     return (m_pfnDepthTest)(depthValue,
                             *reinterpret_cast<const uint16_t *>(pDSBuffer));

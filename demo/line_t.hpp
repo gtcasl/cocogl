@@ -13,10 +13,6 @@
 //
 #pragma once
 
-///---------------------------------------------------------------------------
-/// <summary>
-/// </summary>
-///---------------------------------------------------------------------------
 class CLine_Test : public CTestBase {
 public:
   bool OnInitialize(uint32_t width, uint32_t height) {
@@ -41,8 +37,7 @@ public:
     */
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrthox(FixedFromInt(-50), FixedFromInt(50), FixedFromInt(-50),
-             FixedFromInt(50), FixedFromInt(-50), FixedFromInt(50));
+    glOrthof(-50, 50, -50, 50, -50, 50);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -56,7 +51,7 @@ public:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    glTranslatex(0, 0, FixedFromInt(-10));
+    glTranslatef(0, 0, -10);
 
     // Enable the vertices array
     glEnableClientState(GL_VERTEX_ARRAY);

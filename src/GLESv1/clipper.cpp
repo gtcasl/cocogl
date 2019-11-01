@@ -21,14 +21,14 @@ template <class R> inline float TScalar(float lhs, float rhs) {
   return static_cast<R>(lhs / (lhs - rhs));
 }
 
-template <class R, unsigned int T>
+template <class R, uint32_t T>
 inline R TScalar(TFixed<T> lhs, TFixed<T> rhs) {
   ASSERT(lhs.GetRaw() != rhs.GetRaw());
   const int diff = lhs.GetRaw() - rhs.GetRaw();
   return R::Make((static_cast<int64_t>(lhs.GetRaw()) << R::FRAC) / diff);
 }
 
-template <unsigned int T>
+template <uint32_t T>
 inline int CullSign(TFixed<T> x0, TFixed<T> y0, TFixed<T> w0, TFixed<T> x1,
                     TFixed<T> y1, TFixed<T> w1, TFixed<T> x2, TFixed<T> y2,
                     TFixed<T> w2) {
@@ -67,7 +67,7 @@ inline int CullSign(float x0, float y0, float w0, float x1, float y1, float w1,
   return 0;
 }
 
-bool CRasterizer::CullClipSpaceTriangle(unsigned i0, unsigned i1, unsigned i2) {
+bool CRasterizer::CullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   bool bIsCulled;
 
   const CullStates cullStates = m_cullStates;
@@ -108,14 +108,14 @@ bool CRasterizer::CullClipSpaceTriangle(unsigned i0, unsigned i1, unsigned i2) {
     }
   }
 
-  const unsigned colorIndex = cullStates.bTwoSidedLighting && bIsCulled;
+  const uint32_t colorIndex = cullStates.bTwoSidedLighting && bIsCulled;
   m_pbVertexColor = m_pbVertexData[VERTEXDATA_COLOR0 + colorIndex];
 
   return true;
 }
 
-void CRasterizer::RasterClippedLine(unsigned i0, unsigned i1,
-                                    unsigned clipUnion) {
+void CRasterizer::RasterClippedLine(uint32_t i0, uint32_t i1,
+                                    uint32_t clipUnion) {
   const VECTOR4 *const pvClipPos =
       (const VECTOR4 *)m_pbVertexData[VERTEXDATA_CLIPPOS];
   const uint16_t *const pwFlags =
@@ -123,13 +123,13 @@ void CRasterizer::RasterClippedLine(unsigned i0, unsigned i1,
   RDVECTOR *const pvScreenPos =
       (RDVECTOR *)m_pbVertexData[VERTEXDATA_SCREENPOS];
 
-  unsigned iNext = m_clipVerticesBaseIndex;
-  unsigned iFrom = i0;
-  unsigned iTo = i1;
+  uint32_t iNext = m_clipVerticesBaseIndex;
+  uint32_t iFrom = i0;
+  uint32_t iTo = i1;
 
   floatf fDistA, fDistB;
 
-  for (unsigned plane = 0; clipUnion; clipUnion >>= 1, ++plane) {
+  for (uint32_t plane = 0; clipUnion; clipUnion >>= 1, ++plane) {
     if (clipUnion & 0x1) {
       const VECTOR4 &vFrom = pvClipPos[iFrom];
       const VECTOR4 &vTo = pvClipPos[iTo];
@@ -209,8 +209,8 @@ void CRasterizer::RasterClippedLine(unsigned i0, unsigned i1,
   this->RasterLine(iFrom, iTo);
 }
 
-void CRasterizer::RasterClippedTriangle(unsigned i0, unsigned i1, unsigned i2,
-                                        unsigned clipUnion) {
+void CRasterizer::RasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
+                                        uint32_t clipUnion) {
   const VECTOR4 *const pvClipPos =
       (const VECTOR4 *)m_pbVertexData[VERTEXDATA_CLIPPOS];
   const uint16_t *const pwFlags =
@@ -218,20 +218,20 @@ void CRasterizer::RasterClippedTriangle(unsigned i0, unsigned i1, unsigned i2,
   RDVECTOR *const pvScreenPos =
       (RDVECTOR *)m_pbVertexData[VERTEXDATA_SCREENPOS];
 
-  unsigned clipVertices[2][CLIP_BUFFER_SIZE];
-  unsigned iTmpVertices = m_clipVerticesBaseIndex;
-  unsigned *pSrc = clipVertices[0];
-  unsigned *pDst = clipVertices[1];
+  uint32_t clipVertices[2][CLIP_BUFFER_SIZE];
+  uint32_t iTmpVertices = m_clipVerticesBaseIndex;
+  uint32_t *pSrc = clipVertices[0];
+  uint32_t *pDst = clipVertices[1];
 
   pSrc[0] = i0;
   pSrc[1] = i1;
   pSrc[2] = i2;
 
-  unsigned nNumVertices = 3;
-  const unsigned clz = Clz(clipUnion);
+  uint32_t nNumVertices = 3;
+  const uint32_t clz = Clz(clipUnion);
   clipUnion <<= clz;
 
-  for (unsigned plane = 31 - clz; clipUnion; clipUnion <<= 1, --plane) {
+  for (uint32_t plane = 31 - clz; clipUnion; clipUnion <<= 1, --plane) {
     if (clipUnion & 0x80000000) {
       switch (plane) {
       default:
@@ -287,8 +287,8 @@ void CRasterizer::RasterClippedTriangle(unsigned i0, unsigned i1, unsigned i2,
   }
 
   // Transform clipped vertices back to screen space
-  for (unsigned i = 0; i < nNumVertices; ++i) {
-    const unsigned index = pSrc[i];
+  for (uint32_t i = 0; i < nNumVertices; ++i) {
+    const uint32_t index = pSrc[i];
     if (pwFlags[index] & CLIPPING_MASK) {
       this->XformScreenSpace(&pvScreenPos[index], &pvClipPos[index], 1);
     }
@@ -296,27 +296,27 @@ void CRasterizer::RasterClippedTriangle(unsigned i0, unsigned i1, unsigned i2,
 
   // Raster each triangle
   {
-    const unsigned v0 = *pSrc;
-    for (unsigned *pV = pSrc + 1, *const pEnd = pSrc + nNumVertices - 1;
+    const uint32_t v0 = *pSrc;
+    for (uint32_t *pV = pSrc + 1, *const pEnd = pSrc + nNumVertices - 1;
          pV != pEnd; ++pV) {
       this->RasterTriangle(v0, pV[0], pV[1]);
     }
   }
 }
 
-unsigned CRasterizer::UserClipTriangle(unsigned plane, unsigned nNumVertices,
-                                       unsigned *pSrc, unsigned *pDst,
-                                       unsigned *pTmp) {
+uint32_t CRasterizer::UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
+                                       uint32_t *pSrc, uint32_t *pDst,
+                                       uint32_t *pTmp) {
   const VECTOR4 *const pvClipPos =
       (const VECTOR4 *)m_pbVertexData[VERTEXDATA_CLIPPOS];
 
   floatf fDistA, fDistB;
 
-  unsigned iTmp = *pTmp;
-  unsigned iVB = pSrc[nNumVertices - 1];
-  unsigned iVA;
+  uint32_t iTmp = *pTmp;
+  uint32_t iVB = pSrc[nNumVertices - 1];
+  uint32_t iVA;
 
-  unsigned nClipVertices = 0;
+  uint32_t nClipVertices = 0;
 
   plane -= CLIP_PLANE0;
   ASSERT(plane < m_vClipPlanesCS.GetSize());
@@ -350,8 +350,8 @@ unsigned CRasterizer::UserClipTriangle(unsigned plane, unsigned nNumVertices,
   return nClipVertices;
 }
 
-void CRasterizer::InterpolateVertex(unsigned i0, unsigned i1, floatf fDistA,
-                                    floatf fDistB, unsigned i2) {
+void CRasterizer::InterpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
+                                    floatf fDistB, uint32_t i2) {
   uint16_t *const pwFlags = (uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
   VECTOR4 *const pvClipPos = (VECTOR4 *)m_pbVertexData[VERTEXDATA_CLIPPOS];
 
@@ -377,7 +377,7 @@ void CRasterizer::InterpolateVertex(unsigned i0, unsigned i1, floatf fDistA,
   }
 
   if (rasterFlags.NumTextures) {
-    for (unsigned i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
+    for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
       TEXCOORD2 *const pvTexCoords =
           (TEXCOORD2 *)m_pbVertexData[VERTEXDATA_TEXCOORD0 + i];
       pvTexCoords[i2].m[0] =

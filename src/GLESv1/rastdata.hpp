@@ -25,11 +25,11 @@ class IRasterOp : public CObject {
 public:
   virtual PFN_Scanline GetScanline() const = 0;
 
-  virtual unsigned GetCbSize() const = 0;
+  virtual uint32_t GetCbSize() const = 0;
 
 #ifdef COCOGL_RASTER_PROFILE
 public:
-  void StartProfile(unsigned numPixels);
+  void StartProfile(uint32_t numPixels);
   void EndProfile(float elapsedTime);
   void LogProfile(const RASTERID &rasterID);
   const ProfileCounter &GetProfile() const { return m_profile; }
@@ -86,9 +86,9 @@ public:
   }
 
   HRESULT Insert(const RASTERID &rasterID, IRasterOp *pRasterOp) {
-    unsigned cbTotalSize = m_cbTotalSize;
+    uint32_t cbTotalSize = m_cbTotalSize;
     if (cbTotalSize > MAX_CACHE_SIZE) {
-      const unsigned compactSize = cbTotalSize / COMPACT_RATIO;
+      const uint32_t compactSize = cbTotalSize / COMPACT_RATIO;
       if (cbTotalSize > compactSize) {
         for (Cache::Iter iter = m_map.GetRBegin(); cbTotalSize > compactSize;) {
           Cache::Iter iterCur = iter--;
@@ -104,7 +104,7 @@ public:
       }
     }
 
-    const unsigned cbSize = pRasterOp->GetCbSize();
+    const uint32_t cbSize = pRasterOp->GetCbSize();
     m_cbTotalSize += cbSize;
 
     return m_map.Insert(rasterID, pRasterOp);
@@ -163,7 +163,7 @@ private:
 
   TList<RASTERID> m_slowRasterIDs;
 
-  unsigned m_cbTotalSize;
+  uint32_t m_cbTotalSize;
 };
 
 struct Register {
@@ -179,10 +179,10 @@ struct RasterData {
   Sampler Samplers[MAX_TEXTURES];
 
   uint8_t *pColorBits;
-  unsigned ColorPitch;
+  int32_t ColorPitch;
 
   uint8_t *pDepthStencilBits;
-  unsigned DepthStencilPitch;
+  int32_t DepthStencilPitch;
 
   ColorARGB cFogColor;
 
@@ -191,7 +191,7 @@ struct RasterData {
   uint8_t StencilMask;
   uint8_t StencilWriteMask;
 
-  unsigned ColorWriteMask;
+  uint32_t ColorWriteMask;
 
   uint8_t ColorFormat;
   uint8_t DepthStencilFormat;

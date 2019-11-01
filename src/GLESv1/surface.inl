@@ -16,11 +16,11 @@
 
 template <>
 inline void CGLSurface::TColorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
-                                             unsigned value, unsigned mask,
+                                             uint32_t value, uint32_t mask,
                                              const Rect &rect) {
-  unsigned width = rect.right - rect.left;
-  unsigned height = rect.bottom - rect.top;
-  unsigned pitch = surfDesc.Pitch;
+  uint32_t width = rect.right - rect.left;
+  uint32_t height = rect.bottom - rect.top;
+  int32_t pitch = surfDesc.Pitch;
   uint8_t *pbBits =
       surfDesc.pBits + rect.left * sizeof(uint16_t) + rect.top * pitch;
 
@@ -29,23 +29,23 @@ inline void CGLSurface::TColorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
   const uint32_t dwInvMask = (~wMask << 16) | ~wMask;
   const uint32_t dwValueMask = ((wValue & wMask) << 16) | (wValue & wMask);
 
-  if (((width * sizeof(uint16_t)) == pitch)) {
+  if (int(width * sizeof(uint16_t)) == pitch) {
     if (0xffff == wMask) {
 #ifdef ARM
       memset16(pbBits, wValue, width * height);
 #else
       uint32_t *const pdwBits = reinterpret_cast<uint32_t *>(pbBits);
       const uint32_t dwValue = (wValue << 16) | wValue;
-      const unsigned size = (width >> 1) * height;
-      for (unsigned i = 0; i < size; ++i) {
+      const uint32_t size = (width >> 1) * height;
+      for (uint32_t i = 0; i < size; ++i) {
         pdwBits[i] = dwValue;
       }
 
 #endif
     } else {
       uint32_t *const pdwBits = reinterpret_cast<uint32_t *>(pbBits);
-      const unsigned size = (width >> 1) * height;
-      for (unsigned i = 0; i < size; ++i) {
+      const uint32_t size = (width >> 1) * height;
+      for (uint32_t i = 0; i < size; ++i) {
         pdwBits[i] = (pdwBits[i] & dwInvMask) | dwValueMask;
       }
     }
@@ -59,10 +59,10 @@ inline void CGLSurface::TColorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
 
 #else
       const uint32_t dwValue = (wValue << 16) | value;
-      const unsigned width_d2 = width >> 1; // Divide the width by 2
+      const uint32_t width_d2 = width >> 1; // Divide the width by 2
       while (height--) {
         uint32_t *const pdwBits = reinterpret_cast<uint32_t *>(pbBits);
-        for (unsigned i = 0; i < width_d2; ++i) {
+        for (uint32_t i = 0; i < width_d2; ++i) {
           pdwBits[i] = dwValue;
         }
 
@@ -71,10 +71,10 @@ inline void CGLSurface::TColorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
 
 #endif
     } else {
-      const unsigned width_d2 = width >> 1; // Divide the width by 2
+      const uint32_t width_d2 = width >> 1; // Divide the width by 2
       while (height--) {
         uint32_t *const pdwBits = reinterpret_cast<uint32_t *>(pbBits);
-        for (unsigned i = 0; i < width_d2; ++i) {
+        for (uint32_t i = 0; i < width_d2; ++i) {
           pdwBits[i] = (pdwBits[i] & dwInvMask) | dwValueMask;
         }
 
@@ -86,22 +86,22 @@ inline void CGLSurface::TColorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
 
 template <>
 inline void CGLSurface::TColorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
-                                             unsigned value, unsigned mask,
+                                             uint32_t value, uint32_t mask,
                                              const Rect &rect) {
-  unsigned height = rect.bottom - rect.top;
-  unsigned width = rect.right - rect.left;
-  unsigned pitch = surfDesc.Pitch;
+  uint32_t height = rect.bottom - rect.top;
+  uint32_t width = rect.right - rect.left;
+  int32_t pitch = surfDesc.Pitch;
   uint8_t *pbBits =
       surfDesc.pBits + rect.left * sizeof(uint32_t) + rect.top * pitch;
 
-  if (((width * sizeof(uint32_t)) == pitch)) {
+  if (int(width * sizeof(uint32_t)) == pitch) {
     if (0xffffffff == mask) {
 #ifdef ARM
       memset32(pbBits, value, width * height);
 #else
       uint32_t *const pdwBits = reinterpret_cast<uint32_t *>(pbBits);
-      const unsigned size = width * height;
-      for (unsigned i = 0; i < size; ++i) {
+      const uint32_t size = width * height;
+      for (uint32_t i = 0; i < size; ++i) {
         pdwBits[i] = value;
       }
 
@@ -110,8 +110,8 @@ inline void CGLSurface::TColorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
       uint32_t *const pdwBits = reinterpret_cast<uint32_t *>(pbBits);
       const uint32_t dwValueMask = value & mask;
       const uint32_t dwInvMask = ~mask;
-      const unsigned size = width * height;
-      for (unsigned i = 0; i < size; ++i) {
+      const uint32_t size = width * height;
+      for (uint32_t i = 0; i < size; ++i) {
         pdwBits[i] = (pdwBits[i] & dwInvMask) | dwValueMask;
       }
     }
@@ -126,7 +126,7 @@ inline void CGLSurface::TColorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
 #else
       while (height--) {
         uint32_t *const pdwBits = reinterpret_cast<uint32_t *>(pbBits);
-        for (unsigned i = 0; i < width; ++i) {
+        for (uint32_t i = 0; i < width; ++i) {
           pdwBits[i] = value;
         }
 
@@ -139,7 +139,7 @@ inline void CGLSurface::TColorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
       const uint32_t dwInvMask = ~mask;
       while (height--) {
         uint32_t *const pdwBits = reinterpret_cast<uint32_t *>(pbBits);
-        for (unsigned i = 0; i < width; ++i) {
+        for (uint32_t i = 0; i < width; ++i) {
           pdwBits[i] = (pdwBits[i] & dwInvMask) | dwValueMask;
         }
 

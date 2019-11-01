@@ -1,3 +1,16 @@
+// Copyright (c) Blaise Tine.  All rights reserved.
+//
+//
+// Use of this sample source code is subject to the terms of the Microsoft
+// license agreement under which you licensed this sample source code. If
+// you did not accept the terms of the license agreement, you are not
+// authorized to use this sample source code. For the terms of the license,
+// please see the license agreement between you and Microsoft or, if applicable,
+// see the LICENSE.RTF on your install media or the root of your tools
+// installation.
+// THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES OR
+// INDEMNITIES.
+//
 #include "stdafx.h"
 #include <math.h>
 #include <string.h>
@@ -6,29 +19,20 @@
 void Ortho2D(int width, int height) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrthox(FixedFromInt(0), FixedFromInt(width), FixedFromInt(0),
-           FixedFromInt(height), FixedFromInt(-1), FixedFromInt(1));
+  glOrthof(0, width, 0, height, -1, 1);
   glMatrixMode(GL_MODELVIEW);
 }
 
 void Perspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar) {
-  GLfixed xmin, xmax, ymin, ymax, aspectFixed, znearFixed;
-
-  aspectFixed = FixedFromFloat(aspect);
-  znearFixed = FixedFromFloat(zNear);
-
-  ymax = MultiplyFixed(
-      znearFixed, FixedFromFloat((GLfloat)tan(fovy * 3.1415962f / 360.0f)));
-  ymin = -ymax;
-
-  xmin = MultiplyFixed(ymin, aspectFixed);
-  xmax = MultiplyFixed(ymax, aspectFixed);
-  glFrustumx(xmin, xmax, ymin, ymax, znearFixed, FixedFromFloat(zFar));
+  auto ymax = zNear * tan(fovy * 3.1415962f / 360.0f);
+  auto ymin = -ymax;
+  auto xmin = ymin * aspect;
+  auto xmax = ymax * aspect;
+  glFrustumf(xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
 void normalizef(float v[3]) {
-  float r;
-  r = (float)sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+  auto r = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
   if (r == 0.0)
     return;
   r = 1.f / r;
@@ -46,11 +50,6 @@ void crossf(float v0[3], float v1[3], float r[3]) {
 void __identf(GLfloat m[]) {
   memset(m, 0, sizeof m[0] * 16);
   m[0] = m[5] = m[10] = m[15] = 1.0f;
-}
-
-void __identx(GLfixed m[]) {
-  memset(m, 0, sizeof m[0] * 16);
-  m[0] = m[5] = m[10] = m[15] = __f2x(1.0f);
 }
 
 void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
@@ -93,7 +92,7 @@ void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
 
 bool LoadTGA(LPCTSTR lpszFileName, GLuint *id) {
 
-  FILE *f = _tfopen(lpszFileName, _T("rb"));
+  auto f = _tfopen(lpszFileName, _T("rb"));
   if (nullptr == f) {
     return false;
   }

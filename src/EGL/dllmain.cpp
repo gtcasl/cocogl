@@ -1139,16 +1139,14 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
   // Blit the surface to the display
   pSurface->Present();
 
-  /*#ifndef NDEBUG
-      static int s_fileno = 0;
-      TCHAR szFilePath[MAX_PATH];
-      ::GetModuleFileName(nullptr, szFilePath, MAX_PATH);
-      PathRemoveFileSpec(szFilePath );
-      _sntprintf(szFilePath, MAX_PATH, _T("%s%s%d.bmp"), szFilePath,
-  _T("CocoEGL"), s_fileno++);
-      __eglLog(_T(" - SwapBuffers bitmap dump: %s.\r\n"), szFilePath);
-      pSurface->SaveBitmap(szFilePath);
-  #endif*/
+#ifdef COCOGL_SNAPSHOTS
+  static int s_fileno = 0;
+  TCHAR szFilePath[360];
+  if (s_fileno++ < COCOGL_SNAPSHOTS) {
+    _sntprintf(szFilePath, 360, _T("snapshot%d.bmp"), s_fileno);
+    pSurface->SaveBitmap(szFilePath);
+  }
+#endif
 
   return EGL_TRUE;
 }

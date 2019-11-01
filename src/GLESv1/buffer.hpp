@@ -18,9 +18,9 @@ class CBuffer : public CObject {
 public:
   static GLenum Create(CBuffer **ppBuffer);
 
-  GLenum Initialize(unsigned size, GLenum usage, const GLvoid *pData);
+  GLenum Initialize(uint32_t size, GLenum usage, const GLvoid *pData);
 
-  void CopyData(unsigned offset, unsigned size, const GLvoid *pData) {
+  void CopyData(uint32_t offset, uint32_t size, const GLvoid *pData) {
     ::memcpy(m_pBits + offset, pData, size);
   }
 
@@ -28,7 +28,7 @@ public:
 
   const uint8_t *GetBits() const { return m_pBits; }
 
-  unsigned GetSize() const { return m_size; }
+  uint32_t GetSize() const { return m_size; }
 
   GLenum GetUsage() const { return m_usage; }
 
@@ -42,6 +42,6 @@ private:
 
   uint32_t m_dwHandle;
   uint8_t *m_pBits;
-  unsigned m_size;
+  uint32_t m_size;
   GLenum m_usage;
 };

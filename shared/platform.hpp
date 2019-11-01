@@ -41,6 +41,7 @@ typedef const char *LPCTSTR;
 #define _tprintf printf
 #define _ftprintf fprintf
 #define _vftprintf vfprintf
+#define _sntprintf snprintf
 
 #ifndef ASSERT
 #ifndef NDEBUG

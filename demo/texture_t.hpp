@@ -13,18 +13,16 @@
 //
 #pragma once
 
-///---------------------------------------------------------------------------
-/// <summary>
-/// </summary>
-///---------------------------------------------------------------------------
 class CTextureTest : public CTestBase {
 private:
   // Texture handles
   GLuint m_texture1;
   GLuint m_texture2;
+  float m_offset;
+  int m_rotation;
 
 public:
-  CTextureTest() {}
+  CTextureTest() : m_offset(0), m_rotation(0) {}
 
   ~CTextureTest() {}
 
@@ -32,8 +30,7 @@ public:
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
     the fixed point version (they finish in 'x'*/
-    glClearColorx(FixedFromFloat(0.5f), FixedFromFloat(0.5f),
-                  FixedFromFloat(0.5f), ONE);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
     // Do not want to see smoothed colors, only a plain color for face
     glShadeModel(GL_FLAT);
@@ -56,7 +53,7 @@ public:
     // Set perspective
     float ratio = (float)width / height;
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+    glLoadIdentity();    
     Perspective(45.0f, ratio, 1.0f, 40.0f);
     glMatrixMode(GL_MODELVIEW);
 
@@ -69,8 +66,6 @@ public:
   }
 
   void OnRender() {
-    static int rotation = 0;
-
     // We are going to draw a cube centered at origin, and with an edge of 10
     // units
     /*
@@ -78,7 +73,7 @@ public:
             +--------------------+
           / |                   /|
         /   |                 /  |
-    3  /     |             2 /    |
+    3 /     |             2 /    |
     +---------------------+      |
     |       |             |      |
     |       |             |      |
@@ -105,19 +100,15 @@ public:
     static GLshort vertices[] = {-5, -5, -5, 5, -5, -5, 5, 5, -5, -5, 5, -5,
                                  -5, -5, 5,  5, -5, 5,  5, 5, 5,  -5, 5, 5};
 
-    static GLfixed texCoords[] = {0,   0,   ONE, 0,   ONE, ONE, 0,   ONE,
-                                  ONE, ONE, 0,   ONE, 0,   0,   ONE, 0};
+    static float texCoords[] = {0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0};
 
-    /*GLfixed TWO = FixedFromInt(2);
-    static GLfixed texCoords[] = {0,0,     TWO,0,  TWO,TWO,  0,TWO,
-                                TWO,TWO ,0,TWO,  0,0,      TWO,0};*/
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();
-    glTranslatex(0, 0, FixedFromInt(-20));
+    glTranslatef(0, 0, -20);
     glScalef(0.7f, 0.7f, 0.7f);
-    glRotatex(FixedFromInt(45), ONE, 0, 0);
-    glRotatex(FixedFromInt(rotation++), 0, ONE, 0);
+    glRotatef(45, 1, 0, 0);
+    glRotatef(m_rotation, 0, 1, 0);
 
     // Enable the vertices array
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -129,21 +120,21 @@ public:
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture1);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FIXED, 0, texCoords);
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 
     glActiveTexture(GL_TEXTURE1);
     glClientActiveTexture(GL_TEXTURE1);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture2);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FIXED, 0, texCoords);
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 
     glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
 
-    static float offset = 0.0f;
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
-    glTranslatex(FixedFromFloat(offset += 0.01f), 0, 0);
+    glTranslatef(m_offset, 0, 0);
+
     glMatrixMode(GL_MODELVIEW);
 
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, front);
@@ -155,6 +146,8 @@ public:
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, left);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, right);
 
+    glDisableClientState(GL_VERTEX_ARRAY);
+
     glDisable(GL_TEXTURE_2D);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -162,6 +155,9 @@ public:
     glClientActiveTexture(GL_TEXTURE0);
     glDisable(GL_TEXTURE_2D);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    m_offset += 0.01f;
+    ++m_rotation;
   }
 
   void OnDestroy() {

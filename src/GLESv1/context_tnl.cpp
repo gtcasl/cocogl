@@ -28,7 +28,7 @@ void CGLContext::ClipPlane(GLenum plane, const VECTOR4 &equation) {
     this->UpdateModelViewInvT44();
   }
 
-  const unsigned index = (plane - GL_CLIP_PLANE0);
+  const uint32_t index = (plane - GL_CLIP_PLANE0);
   Math::Mul(&m_vClipPlanesES[index], equation, m_mModelViewInvT);
 
   m_dirtyFlags.ClipPlanesCS |= (1 << index);

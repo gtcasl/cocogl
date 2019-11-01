@@ -104,9 +104,9 @@ void *CAllocator::Allocate(uint32_t dwBytes) {
 
   // If the free block we have found is larger than what we are looking for,
   // we may be able to split our free block in two.
-  const unsigned cbExtraBytes = pFreeBlock->Size - dwBytes;
-  const unsigned cbBlockSize = __align(sizeof(Block), Block::ALIGN_SIZE);
-  const unsigned cbMinAllocSize = cbBlockSize + Block::MIN_SIZE;
+  const uint32_t cbExtraBytes = pFreeBlock->Size - dwBytes;
+  const uint32_t cbBlockSize = __align(sizeof(Block), Block::ALIGN_SIZE);
+  const uint32_t cbMinAllocSize = cbBlockSize + Block::MIN_SIZE;
   if (cbExtraBytes >= cbMinAllocSize) {
     // Reduce the free block size to the requested value
     pFreeBlock->Size = dwBytes;
@@ -169,7 +169,7 @@ void CAllocator::Free(void *ptr) {
   pCurPage->InsertFreeMBlock(pUsedBlock);
 
   // Calculate the aligned block size
-  const unsigned cbBlockSize = __align(sizeof(Block), Block::ALIGN_SIZE);
+  const uint32_t cbBlockSize = __align(sizeof(Block), Block::ALIGN_SIZE);
 
   // Check if we can merge adjacent free blocks from the left.
   if (pUsedBlock->pPrevFreeM) {
@@ -226,7 +226,7 @@ void CAllocator::Free(void *ptr) {
 CAllocator::Page *CAllocator::NewPage(uint32_t dwCbSize) {
   // Increase buffer size to include the page and first block size
   // also add padding to ensure page aligment
-  const unsigned cbPlacementSize =
+  const uint32_t cbPlacementSize =
       __align(sizeof(Page) + sizeof(Block), Block::ALIGN_SIZE);
   dwCbSize = __align(dwCbSize + cbPlacementSize, Page::ALIGN_SIZE);
 

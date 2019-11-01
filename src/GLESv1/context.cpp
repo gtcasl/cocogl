@@ -43,7 +43,7 @@ CGLContext::CGLContext(CHandleTable *pHandles, CRasterCache *pRasterCache,
 
   m_error = GL_NO_ERROR;
 
-  for (unsigned i = 0; i < BUFFER_OBJECTS_SIZE; ++i) {
+  for (uint32_t i = 0; i < BUFFER_OBJECTS_SIZE; ++i) {
     m_bufferObjects[i] = nullptr;
   }
 
@@ -66,7 +66,7 @@ CGLContext::~CGLContext() {
   __safeRelease(m_pMsModelView);
   __safeRelease(m_pMsProjection);
 
-  for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
+  for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     __safeRelease(m_pMsTexCoords[i]);
   }
 
@@ -134,7 +134,7 @@ GLenum CGLContext::Initialize() {
     return err;
   }
 
-  for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
+  for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     err = CMatrixStack::Create(&m_pMsTexCoords[i], TEXTURE_STACK_SIZE);
     if (__glFailed(err)) {
       __glLogError(_T("CMatrixStack::Init() failed, err = %d.\r\n"), err);
@@ -193,7 +193,7 @@ GLenum CGLContext::Initialize() {
   this->ClearStencil(0);
   this->StencilMask(0xffffffff);
 
-  for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
+  for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     this->ActiveTexture(GL_TEXTURE0 + i);
     this->MatrixMode(GL_TEXTURE);
     this->LoadIdentity();
@@ -220,7 +220,7 @@ GLenum CGLContext::Initialize() {
   this->ClientState(GL_POINT_SIZE_ARRAY_OES, false);
   this->PointSizePointerOES(GL_FLOAT, 0, nullptr);
 
-  for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
+  for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     this->ClientActiveTexture(GL_TEXTURE0 + i);
     this->ClientState(GL_TEXTURE_COORD_ARRAY, false);
     this->TexCoordPointer(4, GL_FLOAT, 0, nullptr);
@@ -230,11 +230,11 @@ GLenum CGLContext::Initialize() {
 
   this->Color(fONE, fONE, fONE, fONE);
 
-  for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
+  for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     this->MultiTexCoord(GL_TEXTURE0 + i, fZERO, fZERO, fZERO, fONE);
   }
 
-  for (unsigned i = 0; i < MAX_LIGHTS; ++i) {
+  for (uint32_t i = 0; i < MAX_LIGHTS; ++i) {
     const GLenum light = GL_LIGHT0 + i;
 
     this->TLight<floatf>(light, GL_AMBIENT,
@@ -287,7 +287,7 @@ GLenum CGLContext::Initialize() {
   this->TLightModel<floatf>(GL_LIGHT_MODEL_AMBIENT,
                             VECTOR4(f02, f02, f02, fONE).m);
 
-  for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
+  for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     this->ClipPlane(GL_CLIP_PLANE0 + i, VECTOR4(fZERO, fZERO, fZERO, fZERO));
   }
 
@@ -299,7 +299,7 @@ GLenum CGLContext::Initialize() {
   this->PixelStorei(GL_PACK_ALIGNMENT, 4);
   this->PixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-  for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
+  for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     this->ActiveTexture(GL_TEXTURE0 + i);
 
     this->BindTexture(GL_TEXTURE_2D, 0);
@@ -344,7 +344,7 @@ GLenum CGLContext::Initialize() {
   this->Activate(GL_FOG, false);
   this->Activate(GL_LIGHTING, false);
 
-  for (unsigned i = 0; i < MAX_TEXTURES; ++i) {
+  for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     this->ActiveTexture(GL_TEXTURE0 + i);
     this->Activate(GL_TEXTURE_2D, false);
   }

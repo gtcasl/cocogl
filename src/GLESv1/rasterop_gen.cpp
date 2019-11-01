@@ -511,13 +511,13 @@ GLenum CGenericRasterOp::Initialize() {
   const bool bTexMip0 = ((rasterFlags.TextureMips >> 0) & 0x1);
   const bool bTexMip1 = ((rasterFlags.TextureMips >> 1) & 0x1);
 
-  const unsigned Depth = rasterFlags.DepthTest ? 1 : 0;
-  const unsigned Color = rasterFlags.Color ? 1 : 0;
-  const unsigned Tex0 = (rasterFlags.NumTextures > 0) ? (bTexMip0 ? 2 : 1) : 0;
-  const unsigned Tex1 = (rasterFlags.NumTextures > 1) ? (bTexMip1 ? 2 : 1) : 0;
-  const unsigned Fog = rasterFlags.Fog ? 1 : 0;
+  const uint32_t Depth = rasterFlags.DepthTest ? 1 : 0;
+  const uint32_t Color = rasterFlags.Color ? 1 : 0;
+  const uint32_t Tex0 = (rasterFlags.NumTextures > 0) ? (bTexMip0 ? 2 : 1) : 0;
+  const uint32_t Tex1 = (rasterFlags.NumTextures > 1) ? (bTexMip1 ? 2 : 1) : 0;
+  const uint32_t Fog = rasterFlags.Fog ? 1 : 0;
 
-  const unsigned index =
+  const uint32_t index =
       1 * Depth + 2 * Color + 4 * Tex0 + 12 * Tex1 + 36 * Fog;
 
   ASSERT(index < __countof(l_genericScanlines));
@@ -533,7 +533,7 @@ void CGenericRasterOp::SelectDepthStencilFunc() {
   const RASTERSTATES rasterStates = m_rasterID.States;
 
   if (rasterFlags.DepthTest) {
-    const unsigned index = rasterStates.DepthFunc;
+    const uint32_t index = rasterStates.DepthFunc;
     ASSERT(index < __countof(s_pfnCompare));
     m_pfnDepthTest = s_pfnCompare[index];
   } else {
@@ -544,7 +544,7 @@ void CGenericRasterOp::SelectDepthStencilFunc() {
       Format::GetInfo(rasterFlags.DepthStencilFormat).BytePerPixel;
 
   if (rasterFlags.StencilTest) {
-    const unsigned index = rasterStates.StencilFunc;
+    const uint32_t index = rasterStates.StencilFunc;
     ASSERT(index < __countof(s_pfnCompare));
     m_pfnStencilTest = s_pfnCompare[index];
   }
@@ -552,18 +552,18 @@ void CGenericRasterOp::SelectDepthStencilFunc() {
 
 void CGenericRasterOp::SelectSamplerFunc() {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
-  for (unsigned i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
+  for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
     const TEXTURESTATES texState = m_rasterID.Textures[i];
 
-    const unsigned baseIndex = 1 * texState.AddressV + 2 * texState.AddressU +
+    const uint32_t baseIndex = 1 * texState.AddressV + 2 * texState.AddressU +
                                4 * (texState.Format - 1);
 
-    const unsigned minIndex = baseIndex + 20 * (texState.MinFilter - 1);
+    const uint32_t minIndex = baseIndex + 20 * (texState.MinFilter - 1);
 
     ASSERT(minIndex < __countof(l_pfnGetTexelColorTable));
     m_samplers[i].pfnGetTexelColorMin = l_pfnGetTexelColorTable[minIndex];
 
-    const unsigned magIndex = baseIndex + 20 * (texState.MagFilter - 1);
+    const uint32_t magIndex = baseIndex + 20 * (texState.MagFilter - 1);
 
     ASSERT(magIndex < __countof(l_pfnGetTexelColorTable));
     m_samplers[i].pfnGetTexelColorMag = l_pfnGetTexelColorTable[magIndex];
@@ -572,8 +572,8 @@ void CGenericRasterOp::SelectSamplerFunc() {
 
 void CGenericRasterOp::SelectTexEnvFunc() {
   const RASTERFLAGS rasterFlags = m_rasterID.Flags;
-  for (unsigned i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
-    unsigned index;
+  for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
+    uint32_t index;
 
     switch (m_rasterID.Textures[i].Format) {
     default:
@@ -606,14 +606,14 @@ void CGenericRasterOp::SelectTexEnvFunc() {
 void CGenericRasterOp::SelectAlphaTestFunc() {
   const RASTERSTATES rasterStates = m_rasterID.States;
 
-  const unsigned index = rasterStates.AlphaFunc;
+  const uint32_t index = rasterStates.AlphaFunc;
   ASSERT(index < __countof(s_pfnCompare));
   m_pfnAlphaTest = s_pfnCompare[index];
 }
 
 void CGenericRasterOp::SelectBlendFunc() {
   const RASTERSTATES rasterStates = m_rasterID.States;
-  const unsigned index =
+  const uint32_t index =
       rasterStates.BlendDst * BLEND_SIZE_ + rasterStates.BlendSrc;
 
   ASSERT(index < __countof(s_pfnBlendTable));
@@ -627,14 +627,14 @@ void CGenericRasterOp::SelectWriteColorFunc() {
   const bool bColorWriteMask = rasterFlags.ColorWriteMask;
   const uint32_t logicFunc =
       (rasterFlags.LogicOp ? rasterStates.LogicFunc : static_cast<uint32_t>(LOGICOP_COPY));
-  const unsigned index = 1 * logicFunc + LOGICOP_SIZE_ * bColorWriteMask;
+  const uint32_t index = 1 * logicFunc + LOGICOP_SIZE_ * bColorWriteMask;
 
   ASSERT(index < __countof(s_pfnWriteColorTable));
   m_pfnWriteColor = s_pfnWriteColorTable[index];
 }
 
 bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
-                                     unsigned depthValue,
+                                     uint32_t depthValue,
                                      void *pDSBuffer) const {
   ASSERT(pDSBuffer);
 
@@ -645,16 +645,16 @@ bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
   const RASTERFLAGS rasterFlags = rasterID.Flags;
   const RASTERSTATES rasterStates = rasterID.States;
 
-  const unsigned depthStencilValue = *reinterpret_cast<uint32_t *>(pDSBuffer);
-  const unsigned stencilValue = depthStencilValue >> 16;
-  const unsigned _depthValue = depthStencilValue & 0xffff;
-  const unsigned stencilRef = rasterData.StencilRef;
-  const unsigned _stencilValue = stencilValue & rasterData.StencilMask;
-  const unsigned _stencilRef = stencilRef & rasterData.StencilMask;
+  const uint32_t depthStencilValue = *reinterpret_cast<uint32_t *>(pDSBuffer);
+  const uint32_t stencilValue = depthStencilValue >> 16;
+  const uint32_t _depthValue = depthStencilValue & 0xffff;
+  const uint32_t stencilRef = rasterData.StencilRef;
+  const uint32_t _stencilValue = stencilValue & rasterData.StencilMask;
+  const uint32_t _stencilRef = stencilRef & rasterData.StencilMask;
 
   eStencilOp stencilOp;
 
-  unsigned writeMask = rasterData.StencilWriteMask << 16;
+  uint32_t writeMask = rasterData.StencilWriteMask << 16;
 
   bool bStencilTest = (pRasterOp->m_pfnStencilTest)(_stencilRef, _stencilValue);
   if (bStencilTest) {
@@ -672,7 +672,7 @@ bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
     stencilOp = static_cast<eStencilOp>(rasterStates.StencilFail);
   }
 
-  unsigned result;
+  uint32_t result;
 
   switch (stencilOp) {
   default:
@@ -704,14 +704,14 @@ bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
   }
 
   // Write the depth stencil value
-  const unsigned value = (result << 16) | depthValue;
+  const uint32_t value = (result << 16) | depthValue;
   *reinterpret_cast<uint32_t *>(pDSBuffer) =
       (depthStencilValue & ~writeMask) | (value & writeMask);
 
   return bStencilTest;
 }
 
-void CGenericRasterOp::GetSamplerColor(Color4 *pOut, unsigned unit,
+void CGenericRasterOp::GetSamplerColor(Color4 *pOut, uint32_t unit,
                                        const RasterData &rasterData, fixedRX fU,
                                        fixedRX fV, fixedRX fM) const {
   const Sampler &sampler = rasterData.Samplers[unit];

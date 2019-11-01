@@ -17,7 +17,7 @@
 struct uint24 {
   uint8_t m[3];
 
-  explicit uint24(unsigned value) {
+  explicit uint24(uint32_t value) {
     m[0] = (value >> 0) & 0xff;
     m[1] = (value >> 8) & 0xff;
     m[2] = (value >> 16) & 0xff;
@@ -29,5 +29,5 @@ struct uint24 {
     m[2] = z;
   }
 
-  operator unsigned() const { return (m[2] << 16) | (m[1] << 8) | m[0]; }
+  operator uint32_t() const { return (m[2] << 16) | (m[1] << 8) | m[0]; }
 };

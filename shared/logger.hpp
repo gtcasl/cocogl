@@ -29,14 +29,14 @@ public:
 
   HRESULT Write(const TCHAR *pszFormat, va_list arglist);
 
-  void SetIndent(unsigned indent);
+  void SetIndent(uint32_t indent);
 
-  unsigned GetIndent() const;
+  uint32_t GetIndent() const;
 
   void IncrIndent();
   void DecrIndent();
 
 private:
   FILE *m_pFile;
-  unsigned m_indent;
+  uint32_t m_indent;
 };

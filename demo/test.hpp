@@ -13,7 +13,6 @@
 //
 #pragma once
 
-#include "fixed.hpp"
 #include "mesh.hpp"
 
 void Perspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar);

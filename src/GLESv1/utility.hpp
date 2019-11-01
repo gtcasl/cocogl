@@ -34,9 +34,9 @@ private:
 #define __profileAPI(func, ...) CProfiler profiler(g_logger, func, __VA_ARGS__);
 #endif
 
-inline bool __glFailed(unsigned int err) { return (err != GL_NO_ERROR); }
+inline bool __glFailed(uint32_t err) { return (err != GL_NO_ERROR); }
 
-inline bool __glSucceeded(unsigned int err) { return (err == GL_NO_ERROR); }
+inline bool __glSucceeded(uint32_t err) { return (err == GL_NO_ERROR); }
 
 #ifndef NDEBUG
 #define __glLog(...) g_logger.Write(__VA_ARGS__);
@@ -57,11 +57,11 @@ inline bool __glSucceeded(unsigned int err) { return (err == GL_NO_ERROR); }
 void memset16(void *dst, int fill, int cwCount);
 void memset32(void *dst, int fill, int cwCount);
 
-unsigned GLSizeOf(GLenum type);
+uint32_t GLSizeOf(GLenum type);
 
 eVertexFormat ToVertexFormat(GLenum type, GLint size);
 
-unsigned VertexDataSize(eVertexFormat format);
+uint32_t VertexDataSize(eVertexFormat format);
 
 GLenum DecodeDataType(eVertexFormat format);
 
@@ -69,53 +69,53 @@ GLint DecodeDataSize(eVertexFormat format);
 
 GLenum GLERROR_FROM_HRESULT(HRESULT hr);
 
-GLenum ToPixelFormat(ePixelFormat *pOut, unsigned *pBPP, GLenum format,
+GLenum ToPixelFormat(ePixelFormat *pOut, uint32_t *pBPP, GLenum format,
                      GLenum type);
 
 GLenum ToPixelFormat(ePixelFormat *pOut, GLint format);
 
 eCompare Reverse(eCompare compare);
 
-unsigned CompareFuncFromEnum(GLenum func);
-GLenum EnumFromCompareFunc(unsigned func);
+uint32_t CompareFuncFromEnum(GLenum func);
+GLenum EnumFromCompareFunc(uint32_t func);
 
-unsigned StencilOpFromEnum(GLenum op);
-GLenum EnumFromStencilOp(unsigned op);
+uint32_t StencilOpFromEnum(GLenum op);
+GLenum EnumFromStencilOp(uint32_t op);
 
-unsigned BlendFuncFromEnum(GLenum func);
-GLenum EnumFromBlendFunc(unsigned func);
+uint32_t BlendFuncFromEnum(GLenum func);
+GLenum EnumFromBlendFunc(uint32_t func);
 
-unsigned LogicOpFromEnum(GLenum op);
-GLenum EnumFromLogicOp(unsigned op);
+uint32_t LogicOpFromEnum(GLenum op);
+GLenum EnumFromLogicOp(uint32_t op);
 
-unsigned FogModeFromEnum(GLenum mode);
-GLenum EnumFromFogMode(unsigned mode);
+uint32_t FogModeFromEnum(GLenum mode);
+GLenum EnumFromFogMode(uint32_t mode);
 
-unsigned ShadeModelFromEnum(GLenum mode);
-GLenum EnumFromShadeModel(unsigned mode);
+uint32_t ShadeModelFromEnum(GLenum mode);
+GLenum EnumFromShadeModel(uint32_t mode);
 
-unsigned CullFaceFromEnum(GLenum mode);
-GLenum EnumFromCullFace(unsigned mode);
+uint32_t CullFaceFromEnum(GLenum mode);
+GLenum EnumFromCullFace(uint32_t mode);
 
-unsigned FrontFaceFromEnum(GLenum mode);
-GLenum EnumFromFrontFace(unsigned mode);
+uint32_t FrontFaceFromEnum(GLenum mode);
+GLenum EnumFromFrontFace(uint32_t mode);
 
-unsigned HintFromEnum(GLenum mode);
-GLenum EnumFromHint(unsigned mode);
+uint32_t HintFromEnum(GLenum mode);
+GLenum EnumFromHint(uint32_t mode);
 
-unsigned TexFilterFromEnum(GLenum param);
-GLenum EnumFromTexFilter(unsigned param);
+uint32_t TexFilterFromEnum(GLenum param);
+GLenum EnumFromTexFilter(uint32_t param);
 
-unsigned TexAddressFromEnum(GLenum param);
-GLenum EnumFromTexAddress(unsigned param);
+uint32_t TexAddressFromEnum(GLenum param);
+GLenum EnumFromTexAddress(uint32_t param);
 
 eEnvMode TexEnvFromEnum(GLenum param);
-GLenum EnumFromTexEnv(unsigned param);
+GLenum EnumFromTexEnv(uint32_t param);
 
-GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, unsigned dstOffsetX,
-                   unsigned dstOffsetY, unsigned copyWidth, unsigned copyHeight,
-                   const GLSurfaceDesc &srcDesc, unsigned srcOffsetX,
-                   unsigned srcOffsetY);
+GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
+                   uint32_t dstOffsetY, uint32_t copyWidth, uint32_t copyHeight,
+                   const GLSurfaceDesc &srcDesc, uint32_t srcOffsetX,
+                   uint32_t srcOffsetY);
 
 template <> inline GLenum TToGLenum<float>(float param) {
   return static_cast<GLenum>(param);
@@ -129,7 +129,7 @@ template <> inline GLenum TToGLenum<int>(int param) {
   return static_cast<GLenum>(param);
 }
 
-template <class T, unsigned BITS> class TBitPtr {
+template <class T, uint32_t BITS> class TBitPtr {
 public:
   enum {
     MASK = (1 << BITS) - 1,
@@ -155,5 +155,5 @@ public:
 
 private:
   const T *m_ptr;
-  unsigned m_shift;
+  uint32_t m_shift;
 };

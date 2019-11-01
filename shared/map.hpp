@@ -26,7 +26,7 @@ public:
   typedef typename List::cIter cIter;
 
   TMap() {
-    for (unsigned i = 0; i < BucketSize; ++i) {
+    for (uint32_t i = 0; i < BucketSize; ++i) {
       m_buckets[i].Iter = m_list.GetEnd();
       m_buckets[i].Size = 0;
     }
@@ -192,17 +192,17 @@ public:
 
   cIter GetREnd() const { return m_list.GetREnd(); }
 
-  Iter GetBucketIter(unsigned index) {
+  Iter GetBucketIter(uint32_t index) {
     ASSERT(index < BucketSize);
     return m_buckets[BucketSize].Iter;
   }
 
-  cIter GetBucketIter(unsigned index) const {
+  cIter GetBucketIter(uint32_t index) const {
     ASSERT(index < BucketSize);
     return m_buckets[BucketSize].Iter;
   }
 
-  unsigned GetBucketSize(unsigned index) {
+  uint32_t GetBucketSize(uint32_t index) {
     ASSERT(index < BucketSize);
     return m_buckets[BucketSize].Size;
   }
@@ -223,8 +223,8 @@ protected:
   TMap &operator=(const TMap &rhs) { return *this; }
 
   Bucket &GetBucket(const KeyType &key) {
-    const unsigned hash = static_cast<unsigned>(key);
-    const unsigned index = hash % BucketSize;
+    const uint32_t hash = static_cast<uint32_t>(key);
+    const uint32_t index = hash % BucketSize;
     return m_buckets[index];
   }
 };

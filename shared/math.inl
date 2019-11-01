@@ -18,7 +18,7 @@ namespace Math {
 
 namespace detail {
 
-template <typename Type, unsigned Shift> struct TShiftInverter {
+template <typename Type, uint32_t Shift> struct TShiftInverter {
 public:
   inline static Type call(int value) {
     if
@@ -42,7 +42,7 @@ inline float MulAdd(float a0, float b0, float a1, float b1, float a2, float b2,
   return a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
 }
 
-template <unsigned int F, typename T>
+template <uint32_t F, typename T>
 inline TFixed<F, T> MulAdd(TFixed<F, T> a0, TFixed<F, T> b0, TFixed<F, T> a1,
                            TFixed<F, T> b1, TFixed<F, T> a2, TFixed<F, T> b2,
                            TFixed<F, T> a3, TFixed<F, T> b3) {
@@ -59,7 +59,7 @@ inline float MulAdd(float a0, float b0, float a1, float b1, float a2,
   return a0 * b0 + a1 * b1 + a2 * b2;
 }
 
-template <unsigned int F, typename T>
+template <uint32_t F, typename T>
 inline TFixed<F, T> MulAdd(TFixed<F, T> a0, TFixed<F, T> b0, TFixed<F, T> a1,
                            TFixed<F, T> b1, TFixed<F, T> a2, TFixed<F, T> b2) {
   return TFixed<F, T>::Make((static_cast<int64_t>(a0.GetRaw()) * b0.GetRaw() +
@@ -72,7 +72,7 @@ template <> inline float MulAdd(float a0, float b0, float a1, float b1) {
   return a0 * b0 + a1 * b1;
 }
 
-template <unsigned int F, typename T>
+template <uint32_t F, typename T>
 inline TFixed<F, T> MulAdd(TFixed<F, T> a0, TFixed<F, T> b0, TFixed<F, T> a1,
                            TFixed<F, T> b1) {
   return TFixed<F, T>::Make((static_cast<int64_t>(a0.GetRaw()) * b0.GetRaw() +
@@ -84,7 +84,7 @@ template <> inline float MulSub(float a0, float b0, float a1, float b1) {
   return a0 * b0 - a1 * b1;
 }
 
-template <unsigned int F, typename T>
+template <uint32_t F, typename T>
 inline TFixed<F, T> MulSub(TFixed<F, T> a0, TFixed<F, T> b0, TFixed<F, T> a1,
                            TFixed<F, T> b1) {
   return TFixed<F, T>::Make((static_cast<int64_t>(a0.GetRaw()) * b0.GetRaw() -
@@ -96,25 +96,25 @@ template <typename R> inline R TCast(float rhs) { return static_cast<R>(rhs); }
 
 template <typename R> inline R TCast(int rhs) { return static_cast<R>(rhs); }
 
-template <typename R> inline R TCast(unsigned int rhs) {
+template <typename R> inline R TCast(uint32_t rhs) {
   return static_cast<R>(rhs);
 }
 
 template <typename R> inline R TCast(short rhs) { return static_cast<R>(rhs); }
 
-template <typename R> inline R TCast(unsigned short rhs) {
+template <typename R> inline R TCast(uint16_t rhs) {
   return static_cast<R>(rhs);
 }
 
 template <typename R> inline R TCast(char rhs) { return static_cast<R>(rhs); }
 
-template <typename R> inline R TCast(unsigned char rhs) {
+template <typename R> inline R TCast(uint8_t rhs) {
   return static_cast<R>(rhs);
 }
 
 template <typename R> inline R TCast(bool rhs) { return static_cast<R>(rhs); }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TCast(TFixed<F, T> rhs) {
   return rhs.template To<R>();
 }
@@ -145,11 +145,11 @@ template <> inline int TAbs<int>(int rhs) { return ::abs(rhs); }
 
 template <> inline float TAbs<float>(float rhs) { return ::fabsf(rhs); }
 
-template <unsigned int F> TFixed<F> TAbs(TFixed<F> rhs) {
+template <uint32_t F> TFixed<F> TAbs(TFixed<F> rhs) {
   return TFixed<F>::Make(::abs(rhs.GetRaw()));
 }
 
-template <unsigned int F>
+template <uint32_t F>
 inline TFixed<F, int64_t> TAbs(TFixed<F, int64_t> rhs) {
   return TFixed<F, int64_t>::Make(labs(rhs.GetRaw()));
 }
@@ -269,7 +269,7 @@ template <typename R> inline R TMul(float lhs, int rhs) {
   return static_cast<R>(lhs * rhs);
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TMul(float lhs, TFixed<F, T> rhs) {
   return static_cast<R>(lhs * rhs);
 }
@@ -332,47 +332,47 @@ template <typename R> inline R TShiftRight(float lhs, int rhs) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <unsigned int F, typename T>
+template <uint32_t F, typename T>
 inline TFixed<F, T> TExp(TFixed<F, T> rhs) {
   return static_cast<TFixed<F, T>>((float)exp(Math::TCast<float>(rhs)));
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TCeili(TFixed<F, T> rhs) {
   const int value = rhs.GetRaw() + TFixed<F, T>::MASK;
   return static_cast<R>(value >> TFixed<F, T>::FRAC);
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TCeilf(TFixed<F, T> rhs) {
   const int value = (rhs.GetRaw() + TFixed<F, T>::MASK) & TFixed<F, T>::IMASK;
   return R::Make(value >> (TFixed<F, T>::FRAC - R::FRAC));
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TFloori(TFixed<F, T> rhs) {
   return static_cast<R>(rhs.GetRaw() >> TFixed<F, T>::FRAC);
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TFloorf(TFixed<F, T> rhs) {
   const int value = rhs.GetRaw() & TFixed<F, T>::IMASK;
   return R::Make(value >> (TFixed<F, T>::FRAC - R::FRAC));
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TRoundi(TFixed<F, T> rhs) {
   return static_cast<R>((rhs.GetRaw() + TFixed<F, T>::HALF) >>
                         TFixed<F, T>::FRAC);
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TRoundf(TFixed<F, T> rhs) {
   const int value = (rhs.GetRaw() + TFixed<F, T>::HALF) & TFixed<F, T>::IMASK;
   return R::Make(value >> (TFixed<F, T>::FRAC - R::FRAC));
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TDiv(TFixed<F, T> lhs, TFixed<F, T> rhs) {
   ASSERT(rhs.GetRaw() != 0);
   return R::Make((static_cast<int64_t>(lhs.GetRaw()) << R::FRAC) /
@@ -389,19 +389,19 @@ template <> inline fixed16 TSqrt(fixed16 rhs) {
   return fixed16::Make(Math::iSqrt(rhs.GetRaw()) << 8);
 }
 
-template <unsigned int F, typename T> inline int TToUNORM8(TFixed<F, T> rhs) {
+template <uint32_t F, typename T> inline int TToUNORM8(TFixed<F, T> rhs) {
   ASSERT((rhs >= TConst<TFixed<F, T>>::Zero()) &&
          (rhs <= TConst<TFixed<F, T>>::One()));
   return (0xff * rhs.GetRaw()) >> TFixed<F, T>::FRAC;
 }
 
-template <unsigned int F, typename T> inline int TToUNORM16(TFixed<F, T> rhs) {
+template <uint32_t F, typename T> inline int TToUNORM16(TFixed<F, T> rhs) {
   ASSERT((rhs >= TConst<TFixed<F, T>>::Zero()) &&
          (rhs <= TConst<TFixed<F, T>>::One()));
   return (0xffff * rhs.GetRaw()) >> TFixed<F, T>::FRAC;
 }
 
-template <typename R, unsigned int F, typename T> class TInvSelect {
+template <typename R, uint32_t F, typename T> class TInvSelect {
 public:
   inline static R Invert(TFixed<F, T> rhs) {
     return R::Make(detail::TShiftInverter<typename R::Type,
@@ -410,14 +410,14 @@ public:
   }
 };
 
-template <unsigned int F, typename T> class TInvSelect<float, F, T> {
+template <uint32_t F, typename T> class TInvSelect<float, F, T> {
 public:
   inline static float Invert(TFixed<F, T> rhs) {
     return 1.0f / Math::TCast<float>(rhs);
   }
 };
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TInv(TFixed<F, T> rhs) {
   return TInvSelect<R, F, T>::Invert(rhs);
 }
@@ -427,7 +427,7 @@ template <typename R> inline R TInv(float rhs) {
   return static_cast<R>(1.0f / rhs);
 }
 
-template <typename R, unsigned int F1, unsigned int F2, typename T1,
+template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TFastMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
   ASSERT((static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw()) ==
@@ -436,7 +436,7 @@ inline R TFastMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
   return R::Make((lhs.GetRaw() * rhs.GetRaw()) >> FRAC);
 }
 
-template <typename R, unsigned int F1, unsigned int F2, typename T1,
+template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TFastDiv(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
   const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
@@ -445,7 +445,7 @@ inline R TFastDiv(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
   return R::Make((lhs.GetRaw() << FRAC) / rhs.GetRaw());
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TMulRnd(TFixed<F, T> lhs, int rhs) {
   const int FRAC = TFixed<F, T>::FRAC - R::FRAC;
   const int HALF = 1 << (FRAC - 1);
@@ -453,7 +453,7 @@ inline R TMulRnd(TFixed<F, T> lhs, int rhs) {
   return R::Make((value + HALF) >> FRAC);
 }
 
-template <typename R, unsigned int F1, unsigned int F2, typename T1,
+template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulRnd(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
   const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
@@ -462,7 +462,7 @@ inline R TMulRnd(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
   return R::Make((value + HALF) >> FRAC);
 }
 
-template <typename R, unsigned int F1, unsigned int F2, typename T1,
+template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, int c) {
   const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
@@ -471,7 +471,7 @@ inline R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, int c) {
   return R::Make((value + HALF) >> FRAC);
 }
 
-template <typename R, unsigned int F1, unsigned int F2, unsigned int F3,
+template <typename R, uint32_t F1, uint32_t F2, uint32_t F3,
           typename T1, typename T2, typename T3>
 inline R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F3, T3> c) {
   const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC +
@@ -482,7 +482,7 @@ inline R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F3, T3> c) {
   return R::Make((value + HALF) >> FRAC);
 }
 
-template <typename R, unsigned int F1, unsigned int F2, typename T1,
+template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulAdd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
                  TFixed<F2, T2> d) {
@@ -492,7 +492,7 @@ inline R TMulAdd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
   return R::Make((ab + cd) >> FRAC);
 }
 
-template <typename R, unsigned int F1, unsigned int F2, typename T1,
+template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulSub(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
                  TFixed<F2, T2> d) {
@@ -502,14 +502,14 @@ inline R TMulSub(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
   return R::Make((ab - cd) >> FRAC);
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TMul(TFixed<F, T> lhs, TFixed<F, T> rhs) {
   const int FRAC = TFixed<F, T>::FRAC + TFixed<F, T>::FRAC - R::FRAC;
   const int64_t value = static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw();
   return R::Make(value >> FRAC);
 }
 
-template <typename R, unsigned int F1, unsigned int F2, typename T1,
+template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
   const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
@@ -517,19 +517,19 @@ inline R TMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
   return R::Make(value >> FRAC);
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TMul(TFixed<F, T> lhs, int rhs) {
   const int FRAC = TFixed<F, T>::FRAC - R::FRAC;
   const int64_t value = static_cast<int64_t>(lhs.GetRaw()) * rhs;
   return R::Make(value >> FRAC);
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 R TMul(TFixed<F, T> lhs, float rhs) {
   return static_cast<R>(rhs * lhs);
 }
 
-template <typename R, unsigned int F1, unsigned int F2, typename T1,
+template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulShift(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs, R a, int shift) {
   const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
@@ -537,7 +537,7 @@ inline R TMulShift(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs, R a, int shift) {
   return R::Make((value >> FRAC) - (a.GetRaw() >> shift));
 }
 
-template <unsigned int F1, unsigned int F2, typename T1, typename T2>
+template <uint32_t F1, uint32_t F2, typename T1, typename T2>
 inline TFixed<F1, T1> Lerpf(TFixed<F1, T1> lhs, TFixed<F1, T1> rhs,
                             TFixed<F2, T2> scalar) {
   ASSERT((scalar >= TConst<TFixed<F2, T2>>::Zero()) &&
@@ -545,13 +545,13 @@ inline TFixed<F1, T1> Lerpf(TFixed<F1, T1> lhs, TFixed<F1, T1> rhs,
   return lhs + (rhs - lhs) * scalar;
 }
 
-template <unsigned int F, typename T>
+template <uint32_t F, typename T>
 inline TFixed<F, T> Lerpf(TFixed<F, T> lhs, TFixed<F, T> rhs, float scalar) {
   ASSERT((scalar >= 0.0f) && (scalar <= 1.0f));
   return lhs + (rhs - lhs) * scalar;
 }
 
-template <unsigned int F, typename T>
+template <uint32_t F, typename T>
 inline int Lerp(int lhs, int rhs, TFixed<F, T> scalar) {
   ASSERT((scalar >= TConst<TFixed<F, T>>::Zero()) &&
          (scalar <= TConst<TFixed<F, T>>::One()));
@@ -560,12 +560,12 @@ inline int Lerp(int lhs, int rhs, TFixed<F, T> scalar) {
                           TFixed<F, T>::FRAC);
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TShiftLeft(TFixed<F, T> lhs, int rhs) {
   return R(lhs) << rhs;
 }
 
-template <typename R, unsigned int F, typename T>
+template <typename R, uint32_t F, typename T>
 inline R TShiftRight(TFixed<F, T> lhs, int rhs) {
   return R(lhs) >> rhs;
 }
@@ -788,7 +788,7 @@ inline floatf DegToRad(floatf rhs) { return rhs * (fPI / f180); }
 
 inline floatf RadToDeg(floatf rhs) { return rhs * (f180 / fPI); }
 
-inline unsigned int iLog2(unsigned int rhs) { return 31 - Clz(rhs); }
+inline uint32_t iLog2(uint32_t rhs) { return 31 - Clz(rhs); }
 
 inline void Mul(MATRIX44 *pmatOut, const MATRIX44 &mat1, const MATRIX44 &mat2) {
   ASSERT(pmatOut);

@@ -21,7 +21,7 @@
 
 #ifdef COCOGL_RASTER_PROFILE
 
-void IRasterOp::StartProfile(unsigned numPixels) {
+void IRasterOp::StartProfile(uint32_t numPixels) {
   m_profile.Invocations += 1;
   m_profile.DrawnPixels += numPixels;
 }
@@ -74,9 +74,9 @@ GLenum CRasterizer::SetupRasterStates(GLenum mode) {
   }
 
   if (m_caps.Texture2D) {
-    unsigned n = 0;
+    uint32_t n = 0;
 
-    for (unsigned i = 0, mask = m_caps.Texture2D; mask; mask >>= 1, ++i) {
+    for (uint32_t i = 0, mask = m_caps.Texture2D; mask; mask >>= 1, ++i) {
       if (mask & 0x1) {
         if (m_texUnits[i].Prepare(&m_rasterData.Samplers[n],
                                   &rasterID.Textures[n])) {
@@ -88,7 +88,7 @@ GLenum CRasterizer::SetupRasterStates(GLenum mode) {
           case GL_TRIANGLE_STRIP:
           case GL_TRIANGLE_FAN: {
             // Compute texture mip flags
-            const unsigned state = rasterID.Textures[n].Value;
+            const uint32_t state = rasterID.Textures[n].Value;
             rasterID.Flags.TextureMips |=
                 ((FILTER_NONE !=
                   __get_bitfield(state, TEXTURESTATES::MIPFILTER)) ||
@@ -262,41 +262,41 @@ void CRasterizer::PostRender() {
   __safeRelease(m_rasterData.pRasterOp);
 }
 
-GLenum CRasterizer::RenderPrimitive(GLenum mode, unsigned count) {
+GLenum CRasterizer::RenderPrimitive(GLenum mode, uint32_t count) {
   switch (mode) {
   case GL_TRIANGLES:
-    for (unsigned i = 2; i < count; i += 3) {
+    for (uint32_t i = 2; i < count; i += 3) {
       this->DrawTriangle(i - 2, i - 1, i);
     }
     break;
 
   case GL_TRIANGLE_STRIP:
-    for (unsigned i = 2, p = 0; i < count; ++i, p ^= 1) {
+    for (uint32_t i = 2, p = 0; i < count; ++i, p ^= 1) {
       this->DrawTriangle(i - 2 + p, i - 1 - p, i);
     }
     break;
 
   case GL_TRIANGLE_FAN:
-    for (unsigned i = 2; i < count; ++i) {
+    for (uint32_t i = 2; i < count; ++i) {
       this->DrawTriangle(0, i - 1, i);
     }
     break;
 
   case GL_LINES:
-    for (unsigned i = 1; i < count; i += 2) {
+    for (uint32_t i = 1; i < count; i += 2) {
       this->DrawLine(i - 1, i);
     }
     break;
 
   case GL_LINE_STRIP:
-    for (unsigned i = 1; i < count; ++i) {
+    for (uint32_t i = 1; i < count; ++i) {
       this->DrawLine(i - 1, i);
     }
     break;
 
   case GL_LINE_LOOP:
     if (count > 1) {
-      for (unsigned i = 1; i < count; ++i) {
+      for (uint32_t i = 1; i < count; ++i) {
         this->DrawLine(i - 1, i);
       }
 
@@ -305,7 +305,7 @@ GLenum CRasterizer::RenderPrimitive(GLenum mode, unsigned count) {
     break;
 
   case GL_POINTS:
-    for (unsigned i = 0; i < count; ++i) {
+    for (uint32_t i = 0; i < count; ++i) {
       this->DrawPoint(i);
     }
     break;

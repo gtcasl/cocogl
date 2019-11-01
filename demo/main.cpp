@@ -1,3 +1,16 @@
+// Copyright (c) Blaise Tine.  All rights reserved.
+//
+//
+// Use of this sample source code is subject to the terms of the Microsoft
+// license agreement under which you licensed this sample source code. If
+// you did not accept the terms of the license agreement, you are not
+// authorized to use this sample source code. For the terms of the license,
+// please see the license agreement between you and Microsoft or, if applicable,
+// see the LICENSE.RTF on your install media or the root of your tools
+// installation.
+// THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES OR
+// INDEMNITIES.
+//
 #include "stdafx.h"
 
 // SDL
@@ -10,17 +23,16 @@
 #include "cube_t.hpp"
 #include "debug_t.hpp"
 #include "fog_t.hpp"
-#include "lighting_t.hpp"
+#include "scene_t.hpp"
 #include "line_t.hpp"
 #include "quad_t.hpp"
 #include "stencil_t.hpp"
 #include "texture_t.hpp"
 #include "triangle_t.hpp"
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-
 int testid = 2;
+int width = 640;
+int height = 480;
 
 EGLDisplay glDisplay;
 EGLConfig glConfig;
@@ -36,18 +48,18 @@ static void init_GLES(void) {
       EGL_NONE};
 
   EGLint numConfigs, majorVersion, minorVersion;
-  glesWindow = SDL_CreateWindow("COCGL_DEMO", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
-                                SDL_WINDOW_RESIZABLE);
+  glesWindow = SDL_CreateWindow("CocoGL Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height,
+                                0);
   glDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
   eglInitialize(glDisplay, &majorVersion, &minorVersion);
   eglChooseConfig(glDisplay, egl_config_attr, &glConfig, 1, &numConfigs);
   SDL_SysWMinfo sysInfo;
-  SDL_VERSION(&sysInfo.version); // Set SDL version
+  SDL_VERSION(&sysInfo.version);
   SDL_GetWindowWMInfo(glesWindow, &sysInfo);
   glContext = eglCreateContext(glDisplay, glConfig, EGL_NO_CONTEXT, nullptr);
   glSurface = eglCreateWindowSurface(
       glDisplay, glConfig, (EGLNativeWindowType)sysInfo.info.x11.window,
-      0); // X11?
+      0); 
   eglMakeCurrent(glDisplay, glSurface, glSurface, glContext);
 }
 
@@ -60,13 +72,18 @@ static void cleanup() {
 
 static void parse_args(int argc, char **argv) {
   int c;
-  while ((c = getopt(argc, argv, "t:h?")) != -1) {
+  while ((c = getopt(argc, argv, "w:h:t:?")) != -1) {
     switch (c) {
+    case 'w':
+      width = atoi(optarg);
+      break;
+    case 'h':
+      height = atoi(optarg);
+      break;
     case 't':
       testid = atoi(optarg);
       break;
     case '?':
-    case 'h':
       printf("CocoGL Demo.\n");
       printf("Usage: [-t: testno] [-h: help]\n");
       [[fallthrough]];
@@ -99,7 +116,7 @@ int main(int argc, char **argv) {
     test = new CTextureTest();
     break;
   case 5:
-    test = new CLightingTest();
+    test = new CSceneTest();
     break;
   case 6:
     test = new CFogTest();
@@ -123,7 +140,7 @@ int main(int argc, char **argv) {
 
   init_GLES();
 
-  if (!test->OnInitialize(SCREEN_WIDTH, SCREEN_HEIGHT)) {
+  if (!test->OnInitialize(width, height)) {
     std::cout << "test initiaklization failed" << std::endl;
     delete test;
     exit(1);

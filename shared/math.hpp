@@ -50,7 +50,7 @@ template <> struct TConst<float> {
   inline static float LogE() { return 1.442695041f; }
 };
 
-template <unsigned int F, typename T> struct TConst<TFixed<F, T>> {
+template <uint32_t F, typename T> struct TConst<TFixed<F, T>> {
   inline static TFixed<F, T> Zero() { return TFixed<F, T>::Make(0); }
 
   inline static TFixed<F, T> Half() {
@@ -353,9 +353,9 @@ typedef TMatrix44<floatf> MATRIX44;
 #define fEPS TConst<floatf>::Epsilon()
 
 namespace Math {
-unsigned int iLog2(unsigned int rhs);
+uint32_t iLog2(uint32_t rhs);
 
-unsigned int iSqrt(unsigned int rhs);
+uint32_t iSqrt(uint32_t rhs);
 
 int Mul8(int lhs, int rhs);
 
@@ -369,19 +369,19 @@ template <class R> R TCast(float rhs);
 
 template <class R> R TCast(int rhs);
 
-template <class R> R TCast(unsigned int rhs);
+template <class R> R TCast(uint32_t rhs);
 
 template <class R> R TCast(short rhs);
 
-template <class R> R TCast(unsigned short rhs);
+template <class R> R TCast(uint16_t rhs);
 
 template <class R> R TCast(char rhs);
 
-template <class R> R TCast(unsigned char rhs);
+template <class R> R TCast(uint8_t rhs);
 
 template <class R> R TCast(bool rhs);
 
-template <class R, unsigned int F, typename T> R TCast(TFixed<F, T> rhs);
+template <class R, uint32_t F, typename T> R TCast(TFixed<F, T> rhs);
 
 template <class R> R TFromUNORM8(int rhs);
 
@@ -441,7 +441,7 @@ template <class R> R TMul(float lhs, float rhs);
 
 template <class R> R TMul(float lhs, int rhs);
 
-template <class R, unsigned int F, typename T>
+template <class R, uint32_t F, typename T>
 R TMul(float lhs, TFixed<F, T> rhs);
 
 float MulDiv(float lhs, float rhs);
@@ -470,60 +470,60 @@ template <class R> R TShiftRight(float lhs, int rhs);
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <class R, unsigned int F, typename T> R TInv(TFixed<F, T> rhs);
+template <class R, uint32_t F, typename T> R TInv(TFixed<F, T> rhs);
 
 template <class R> R TInv(float rhs);
 
-template <class R, unsigned int F1, unsigned int F2, typename T1, typename T2>
+template <class R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R TFastMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs);
 
-template <class R, unsigned int F1, unsigned int F2, typename T1, typename T2>
+template <class R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R TFastDiv(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs);
 
-template <class R, unsigned int F1, unsigned int F2, typename T1, typename T2>
+template <class R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R TMulRnd(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs);
 
-template <class R, unsigned int F1, unsigned int F2, typename T1, typename T2>
+template <class R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, int c);
 
-template <class R, unsigned int F1, unsigned int F2, unsigned int F3,
+template <class R, uint32_t F1, uint32_t F2, uint32_t F3,
           typename T1, typename T2, typename T3>
 R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F3, T3> c);
 
-template <class R, unsigned int F, typename T>
+template <class R, uint32_t F, typename T>
 R TMulRnd(TFixed<F, T> lhs, int rhs);
 
-template <class R, unsigned int F1, unsigned int F2, typename T1, typename T2>
+template <class R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R TMulAdd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
           TFixed<F2, T2> d);
 
-template <class R, unsigned int F1, unsigned int F2, typename T1, typename T2>
+template <class R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R TMulSub(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
           TFixed<F2, T2> d);
 
-template <class R, unsigned int F, typename T>
+template <class R, uint32_t F, typename T>
 R TMul(TFixed<F, T> lhs, int rhs);
 
-template <class R, unsigned int F, typename T>
+template <class R, uint32_t F, typename T>
 R TMul(TFixed<F, T> lhs, float rhs);
 
-template <class R, unsigned int F1, unsigned int F2, typename T1, typename T2>
+template <class R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R TMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs);
 
-template <class R, unsigned int F, typename T>
+template <class R, uint32_t F, typename T>
 R TMul(TFixed<F, T> lhs, TFixed<F, T> rhs);
 
-template <unsigned int F1, unsigned int F2, typename T1, typename T2>
+template <uint32_t F1, uint32_t F2, typename T1, typename T2>
 TFixed<F1, T1> TLerpf(TFixed<F1, T1> lhs, TFixed<F1, T1> rhs,
                       TFixed<F2, T2> scalar);
 
-template <unsigned int F, typename T>
+template <uint32_t F, typename T>
 TFixed<F, T> TLerpf(TFixed<F, T> lhs, TFixed<F, T> rhs, float scalar);
 
-template <class R, unsigned int F, typename T>
+template <class R, uint32_t F, typename T>
 R TShiftLeft(TFixed<F, T> lhs, int rhs);
 
-template <class R, unsigned int F, typename T>
+template <class R, uint32_t F, typename T>
 R TShiftRight(TFixed<F, T> lhs, int rhs);
 
 //////////////////////////////////////////////////////////////////////////////

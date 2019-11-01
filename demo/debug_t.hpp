@@ -13,10 +13,6 @@
 //
 #pragma once
 
-///---------------------------------------------------------------------------
-/// <summary>
-/// </summary>
-///---------------------------------------------------------------------------
 class CDebugTest : public CTestBase {
 public:
   bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) {

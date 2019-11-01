@@ -56,7 +56,7 @@ struct Sampler {
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
-      unsigned cEnvColor_MaxMipLevel;
+      uint32_t cEnvColor_MaxMipLevel;
     };
     struct {
       uint8_t cEnvColor[3];
@@ -72,15 +72,15 @@ public:
 
   ~CSurface2D() { this->Destroy(); }
 
-  GLenum Initialize(unsigned width, unsigned height, ePixelFormat format);
+  GLenum Initialize(uint32_t width, uint32_t height, ePixelFormat format);
 
-  GLenum Initialize(unsigned width, unsigned height, unsigned pitch,
+  GLenum Initialize(uint32_t width, uint32_t height, int32_t pitch,
                     ePixelFormat format, GLvoid *pPixels);
 
-  GLenum Initialize(unsigned width, unsigned height, ePixelFormat format,
+  GLenum Initialize(uint32_t width, uint32_t height, ePixelFormat format,
                     const GLvoid *pPixels);
 
-  unsigned GetPitch() const { return m_pitch; }
+  uint32_t GetPitch() const { return m_pitch; }
 
   ePixelFormat GetFormat() const { return static_cast<ePixelFormat>(m_format); }
 
@@ -98,7 +98,7 @@ public:
 private:
   void Clear();
 
-  uint16_t m_pitch;
+  int32_t m_pitch;
   uint8_t m_format;
   bool m_bOwnedBuffer;
 };
@@ -110,7 +110,7 @@ public:
 
   static GLenum Create(CTexture **ppTexture);
 
-  const CSurface2D &GetSurface(unsigned level) const {
+  const CSurface2D &GetSurface(uint32_t level) const {
     ASSERT(level < MAX_TEXTURE_LEVELS);
     return m_surfaces[level];
   }
@@ -123,7 +123,7 @@ public:
 
   void SetHandle(uint32_t dwHandle) { m_dwHandle = dwHandle; }
 
-  GLenum InitializeSurface(unsigned level, unsigned width, unsigned height,
+  GLenum InitializeSurface(uint32_t level, uint32_t width, uint32_t height,
                            ePixelFormat format) {
     if (m_pBoundSurface) {
       this->ReleaseSurface(m_pBoundSurface);

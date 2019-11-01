@@ -125,15 +125,15 @@ template <class T> inline void __swap(T &a, T &b) {
   b = c;
 }
 
-template <unsigned long N> struct __countbits {
-  static const unsigned nbits = __countbits<(N >> 1)>::nbits + 1;
+template <uint64_t N> struct __countbits {
+  static const uint32_t nbits = __countbits<(N >> 1)>::nbits + 1;
 };
 
-template <> struct __countbits<0> { static const unsigned nbits = 0; };
+template <> struct __countbits<0> { static const uint32_t nbits = 0; };
 
-inline unsigned int Clz(unsigned int rhs) { return __builtin_clz(rhs); }
+inline uint32_t Clz(uint32_t rhs) { return __builtin_clz(rhs); }
 
-inline unsigned int Ctz(unsigned int rhs) { return 31 - Clz(rhs & -(int)rhs); }
+inline uint32_t Ctz(uint32_t rhs) { return 31 - Clz(rhs & -(int)rhs); }
 
 #ifndef NDEBUG
 #define __debugMsg(level, ...) DbgPrintf(level, __VA_ARGS__);

@@ -18,8 +18,8 @@
 #include "vertarray.hpp"
 
 GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
-                                       unsigned count, unsigned *pMin,
-                                       unsigned *pMax) {
+                                       uint32_t count, uint32_t *pMin,
+                                       uint32_t *pMax) {
   ASSERT(ppvIndices);
 
   const GLvoid *pvIndices = *ppvIndices;
@@ -28,9 +28,9 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
 
   const uint8_t *const pBits = pBufElements->GetBits();
   if (pBits) {
-    const unsigned stride = GLSizeOf(type);
-    const unsigned size = pBufElements->GetSize();
-    const unsigned offset = static_cast<const uint8_t *>(pvIndices) -
+    const uint32_t stride = GLSizeOf(type);
+    const uint32_t size = pBufElements->GetSize();
+    const uint32_t offset = static_cast<const uint8_t *>(pvIndices) -
                             static_cast<const uint8_t *>(nullptr);
     if ((offset + stride * count) <= size) {
       pvIndices = pBits + offset;
@@ -45,15 +45,15 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
     }
   }
 
-  unsigned min = UINT_MAX;
-  unsigned max = 0;
+  uint32_t min = UINT_MAX;
+  uint32_t max = 0;
 
   switch (type) {
   case GL_UNSIGNED_SHORT: {
     const uint16_t *const pwIndices =
         reinterpret_cast<const uint16_t *>(pvIndices);
-    for (unsigned i = 0; i < count; ++i) {
-      const unsigned value = pwIndices[i];
+    for (uint32_t i = 0; i < count; ++i) {
+      const uint32_t value = pwIndices[i];
       if (value < min) {
         min = value;
       }
@@ -69,8 +69,8 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
   case GL_UNSIGNED_BYTE: {
     const uint8_t *const pbIndices =
         reinterpret_cast<const uint8_t *>(pvIndices);
-    for (unsigned i = 0; i < count; ++i) {
-      const unsigned value = pbIndices[i];
+    for (uint32_t i = 0; i < count; ++i) {
+      const uint32_t value = pbIndices[i];
       if (value < min) {
         min = value;
       }

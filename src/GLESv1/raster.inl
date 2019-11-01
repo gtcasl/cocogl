@@ -15,20 +15,20 @@
 #pragma once
 
 template <eClipFlags ClipPlane>
-inline unsigned CRasterizer::TClipTriangle(unsigned nNumVertices,
-                                           unsigned *pSrc, unsigned *pDst,
-                                           unsigned *pTmp) {
+inline uint32_t CRasterizer::TClipTriangle(uint32_t nNumVertices,
+                                           uint32_t *pSrc, uint32_t *pDst,
+                                           uint32_t *pTmp) {
   const VECTOR4 *const pvClipPos =
       (const VECTOR4 *)m_pbVertexData[VERTEXDATA_CLIPPOS];
 
   const int coord = ClipPlane >> 1;
   static constexpr bool Signed = (ClipPlane & 1) != 0;
 
-  unsigned iTmp = *pTmp;
-  unsigned iVB = pSrc[nNumVertices - 1];
-  unsigned iVA;
+  uint32_t iTmp = *pTmp;
+  uint32_t iVB = pSrc[nNumVertices - 1];
+  uint32_t iVA;
 
-  unsigned nClipVertices = 0;
+  uint32_t nClipVertices = 0;
 
   if
     constexpr(Signed) {
@@ -90,15 +90,15 @@ inline unsigned CRasterizer::TClipTriangle(unsigned nNumVertices,
 template <class T>
 inline GLenum
 CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
-                                     unsigned count, unsigned startVertex) {
+                                     uint32_t count, uint32_t startVertex) {
   ASSERT(pIndices);
 
   switch (mode) {
   case GL_TRIANGLES:
     for (const T *const pEnd = pIndices + count - 2; pIndices < pEnd;) {
-      const unsigned i0 = *pIndices++ - startVertex;
-      const unsigned i1 = *pIndices++ - startVertex;
-      const unsigned i2 = *pIndices++ - startVertex;
+      const uint32_t i0 = *pIndices++ - startVertex;
+      const uint32_t i1 = *pIndices++ - startVertex;
+      const uint32_t i2 = *pIndices++ - startVertex;
       this->DrawTriangle(i0, i1, i2);
     }
     break;
@@ -106,14 +106,14 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
   case GL_TRIANGLE_STRIP:
     if (count > 2) {
       const T *const pEnd = pIndices + count;
-      unsigned i0 = *pIndices++ - startVertex;
-      unsigned i1 = *pIndices++ - startVertex;
+      uint32_t i0 = *pIndices++ - startVertex;
+      uint32_t i1 = *pIndices++ - startVertex;
 
       for (const T *const pEnd2 = pEnd - 1; pIndices < pEnd2;) {
-        const unsigned i2 = *pIndices++ - startVertex;
+        const uint32_t i2 = *pIndices++ - startVertex;
         this->DrawTriangle(i0, i1, i2);
 
-        const unsigned i3 = *pIndices++ - startVertex;
+        const uint32_t i3 = *pIndices++ - startVertex;
         this->DrawTriangle(i2, i1, i3);
 
         i0 = i2;
@@ -121,7 +121,7 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
       }
 
       if (pIndices < pEnd) {
-        const unsigned i2 = *pIndices++ - startVertex;
+        const uint32_t i2 = *pIndices++ - startVertex;
         this->DrawTriangle(i0, i1, i2);
       }
     }
@@ -130,11 +130,11 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
   case GL_TRIANGLE_FAN:
     if (count > 2) {
       const T *const pEnd = pIndices + count;
-      const unsigned is = *pIndices++ - startVertex;
-      unsigned i0 = *pIndices++;
+      const uint32_t is = *pIndices++ - startVertex;
+      uint32_t i0 = *pIndices++;
 
       for (; pIndices < pEnd;) {
-        const unsigned i1 = *pIndices++ - startVertex;
+        const uint32_t i1 = *pIndices++ - startVertex;
         this->DrawTriangle(is, i0, i1);
         i0 = i1;
       }
@@ -143,8 +143,8 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
 
   case GL_LINES:
     for (const T *const pEnd = pIndices + count - 1; pIndices < pEnd;) {
-      const unsigned i0 = *pIndices++ - startVertex;
-      const unsigned i1 = *pIndices++ - startVertex;
+      const uint32_t i0 = *pIndices++ - startVertex;
+      const uint32_t i1 = *pIndices++ - startVertex;
       this->DrawLine(i0, i1);
     }
     break;
@@ -152,10 +152,10 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
   case GL_LINE_STRIP:
     if (count > 1) {
       const T *const pEnd = pIndices + count;
-      unsigned i0 = *pIndices++ - startVertex;
+      uint32_t i0 = *pIndices++ - startVertex;
 
       for (; pIndices < pEnd;) {
-        const unsigned i1 = *pIndices++ - startVertex;
+        const uint32_t i1 = *pIndices++ - startVertex;
         this->DrawLine(i0, i1);
         i0 = i1;
       }
@@ -165,11 +165,11 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
   case GL_LINE_LOOP:
     if (count > 1) {
       const T *const pEnd = pIndices + count;
-      const unsigned is = *pIndices++ - startVertex;
-      unsigned i0 = is;
+      const uint32_t is = *pIndices++ - startVertex;
+      uint32_t i0 = is;
 
       for (; pIndices < pEnd;) {
-        const unsigned i1 = *pIndices++ - startVertex;
+        const uint32_t i1 = *pIndices++ - startVertex;
         this->DrawLine(i0, i1);
         i0 = i1;
       }
@@ -180,7 +180,7 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
 
   case GL_POINTS:
     for (const T *const pEnd = pIndices + count; pIndices < pEnd;) {
-      const unsigned i0 = *pIndices++ - startVertex;
+      const uint32_t i0 = *pIndices++ - startVertex;
       this->DrawPoint(i0);
     }
     break;

@@ -19,7 +19,7 @@ struct ColorARGB {
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
-      unsigned value;
+      uint32_t value;
     };
     struct {
       uint8_t b, g, r, a;

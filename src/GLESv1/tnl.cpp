@@ -1093,12 +1093,12 @@ void CTNL::UpdateModelViewProj() {
 
 void CTNL::UpdateScreenXform() {
   m_screenXform.fMinX =
-      static_cast<fixed4>((m_viewport.left + m_viewport.right) >> 1);
-  m_screenXform.iScaleX = (m_viewport.right - m_viewport.left) >> 1;
+      static_cast<fixed4>((m_viewport.left + m_viewport.right) / 2);
+  m_screenXform.iScaleX = (m_viewport.right - m_viewport.left) / 2;
 
   m_screenXform.fMinY =
-      static_cast<fixed4>((m_viewport.top + m_viewport.bottom) >> 1);
-  m_screenXform.iScaleY = (m_viewport.bottom - m_viewport.top) >> 1;
+      static_cast<fixed4>((m_viewport.top + m_viewport.bottom) / 2);
+  m_screenXform.iScaleY = (m_viewport.bottom - m_viewport.top) / 2;
 
   m_screenXform.fMinZ =
       static_cast<float20>((m_depthRange.fNear + m_depthRange.fFar) / 2);

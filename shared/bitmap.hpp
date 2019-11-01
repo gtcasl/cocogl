@@ -18,47 +18,46 @@
 include<wingdi.h>
 #else
 
-// file header
-struct BITMAPFILEHEADER {
-  unsigned short bfType; // magic number
-  unsigned int bfSize;
-  unsigned short bfReserved1;
-  unsigned short bfReserved2;
-  unsigned int bfOffBits; // offset to data
-};
-
-#define BF_TYPE 0x4D42
-
-// file info
-struct BITMAPINFOHEADER {
-  unsigned int biSize;
-  int biWidth;
-  int biHeight;
-  unsigned short biPlanes;     // number of color planes
-  unsigned short biBitCount;   // number of bits per pixel
-  unsigned int biCompression;  // type of compression to use
-  unsigned int biSizeImage;    // size of image data
-  int biXPelsPerMeter;         // X pixels per meter
-  int biYPelsPerMeter;         // Y pixels per meter
-  unsigned int biClrUsed;      // number of colors used
-  unsigned int biClrImportant; // number of important colors
-};
-
+#define BF_TYPE 0x4D42 // bitmap file type
 #define BI_RGB 0       // no compression
 #define BI_RLE8 1      // 8-bit run-length compression
 #define BI_RLE4 2      // 4-bit run-length compression
 #define BI_BITFIELDS 3 // with RGB masks
 
-struct RGBQUAD {
-  unsigned char rgbBlue;
-  unsigned char rgbGreen;
-  unsigned char rgbRed;
-  unsigned char rgbReserved;
+// file header
+ struct __attribute__((__packed__)) BITMAPFILEHEADER {
+  uint16_t bfType; // magic number
+  uint32_t bfSize;
+  uint16_t bfReserved1;
+  uint16_t bfReserved2;
+  uint32_t bfOffBits; // offset to data
 };
 
-struct BITMAPINFO {
+// file info
+struct __attribute__((__packed__)) BITMAPINFOHEADER {
+  uint32_t biSize;
+  int32_t  biWidth;
+  int32_t  biHeight;
+  uint16_t biPlanes;     // number of color planes
+  uint16_t biBitCount;   // number of bits per pixel
+  uint32_t biCompression;  // type of compression to use
+  uint32_t biSizeImage;    // size of image data
+  int32_t  biXPelsPerMeter;         // X pixels per meter
+  int32_t  biYPelsPerMeter;         // Y pixels per meter
+  uint32_t biClrUsed;      // number of colors used
+  uint32_t biClrImportant; // number of important colors
+};
+
+struct __attribute__((__packed__)) RGBQUAD {
+  uint8_t rgbBlue;
+  uint8_t rgbGreen;
+  uint8_t rgbRed;
+  uint8_t rgbReserved;
+};
+
+struct __attribute__((__packed__)) BITMAPINFO {
   BITMAPINFOHEADER bmiHeader;
-  RGBQUAD bmiColors[256];
+  RGBQUAD          bmiColors[1];
 };
 
 #endif

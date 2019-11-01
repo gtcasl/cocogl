@@ -14,14 +14,14 @@
 //
 #pragma once
 
-template <unsigned Format, unsigned AddressU, unsigned AddressV>
+template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 void TGetTexelColorPt(Color4 *pOut, const SurfaceDesc &surface, fixedRX fU,
                       fixedRX fV) {
   Format::TConvertFromNative<Format, false>(
       pOut, TGetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
 }
 
-template <unsigned Format, unsigned AddressU, unsigned AddressV>
+template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 void TGetTexelColorLn(Color4 *pOut, const SurfaceDesc &surface, fixedRX fU,
                       fixedRX fV) {
   Format::TConvertFromNative<Format, false>(
@@ -50,14 +50,14 @@ void TBlend(Color4 *pInOut, const uint8_t *pCB) {
 template <ePixelFormat Format, bool bWriteMask, eLogicOp LogicOp>
 void TWriteColor(const RasterData &rasterData, const Color4 &cColor,
                  uint8_t *pCB) {
-  unsigned dstColor =
+  uint32_t dstColor =
       *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB);
-  unsigned result = Format::TConvertToNative<Format>(cColor);
+  uint32_t result = Format::TConvertToNative<Format>(cColor);
   result = TLogicOp<LogicOp>(result, dstColor);
 
   if
     constexpr(bWriteMask) {
-      const unsigned writeMask = rasterData.ColorWriteMask;
+      const uint32_t writeMask = rasterData.ColorWriteMask;
       result = (result & writeMask) | (dstColor & ~writeMask);
     }
   else {
@@ -71,7 +71,7 @@ void TWriteColor(const RasterData &rasterData, const Color4 &cColor,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <bool Depth, bool Color, unsigned Texture0, unsigned Texture1,
+template <bool Depth, bool Color, uint32_t Texture0, uint32_t Texture1,
           bool Fog>
 class TGenericScanlineA {
 public:
@@ -123,11 +123,11 @@ public:
     const RASTERFLAGS rasterFlags = pRasterOp->GetRasterID().Flags;
 
     uint8_t *const pColorBits = rasterData.pColorBits;
-    const unsigned colorPitch = rasterData.ColorPitch;
+    const int32_t colorPitch = rasterData.ColorPitch;
     const uint8_t colorStride = pRasterOp->GetColorStride();
 
     uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-    const unsigned depthStencilPitch = rasterData.DepthStencilPitch;
+    const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
     const uint8_t depthStencilStride = pRasterOp->GetDepthStencilStride();
 
     const fixed4 fOffsetX = fixed4(lx) - rasterData.fRefX;
@@ -228,7 +228,7 @@ public:
 
     do {
       for (;;) {
-        unsigned depthValue = 0;
+        uint32_t depthValue = 0;
 
         if
           constexpr(Depth) {
@@ -349,7 +349,7 @@ public:
   }
 };
 
-template <bool Depth, bool Color, unsigned Texture0, unsigned Texture1,
+template <bool Depth, bool Color, uint32_t Texture0, uint32_t Texture1,
           bool Fog>
 class TGenericScanlineP {
 public:
@@ -396,11 +396,11 @@ public:
     const RASTERFLAGS rasterFlags = pRasterOp->GetRasterID().Flags;
 
     uint8_t *const pColorBits = rasterData.pColorBits;
-    const unsigned colorPitch = rasterData.ColorPitch;
+    const int32_t colorPitch = rasterData.ColorPitch;
     const uint8_t colorStride = pRasterOp->GetColorStride();
 
     uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-    const unsigned depthStencilPitch = rasterData.DepthStencilPitch;
+    const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
     const uint8_t depthStencilStride = pRasterOp->GetDepthStencilStride();
 
     const fixed4 fOffsetX = fixed4(lx) - rasterData.fRefX;
@@ -563,9 +563,9 @@ public:
     Color4 cColor(0xff, 0xff, 0xff, 0xff);
 
     do {
-      const unsigned int blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
-      const unsigned int log2width = Math::iLog2(blockWidth1);
-      const unsigned int blockWidth = 1 << log2width;
+      const uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
+      const uint32_t log2width = Math::iLog2(blockWidth1);
+      const uint32_t blockWidth = 1 << log2width;
       width -= blockWidth;
       uint8_t *const pCBEnd = pCB + blockWidth * colorStride;
 
@@ -619,7 +619,7 @@ public:
 
       do {
         for (;;) {
-          unsigned depthValue = 0;
+          uint32_t depthValue = 0;
 
           if
             constexpr(Depth) {

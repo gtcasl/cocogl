@@ -161,7 +161,7 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
       goto L_EXIT;
     }
 
-    unsigned vmin, vmax;
+    uint32_t vmin, vmax;
 
     // Prepare index buffer
     err = this->PrepareIndices(type, &pIndices, count, &vmin, &vmax);
@@ -171,7 +171,7 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
       goto L_EXIT;
     }
 
-    const unsigned vertexCount = vmax - vmin + 1;
+    const uint32_t vertexCount = vmax - vmin + 1;
 
     // Setup TNL states
     err = this->SetupTNLStates(mode, vmin, vertexCount);

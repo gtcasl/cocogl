@@ -118,7 +118,7 @@ public:
     return Enumerator(this, pOwner);
   }
 
-  unsigned GetNumHandles() const { return m_nHandleCount; }
+  uint32_t GetNumHandles() const { return m_nHandleCount; }
 
   uint32_t FindHandle(const void *pObject, const void *pOwner = nullptr) {
     auto enumerator = this->GetEnumerator(pOwner);
@@ -137,17 +137,17 @@ private:
   CHandleTable();
   ~CHandleTable();
 
-  static unsigned GetHandleIndex(uint32_t dwHandle) {
+  static uint32_t GetHandleIndex(uint32_t dwHandle) {
     return (dwHandle & HANDLE_INDEX_MASK);
   }
 
-  static unsigned GetHandleSerial(uint32_t dwHandle) {
+  static uint32_t GetHandleSerial(uint32_t dwHandle) {
     return (dwHandle & HANDLE_SERIAL_MASK) >> HANDLE_SERIAL_SHIFT;
   }
 
   Entry *GetEntry(uint32_t dwHandle) const {
     // Get the handle entry from the table
-    const unsigned index = this->GetHandleIndex(dwHandle);
+    const uint32_t index = this->GetHandleIndex(dwHandle);
     if (index < m_dwSize) {
       // Validate the handle serial
       Entry *pEntry = m_pEntries + index;
@@ -165,5 +165,5 @@ private:
   uint32_t m_dwSize;
   Entry *m_pEntries;
   Entry *m_pActiveList;
-  unsigned m_nHandleCount;
+  uint32_t m_nHandleCount;
 };

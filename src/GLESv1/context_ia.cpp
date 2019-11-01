@@ -56,7 +56,7 @@ void CGLContext::ClientState(GLenum array, bool bValue) {
 }
 
 void CGLContext::ClientActiveTexture(GLenum texture) {
-  const unsigned index = (texture - GL_TEXTURE0);
+  const uint32_t index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM, _T("CGLContext::ClientActiveTexture() failed, ")
                                _T("invalid texture parameter: %d.\r\n"),
@@ -68,7 +68,7 @@ void CGLContext::ClientActiveTexture(GLenum texture) {
 }
 
 void CGLContext::ActiveTexture(GLenum texture) {
-  const unsigned index = (texture - GL_TEXTURE0);
+  const uint32_t index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM, _T("CGLContext::ActiveTexture() failed, ")
                                _T("invalid texture parameter: %d.\r\n"),
@@ -260,7 +260,7 @@ void CGLContext::Normal(floatf nx, floatf ny, floatf nz) {
 
 void CGLContext::MultiTexCoord(GLenum target, floatf s, floatf t, floatf /*r*/,
                                floatf q) {
-  const unsigned index = (target - GL_TEXTURE0);
+  const uint32_t index = (target - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM, _T("CGLContext::MultiTexCoord() failed, ")
                                _T("invalid target parameter: %d.\r\n"),

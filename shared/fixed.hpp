@@ -14,7 +14,15 @@
 //
 #pragma once
 
-template <unsigned int F, typename T = int> class TFixed {
+inline int FloatToFixed(uint32_t base, float value) {
+    return static_cast<int>(value * (1 << base));  
+}
+
+inline float FixedToFloat(uint32_t base, int value) {
+  return value / static_cast<float>(1 << base);
+}
+
+template <uint32_t F, typename T = int> class TFixed {
 public:
   typedef T Type;
 
@@ -32,13 +40,13 @@ public:
   TFixed<F, T>();
   explicit TFixed<F, T>(float rhs);
   explicit TFixed<F, T>(int rhs);
-  explicit TFixed<F, T>(unsigned int rhs);
+  explicit TFixed<F, T>(uint32_t rhs);
   explicit TFixed<F, T>(short rhs);
-  explicit TFixed<F, T>(unsigned short rhs);
+  explicit TFixed<F, T>(uint16_t rhs);
   explicit TFixed<F, T>(char rhs);
-  explicit TFixed<F, T>(unsigned char rhs);
+  explicit TFixed<F, T>(uint8_t rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   explicit TFixed<F, T>(TFixed<F2, T2> rhs);
 
   template <typename C> C To() const;
@@ -57,22 +65,22 @@ public:
   TFixed<F, T> operator*=(TFixed<F, T> rhs);
   TFixed<F, T> operator/=(TFixed<F, T> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   TFixed<F, T> operator*=(TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   TFixed<F, T> operator/=(TFixed<F2, T2> rhs);
 
   TFixed<F, T> operator*=(int rhs);
-  TFixed<F, T> operator*=(unsigned int rhs);
+  TFixed<F, T> operator*=(uint32_t rhs);
   TFixed<F, T> operator*=(float rhs);
 
   TFixed<F, T> operator/=(int rhs);
-  TFixed<F, T> operator/=(unsigned int rhs);
+  TFixed<F, T> operator/=(uint32_t rhs);
   TFixed<F, T> operator/=(float rhs);
 
   static TFixed<F, T> Make(int value);
-  static TFixed<F, T> Make(unsigned int value);
+  static TFixed<F, T> Make(uint32_t value);
   static TFixed<F, T> Make(float value);
   static TFixed<F, T> Make(int64_t value);
 
@@ -83,124 +91,121 @@ private:
 
   void SetRaw(T value);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator+(TFixed<F2, T2> lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator-(TFixed<F2, T2> lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, unsigned int F3, typename T2, typename T3>
+  template <uint32_t F2, uint32_t F3, typename T2, typename T3>
   friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, TFixed<F3, T3> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, unsigned int F3, typename T2, typename T3>
+  template <uint32_t F2, uint32_t F3, typename T2, typename T3>
   friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, TFixed<F3, T3> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend float operator*(TFixed<F2, T2> lhs, float rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend float operator*(float lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend float operator/(TFixed<F2, T2> lhs, float rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend float operator/(float lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, char rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator*(char lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, char rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator/(char lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, unsigned char rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, uint8_t rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator*(unsigned char lhs, TFixed<F2, T2> rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator*(uint8_t lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, unsigned char rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, uint8_t rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator/(unsigned char lhs, TFixed<F2, T2> rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator/(uint8_t lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, short rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator*(short lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, short rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator/(short lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, unsigned short rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, uint16_t rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator*(unsigned short lhs, TFixed<F2, T2> rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator*(uint16_t lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, unsigned short rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, uint16_t rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator/(unsigned short lhs, TFixed<F2, T2> rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator/(uint16_t lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, int rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator<<(TFixed<F2, T2> lhs, int rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator*(int lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, int rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator>>(TFixed<F2, T2> lhs, int rhs);
 
-  template <unsigned int F2, typename T2>
+  template <uint32_t F2, typename T2>
   friend TFixed<F2, T2> operator/(int lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, unsigned int rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator*(TFixed<F2, T2> lhs, uint32_t rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator<<(TFixed<F2, T2> lhs, unsigned int rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator<<(TFixed<F2, T2> lhs, uint32_t rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator*(unsigned int lhs, TFixed<F2, T2> rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator*(uint32_t lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, unsigned int rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator/(TFixed<F2, T2> lhs, uint32_t rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator>>(TFixed<F2, T2> lhs, unsigned int rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator>>(TFixed<F2, T2> lhs, uint32_t rhs);
 
-  template <unsigned int F2, typename T2>
-  friend TFixed<F2, T2> operator/(unsigned int lhs, TFixed<F2, T2> rhs);
+  template <uint32_t F2, typename T2>
+  friend TFixed<F2, T2> operator/(uint32_t lhs, TFixed<F2, T2> rhs);
 
-  template <unsigned int F2, typename T2> friend class TFixed;
+  template <uint32_t F2, typename T2> friend class TFixed;
 
-  template <unsigned int F2, typename T2> friend class TFixedTypeCaster;
+  template <uint32_t F2, typename T2> friend class TFixedTypeCaster;
 };
-
-int FloatToFixed(unsigned int base, float fValue);
-float FixedToFloat(unsigned int base, int value);

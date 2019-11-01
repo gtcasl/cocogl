@@ -69,12 +69,12 @@ protected:
     return pTexture->GetHandle();
   }
 
-  CTexture *GetTexture(unsigned unit) const {
+  CTexture *GetTexture(uint32_t unit) const {
     ASSERT(unit < MAX_TEXTURES);
     return m_texUnits[unit].GetTexture();
   }
 
-  void SetTexture(unsigned unit, CTexture *pTexture) {
+  void SetTexture(uint32_t unit, CTexture *pTexture) {
     ASSERT(unit < MAX_TEXTURES);
     m_texUnits[unit].SetTexture(pTexture);
   }
@@ -95,13 +95,13 @@ protected:
   CG::CAssembler *m_pCGAssembler;
 #endif
 
-  unsigned m_packAlignment;
-  unsigned m_unpackAlignment;
+  uint32_t m_packAlignment;
+  uint32_t m_unpackAlignment;
   SampleCoverage m_sampleCoverage;
 
   TexUnit m_texUnits[MAX_TEXTURES];
-  unsigned m_activeTexture;
-  unsigned m_clientActiveTexture;
+  uint32_t m_activeTexture;
+  uint32_t m_clientActiveTexture;
 
   Rect m_scissor;
   Rect m_viewport;

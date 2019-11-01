@@ -61,14 +61,14 @@
 
 #define __enum_bitfield(pos, pos1, prefix, size)                               \
   prefix##_SHIFT = __offset##pos, prefix##_SIZE = size,                        \
-  prefix##_MASK = ((unsigned)((1 << size) - 1) << prefix##_SHIFT),             \
+  prefix##_MASK = ((uint32_t)((1 << size) - 1) << prefix##_SHIFT),             \
   __offset##pos1 = (prefix##_SHIFT + size)
 
 #define __get_bitfield(mask, prefix)                                           \
-  ((unsigned)(mask & prefix##_MASK) >> prefix##_SHIFT)
+  ((uint32_t)(mask & prefix##_MASK) >> prefix##_SHIFT)
 
 #define __set_bitfield(mask, prefix, value)                                    \
-    mask = (((unsigned)(value) << (prefix##_SHIFT)) | (mask & ~(prefix##_MASK))))
+    mask = (((uint32_t)(value) << (prefix##_SHIFT)) | (mask & ~(prefix##_MASK))))
 
 enum eHANDLETYPE {
   HANDLE_NONE = 0,
@@ -380,13 +380,13 @@ struct HINTS {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
-    unsigned Value;
+    uint32_t Value;
     struct {
-      unsigned Perspective : 2;
-      unsigned PointSmooth : 2;
-      unsigned LineSmooth : 2;
-      unsigned Fog : 2;
-      unsigned GenerateMipmap : 2;
+      uint32_t Perspective : 2;
+      uint32_t PointSmooth : 2;
+      uint32_t LineSmooth : 2;
+      uint32_t Fog : 2;
+      uint32_t GenerateMipmap : 2;
     };
   };
   DISABLE_WARNING_POP
@@ -504,18 +504,18 @@ struct TexParams {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
-    unsigned Value;
+    uint32_t Value;
     struct {
-      unsigned MinFilter : 3;
-      unsigned MagFilter : 3;
-      unsigned AddressU : 2;
-      unsigned AddressV : 2;
+      uint32_t MinFilter : 3;
+      uint32_t MagFilter : 3;
+      uint32_t AddressU : 2;
+      uint32_t AddressV : 2;
     };
   };
   DISABLE_WARNING_POP
   TexParams() : Value(0) { static_assert(sizeof(TexParams) == sizeof(Value)); }
 
-  TexParams(unsigned value) { this->Value = value; }
+  TexParams(uint32_t value) { this->Value = value; }
 
   bool operator==(const TexParams &rhs) const {
     return (this->Value == rhs.Value);
@@ -526,24 +526,24 @@ struct DirtyFlags {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
-    unsigned Value;
+    uint32_t Value;
     struct {
-      unsigned ModelViewInvT44 : 1;
-      unsigned ModelViewInvT33 : 1;
-      unsigned ProjectionInvT : 1;
-      unsigned ModelViewProj : 1;
-      unsigned Lights : 1;
-      unsigned ScreenXform : 1;
-      unsigned ScissorRECT : 1;
-      unsigned ScaledAmbient : 1;
-      unsigned FogRatio : 1;
-      unsigned ClipPlanesCS : MAX_CLIPPLANES;
-      unsigned DefaultColor : 1;
-      unsigned NormalizeNormal : 1;
-      unsigned ClearColor : 1;
-      unsigned ClearDepth : 1;
-      unsigned ColorWriteMask : 1;
-      unsigned FogColor : 1;
+      uint32_t ModelViewInvT44 : 1;
+      uint32_t ModelViewInvT33 : 1;
+      uint32_t ProjectionInvT : 1;
+      uint32_t ModelViewProj : 1;
+      uint32_t Lights : 1;
+      uint32_t ScreenXform : 1;
+      uint32_t ScissorRECT : 1;
+      uint32_t ScaledAmbient : 1;
+      uint32_t FogRatio : 1;
+      uint32_t ClipPlanesCS : MAX_CLIPPLANES;
+      uint32_t DefaultColor : 1;
+      uint32_t NormalizeNormal : 1;
+      uint32_t ClearColor : 1;
+      uint32_t ClearDepth : 1;
+      uint32_t ColorWriteMask : 1;
+      uint32_t FogColor : 1;
     };
   };
   DISABLE_WARNING_POP
@@ -556,7 +556,7 @@ struct DirtyLights {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
-    unsigned Value;
+    uint32_t Value;
     struct {
       uint8_t States[4];
     };
@@ -609,13 +609,13 @@ struct VertexStates {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
-    unsigned Value;
+    uint32_t Value;
     struct {
-      unsigned Position : 1;
-      unsigned Normal : 1;
-      unsigned Color : 1;
-      unsigned TexCoords : MAX_TEXTURES;
-      unsigned PointSize : 1;
+      uint32_t Position : 1;
+      uint32_t Normal : 1;
+      uint32_t Color : 1;
+      uint32_t TexCoords : MAX_TEXTURES;
+      uint32_t PointSize : 1;
     };
   };
   DISABLE_WARNING_POP
@@ -629,36 +629,36 @@ struct GLCAPS {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
-    unsigned Flags1;
+    uint32_t Flags1;
     struct {
-      unsigned DepthTest : 1;
-      unsigned ShadeModel : 1;
-      unsigned Lighting : 1;
-      unsigned CullFace : 1;
-      unsigned AlphaTest : 1;
-      unsigned Blend : 1;
-      unsigned Fog : 1;
-      unsigned StencilTest : 1;
-      unsigned ScissorTest : 1;
-      unsigned ColorMaterial : 1;
-      unsigned Normalize : 1;
-      unsigned RescaleNormal : 1;
-      unsigned PolygonOffsetFill : 1;
-      unsigned TwoSidedLighting : 1;
-      unsigned LogicOp : 1;
-      unsigned PointSmooth : 1;
-      unsigned PointSprite : 1;
-      unsigned LineSmooth : 1;
-      unsigned MultiSample : 1;
-      unsigned SampleAlphaToCoverage : 1;
-      unsigned SampleAlphaToOne : 1;
-      unsigned SampleCoverage : 1;
-      unsigned Dither : 1;
+      uint32_t DepthTest : 1;
+      uint32_t ShadeModel : 1;
+      uint32_t Lighting : 1;
+      uint32_t CullFace : 1;
+      uint32_t AlphaTest : 1;
+      uint32_t Blend : 1;
+      uint32_t Fog : 1;
+      uint32_t StencilTest : 1;
+      uint32_t ScissorTest : 1;
+      uint32_t ColorMaterial : 1;
+      uint32_t Normalize : 1;
+      uint32_t RescaleNormal : 1;
+      uint32_t PolygonOffsetFill : 1;
+      uint32_t TwoSidedLighting : 1;
+      uint32_t LogicOp : 1;
+      uint32_t PointSmooth : 1;
+      uint32_t PointSprite : 1;
+      uint32_t LineSmooth : 1;
+      uint32_t MultiSample : 1;
+      uint32_t SampleAlphaToCoverage : 1;
+      uint32_t SampleAlphaToOne : 1;
+      uint32_t SampleCoverage : 1;
+      uint32_t Dither : 1;
     };
   };
 
   union {
-    unsigned Flags2;
+    uint32_t Flags2;
     struct {
       uint8_t Texture2D;
       uint8_t ClipPlanes;
@@ -683,17 +683,17 @@ struct RASTERSTATES {
       __enum_bitfield(8, 9, LOGICFUNC, 4),
       __enum_bitfield_end DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT
       union {
-    unsigned Value;
+    uint32_t Value;
     struct {
-      unsigned DepthFunc : 3;
-      unsigned BlendSrc : 4;
-      unsigned BlendDst : 4;
-      unsigned AlphaFunc : 3;
-      unsigned StencilFunc : 3;
-      unsigned StencilFail : 3;
-      unsigned StencilZFail : 3;
-      unsigned StencilZPass : 3;
-      unsigned LogicFunc : 4;
+      uint32_t DepthFunc : 3;
+      uint32_t BlendSrc : 4;
+      uint32_t BlendDst : 4;
+      uint32_t AlphaFunc : 3;
+      uint32_t StencilFunc : 3;
+      uint32_t StencilFail : 3;
+      uint32_t StencilZFail : 3;
+      uint32_t StencilZPass : 3;
+      uint32_t LogicFunc : 4;
     };
   };
   DISABLE_WARNING_POP
@@ -702,7 +702,7 @@ struct RASTERSTATES {
     static_assert(sizeof(RASTERSTATES) == sizeof(Value));
   }
 
-  RASTERSTATES(unsigned value) : Value(value) {
+  RASTERSTATES(uint32_t value) : Value(value) {
     static_assert(sizeof(RASTERSTATES) == sizeof(Value));
   }
 
@@ -731,28 +731,28 @@ struct RASTERFLAGS {
       __enum_bitfield(19, 20, INTERPOLATEFOG, 1), __enum_bitfield_end
 
       DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT union {
-    unsigned Value;
+    uint32_t Value;
     struct {
-      unsigned DepthTest : 1;
-      unsigned DepthWrite : 1;
-      unsigned Color : 1;
-      unsigned Perspective : 1;
-      unsigned NumTextures : MAX_TEXTURES_MASK;
-      unsigned TextureMips : MAX_TEXTURES;
-      unsigned Blend : 1;
-      unsigned AlphaTest : 1;
-      unsigned Fog : 1;
-      unsigned StencilTest : 1;
-      unsigned StencilWrite : 1;
-      unsigned LogicOp : 1;
-      unsigned ColorWriteMask : 1;
-      unsigned ColorFormat : 4;
-      unsigned DepthStencilFormat : 4;
-      unsigned InterpolateDepth : 1;
-      unsigned InterpolateColor : 1;
-      unsigned InterpolateAlpha : 1;
-      unsigned InterpolateMips : MAX_TEXTURES;
-      unsigned InterpolateFog : 1;
+      uint32_t DepthTest : 1;
+      uint32_t DepthWrite : 1;
+      uint32_t Color : 1;
+      uint32_t Perspective : 1;
+      uint32_t NumTextures : MAX_TEXTURES_MASK;
+      uint32_t TextureMips : MAX_TEXTURES;
+      uint32_t Blend : 1;
+      uint32_t AlphaTest : 1;
+      uint32_t Fog : 1;
+      uint32_t StencilTest : 1;
+      uint32_t StencilWrite : 1;
+      uint32_t LogicOp : 1;
+      uint32_t ColorWriteMask : 1;
+      uint32_t ColorFormat : 4;
+      uint32_t DepthStencilFormat : 4;
+      uint32_t InterpolateDepth : 1;
+      uint32_t InterpolateColor : 1;
+      uint32_t InterpolateAlpha : 1;
+      uint32_t InterpolateMips : MAX_TEXTURES;
+      uint32_t InterpolateFog : 1;
     };
   };
   DISABLE_WARNING_POP
@@ -761,7 +761,7 @@ struct RASTERFLAGS {
     static_assert(sizeof(RASTERFLAGS) == sizeof(Value));
   }
 
-  RASTERFLAGS(unsigned value) : Value(value) {
+  RASTERFLAGS(uint32_t value) : Value(value) {
     static_assert(sizeof(RASTERFLAGS) == sizeof(Value));
   }
 
@@ -787,15 +787,15 @@ struct TEXTURESTATES {
       __enum_bitfield(5, 6, ENVMODE, 8), __enum_bitfield(6, 7, FORMAT, 8),
       __enum_bitfield_end DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT
       union {
-    unsigned Value;
+    uint32_t Value;
     struct {
-      unsigned MipFilter : 2;
-      unsigned MinFilter : 2;
-      unsigned MagFilter : 2;
-      unsigned AddressU : 2;
-      unsigned AddressV : 2;
-      unsigned EnvMode : 8;
-      unsigned Format : 8;
+      uint32_t MipFilter : 2;
+      uint32_t MinFilter : 2;
+      uint32_t MagFilter : 2;
+      uint32_t AddressU : 2;
+      uint32_t AddressV : 2;
+      uint32_t EnvMode : 8;
+      uint32_t Format : 8;
     };
   };
   DISABLE_WARNING_POP
@@ -804,7 +804,7 @@ struct TEXTURESTATES {
     static_assert(sizeof(TEXTURESTATES) == sizeof(Value));
   }
 
-  TEXTURESTATES(unsigned value) { this->Value = value; }
+  TEXTURESTATES(uint32_t value) { this->Value = value; }
 
   bool operator==(const TEXTURESTATES &rhs) const {
     return (this->Value == rhs.Value);
@@ -819,7 +819,7 @@ struct RASTERID {
 
   RASTERID() {}
 
-  RASTERID(unsigned flags, unsigned states, unsigned t0, unsigned t1)
+  RASTERID(uint32_t flags, uint32_t states, uint32_t t0, uint32_t t1)
       : Flags(flags), States(states), Textures{t0, t1} {}
 
   bool operator==(const RASTERID &rhs) const {
@@ -828,7 +828,7 @@ struct RASTERID {
            (this->Textures[1] == rhs.Textures[1]);
   }
 
-  operator unsigned() const { return this->Flags.Value; }
+  operator uint32_t() const { return this->Flags.Value; }
 };
 
 struct TNLFLAGS {
@@ -840,17 +840,17 @@ struct TNLFLAGS {
       __enum_bitfield(8, 9, POINTATTENUATE, 1),
       __enum_bitfield_end DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT
       union {
-    unsigned Value;
+    uint32_t Value;
     struct {
-      unsigned UserClipPlanes : 1;
-      unsigned EyeSpace : 1;
-      unsigned EyeSpaceZ : 1;
-      unsigned Color : 1;
-      unsigned Normalize : 1;
-      unsigned TexCoords : MAX_TEXTURES_MASK;
-      unsigned Fog : 1;
-      unsigned PointSize : 1;
-      unsigned PointSizeQAttn : 1;
+      uint32_t UserClipPlanes : 1;
+      uint32_t EyeSpace : 1;
+      uint32_t EyeSpaceZ : 1;
+      uint32_t Color : 1;
+      uint32_t Normalize : 1;
+      uint32_t TexCoords : MAX_TEXTURES_MASK;
+      uint32_t Fog : 1;
+      uint32_t PointSize : 1;
+      uint32_t PointSizeQAttn : 1;
     };
   };
   DISABLE_WARNING_POP
@@ -862,11 +862,11 @@ struct LIGHTFLAGS {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
-    unsigned Value;
+    uint32_t Value;
     struct {
-      unsigned DirectionalLight : 1;
-      unsigned Attenuation : 1;
-      unsigned SpotLight : 1;
+      uint32_t DirectionalLight : 1;
+      uint32_t Attenuation : 1;
+      uint32_t SpotLight : 1;
     };
   };
   DISABLE_WARNING_POP
@@ -877,8 +877,8 @@ struct LIGHTFLAGS {
 };
 
 struct ProfileCounter {
-  unsigned Invocations;
-  unsigned DrawnPixels;
+  uint32_t Invocations;
+  uint32_t DrawnPixels;
   float RenderTime;
 
   ProfileCounter() : Invocations(0), DrawnPixels(0), RenderTime(0.0f) {}

@@ -55,13 +55,13 @@ public:
 
   bool IsIdentity() const { return m_identityMask & (1 << m_curIndex); }
 
-  unsigned GetSize() const { return m_size; }
+  uint32_t GetSize() const { return m_size; }
 
   template <class T> void TGetTop(T *pDst) const {
     ASSERT(pDst);
 
     const floatf *const pSrc = m_pMatrices[m_curIndex]._m;
-    for (unsigned i = 0; i < 16; ++i) {
+    for (uint32_t i = 0; i < 16; ++i) {
       pDst[i] = Math::TCast<T>(pSrc[i]);
     }
   }
