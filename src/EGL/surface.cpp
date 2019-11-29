@@ -472,8 +472,8 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
       return EGL_BAD_ALLOC;
     }
 
-    const uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
-    const uint32_t mipLevels = m_mipLevels;
+    uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
+    uint32_t mipLevels = m_mipLevels;
 
     for (uint32_t i = 0, _width = width, _height = height; i < mipLevels; ++i) {
       // Allocate mipmap level
@@ -553,7 +553,7 @@ EGLint CEGLSurface::BindTexture() {
     return EGL_BAD_MATCH;
   }
 
-  const bool bGenMipmaps = (0 == m_mipLevel) && (m_mipLevels > 1);
+  bool bGenMipmaps = (0 == m_mipLevel) && (m_mipLevels > 1);
 
   err = EGLERROR_FROM_GLERROR(__glBindTexImage(m_glSurface, bGenMipmaps));
   if (__eglFailed(err)) {
@@ -676,9 +676,8 @@ EGLint CEGLSurface::CopyBuffer(EGLNativePixmapType hPixmap) {
   GLSurfaceDesc srcDesc;
 
   if (m_ppBuffers) {
-    const uint32_t mipLevel =
-        Math::TClamp<uint32_t>(m_mipLevel, 0, m_mipLevels - 1);
-    const uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
+    auto mipLevel = Math::TClamp<uint32_t>(m_mipLevel, 0, m_mipLevels - 1);
+    uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
     srcDesc.pBits = m_ppBuffers[mipLevel];
     srcDesc.Format = CEGLSurface::GetColorFormat(nBPP);
     srcDesc.Pitch = m_width * (nBPP / 8);
@@ -833,9 +832,7 @@ EGLint CEGLSurface::InitDepthStencil(uint32_t width, uint32_t height,
 void CEGLSurface::GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc) {
   ASSERT(pSurfaceDesc);
 
-  const uint32_t mipLevel =
-      Math::TClamp<uint32_t>(m_mipLevel, 0, m_mipLevels - 1);
-
+  auto mipLevel = Math::TClamp<uint32_t>(m_mipLevel, 0, m_mipLevels - 1);
   uint32_t width = m_width;
   uint32_t height = m_height;
 
@@ -849,7 +846,7 @@ void CEGLSurface::GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc) {
     }
   }
 
-  const uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
+  uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
 
   pSurfaceDesc->Format = CEGLSurface::GetColorFormat(nBPP);
   pSurfaceDesc->pBits = m_ppBuffers[mipLevel];

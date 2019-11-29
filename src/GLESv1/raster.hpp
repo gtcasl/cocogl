@@ -40,11 +40,11 @@ protected:
 
     template <class T, class D> T TCalcDeltaX(D delta0, D delta1) const {
 #ifdef COCOGL_PIXEDPOINT
-      const int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
-      const int64_t half = static_cast<int64_t>(1) << (FRAC - 1);
-      const int64_t uv0 =
+      int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
+      auto half = static_cast<int64_t>(1) << (FRAC - 1);
+      int64_t uv0 =
           static_cast<int64_t>(delta0.GetRaw()) * this->fdY1.GetRaw();
-      const int64_t uv1 =
+      int64_t uv1 =
           static_cast<int64_t>(delta1.GetRaw()) * this->fdY0.GetRaw();
       return T::Make(((uv0 - uv1) * this->fRatio.GetRaw() + half) >> FRAC);
 #else
@@ -55,11 +55,11 @@ protected:
 
     template <class T, class D> T TCalcDeltaY(D delta0, D delta1) const {
 #ifdef COCOGL_PIXEDPOINT
-      const int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
-      const int64_t half = static_cast<int64_t>(1) << (FRAC - 1);
-      const int64_t uv0 =
+      int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
+      auto half = static_cast<int64_t>(1) << (FRAC - 1);
+      int64_t uv0 =
           static_cast<int64_t>(delta1.GetRaw()) * this->fdX0.GetRaw();
-      const int64_t uv1 =
+      int64_t uv1 =
           static_cast<int64_t>(delta0.GetRaw()) * this->fdX1.GetRaw();
       return T::Make(((uv0 - uv1) * this->fRatio.GetRaw() + half) >> FRAC);
 #else
@@ -69,10 +69,10 @@ protected:
     }
 
     template <class T> T TCalcDeltaX(int delta0, int delta1) const {
-      const fixed4 diff = this->fdY1 * delta0 - this->fdY0 * delta1;
+      auto diff = this->fdY1 * delta0 - this->fdY0 * delta1;
 #ifdef COCOGL_PIXEDPOINT
-      const int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
-      const int half = 1 << (FRAC - 1);
+      int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
+      int half = 1 << (FRAC - 1);
       return T::Make((diff.GetRaw() * this->fRatio.GetRaw() + half) >> FRAC);
 #else
       return static_cast<T>(fixed12::Make(diff.GetRaw()) * this->fRatio);
@@ -80,10 +80,10 @@ protected:
     }
 
     template <class T> T TCalcDeltaY(int delta0, int delta1) const {
-      const fixed4 diff = this->fdX0 * delta1 - this->fdX1 * delta0;
+      auto diff = this->fdX0 * delta1 - this->fdX1 * delta0;
 #ifdef COCOGL_PIXEDPOINT
-      const int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
-      const int half = 1 << (FRAC - 1);
+      int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
+      int half = 1 << (FRAC - 1);
       return T::Make((diff.GetRaw() * this->fRatio.GetRaw() + half) >> FRAC);
 #else
       return static_cast<T>(fixed12::Make(diff.GetRaw()) * this->fRatio);
@@ -96,8 +96,8 @@ protected:
 
     template <class T, class D> T TCalcDelta(D delta) const {
 #ifdef COCOGL_PIXEDPOINT
-      const int FRAC = D::FRAC + floatQ::FRAC - T::FRAC;
-      const int half = 1 << (FRAC - 1);
+      int FRAC = D::FRAC + floatQ::FRAC - T::FRAC;
+      int half = 1 << (FRAC - 1);
       return T::Make((delta.GetRaw() * this->fRatio.GetRaw() + half) >> FRAC);
 #else
       return static_cast<T>(delta * this->fRatio);
@@ -106,8 +106,8 @@ protected:
 
     template <class T> T TCalcDelta(int delta) const {
 #ifdef COCOGL_PIXEDPOINT
-      const int FRAC = fixed8::FRAC + floatQ::FRAC - T::FRAC;
-      const int half = 1 << (FRAC - 1);
+      int FRAC = fixed8::FRAC + floatQ::FRAC - T::FRAC;
+      int half = 1 << (FRAC - 1);
       return T::Make((delta * this->fRatio.GetRaw() + half) >> FRAC);
 #else
       return T::Make(

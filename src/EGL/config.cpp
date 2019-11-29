@@ -61,7 +61,7 @@ EGLint CConfig::Create(CConfig **ppConfig, EGLint red, EGLint green,
 
   ASSERT(ppConfig);
 
-  CConfig *pConfig = new CConfig(red, green, blue, alpha, depth, stencil);
+  auto pConfig = new CConfig(red, green, blue, alpha, depth, stencil);
   if (nullptr == pConfig) {
     __eglLogError(_T("CConfig allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;
@@ -97,8 +97,8 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
 
   if (pAttrib_list) {
     while (EGL_NONE != *pAttrib_list) {
-      const EGLint name = *pAttrib_list++;
-      const EGLint refValue = *pAttrib_list++;
+      EGLint name = *pAttrib_list++;
+      EGLint refValue = *pAttrib_list++;
 
       EGLint curValue;
       err = this->GetAtttribute(name, &curValue);
@@ -266,9 +266,9 @@ int CConfig::Compare(const CConfig *pConfigA, const CConfig *pConfigB) {
   };
 
   for (uint32_t i = 0; i < __countof(sortedList); ++i) {
-    const EGLint name = sortedList[i];
-    const EGLint valueA = pConfigA->GetAttribute(name);
-    const EGLint valueB = pConfigB->GetAttribute(name);
+    EGLint name = sortedList[i];
+    EGLint valueA = pConfigA->GetAttribute(name);
+    EGLint valueB = pConfigB->GetAttribute(name);
 
     switch (name) {
     case EGL_CONFIG_CAVEAT:

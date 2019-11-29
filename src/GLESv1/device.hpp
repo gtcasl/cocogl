@@ -64,7 +64,7 @@ protected:
   }
 
   uint32_t GetBoundTextureHandle() const {
-    CTexture *const pTexture = m_texUnits[m_activeTexture].GetTexture();
+    auto pTexture = m_texUnits[m_activeTexture].GetTexture();
     ASSERT(pTexture);
     return pTexture->GetHandle();
   }

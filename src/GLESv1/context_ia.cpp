@@ -56,7 +56,7 @@ void CGLContext::ClientState(GLenum array, bool bValue) {
 }
 
 void CGLContext::ClientActiveTexture(GLenum texture) {
-  const uint32_t index = (texture - GL_TEXTURE0);
+  uint32_t index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM, _T("CGLContext::ClientActiveTexture() failed, ")
                                _T("invalid texture parameter: %d.\r\n"),
@@ -68,7 +68,7 @@ void CGLContext::ClientActiveTexture(GLenum texture) {
 }
 
 void CGLContext::ActiveTexture(GLenum texture) {
-  const uint32_t index = (texture - GL_TEXTURE0);
+  uint32_t index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM, _T("CGLContext::ActiveTexture() failed, ")
                                _T("invalid texture parameter: %d.\r\n"),
@@ -115,7 +115,7 @@ void CGLContext::VertexPointer(GLint size, GLenum type, GLsizei stride,
 
 void CGLContext::NormalPointer(GLenum type, GLsizei stride,
                                const GLvoid *pPointer) {
-  const GLint size = 3;
+  GLint size = 3;
 
   if ((type != GL_BYTE) && (type != GL_SHORT) && (type != GL_FIXED) &&
       (type != GL_FLOAT)) {
@@ -213,7 +213,7 @@ void CGLContext::TexCoordPointer(GLint size, GLenum type, GLsizei stride,
 
 void CGLContext::PointSizePointerOES(GLenum type, GLsizei stride,
                                      const GLvoid *pPointer) {
-  const GLint size = 1;
+  GLint size = 1;
 
   if ((type != GL_FIXED) && (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE, _T("CGLContext::PointSizePointerOES() failed, ")
@@ -260,7 +260,7 @@ void CGLContext::Normal(floatf nx, floatf ny, floatf nz) {
 
 void CGLContext::MultiTexCoord(GLenum target, floatf s, floatf t, floatf /*r*/,
                                floatf q) {
-  const uint32_t index = (target - GL_TEXTURE0);
+  uint32_t index = (target - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM, _T("CGLContext::MultiTexCoord() failed, ")
                                _T("invalid target parameter: %d.\r\n"),
@@ -273,7 +273,7 @@ void CGLContext::MultiTexCoord(GLenum target, floatf s, floatf t, floatf /*r*/,
   vTexCoords.y = t;
 
   if (!Math::TIsZero(q - fONE)) {
-    const floatf fInvQ = Math::TInv<floatf>(q);
+    auto fInvQ = Math::TInv<floatf>(q);
     vTexCoords.x *= fInvQ;
     vTexCoords.y *= fInvQ;
   }

@@ -91,16 +91,16 @@ public:
 
   void ClearStencil(uint32_t clearStencil, uint32_t stencilMask,
                     const Rect &rect) {
-    const uint32_t value = clearStencil << 16;
-    const uint32_t mask = stencilMask << 16;
+    uint32_t value = clearStencil << 16;
+    uint32_t mask = stencilMask << 16;
     (m_pfnDepthStencilFill)(m_pDepthStencilDesc, value, mask, rect);
   }
 
   void ClearDepthStencil(uint32_t depthValue, uint32_t depthMask,
                          uint32_t stencilValue, uint32_t stencilMask,
                          const Rect &rect) {
-    const uint32_t value = 0xff000000 | (stencilValue << 16) | depthValue;
-    const uint32_t mask = 0xff000000 | (stencilMask << 16) | depthMask;
+    uint32_t value = 0xff000000 | (stencilValue << 16) | depthValue;
+    uint32_t mask = 0xff000000 | (stencilMask << 16) | depthMask;
     (m_pfnDepthStencilFill)(m_pDepthStencilDesc, value, mask, rect);
   }
 

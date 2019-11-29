@@ -29,7 +29,7 @@ inline void CGLContext::TGetClipPlane(GLenum plane, T eqn[4]) {
     return;
   }
 
-  const uint32_t index = plane - GL_CLIP_PLANE0;
+  uint32_t index = plane - GL_CLIP_PLANE0;
 
   eqn[0] = Math::TCast<T>(m_vClipPlanesES[index].x);
   eqn[1] = Math::TCast<T>(m_vClipPlanesES[index].y);
@@ -49,7 +49,7 @@ inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
     return;
   }
 
-  const uint32_t index = light - GL_LIGHT0;
+  uint32_t index = light - GL_LIGHT0;
   Light &_light = m_lights[index];
 
   switch (pname) {
@@ -188,7 +188,7 @@ inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
     return;
   }
 
-  CTexture *const pTexture = this->GetTexture(m_activeTexture);
+  auto pTexture = this->GetTexture(m_activeTexture);
   ASSERT(pTexture);
 
   switch (pname) {

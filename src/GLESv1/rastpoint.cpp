@@ -16,9 +16,9 @@
 #include "raster.hpp"
 
 void CRasterizer::DrawPoint(uint32_t index) {
-  const uint16_t *const pwFlags =
-      (const uint16_t *)m_pbVertexData[VERTEXDATA_FLAGS];
-  const uint32_t flags = pwFlags[index];
+  auto pwFlags =
+      reinterpret_cast<uint16_t*>(m_pbVertexData[VERTEXDATA_FLAGS]);
+  uint32_t flags = pwFlags[index];
 
   // Check if the vertex is clipped
   if (flags & CLIPPING_MASK) {
@@ -30,25 +30,24 @@ void CRasterizer::DrawPoint(uint32_t index) {
 }
 
 void CRasterizer::RasterPoint(uint32_t index) {
-  const RDVECTOR *const pvScreenPos =
-      (const RDVECTOR *)m_pbVertexData[VERTEXDATA_SCREENPOS];
-  const fixed4 *const pfPointSize =
-      (const fixed4 *)m_pbVertexData[VERTEXDATA_POINTSIZE];
+  auto pvScreenPos =
+      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+  auto pfPointSize = reinterpret_cast<fixed4*>(m_pbVertexData[VERTEXDATA_POINTSIZE]);
 
   const RDVECTOR &vertex = pvScreenPos[index];
-  const fixed4 fPointSize = pfPointSize[index];
-  const fixed4 fHalfSize = fPointSize >> 1;
+  auto fPointSize = pfPointSize[index];
+  auto fHalfSize = fPointSize >> 1;
 
-  const int ymin = Math::TMax<int>(Math::TRoundi<int>(vertex.y - fHalfSize),
+  int ymin = Math::TMax<int>(Math::TRoundi<int>(vertex.y - fHalfSize),
                                    m_scissorRect.top);
 
-  const int ymax = Math::TMin<int>(Math::TRoundi<int>(vertex.y + fHalfSize),
+  int ymax = Math::TMin<int>(Math::TRoundi<int>(vertex.y + fHalfSize),
                                    m_scissorRect.bottom);
 
-  const int xmin = Math::TMax<int>(Math::TRoundi<int>(vertex.x - fHalfSize),
+  int xmin = Math::TMax<int>(Math::TRoundi<int>(vertex.x - fHalfSize),
                                    m_scissorRect.left);
 
-  const int xmax = Math::TMin<int>(Math::TRoundi<int>(vertex.x + fHalfSize),
+  int xmax = Math::TMin<int>(Math::TRoundi<int>(vertex.x + fHalfSize),
                                    m_scissorRect.right);
 
   // Early out if the point has no size
@@ -62,10 +61,10 @@ void CRasterizer::RasterPoint(uint32_t index) {
   }
 
   // Obtain the scanline routine
-  const PFN_Scanline pfnScanline = m_rasterData.pRasterOp->GetScanline();
+  PFN_Scanline pfnScanline = m_rasterData.pRasterOp->GetScanline();
 
   Register *pRegisters = m_rasterData.Registers;
-  const RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = m_rasterID.Flags;
 
   if (rasterFlags.DepthTest) {
     pRegisters->m[0] = TConst<fixedRX>::Zero();
@@ -75,8 +74,8 @@ void CRasterizer::RasterPoint(uint32_t index) {
   }
 
   if (rasterFlags.Color) {
-    const ColorARGB *const pcColors = (const ColorARGB *)m_pbVertexColor;
-    const ColorARGB cColor = pcColors[index];
+    auto pcColors = reinterpret_cast<ColorARGB*>(m_pbVertexColor);
+    ColorARGB cColor = pcColors[index];
 
     pRegisters[0].m[0] = TConst<fixedRX>::Zero();
     pRegisters[0].m[1] = TConst<fixedRX>::Zero();
@@ -116,8 +115,7 @@ void CRasterizer::RasterPoint(uint32_t index) {
         pRegisters[1].m[1] = fDelta;
         pRegisters[1].m[2] = (fDelta >> 1) - fDelta * ymin;
       } else {
-        const TEXCOORD2 *const vTexCoords =
-            (const TEXCOORD2 *)m_pbVertexData[VERTEXDATA_TEXCOORD0 + i];
+        auto vTexCoords = reinterpret_cast<TEXCOORD2*>(m_pbVertexData[VERTEXDATA_TEXCOORD0 + i]);
         const TEXCOORD2 &vTexCoord = vTexCoords[index];
 
         pRegisters[0].m[0] = TConst<fixedRX>::Zero();
@@ -134,9 +132,8 @@ void CRasterizer::RasterPoint(uint32_t index) {
   }
 
   if (rasterFlags.Fog) {
-    const float20 *const pfFogs =
-        (const float20 *)m_pbVertexData[VERTEXDATA_FOG];
-    const float20 fFog = pfFogs[index];
+    auto pfFogs = reinterpret_cast<float20*>(m_pbVertexData[VERTEXDATA_FOG]);
+    auto fFog = pfFogs[index];
 
     pRegisters->m[0] = TConst<fixedRX>::Zero();
     pRegisters->m[1] = TConst<fixedRX>::Zero();

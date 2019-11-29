@@ -292,7 +292,7 @@ public:
   HRESULT Add(const T &value) {
     HRESULT hr;
 
-    const uint32_t index = m_size;
+    uint32_t index = m_size;
     hr = this->Resize(index + 1);
     if (SUCCEEDED(hr)) {
       (*this)[index] = value;

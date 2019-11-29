@@ -28,7 +28,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
 
   VECTOR4 vParam;
 
-  const uint32_t index = light - GL_LIGHT0;
+  uint32_t index = light - GL_LIGHT0;
   Light &_light = m_lights[index];
 
   switch (pname) {
@@ -222,7 +222,7 @@ inline void CGLContext::TFog(GLenum pname, const T *pParams) {
 
   switch (pname) {
   case GL_FOG_MODE: {
-    const GLenum param = TToGLenum<T>(*pParams);
+    GLenum param = TToGLenum<T>(*pParams);
     switch (param) {
     case GL_LINEAR:
     case GL_EXP:

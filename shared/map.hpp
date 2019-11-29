@@ -223,8 +223,8 @@ protected:
   TMap &operator=(const TMap &rhs) { return *this; }
 
   Bucket &GetBucket(const KeyType &key) {
-    const uint32_t hash = static_cast<uint32_t>(key);
-    const uint32_t index = hash % BucketSize;
+    auto hash = static_cast<uint32_t>(key);
+    uint32_t index = hash % BucketSize;
     return m_buckets[index];
   }
 };

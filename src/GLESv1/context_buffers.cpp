@@ -110,7 +110,7 @@ void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
     return;
   }
 
-  CBuffer *const pBuffer = this->GetBufferObject(target);
+  auto pBuffer = this->GetBufferObject(target);
   ASSERT(pBuffer);
 
   err = pBuffer->Initialize(size, usage, pData);
@@ -139,7 +139,7 @@ void CGLContext::BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
     return;
   }
 
-  CBuffer *const pBuffer = this->GetBufferObject(target);
+  auto pBuffer = this->GetBufferObject(target);
   ASSERT(pBuffer);
 
   if (uint32_t(offset + size) > pBuffer->GetSize()) {
@@ -165,7 +165,7 @@ void CGLContext::GetBufferParameter(GLenum target, GLenum pname,
     return;
   }
 
-  CBuffer *const pBuffer = this->GetBufferObject(target);
+  auto pBuffer = this->GetBufferObject(target);
   ASSERT(pBuffer);
 
   err = pBuffer->GetParameter(pname, pParams);
@@ -187,21 +187,17 @@ void CGLContext::DeleteBuffers(GLsizei n, const GLuint *phBuffers) {
   }
 
   for (const GLuint *phBuf = phBuffers, * const phEnd = phBuf + n; phBuf != phEnd; ++phBuf) {
-    const GLuint handle = *phBuf;
+    GLuint handle = *phBuf;
     if (handle) {
       auto pBuffer = reinterpret_cast<CBuffer*>(m_pHandles->Delete(handle, this));
       if (pBuffer) {
-        //
         // Unbind the buffer if bound.
-        //
         if (pBuffer == this->GetBufferObject(GL_ARRAY_BUFFER)) {
           this->SetBufferObject(GL_ARRAY_BUFFER, m_pBufDefault);
         }
-
         if (pBuffer == this->GetBufferObject(GL_ELEMENT_ARRAY_BUFFER)) {
           this->SetBufferObject(GL_ELEMENT_ARRAY_BUFFER, m_pBufDefault);
         }
-
         pBuffer->Release();
       }
     }

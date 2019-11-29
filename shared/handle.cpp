@@ -33,7 +33,7 @@ CHandleTable::Create(CHandleTable **ppCHandleTable) {
   ASSERT(ppCHandleTable);
 
   // Allocate a new handle table
-  CHandleTable *pHandleTable = new CHandleTable();
+  auto pHandleTable = new CHandleTable();
   if (nullptr == pHandleTable) {
     return E_OUTOFMEMORY;
   }
@@ -91,12 +91,12 @@ CHandleTable::Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
     index = m_dwSize;
 
     // Calculate the table new size
-    const uint32_t dwNewSize = m_dwSize + GROW_INCREMENT;
+    uint32_t dwNewSize = m_dwSize + GROW_INCREMENT;
     if (dwNewSize > HANDLE_INDEX_MASK)
       return E_FAIL;
 
     // Reallocate the table's buffer
-    Entry *pEntries = reinterpret_cast<Entry *>(
+    auto pEntries = reinterpret_cast<Entry *>(
         realloc(m_pEntries, dwNewSize * sizeof(Entry)));
     if (nullptr == pEntries) {
       return E_OUTOFMEMORY;
@@ -104,7 +104,7 @@ CHandleTable::Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
 
     if (m_pActiveList) {
       // Calculate the reallocation offset
-      const int offset = pEntries - m_pEntries;
+      int offset = pEntries - m_pEntries;
       if (offset) {
         // Update active pointers to refect the offset
         m_pActiveList += offset;
@@ -170,7 +170,7 @@ CHandleTable::Entry *CHandleTable::DeleteEntry(Entry *pEntry) {
   ASSERT(pEntry);
 
   // Save the next entry
-  Entry *const pNextEntry = pEntry->pNext;
+  auto pNextEntry = pEntry->pNext;
 
   // Remove the entry from the active list
   Entry *pPrevEntry = nullptr;
@@ -210,7 +210,7 @@ void *CHandleTable::Delete(uint32_t dwHandle, const void *pOwner) {
   Entry *pEntry = this->GetEntry(dwHandle);
   if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
     // Get the object pointer
-    void *const pObject = pEntry->pObject;
+    auto pObject = pEntry->pObject;
 
     // Remove the entry from the table
     this->DeleteEntry(pEntry);

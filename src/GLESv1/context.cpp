@@ -95,7 +95,7 @@ GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
   ASSERT(pHandles && ppContext);
 
   // Create a new context object
-  CGLContext *pContext = new CGLContext(pHandles, pRasterCache, pCtxShared);
+  auto pContext = new CGLContext(pHandles, pRasterCache, pCtxShared);
   if (nullptr == pContext) {
     __glLogError(_T("CGLContext allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
@@ -235,7 +235,7 @@ GLenum CGLContext::Initialize() {
   }
 
   for (uint32_t i = 0; i < MAX_LIGHTS; ++i) {
-    const GLenum light = GL_LIGHT0 + i;
+    GLenum light = GL_LIGHT0 + i;
 
     this->TLight<floatf>(light, GL_AMBIENT,
                          VECTOR4(fZERO, fZERO, fZERO, fONE).m);

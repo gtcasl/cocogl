@@ -1167,7 +1167,7 @@ __glUpdateSurface(__GLSurface surface, const GLSurfaceDesc *pColorDesc,
 
   GLenum err;
 
-  CGLSurface *const pSurface = g_driver.TGetObject<CGLSurface *>(surface);
+  auto pSurface = g_driver.TGetObject<CGLSurface *>(surface);
   if (nullptr == pSurface) {
     __glLogError(_T("__glUpdateSurface() failed, invalid surface handle.\r\n"));
     return GL_INVALID_VALUE;
@@ -1186,7 +1186,7 @@ GL_API GLenum GL_APIENTRY __glDestroySurface(__GLSurface surface) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   // Remove the surface object from the handle table
-  CGLSurface *const pSurface = g_driver.UnregisterObject<CGLSurface *>(surface);
+  auto pSurface = g_driver.UnregisterObject<CGLSurface *>(surface);
   if (nullptr == pSurface) {
     __glLogError(_T("Invalid surface handle.\r\n"));
     return GL_INVALID_VALUE;
@@ -1304,7 +1304,7 @@ GL_API GLenum GL_APIENTRY __glBindTexImage(__GLSurface surface,
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   if (surface) {
-    CGLSurface *const pSurface = g_driver.TGetObject<CGLSurface *>(surface);
+    auto pSurface = g_driver.TGetObject<CGLSurface *>(surface);
     if (pSurface) {
       auto pContext = g_driver.GetCurrentContext();
       if (nullptr == pContext) {
@@ -1324,7 +1324,7 @@ GL_API GLenum GL_APIENTRY __glReleaseTexImage(__GLSurface surface) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   if (surface) {
-    CGLSurface *const pSurface = g_driver.TGetObject<CGLSurface *>(surface);
+    auto pSurface = g_driver.TGetObject<CGLSurface *>(surface);
     if (pSurface) {
       auto pContext = g_driver.GetCurrentContext();
       if (nullptr == pContext) {
@@ -1344,7 +1344,7 @@ GLenum __glSaveBitmap(__GLSurface surface, LPCTSTR lpszFilename) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   if (surface) {
-    CGLSurface *const pSurface = g_driver.TGetObject<CGLSurface *>(surface);
+    auto pSurface = g_driver.TGetObject<CGLSurface *>(surface);
     if (pSurface) {
       return pSurface->SaveBitmap(lpszFilename);
     }
@@ -2589,7 +2589,7 @@ GL_API void GL_APIENTRY glLightModelx(GLenum pname, GLfixed param) {
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
     pContext->TLightModel<fixed16>(pname,
-                                   reinterpret_cast<const fixed16 *>(&param));
+                                   reinterpret_cast<const fixed16*>(&param));
   }
 }
 

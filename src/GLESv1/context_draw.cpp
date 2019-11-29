@@ -171,7 +171,7 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
       goto L_EXIT;
     }
 
-    const uint32_t vertexCount = vmax - vmin + 1;
+    uint32_t vertexCount = vmax - vmin + 1;
 
     // Setup TNL states
     err = this->SetupTNLStates(mode, vmin, vertexCount);

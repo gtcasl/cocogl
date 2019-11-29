@@ -32,8 +32,8 @@ void IRasterOp::EndProfile(float elapsedTime) {
 
 void IRasterOp::LogProfile(const RASTERID &rasterID) {
 
-  const float fRenderTime = m_profile.RenderTime;
-  const float fMPs = m_profile.DrawnPixels / fRenderTime;
+  float fRenderTime = m_profile.RenderTime;
+  float fMPs = m_profile.DrawnPixels / fRenderTime;
 
   DbgPrintf(1, _T("Profile_PS(%d,%d,%d,%d): Calls=%ld, Pixels=%ld, Time=%.6f ")
                _T("ms, MPs=%.6f - "),
@@ -88,7 +88,7 @@ GLenum CRasterizer::SetupRasterStates(GLenum mode) {
           case GL_TRIANGLE_STRIP:
           case GL_TRIANGLE_FAN: {
             // Compute texture mip flags
-            const uint32_t state = rasterID.Textures[n].Value;
+            uint32_t state = rasterID.Textures[n].Value;
             rasterID.Flags.TextureMips |=
                 ((FILTER_NONE !=
                   __get_bitfield(state, TEXTURESTATES::MIPFILTER)) ||

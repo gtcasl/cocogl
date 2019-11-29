@@ -190,10 +190,10 @@ private:
                       uint32_t dstOffsetY, uint32_t copyWidth,
                       uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
                       uint32_t srcOffsetX, uint32_t srcOffsetY) {
-    const uint32_t srcBPP = TFormatInfo<SrcFormat>::CBSIZE;
-    const uint32_t dstBPP = TFormatInfo<DstFormat>::CBSIZE;
-    const int32_t srcNextLine = srcDesc.Pitch;
-    const int32_t dstNextLine = dstDesc.Pitch;
+    uint32_t srcBPP = TFormatInfo<SrcFormat>::CBSIZE;
+    uint32_t dstBPP = TFormatInfo<DstFormat>::CBSIZE;
+    int32_t srcNextLine = srcDesc.Pitch;
+    int32_t dstNextLine = dstDesc.Pitch;
 
     const uint8_t *pbSrc =
         srcDesc.pBits + srcOffsetX * srcBPP + srcOffsetY * srcDesc.Pitch;
@@ -203,13 +203,8 @@ private:
     Color4 tmp;
 
     while (copyHeight--) {
-      const typename TFormatInfo<SrcFormat>::TYPE *pSrc =
-          reinterpret_cast<const typename TFormatInfo<SrcFormat>::TYPE *>(
-              pbSrc);
-
-      for (typename TFormatInfo<DstFormat>::TYPE *
-               pDst = reinterpret_cast<typename TFormatInfo<DstFormat>::TYPE *>(
-                  pbDst),
+      auto pSrc = reinterpret_cast<const typename TFormatInfo<SrcFormat>::TYPE *>(pbSrc);
+      for (auto * pDst = reinterpret_cast<typename TFormatInfo<DstFormat>::TYPE *>(pbDst),
               *const pEnd = pDst + copyWidth;
            pDst != pEnd; ++pDst, ++pSrc) {
         Format::TConvertFrom<SrcFormat, true>(&tmp, pSrc);
@@ -228,9 +223,9 @@ private:
                           uint32_t dstOffsetY, uint32_t copyWidth,
                           uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
                           uint32_t srcOffsetX, uint32_t srcOffsetY) {
-    const uint32_t nBPP = sizeof(Type);
-    const int32_t srcNextLine = srcDesc.Pitch;
-    const int32_t dstNextLine = dstDesc.Pitch;
+    uint32_t nBPP = sizeof(Type);
+    int32_t srcNextLine = srcDesc.Pitch;
+    int32_t dstNextLine = dstDesc.Pitch;
 
     const uint8_t *pbSrc =
         srcDesc.pBits + srcOffsetX * nBPP + srcOffsetY * srcDesc.Pitch;
@@ -238,8 +233,8 @@ private:
         dstDesc.pBits + dstOffsetX * nBPP + dstOffsetY * dstDesc.Pitch;
 
     while (copyHeight--) {
-      const Type *pSrc = reinterpret_cast<const Type *>(pbSrc);
-      for (Type *pDst = reinterpret_cast<Type *>(pbDst),
+      auto pSrc = reinterpret_cast<const Type *>(pbSrc);
+      for (auto *pDst = reinterpret_cast<Type *>(pbDst),
                 *const pEnd = pDst + copyWidth;
            pDst != pEnd; ++pDst, ++pSrc) {
         *pDst = *pSrc;

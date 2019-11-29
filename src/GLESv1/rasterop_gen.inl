@@ -57,7 +57,7 @@ void TWriteColor(const RasterData &rasterData, const Color4 &cColor,
 
   if
     constexpr(bWriteMask) {
-      const uint32_t writeMask = rasterData.ColorWriteMask;
+      uint32_t writeMask = rasterData.ColorWriteMask;
       result = (result & writeMask) | (dstColor & ~writeMask);
     }
   else {
@@ -97,7 +97,7 @@ public:
   inline static void Execute(const RasterData &rasterData, int y, int lx,
                              int rx) {
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         TGenericScanlineA<Depth, Color, Texture0, Texture1, Fog>::__Execute(
             rasterData, y, lx, rx);
       }
@@ -118,28 +118,28 @@ public:
 
   inline static void __Execute(const RasterData &rasterData, int y, int lx,
                                int rx) {
-    const CGenericRasterOp *const pRasterOp =
+    auto pRasterOp =
         reinterpret_cast<const CGenericRasterOp *>(rasterData.pRasterOp);
-    const RASTERFLAGS rasterFlags = pRasterOp->GetRasterID().Flags;
+    RASTERFLAGS rasterFlags = pRasterOp->GetRasterID().Flags;
 
-    uint8_t *const pColorBits = rasterData.pColorBits;
-    const int32_t colorPitch = rasterData.ColorPitch;
-    const uint8_t colorStride = pRasterOp->GetColorStride();
+    auto pColorBits = rasterData.pColorBits;
+    int32_t colorPitch = rasterData.ColorPitch;
+    uint8_t colorStride = pRasterOp->GetColorStride();
 
-    uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-    const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
-    const uint8_t depthStencilStride = pRasterOp->GetDepthStencilStride();
+    auto pDepthStencilBits = rasterData.pDepthStencilBits;
+    int32_t depthStencilPitch = rasterData.DepthStencilPitch;
+    uint8_t depthStencilStride = pRasterOp->GetDepthStencilStride();
 
-    const fixed4 fOffsetX = fixed4(lx) - rasterData.fRefX;
-    const fixed4 fOffsetY = fixed4(y) - rasterData.fRefY;
+    auto fOffsetX = fixed4(lx) - rasterData.fRefX;
+    auto fOffsetY = fixed4(y) - rasterData.fRefY;
 
     fixedRX fZ, fZdA;
 
     if
       constexpr(Depth) {
         fZdA = rasterData.Registers[REG_DEPTH + 0].m[0];
-        const fixedRX fZdB = rasterData.Registers[REG_DEPTH + 0].m[1];
-        const fixedRX fZdC = rasterData.Registers[REG_DEPTH + 0].m[2];
+        fixedRX fZdB = rasterData.Registers[REG_DEPTH + 0].m[1];
+        fixedRX fZdC = rasterData.Registers[REG_DEPTH + 0].m[2];
         fZ = fZdA * fOffsetX + fZdB * fOffsetY + fZdC;
       }
 
@@ -149,23 +149,23 @@ public:
     if
       constexpr(Color) {
         fBdA = rasterData.Registers[REG_COLOR + 0].m[0];
-        const fixedRX fBdB = rasterData.Registers[REG_COLOR + 0].m[1];
-        const fixedRX fBdC = rasterData.Registers[REG_COLOR + 0].m[2];
+        fixedRX fBdB = rasterData.Registers[REG_COLOR + 0].m[1];
+        fixedRX fBdC = rasterData.Registers[REG_COLOR + 0].m[2];
         fB = fBdA * fOffsetX + fBdB * fOffsetY + fBdC;
 
         fGdA = rasterData.Registers[REG_COLOR + 1].m[0];
-        const fixedRX fGdB = rasterData.Registers[REG_COLOR + 1].m[1];
-        const fixedRX fGdC = rasterData.Registers[REG_COLOR + 1].m[2];
+        fixedRX fGdB = rasterData.Registers[REG_COLOR + 1].m[1];
+        fixedRX fGdC = rasterData.Registers[REG_COLOR + 1].m[2];
         fG = fGdA * fOffsetX + fGdB * fOffsetY + fGdC;
 
         fRdA = rasterData.Registers[REG_COLOR + 2].m[0];
-        const fixedRX fRdB = rasterData.Registers[REG_COLOR + 2].m[1];
-        const fixedRX fRdC = rasterData.Registers[REG_COLOR + 2].m[2];
+        fixedRX fRdB = rasterData.Registers[REG_COLOR + 2].m[1];
+        fixedRX fRdC = rasterData.Registers[REG_COLOR + 2].m[2];
         fR = fRdA * fOffsetX + fRdB * fOffsetY + fRdC;
 
         fAdA = rasterData.Registers[REG_COLOR + 3].m[0];
-        const fixedRX fAdB = rasterData.Registers[REG_COLOR + 3].m[1];
-        const fixedRX fAdC = rasterData.Registers[REG_COLOR + 3].m[2];
+        fixedRX fAdB = rasterData.Registers[REG_COLOR + 3].m[1];
+        fixedRX fAdC = rasterData.Registers[REG_COLOR + 3].m[2];
         fA = fAdA * fOffsetX + fAdB * fOffsetY + fAdC;
       }
 
@@ -174,15 +174,15 @@ public:
     fixedRX fU0dA, fV0dA, fU1dA, fV1dA;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         fU0dA = rasterData.Registers[REG_TEX0 + 0].m[0];
-        const fixedRX fU0dB = rasterData.Registers[REG_TEX0 + 0].m[1];
-        const fixedRX fU0dC = rasterData.Registers[REG_TEX0 + 0].m[2];
+        fixedRX fU0dB = rasterData.Registers[REG_TEX0 + 0].m[1];
+        fixedRX fU0dC = rasterData.Registers[REG_TEX0 + 0].m[2];
         fU0 = fU0dA * fOffsetX + fU0dB * fOffsetY + fU0dC;
 
         fV0dA = rasterData.Registers[REG_TEX0 + 1].m[0];
-        const fixedRX fV0dB = rasterData.Registers[REG_TEX0 + 1].m[1];
-        const fixedRX fV0dC = rasterData.Registers[REG_TEX0 + 1].m[2];
+        fixedRX fV0dB = rasterData.Registers[REG_TEX0 + 1].m[1];
+        fixedRX fV0dC = rasterData.Registers[REG_TEX0 + 1].m[2];
         fV0 = fV0dA * fOffsetX + fV0dB * fOffsetY + fV0dC;
 
         if
@@ -191,15 +191,15 @@ public:
           }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1dA = rasterData.Registers[REG_TEX1 + 0].m[0];
-            const fixedRX fU1dB = rasterData.Registers[REG_TEX1 + 0].m[1];
-            const fixedRX fU1dC = rasterData.Registers[REG_TEX1 + 0].m[2];
+            fixedRX fU1dB = rasterData.Registers[REG_TEX1 + 0].m[1];
+            fixedRX fU1dC = rasterData.Registers[REG_TEX1 + 0].m[2];
             fU1 = fU1dA * fOffsetX + fU1dB * fOffsetY + fU1dC;
 
             fV1dA = rasterData.Registers[REG_TEX1 + 1].m[0];
-            const fixedRX fV1dB = rasterData.Registers[REG_TEX1 + 1].m[1];
-            const fixedRX fV1dC = rasterData.Registers[REG_TEX1 + 1].m[2];
+            fixedRX fV1dB = rasterData.Registers[REG_TEX1 + 1].m[1];
+            fixedRX fV1dC = rasterData.Registers[REG_TEX1 + 1].m[2];
             fV1 = fV1dA * fOffsetX + fV1dB * fOffsetY + fV1dC;
 
             if
@@ -214,15 +214,15 @@ public:
     if
       constexpr(Fog) {
         fFogdA = rasterData.Registers[REG_FOG + 0].m[0];
-        const fixedRX fFogdB = rasterData.Registers[REG_FOG + 0].m[1];
-        const fixedRX fFogdC = rasterData.Registers[REG_FOG + 0].m[2];
+        fixedRX fFogdB = rasterData.Registers[REG_FOG + 0].m[1];
+        fixedRX fFogdC = rasterData.Registers[REG_FOG + 0].m[2];
         fFog = fFogdA * fOffsetX + fFogdB * fOffsetY + fFogdC;
       }
 
     uint8_t *pDS =
         lx * depthStencilStride + y * depthStencilPitch + pDepthStencilBits;
     uint8_t *pCB = lx * colorStride + y * colorPitch + pColorBits;
-    uint8_t *const pCBEnd = pCB + (rx - lx) * colorStride;
+    auto pCBEnd = pCB + (rx - lx) * colorStride;
 
     Color4 cColor(0xff, 0xff, 0xff, 0xff);
 
@@ -246,7 +246,7 @@ public:
 
         // Execute texture operations
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             Color4 cTexture;
 
             if
@@ -261,7 +261,7 @@ public:
             pRasterOp->GetTexEnvColor(&cColor, cTexture, 0, rasterData);
 
             if
-              constexpr(Texture1) {
+              constexpr(Texture1 != 0) {
                 if
                   constexpr(2 == Texture1) {
                     pRasterOp->GetSamplerColor(&cTexture, 1, rasterData, fU1,
@@ -330,13 +330,13 @@ public:
         }
 
       if
-        constexpr(Texture0) {
+        constexpr(Texture0 != 0) {
           fU0 += fU0dA;
           fV0 += fV0dA;
         }
 
       if
-        constexpr(Texture1) {
+        constexpr(Texture1 != 0) {
           fU1 += fU1dA;
           fV1 += fV1dA;
         }
@@ -377,7 +377,7 @@ public:
   inline static void Execute(const RasterData &rasterData, int y, int lx,
                              int rx) {
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         TGenericScanlineP<Depth, Color, Texture0, Texture1, Fog>::__Execute(
             rasterData, y, lx, rx);
       }
@@ -391,28 +391,28 @@ public:
 
   inline static void __Execute(const RasterData &rasterData, int y, int lx,
                                int rx) {
-    const CGenericRasterOp *const pRasterOp =
+    auto pRasterOp =
         reinterpret_cast<const CGenericRasterOp *>(rasterData.pRasterOp);
-    const RASTERFLAGS rasterFlags = pRasterOp->GetRasterID().Flags;
+    RASTERFLAGS rasterFlags = pRasterOp->GetRasterID().Flags;
 
-    uint8_t *const pColorBits = rasterData.pColorBits;
-    const int32_t colorPitch = rasterData.ColorPitch;
-    const uint8_t colorStride = pRasterOp->GetColorStride();
+    auto pColorBits = rasterData.pColorBits;
+    int32_t colorPitch = rasterData.ColorPitch;
+    uint8_t colorStride = pRasterOp->GetColorStride();
 
-    uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-    const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
-    const uint8_t depthStencilStride = pRasterOp->GetDepthStencilStride();
+    auto pDepthStencilBits = rasterData.pDepthStencilBits;
+    int32_t depthStencilPitch = rasterData.DepthStencilPitch;
+    uint8_t depthStencilStride = pRasterOp->GetDepthStencilStride();
 
-    const fixed4 fOffsetX = fixed4(lx) - rasterData.fRefX;
-    const fixed4 fOffsetY = fixed4(y) - rasterData.fRefY;
+    auto fOffsetX = fixed4(lx) - rasterData.fRefX;
+    auto fOffsetY = fixed4(y) - rasterData.fRefY;
 
     fixedRX fZ, fZdA;
 
     if
       constexpr(Depth) {
         fZdA = rasterData.Registers[REG_DEPTH + 0].m[0];
-        const fixedRX fZdB = rasterData.Registers[REG_DEPTH + 0].m[1];
-        const fixedRX fZdC = rasterData.Registers[REG_DEPTH + 0].m[2];
+        fixedRX fZdB = rasterData.Registers[REG_DEPTH + 0].m[1];
+        fixedRX fZdC = rasterData.Registers[REG_DEPTH + 0].m[2];
         fZ = fZdA * fOffsetX + fZdB * fOffsetY + fZdC;
       }
 
@@ -422,23 +422,23 @@ public:
     if
       constexpr(Color) {
         fBdA = rasterData.Registers[REG_COLOR + 0].m[0];
-        const fixedRX fBdB = rasterData.Registers[REG_COLOR + 0].m[1];
-        const fixedRX fBdC = rasterData.Registers[REG_COLOR + 0].m[2];
+        fixedRX fBdB = rasterData.Registers[REG_COLOR + 0].m[1];
+        fixedRX fBdC = rasterData.Registers[REG_COLOR + 0].m[2];
         fB = fBdA * fOffsetX + fBdB * fOffsetY + fBdC;
 
         fGdA = rasterData.Registers[REG_COLOR + 1].m[0];
-        const fixedRX fGdB = rasterData.Registers[REG_COLOR + 1].m[1];
-        const fixedRX fGdC = rasterData.Registers[REG_COLOR + 1].m[2];
+        fixedRX fGdB = rasterData.Registers[REG_COLOR + 1].m[1];
+        fixedRX fGdC = rasterData.Registers[REG_COLOR + 1].m[2];
         fG = fGdA * fOffsetX + fGdB * fOffsetY + fGdC;
 
         fRdA = rasterData.Registers[REG_COLOR + 2].m[0];
-        const fixedRX fRdB = rasterData.Registers[REG_COLOR + 2].m[1];
-        const fixedRX fRdC = rasterData.Registers[REG_COLOR + 2].m[2];
+        fixedRX fRdB = rasterData.Registers[REG_COLOR + 2].m[1];
+        fixedRX fRdC = rasterData.Registers[REG_COLOR + 2].m[2];
         fR = fRdA * fOffsetX + fRdB * fOffsetY + fRdC;
 
         fAdA = rasterData.Registers[REG_COLOR + 3].m[0];
-        const fixedRX fAdB = rasterData.Registers[REG_COLOR + 3].m[1];
-        const fixedRX fAdC = rasterData.Registers[REG_COLOR + 3].m[2];
+        fixedRX fAdB = rasterData.Registers[REG_COLOR + 3].m[1];
+        fixedRX fAdC = rasterData.Registers[REG_COLOR + 3].m[2];
         fA = fAdA * fOffsetX + fAdB * fOffsetY + fAdC;
       }
 
@@ -449,20 +449,20 @@ public:
     fixedRX fM0OverW2dA, fM1OverW2dA;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         fRhwdA = rasterData.Registers[REG_RHW + 0].m[0];
-        const fixedRX fRhwdB = rasterData.Registers[REG_RHW + 0].m[1];
-        const fixedRX fRhwdC = rasterData.Registers[REG_RHW + 0].m[2];
+        fixedRX fRhwdB = rasterData.Registers[REG_RHW + 0].m[1];
+        fixedRX fRhwdC = rasterData.Registers[REG_RHW + 0].m[2];
         fRhw = fRhwdA * fOffsetX + fRhwdB * fOffsetY + fRhwdC;
 
         fU0OverWdA = rasterData.Registers[REG_TEX0 + 0].m[0];
-        const fixedRX fU0OverWdB = rasterData.Registers[REG_TEX0 + 0].m[1];
-        const fixedRX fU0OverWdC = rasterData.Registers[REG_TEX0 + 0].m[2];
+        fixedRX fU0OverWdB = rasterData.Registers[REG_TEX0 + 0].m[1];
+        fixedRX fU0OverWdC = rasterData.Registers[REG_TEX0 + 0].m[2];
         fU0OverW = fU0OverWdA * fOffsetX + fU0OverWdB * fOffsetY + fU0OverWdC;
 
         fV0OverWdA = rasterData.Registers[REG_TEX0 + 1].m[0];
-        const fixedRX fV0OverWdB = rasterData.Registers[REG_TEX0 + 1].m[1];
-        const fixedRX fV0OverWdC = rasterData.Registers[REG_TEX0 + 1].m[2];
+        fixedRX fV0OverWdB = rasterData.Registers[REG_TEX0 + 1].m[1];
+        fixedRX fV0OverWdC = rasterData.Registers[REG_TEX0 + 1].m[2];
         fV0OverW = fV0OverWdA * fOffsetX + fV0OverWdB * fOffsetY + fV0OverWdC;
 
         if
@@ -471,23 +471,23 @@ public:
             fM0OverW2 = rasterData.Registers[REG_MIP0 + 0].m[2];
 
             if (rasterFlags.InterpolateMips & 1) {
-              const fixedRX fM0OverW2dB =
+              fixedRX fM0OverW2dB =
                   rasterData.Registers[REG_MIP0 + 0].m[1];
               fM0OverW2 += fM0OverW2dA * fOffsetX + fM0OverW2dB * fOffsetY;
             }
           }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1OverWdA = rasterData.Registers[REG_TEX1 + 0].m[0];
-            const fixedRX fU1OverWdB = rasterData.Registers[REG_TEX1 + 0].m[1];
-            const fixedRX fU1OverWdC = rasterData.Registers[REG_TEX1 + 0].m[2];
+            fixedRX fU1OverWdB = rasterData.Registers[REG_TEX1 + 0].m[1];
+            fixedRX fU1OverWdC = rasterData.Registers[REG_TEX1 + 0].m[2];
             fU1OverW =
                 fU1OverWdA * fOffsetX + fU1OverWdB * fOffsetY + fU1OverWdC;
 
             fV1OverWdA = rasterData.Registers[REG_TEX1 + 1].m[0];
-            const fixedRX fV1OverWdB = rasterData.Registers[REG_TEX1 + 1].m[1];
-            const fixedRX fV1OverWdC = rasterData.Registers[REG_TEX1 + 1].m[2];
+            fixedRX fV1OverWdB = rasterData.Registers[REG_TEX1 + 1].m[1];
+            fixedRX fV1OverWdC = rasterData.Registers[REG_TEX1 + 1].m[2];
             fV1OverW =
                 fV1OverWdA * fOffsetX + fV1OverWdB * fOffsetY + fV1OverWdC;
 
@@ -497,7 +497,7 @@ public:
                 fM1OverW2 = rasterData.Registers[REG_MIP1 + 0].m[2];
 
                 if (rasterFlags.InterpolateMips & 2) {
-                  const fixedRX fM1OverW2dB =
+                  fixedRX fM1OverW2dB =
                       rasterData.Registers[REG_MIP1 + 0].m[1];
                   fM1OverW2 += fM1OverW2dA * fOffsetX + fM1OverW2dB * fOffsetY;
                 }
@@ -510,12 +510,12 @@ public:
     if
       constexpr(Fog) {
         fFogdA = rasterData.Registers[REG_FOG + 0].m[0];
-        const fixedRX fFogdB = rasterData.Registers[REG_FOG + 0].m[1];
-        const fixedRX fFogdC = rasterData.Registers[REG_FOG + 0].m[2];
+        fixedRX fFogdB = rasterData.Registers[REG_FOG + 0].m[1];
+        fixedRX fFogdC = rasterData.Registers[REG_FOG + 0].m[2];
         fFog = fFogdA * fOffsetX + fFogdB * fOffsetY + fFogdC;
       }
 
-    const fixedW fW = Math::TInv<fixedW>(fRhw);
+    fixedW fW = Math::TInv<fixedW>(fRhw);
     fixedW fW2;
 
     if
@@ -524,7 +524,7 @@ public:
     fixedRX fU0, fV0, fM0;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         fU0 = fU0OverW * fW;
         fV0 = fV0OverW * fW;
 
@@ -541,7 +541,7 @@ public:
     fixedRX fU1, fV1, fM1;
 
     if
-      constexpr(Texture1) {
+      constexpr(Texture1 != 0) {
         fU1 = fU1OverW * fW;
         fV1 = fV1OverW * fW;
 
@@ -563,25 +563,25 @@ public:
     Color4 cColor(0xff, 0xff, 0xff, 0xff);
 
     do {
-      const uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
-      const uint32_t log2width = Math::iLog2(blockWidth1);
-      const uint32_t blockWidth = 1 << log2width;
+      uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
+      uint32_t log2width = Math::iLog2(blockWidth1);
+      uint32_t blockWidth = 1 << log2width;
       width -= blockWidth;
-      uint8_t *const pCBEnd = pCB + blockWidth * colorStride;
+      auto pCBEnd = pCB + blockWidth * colorStride;
 
       fixedRX fdUr0, fdVr0, fdMr0;
       fixedRX fdUr1, fdVr1, fdMr1;
 
       if (log2width) {
         fRhw += fRhwdA << log2width;
-        const fixedW fWr = Math::TInv<fixedW>(fRhw);
+        fixedW fWr = Math::TInv<fixedW>(fRhw);
         fixedW fWr2;
 
         if
           constexpr((2 == Texture0) || (2 == Texture1)) { fWr2 = fWr * fWr; }
 
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             fU0OverW += fU0OverWdA << log2width;
             fV0OverW += fV0OverWdA << log2width;
             fdUr0 = (fU0OverW * fWr - fU0) >> log2width;
@@ -599,7 +599,7 @@ public:
           }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1OverW += fU1OverWdA << log2width;
             fV1OverW += fV1OverWdA << log2width;
             fdUr1 = (fU1OverW * fWr - fU1) >> log2width;
@@ -637,7 +637,7 @@ public:
 
           // Execute texture operations
           if
-            constexpr(Texture0) {
+            constexpr(Texture0 != 0) {
               Color4 cTexture;
 
               if
@@ -652,7 +652,7 @@ public:
               pRasterOp->GetTexEnvColor(&cColor, cTexture, 0, rasterData);
 
               if
-                constexpr(Texture1) {
+                constexpr(Texture1 != 0) {
                   if
                     constexpr(2 == Texture1) {
                       pRasterOp->GetSamplerColor(&cTexture, 1, rasterData, fU1,
@@ -721,7 +721,7 @@ public:
           }
 
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             fU0 += fdUr0;
             fV0 += fdVr0;
 
@@ -730,7 +730,7 @@ public:
           }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1 += fdUr1;
             fV1 += fdVr1;
 

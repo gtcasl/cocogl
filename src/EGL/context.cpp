@@ -56,7 +56,7 @@ EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
   ASSERT(pDisplay && pConfig && ppContext);
 
   // Create a new context object
-  CEGLContext *pContext = new CEGLContext(pDisplay, pConfig);
+  auto pContext = new CEGLContext(pDisplay, pConfig);
   if (nullptr == pContext) {
     __eglLogError(_T("CEGLContext allocation failed, out of memory.\r\n"));
     return EGL_BAD_ALLOC;

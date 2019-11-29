@@ -164,7 +164,7 @@ template <class T> inline T TMax(T lhs, T rhs) {
 
 template <class T> inline T TClamp(T lhs, T min, T max) {
   ASSERT(max >= min);
-  const T tmp = (lhs >= min) ? lhs : min;
+  T tmp = (lhs >= min) ? lhs : min;
   return (tmp <= max) ? tmp : max;
 }
 
@@ -321,12 +321,12 @@ template <typename R> inline R TMulSub(float a, float b, float c, float d) {
 }
 
 template <typename R> inline R TShiftLeft(float lhs, int rhs) {
-  const float scale = (float)(1 << rhs);
+  float scale = (float)(1 << rhs);
   return static_cast<R>(lhs * scale);
 }
 
 template <typename R> inline R TShiftRight(float lhs, int rhs) {
-  const float scale = 1.0f / (float)(1 << rhs);
+  float scale = 1.0f / (float)(1 << rhs);
   return static_cast<R>(lhs * scale);
 }
 
@@ -339,13 +339,13 @@ inline TFixed<F, T> TExp(TFixed<F, T> rhs) {
 
 template <typename R, uint32_t F, typename T>
 inline R TCeili(TFixed<F, T> rhs) {
-  const int value = rhs.GetRaw() + TFixed<F, T>::MASK;
+  int value = rhs.GetRaw() + TFixed<F, T>::MASK;
   return static_cast<R>(value >> TFixed<F, T>::FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
 inline R TCeilf(TFixed<F, T> rhs) {
-  const int value = (rhs.GetRaw() + TFixed<F, T>::MASK) & TFixed<F, T>::IMASK;
+  int value = (rhs.GetRaw() + TFixed<F, T>::MASK) & TFixed<F, T>::IMASK;
   return R::Make(value >> (TFixed<F, T>::FRAC - R::FRAC));
 }
 
@@ -356,7 +356,7 @@ inline R TFloori(TFixed<F, T> rhs) {
 
 template <typename R, uint32_t F, typename T>
 inline R TFloorf(TFixed<F, T> rhs) {
-  const int value = rhs.GetRaw() & TFixed<F, T>::IMASK;
+  int value = rhs.GetRaw() & TFixed<F, T>::IMASK;
   return R::Make(value >> (TFixed<F, T>::FRAC - R::FRAC));
 }
 
@@ -368,7 +368,7 @@ inline R TRoundi(TFixed<F, T> rhs) {
 
 template <typename R, uint32_t F, typename T>
 inline R TRoundf(TFixed<F, T> rhs) {
-  const int value = (rhs.GetRaw() + TFixed<F, T>::HALF) & TFixed<F, T>::IMASK;
+  int value = (rhs.GetRaw() + TFixed<F, T>::HALF) & TFixed<F, T>::IMASK;
   return R::Make(value >> (TFixed<F, T>::FRAC - R::FRAC));
 }
 
@@ -432,14 +432,14 @@ template <typename R, uint32_t F1, uint32_t F2, typename T1,
 inline R TFastMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
   ASSERT((static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw()) ==
          (lhs.GetRaw() * rhs.GetRaw()));
-  const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
   return R::Make((lhs.GetRaw() * rhs.GetRaw()) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TFastDiv(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
-  const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
   ASSERT((static_cast<int64_t>(lhs.GetRaw()) << FRAC) ==
          (lhs.GetRaw() << FRAC));
   return R::Make((lhs.GetRaw() << FRAC) / rhs.GetRaw());
@@ -447,37 +447,37 @@ inline R TFastDiv(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
 
 template <typename R, uint32_t F, typename T>
 inline R TMulRnd(TFixed<F, T> lhs, int rhs) {
-  const int FRAC = TFixed<F, T>::FRAC - R::FRAC;
-  const int HALF = 1 << (FRAC - 1);
-  const int64_t value = static_cast<int64_t>(lhs.GetRaw()) * rhs;
+  int FRAC = TFixed<F, T>::FRAC - R::FRAC;
+  int HALF = 1 << (FRAC - 1);
+  auto value = static_cast<int64_t>(lhs.GetRaw()) * rhs;
   return R::Make((value + HALF) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulRnd(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
-  const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
-  const int HALF = 1 << (FRAC - 1);
-  const int64_t value = static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw();
+  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  int HALF = 1 << (FRAC - 1);
+  auto value = static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw();
   return R::Make((value + HALF) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, int c) {
-  const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
-  const int64_t HALF = static_cast<int64_t>(1) << (FRAC - 1);
-  const int64_t value = static_cast<int64_t>(a.GetRaw()) * b.GetRaw() * c;
+  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  auto HALF = static_cast<int64_t>(1) << (FRAC - 1);
+  auto value = static_cast<int64_t>(a.GetRaw()) * b.GetRaw() * c;
   return R::Make((value + HALF) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, uint32_t F3,
           typename T1, typename T2, typename T3>
 inline R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F3, T3> c) {
-  const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC +
+  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC +
                    TFixed<F3, T3>::FRAC - R::FRAC;
-  const int64_t HALF = static_cast<int64_t>(1) << (FRAC - 1);
-  const int64_t value =
+  auto HALF = static_cast<int64_t>(1) << (FRAC - 1);
+  int64_t value =
       static_cast<int64_t>(a.GetRaw()) * b.GetRaw() * c.GetRaw();
   return R::Make((value + HALF) >> FRAC);
 }
@@ -486,9 +486,9 @@ template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulAdd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
                  TFixed<F2, T2> d) {
-  const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
-  const int64_t ab = static_cast<int64_t>(a.GetRaw()) * b.GetRaw();
-  const int64_t cd = static_cast<int64_t>(c.GetRaw()) * d.GetRaw();
+  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  auto ab = static_cast<int64_t>(a.GetRaw()) * b.GetRaw();
+  auto cd = static_cast<int64_t>(c.GetRaw()) * d.GetRaw();
   return R::Make((ab + cd) >> FRAC);
 }
 
@@ -496,31 +496,31 @@ template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulSub(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
                  TFixed<F2, T2> d) {
-  const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
-  const int64_t ab = static_cast<int64_t>(a.GetRaw()) * b.GetRaw();
-  const int64_t cd = static_cast<int64_t>(c.GetRaw()) * d.GetRaw();
+  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  auto ab = static_cast<int64_t>(a.GetRaw()) * b.GetRaw();
+  auto cd = static_cast<int64_t>(c.GetRaw()) * d.GetRaw();
   return R::Make((ab - cd) >> FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
 inline R TMul(TFixed<F, T> lhs, TFixed<F, T> rhs) {
-  const int FRAC = TFixed<F, T>::FRAC + TFixed<F, T>::FRAC - R::FRAC;
-  const int64_t value = static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw();
+  int FRAC = TFixed<F, T>::FRAC + TFixed<F, T>::FRAC - R::FRAC;
+  auto value = static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw();
   return R::Make(value >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
-  const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
-  const int64_t value = static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw();
+  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  auto value = static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw();
   return R::Make(value >> FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
 inline R TMul(TFixed<F, T> lhs, int rhs) {
-  const int FRAC = TFixed<F, T>::FRAC - R::FRAC;
-  const int64_t value = static_cast<int64_t>(lhs.GetRaw()) * rhs;
+  int FRAC = TFixed<F, T>::FRAC - R::FRAC;
+  auto value = static_cast<int64_t>(lhs.GetRaw()) * rhs;
   return R::Make(value >> FRAC);
 }
 
@@ -532,8 +532,8 @@ R TMul(TFixed<F, T> lhs, float rhs) {
 template <typename R, uint32_t F1, uint32_t F2, typename T1,
           typename T2>
 inline R TMulShift(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs, R a, int shift) {
-  const int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
-  const int64_t value = static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw();
+  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  auto value = static_cast<int64_t>(lhs.GetRaw()) * rhs.GetRaw();
   return R::Make((value >> FRAC) - (a.GetRaw() >> shift));
 }
 
@@ -575,19 +575,19 @@ inline R TShiftRight(TFixed<F, T> lhs, int rhs) {
 template <>
 inline fixed16 TDot<fixed16>(const TVector3<fixed16> &lhs,
                              const TVector3<fixed16> &rhs) {
-  const int64_t xx = static_cast<int64_t>(lhs.x.GetRaw()) * rhs.x.GetRaw();
-  const int64_t yy = static_cast<int64_t>(lhs.y.GetRaw()) * rhs.y.GetRaw();
-  const int64_t zz = static_cast<int64_t>(lhs.z.GetRaw()) * rhs.z.GetRaw();
+  auto xx = static_cast<int64_t>(lhs.x.GetRaw()) * rhs.x.GetRaw();
+  auto yy = static_cast<int64_t>(lhs.y.GetRaw()) * rhs.y.GetRaw();
+  auto zz = static_cast<int64_t>(lhs.z.GetRaw()) * rhs.z.GetRaw();
   return fixed16::Make((xx + yy + zz) >> fixed16::FRAC);
 }
 
 template <>
 inline fixed16 TDot<fixed16>(const TVector4<fixed16> &lhs,
                              const TVector4<fixed16> &rhs) {
-  const int64_t xx = static_cast<int64_t>(lhs.x.GetRaw()) * rhs.x.GetRaw();
-  const int64_t yy = static_cast<int64_t>(lhs.y.GetRaw()) * rhs.y.GetRaw();
-  const int64_t zz = static_cast<int64_t>(lhs.z.GetRaw()) * rhs.z.GetRaw();
-  const int64_t ww = static_cast<int64_t>(lhs.w.GetRaw()) * rhs.w.GetRaw();
+  auto xx = static_cast<int64_t>(lhs.x.GetRaw()) * rhs.x.GetRaw();
+  auto yy = static_cast<int64_t>(lhs.y.GetRaw()) * rhs.y.GetRaw();
+  auto zz = static_cast<int64_t>(lhs.z.GetRaw()) * rhs.z.GetRaw();
+  auto ww = static_cast<int64_t>(lhs.w.GetRaw()) * rhs.w.GetRaw();
   return fixed16::Make((xx + yy + zz + ww) >> fixed16::FRAC);
 }
 
@@ -606,9 +606,9 @@ inline float TDot<float>(const TVector4<float> &lhs,
 inline void Mul(VECTOR4 *pvOut, const VECTOR3 &vIn, const MATRIX44 &mat) {
   ASSERT(pvOut);
 
-  const floatf x = vIn.x;
-  const floatf y = vIn.y;
-  const floatf z = vIn.z;
+  auto x = vIn.x;
+  auto y = vIn.y;
+  auto z = vIn.z;
 
   pvOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31) + mat._41;
   pvOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32) + mat._42;
@@ -619,9 +619,9 @@ inline void Mul(VECTOR4 *pvOut, const VECTOR3 &vIn, const MATRIX44 &mat) {
 inline void Mul4x3(VECTOR3 *pvOut, const VECTOR3 &vIn, const MATRIX44 &mat) {
   ASSERT(pvOut);
 
-  const floatf x = vIn.x;
-  const floatf y = vIn.y;
-  const floatf z = vIn.z;
+  auto x = vIn.x;
+  auto y = vIn.y;
+  auto z = vIn.z;
 
   pvOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31) + mat._41;
   pvOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32) + mat._42;
@@ -631,9 +631,9 @@ inline void Mul4x3(VECTOR3 *pvOut, const VECTOR3 &vIn, const MATRIX44 &mat) {
 inline void Mul(VECTOR3 *pvOut, const VECTOR3 &vIn, const MATRIX44 &mat) {
   ASSERT(pvOut);
 
-  const floatf x = vIn.x;
-  const floatf y = vIn.y;
-  const floatf z = vIn.z;
+  auto x = vIn.x;
+  auto y = vIn.y;
+  auto z = vIn.z;
 
   pvOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31);
   pvOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32);
@@ -643,10 +643,10 @@ inline void Mul(VECTOR3 *pvOut, const VECTOR3 &vIn, const MATRIX44 &mat) {
 inline void Mul(VECTOR4 *pvOut, const VECTOR4 &vIn, const MATRIX44 &mat) {
   ASSERT(pvOut);
 
-  const floatf x = vIn.x;
-  const floatf y = vIn.y;
-  const floatf z = vIn.z;
-  const floatf w = vIn.w;
+  auto x = vIn.x;
+  auto y = vIn.y;
+  auto z = vIn.z;
+  auto w = vIn.w;
 
   pvOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31, w, mat._41);
   pvOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32, w, mat._42);
@@ -657,10 +657,10 @@ inline void Mul(VECTOR4 *pvOut, const VECTOR4 &vIn, const MATRIX44 &mat) {
 inline void Mul(VECTOR3 *pvOut, const VECTOR4 &vIn, const MATRIX44 &mat) {
   ASSERT(pvOut);
 
-  const floatf x = vIn.x;
-  const floatf y = vIn.y;
-  const floatf z = vIn.z;
-  const floatf w = vIn.w;
+  auto x = vIn.x;
+  auto y = vIn.y;
+  auto z = vIn.z;
+  auto w = vIn.w;
 
   pvOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31, w, mat._41);
   pvOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32, w, mat._42);
@@ -670,10 +670,10 @@ inline void Mul(VECTOR3 *pvOut, const VECTOR4 &vIn, const MATRIX44 &mat) {
 inline void Mul(VECTOR2 *pvOut, const VECTOR4 &vIn, const MATRIX44 &mat) {
   ASSERT(pvOut);
 
-  const floatf x = vIn.x;
-  const floatf y = vIn.y;
-  const floatf z = vIn.z;
-  const floatf w = vIn.w;
+  auto x = vIn.x;
+  auto y = vIn.y;
+  auto z = vIn.z;
+  auto w = vIn.w;
 
   pvOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31, w, mat._41);
   pvOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32, w, mat._42);
@@ -682,15 +682,15 @@ inline void Mul(VECTOR2 *pvOut, const VECTOR4 &vIn, const MATRIX44 &mat) {
 inline void Mul(VECTOR2 *pvOut, const VECTOR2 &vIn, const MATRIX44 &mat) {
   ASSERT(pvOut);
 
-  const floatf x = vIn.x;
-  const floatf y = vIn.y;
+  auto x = vIn.x;
+  auto y = vIn.y;
 
   pvOut->x = MulAdd(x, mat._11, y, mat._21) + mat._41;
   pvOut->y = MulAdd(x, mat._12, y, mat._22) + mat._42;
 }
 
 inline floatf Length(const VECTOR3 &vIn) {
-  const floatf fDot = Math::TDot<floatf>(vIn, vIn);
+  auto fDot = Math::TDot<floatf>(vIn, vIn);
   if (!Math::TIsZero(fDot - fONE)) {
     return Math::TSqrt(fDot);
   }
@@ -701,9 +701,9 @@ inline floatf Length(const VECTOR3 &vIn) {
 inline void Normalize(VECTOR3 *pvOut) {
   ASSERT(pvOut);
 
-  const floatf fDot = Math::TDot<floatf>(*pvOut, *pvOut);
+  auto fDot = Math::TDot<floatf>(*pvOut, *pvOut);
   if (!Math::TIsZero(fDot - fONE) && !Math::TIsZero(fDot)) {
-    const floatf fInvLen = Math::TInvSqrt(fDot);
+    auto fInvLen = Math::TInvSqrt(fDot);
     pvOut->x = pvOut->x * fInvLen;
     pvOut->y = pvOut->y * fInvLen;
     pvOut->z = pvOut->z * fInvLen;
@@ -845,11 +845,11 @@ inline void Inverse33(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
   pmatOut->_32 = -MulSub(matIn._11, matIn._23, matIn._13, matIn._21);
   pmatOut->_33 = MulSub(matIn._11, matIn._22, matIn._12, matIn._21);
 
-  const floatf fDet = MulAdd(matIn._11, pmatOut->_11, matIn._21, pmatOut->_21,
+  auto fDet = MulAdd(matIn._11, pmatOut->_11, matIn._21, pmatOut->_21,
                              matIn._31, pmatOut->_31);
 
   if (!Math::TIsZero(fDet - fONE)) {
-    const floatf fDetInv = Math::TInv<floatf>(fDet);
+    auto fDetInv = Math::TInv<floatf>(fDet);
 
     pmatOut->_11 *= fDetInv;
     pmatOut->_12 *= fDetInv;
@@ -868,12 +868,12 @@ inline void Inverse33(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
 inline void Inverse(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
   ASSERT(pmatOut);
 
-  const floatf fB0 = MulSub(matIn._13, matIn._24, matIn._23, matIn._14);
-  const floatf fB1 = MulSub(matIn._13, matIn._34, matIn._33, matIn._14);
-  const floatf fB2 = MulSub(matIn._13, matIn._44, matIn._43, matIn._14);
-  const floatf fB3 = MulSub(matIn._23, matIn._34, matIn._33, matIn._24);
-  const floatf fB4 = MulSub(matIn._23, matIn._44, matIn._43, matIn._24);
-  const floatf fB5 = MulSub(matIn._33, matIn._44, matIn._43, matIn._34);
+  auto fB0 = MulSub(matIn._13, matIn._24, matIn._23, matIn._14);
+  auto fB1 = MulSub(matIn._13, matIn._34, matIn._33, matIn._14);
+  auto fB2 = MulSub(matIn._13, matIn._44, matIn._43, matIn._14);
+  auto fB3 = MulSub(matIn._23, matIn._34, matIn._33, matIn._24);
+  auto fB4 = MulSub(matIn._23, matIn._44, matIn._43, matIn._24);
+  auto fB5 = MulSub(matIn._33, matIn._44, matIn._43, matIn._34);
 
   pmatOut->_11 = (matIn._22 * fB5 - matIn._32 * fB4 + matIn._42 * fB3);
   pmatOut->_12 = (-matIn._12 * fB5 + matIn._32 * fB2 - matIn._42 * fB1);
@@ -885,12 +885,12 @@ inline void Inverse(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
   pmatOut->_23 = (-matIn._11 * fB4 + matIn._21 * fB2 - matIn._41 * fB0);
   pmatOut->_24 = (matIn._11 * fB3 - matIn._21 * fB1 + matIn._31 * fB0);
 
-  const floatf fA0 = MulSub(matIn._11, matIn._22, matIn._21, matIn._12);
-  const floatf fA1 = MulSub(matIn._11, matIn._32, matIn._31, matIn._12);
-  const floatf fA2 = MulSub(matIn._11, matIn._42, matIn._41, matIn._12);
-  const floatf fA3 = MulSub(matIn._21, matIn._32, matIn._31, matIn._22);
-  const floatf fA4 = MulSub(matIn._21, matIn._42, matIn._41, matIn._22);
-  const floatf fA5 = MulSub(matIn._31, matIn._42, matIn._41, matIn._32);
+  auto fA0 = MulSub(matIn._11, matIn._22, matIn._21, matIn._12);
+  auto fA1 = MulSub(matIn._11, matIn._32, matIn._31, matIn._12);
+  auto fA2 = MulSub(matIn._11, matIn._42, matIn._41, matIn._12);
+  auto fA3 = MulSub(matIn._21, matIn._32, matIn._31, matIn._22);
+  auto fA4 = MulSub(matIn._21, matIn._42, matIn._41, matIn._22);
+  auto fA5 = MulSub(matIn._31, matIn._42, matIn._41, matIn._32);
 
   pmatOut->_31 = (matIn._24 * fA5 - matIn._34 * fA4 + matIn._44 * fA3);
   pmatOut->_32 = (-matIn._14 * fA5 + matIn._34 * fA2 - matIn._44 * fA1);
@@ -902,11 +902,11 @@ inline void Inverse(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
   pmatOut->_43 = (-matIn._13 * fA4 + matIn._23 * fA2 - matIn._43 * fA0);
   pmatOut->_44 = (matIn._13 * fA3 - matIn._23 * fA1 + matIn._33 * fA0);
 
-  const floatf fDet = MulAdd(fA0, fB5, fA2, fB3, fA3, fB2, fA5, fB0) -
+  auto fDet = MulAdd(fA0, fB5, fA2, fB3, fA3, fB2, fA5, fB0) -
                       MulAdd(fA1, fB4, fA4, fB1);
 
   if (!Math::TIsZero(fDet - fONE)) {
-    const floatf fDetInv = Math::TInv<floatf>(fDet);
+    auto fDetInv = Math::TInv<floatf>(fDet);
 
     pmatOut->_11 *= fDetInv;
     pmatOut->_12 *= fDetInv;
@@ -934,15 +934,15 @@ inline void Ortho(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
                   floatf top, floatf zNear, floatf zFar) {
   ASSERT(pmatOut);
 
-  const floatf fWidth = right - left;
-  const floatf fHeight = top - bottom;
-  const floatf fDepth = zFar - zNear;
+  auto fWidth = right - left;
+  auto fHeight = top - bottom;
+  auto fDepth = zFar - zNear;
 
-  const floatf fInvWidth =
+  auto fInvWidth =
       (fWidth != fZERO) ? Math::TInv<floatf>(fWidth) : fZERO;
-  const floatf fInvHeight =
+  auto fInvHeight =
       (fHeight != fZERO) ? Math::TInv<floatf>(fHeight) : fZERO;
-  const floatf fInvDepth =
+  auto fInvDepth =
       (fDepth != fZERO) ? Math::TInv<floatf>(fDepth) : fZERO;
 
   pmatOut->_11 = fTWO * fInvWidth;
@@ -970,18 +970,18 @@ inline void Frustum(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
                     floatf top, floatf zNear, floatf zFar) {
   ASSERT(pmatOut);
 
-  const floatf fWidth = right - left;
-  const floatf fHeight = top - bottom;
-  const floatf fDepth = zFar - zNear;
+  auto fWidth = right - left;
+  auto fHeight = top - bottom;
+  auto fDepth = zFar - zNear;
 
-  const floatf fInvWidth =
+  auto fInvWidth =
       (fWidth != fZERO) ? Math::TInv<floatf>(fWidth) : fZERO;
-  const floatf fInvHeight =
+  auto fInvHeight =
       (fHeight != fZERO) ? Math::TInv<floatf>(fHeight) : fZERO;
-  const floatf fInvDepth =
+  auto fInvDepth =
       (fDepth != fZERO) ? Math::TInv<floatf>(fDepth) : fZERO;
 
-  const floatf fTwoNear = fTWO * zNear;
+  auto fTwoNear = fTWO * zNear;
 
   pmatOut->_11 = fTwoNear * fInvWidth;
   pmatOut->_12 = fZERO;
@@ -1011,13 +1011,13 @@ inline void Rotate(MATRIX44 *pmatOut, floatf angle, floatf x, floatf y,
   VECTOR3 vAxis(x, y, z);
   Math::Normalize(&vAxis);
 
-  const floatf fSin = Math::TSin(angle);
-  const floatf fCos = Math::TCos(angle);
-  const floatf fICos = fONE - fCos;
+  auto fSin = Math::TSin(angle);
+  auto fCos = Math::TCos(angle);
+  auto fICos = fONE - fCos;
 
-  const floatf _fA = fICos * vAxis.x * vAxis.y;
-  const floatf _fB = fICos * vAxis.x * vAxis.z;
-  const floatf _fC = fICos * vAxis.y * vAxis.z;
+  auto _fA = fICos * vAxis.x * vAxis.y;
+  auto _fB = fICos * vAxis.x * vAxis.z;
+  auto _fC = fICos * vAxis.y * vAxis.z;
 
   pmatOut->_11 = fICos * vAxis.x * vAxis.x + fCos;
   pmatOut->_12 = _fA + vAxis.z * fSin;

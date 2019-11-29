@@ -43,7 +43,7 @@ GLenum CGLSurface::Create(CGLSurface **ppSurface,
   ASSERT(ppSurface);
 
   // Create a new surface object
-  CGLSurface *pSurface = new CGLSurface();
+  auto pSurface = new CGLSurface();
   if (nullptr == pSurface) {
     __glLogError(_T("CGLSurface allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
@@ -169,7 +169,7 @@ GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
     uint32_t bmiColors[3];
   } bmp_info;
 
-  const uint8_t nBPP = Format::GetInfo(m_pColorDesc.Format).BytePerPixel;
+  uint8_t nBPP = Format::GetInfo(m_pColorDesc.Format).BytePerPixel;
   
   bmp_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
   bmp_info.bmiHeader.biWidth = m_pColorDesc.Width;

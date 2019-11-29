@@ -62,7 +62,7 @@ uint32_t iSqrt(uint32_t rhs) {
   uint32_t s = (31 - Clz(rhs)) >> 1;
   uint32_t b = 1 << s;
   do {
-    const uint32_t tmp = (b + (g << 1)) << s;
+    uint32_t tmp = (b + (g << 1)) << s;
     if (rhs >= tmp) {
       g += b;
       rhs -= tmp;
@@ -76,7 +76,7 @@ uint32_t iSqrt(uint32_t rhs) {
 
 // By Ken Turkowski's Inverse Square Root from "Graphics Gems V".
 template <> fixed16 TInvSqrt(fixed16 rhs) {
-  const int value = rhs.GetRaw();
+  int value = rhs.GetRaw();
 
   ASSERT(value > 0);
 
@@ -98,7 +98,7 @@ template <> fixed16 TInvSqrt(fixed16 rhs) {
     }
 
     // Two iterations of newton-raphson x = ( x / 2 ) * ( 3 - a * x * x )
-    const int64_t a = static_cast<int64_t>(value);
+    auto a = static_cast<int64_t>(value);
     x = static_cast<int>(
         ((x >> 1) * ((3 << 16) - ((((a * x) >> 16) * x) >> 16))) >> 16);
     x = static_cast<int>(
@@ -211,7 +211,7 @@ template <> fixed16 TSin(fixed16 rhs) {
   value >>= 16;
   value >>= 4;
 
-  const int result = (value & 0x400) ? __fp_sin_table[0x3ff - (value & 0x3ff)]
+  int result = (value & 0x400) ? __fp_sin_table[0x3ff - (value & 0x3ff)]
                                      : __fp_sin_table[value & 0x3ff];
 
   return fixed16::Make((value & 0x800) ? -result : result);
@@ -232,7 +232,7 @@ template <> fixed16 TCos(fixed16 rhs) {
   value += 0x4000;
   value >>= 4;
 
-  const int result = (value & 0x400) ? __fp_sin_table[0x3ff - (value & 0x3ff)]
+  int result = (value & 0x400) ? __fp_sin_table[0x3ff - (value & 0x3ff)]
                                      : __fp_sin_table[value & 0x3ff];
 
   return fixed16::Make((value & 0x800) ? -result : result);
@@ -263,7 +263,7 @@ int Inverse32(int value) {
     }
 
     // two iterations of newton-raphson  x = x * ( 2 - a * x )
-    const int64_t a = static_cast<int64_t>(value);
+    auto a = static_cast<int64_t>(value);
     x = static_cast<int>((x * ((2 << 16) - ((a * x) >> 16))) >> 16);
     x = static_cast<int>((x * ((2 << 16) - ((a * x) >> 16))) >> 16);
 

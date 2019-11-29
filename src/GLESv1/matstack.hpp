@@ -60,7 +60,7 @@ public:
   template <class T> void TGetTop(T *pDst) const {
     ASSERT(pDst);
 
-    const floatf *const pSrc = m_pMatrices[m_curIndex]._m;
+    auto pSrc = m_pMatrices[m_curIndex]._m;
     for (uint32_t i = 0; i < 16; ++i) {
       pDst[i] = Math::TCast<T>(pSrc[i]);
     }

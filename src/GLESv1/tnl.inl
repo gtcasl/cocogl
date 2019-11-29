@@ -96,8 +96,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
   ASSERT(pOut);
   ASSERT(pbIn);
 
-  const typename T::Input *const pIn =
-      reinterpret_cast<const typename T::Input *>(pbIn);
+  auto pIn = reinterpret_cast<const typename T::Input *>(pbIn);
 
   if
     constexpr(T::Input::DIM >= 1) { pOut->x = Math::TCast<floatf>(pIn->x); }
@@ -165,9 +164,9 @@ template <bool ColorMaterial, eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
 inline void CTNL::TProcessLighting_OneSided(uint32_t count) {
 
-  VECTOR3 *const pvEyePos = (VECTOR3 *)m_pbVertexData[VERTEXDATA_EYEPOS];
-  ColorARGB *const pcFrontColors =
-      (ColorARGB *)m_pbVertexData[VERTEXDATA_FRONTCOLOR];
+  auto pvEyePos = reinterpret_cast<VECTOR3*>(m_pbVertexData[VERTEXDATA_EYEPOS]);
+  auto pcFrontColors =
+      reinterpret_cast<ColorARGB*>(m_pbVertexData[VERTEXDATA_FRONTCOLOR]);
 
   VECTOR3 vNormal;
   VECTOR4 vVertexColor;
@@ -263,11 +262,11 @@ template <bool ColorMaterial, eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
 inline void CTNL::TProcessLighting_TwoSided(uint32_t count) {
 
-  VECTOR3 *const pvEyePos = (VECTOR3 *)m_pbVertexData[VERTEXDATA_EYEPOS];
-  ColorARGB *const pcFrontColors =
-      (ColorARGB *)m_pbVertexData[VERTEXDATA_FRONTCOLOR];
-  ColorARGB *const pcBackColors =
-      (ColorARGB *)m_pbVertexData[VERTEXDATA_BACKCOLOR];
+  auto pvEyePos = reinterpret_cast<VECTOR3*>(m_pbVertexData[VERTEXDATA_EYEPOS]);
+  auto pcFrontColors =
+      reinterpret_cast<ColorARGB*>(m_pbVertexData[VERTEXDATA_FRONTCOLOR]);
+  auto pcBackColors =
+      reinterpret_cast<ColorARGB*>(m_pbVertexData[VERTEXDATA_BACKCOLOR]);
 
   VECTOR3 vNormal;
   VECTOR4 vVertexColor;
@@ -375,11 +374,11 @@ inline void CTNL::TProcessLighting_TwoSided(uint32_t count) {
 
 template <eVertexFormat VertexFormat>
 void CTNL::TProcessVertexColor(uint32_t count) {
-  ColorARGB *const pcFrontColors =
-      (ColorARGB *)m_pbVertexData[VERTEXDATA_FRONTCOLOR];
+  auto pcFrontColors =
+      reinterpret_cast<ColorARGB*>(m_pbVertexData[VERTEXDATA_FRONTCOLOR]);
 
-  const uint8_t *const pbIn = m_colorDecode.pBits;
-  const uint32_t stride = m_colorDecode.Stride;
+  auto pbIn = m_colorDecode.pBits;
+  uint32_t stride = m_colorDecode.Stride;
 
   for (uint32_t i = 0; i < count; ++i) {
     VECTOR4 vColor;
@@ -404,13 +403,11 @@ void CTNL::TProcessVertexColor(uint32_t count) {
 template <bool Transform, eVertexFormat VertexFormat>
 void CTNL::TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
                              uint32_t count) {
-  TEXCOORD2 *const pvTexCoords =
-      (TEXCOORD2 *)m_pbVertexData[VERTEXDATA_TEXCOORD0 + dstIndex];
-
+  auto pvTexCoords = reinterpret_cast<TEXCOORD2*>(m_pbVertexData[VERTEXDATA_TEXCOORD0 + dstIndex]);
   const MATRIX44 &transform = m_pMsTexCoords[srcIndex]->GetMatrix();
 
-  const uint8_t *const pbIn = m_texCoordDecodes[srcIndex].pBits;
-  const uint32_t stride = m_texCoordDecodes[srcIndex].Stride;
+  auto pbIn = m_texCoordDecodes[srcIndex].pBits;
+  uint32_t stride = m_texCoordDecodes[srcIndex].Stride;
 
   for (uint32_t i = 0; i < count; ++i) {
     typename TVertexData<VertexFormat>::Output vIn;
@@ -424,7 +421,7 @@ void CTNL::TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
     if
       constexpr(TVertexData<VertexFormat>::Output::DIM >= 4) {
         if (!Math::TIsZero(vIn.w - fONE) && !Math::TIsZero(vIn.w)) {
-          const floatf fInvW = Math::TInv<floatf>(vIn.w);
+          auto fInvW = Math::TInv<floatf>(vIn.w);
           vIn.x *= fInvW;
           vIn.y *= fInvW;
         }
@@ -437,7 +434,7 @@ void CTNL::TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
 
 template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
 void CTNL::TProcessPointSize(uint32_t count) {
-  fixed4 *const pfPointSizes = (fixed4 *)m_pbVertexData[VERTEXDATA_POINTSIZE];
+  auto pfPointSizes = reinterpret_cast<fixed4*>(m_pbVertexData[VERTEXDATA_POINTSIZE]);
 
   const VECTOR3 &vAttenuation = m_pointParams.vAttenuation;
   const VECTOR3 *pvEyePos;
@@ -445,7 +442,7 @@ void CTNL::TProcessPointSize(uint32_t count) {
 
   if
     constexpr(QuadraticAttenuation) {
-      pvEyePos = (VECTOR3 *)m_pbVertexData[VERTEXDATA_EYEPOS];
+      pvEyePos = reinterpret_cast<VECTOR3*>(m_pbVertexData[VERTEXDATA_EYEPOS]);
     }
   else {
     fInvAtt = vAttenuation.x;
@@ -454,8 +451,8 @@ void CTNL::TProcessPointSize(uint32_t count) {
     }
   }
 
-  const uint8_t *const pbIn = m_pointSizeDecode.pBits;
-  const uint32_t stride = m_pointSizeDecode.Stride;
+  auto pbIn = m_pointSizeDecode.pBits;
+  uint32_t stride = m_pointSizeDecode.Stride;
 
   for (uint32_t i = 0; i < count; ++i) {
     VECTOR1 vPointSize;
@@ -465,8 +462,8 @@ void CTNL::TProcessPointSize(uint32_t count) {
 
     if
       constexpr(QuadraticAttenuation) {
-        const floatf fEyeDist = Math::TAbs(pvEyePos[i].z);
-        const floatf fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
+        auto fEyeDist = Math::TAbs(pvEyePos[i].z);
+        auto fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
                                vAttenuation.y * fEyeDist + vAttenuation.x;
         if (!Math::TIsZero(fInvAtt - fONE)) {
           vPointSize.x *= Math::TInvSqrt(fInvAtt);
@@ -483,35 +480,35 @@ void CTNL::TProcessPointSize(uint32_t count) {
 
 template <eFogMode FogMode> void CTNL::TProcessFog(uint32_t count) {
 
-  VECTOR3 *const pvEyePos = (VECTOR3 *)m_pbVertexData[VERTEXDATA_EYEPOS];
-  float20 *const pfFogs = (float20 *)m_pbVertexData[VERTEXDATA_FOG];
+  auto pvEyePos = reinterpret_cast<VECTOR3*>(m_pbVertexData[VERTEXDATA_EYEPOS]);
+  auto pfFogs = reinterpret_cast<float20*>(m_pbVertexData[VERTEXDATA_FOG]);
 
   if
     constexpr(FogMode == FogLinear) {
-      const floatf fFogEnd = m_fog.GetFactor(GL_FOG_END);
-      const fixedRF fFogRatio = m_fog.fRatio;
+      auto fFogEnd = m_fog.GetFactor(GL_FOG_END);
+      fixedRF fFogRatio = m_fog.fRatio;
 
       for (uint32_t i = 0; i < count; ++i) {
-        const floatf fEyeDist = Math::TAbs(pvEyePos[i].z);
+        auto fEyeDist = Math::TAbs(pvEyePos[i].z);
         pfFogs[i] = Math::TSat(fFogRatio * (fFogEnd - fEyeDist));
       }
     }
   if
     constexpr(FogMode == FogExp) {
-      const floatf fFogDensity = m_fog.GetFactor(GL_FOG_DENSITY);
+      auto fFogDensity = m_fog.GetFactor(GL_FOG_DENSITY);
 
       for (uint32_t i = 0; i < count; ++i) {
-        const floatf fEyeDist = Math::TAbs(pvEyePos[i].z);
+        auto fEyeDist = Math::TAbs(pvEyePos[i].z);
         floatf fTmp = fEyeDist * fFogDensity;
         pfFogs[i] = static_cast<fixedRF>(Math::TSat(Math::TExp(-fTmp)));
       }
     }
   if
     constexpr(FogMode == FogExp2) {
-      const floatf fFogDensity = m_fog.GetFactor(GL_FOG_DENSITY);
+      auto fFogDensity = m_fog.GetFactor(GL_FOG_DENSITY);
 
       for (uint32_t i = 0; i < count; ++i) {
-        const floatf fEyeDist = Math::TAbs(pvEyePos[i].z);
+        auto fEyeDist = Math::TAbs(pvEyePos[i].z);
         floatf fTmp = fEyeDist * fFogDensity;
         pfFogs[i] =
             static_cast<fixedRF>(Math::TSat(Math::TExp(-(fTmp * fTmp))));

@@ -255,7 +255,7 @@ public:
   }
 
   HRESULT PushBack(const T &item) {
-    Node *const pNew = new Node(item);
+    auto pNew = new Node(item);
     if (nullptr == pNew) {
       return E_OUTOFMEMORY;
     }
@@ -271,7 +271,7 @@ public:
   }
 
   HRESULT PushFront(const T &item) {
-    Node *const pNew = new Node(item);
+    auto pNew = new Node(item);
     if (nullptr == pNew) {
       return E_OUTOFMEMORY;
     }
@@ -289,7 +289,7 @@ public:
   void PopBack() {
     ASSERT(m_size);
 
-    Node *const pTail = m_pEnd->pPrev;
+    auto pTail = m_pEnd->pPrev;
     pTail->pPrev->pNext = m_pEnd;
     m_pEnd->pPrev = pTail->pPrev;
 
@@ -301,7 +301,7 @@ public:
   void PopFront() {
     ASSERT(m_size);
 
-    Node *const pHead = m_pEnd->pNext;
+    auto pHead = m_pEnd->pNext;
     pHead->pNext->pPrev = m_pEnd;
     m_pEnd->pNext = pHead->pNext;
 
@@ -312,12 +312,12 @@ public:
 
   // Insert an item before the given iterator
   HRESULT Insert(const Iter &iter, const T &item) {
-    Node *const pNew = new Node(item);
+    auto pNew = new Node(item);
     if (nullptr == pNew) {
       return E_OUTOFMEMORY;
     }
 
-    Node *const pNode = iter.m_pNode;
+    auto pNode = iter.m_pNode;
     ASSERT(pNode);
     pNew->pNext = pNode;
     pNew->pPrev = pNode->pPrev;
@@ -330,10 +330,10 @@ public:
   }
 
   void Splice(const Iter &iterDst, TList &listSrc, const Iter &iterSrc) {
-    Node *const pSrc = iterSrc.m_pNode;
+    auto pSrc = iterSrc.m_pNode;
     ASSERT(pSrc);
 
-    Node *const pDst = iterDst.m_pNode;
+    auto pDst = iterDst.m_pNode;
     ASSERT(pDst);
 
     if ((pSrc == pDst) && (this == &listSrc)) {
@@ -357,7 +357,7 @@ public:
   }
 
   void Erase(const Iter &iter) {
-    Node *const pNode = iter.m_pNode;
+    auto pNode = iter.m_pNode;
     ASSERT(pNode);
 
     pNode->pPrev->pNext = pNode->pNext;

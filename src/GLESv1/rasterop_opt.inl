@@ -22,11 +22,11 @@ bool TStencilTest(uint32_t depthValue, uint32_t stencilRef,
                   void *pDSBuffer) {
   ASSERT(pDSBuffer);
 
-  const uint32_t depthStencilValue = *reinterpret_cast<uint32_t *>(pDSBuffer);
-  const uint32_t stencilValue = depthStencilValue >> 16;
-  const uint32_t _depthValue = depthStencilValue & 0xffff;
-  const uint32_t _stencilValue = stencilValue & stencilMask;
-  const uint32_t _stencilRef = stencilRef & stencilMask;
+  uint32_t depthStencilValue = *reinterpret_cast<uint32_t *>(pDSBuffer);
+  uint32_t stencilValue = depthStencilValue >> 16;
+  uint32_t _depthValue = depthStencilValue & 0xffff;
+  uint32_t _stencilValue = stencilValue & stencilMask;
+  uint32_t _stencilRef = stencilRef & stencilMask;
 
   uint32_t stencilResult;
   uint32_t writeMask = 0;
@@ -53,7 +53,7 @@ bool TStencilTest(uint32_t depthValue, uint32_t stencilRef,
 
   if
     constexpr(DepthWrite || StencilWrite) {
-      const uint32_t value = ((stencilResult << 16) | depthValue);
+      uint32_t value = ((stencilResult << 16) | depthValue);
       *reinterpret_cast<uint32_t *>(pDSBuffer) =
           (depthStencilValue & ~writeMask) | (value & writeMask);
     }
@@ -126,7 +126,7 @@ void TGetTexEnvColor(Color4 *pInOut, uint32_t texture, ColorARGB cEnvColor) {
 template <uint32_t Format, bool NativeColor>
 inline void TCalcFog(Color4 *pInOut, ColorARGB cFogColor, fixedRX fFactor) {
 
-  const int factor = fFactor.GetRaw();
+  int factor = fFactor.GetRaw();
 
   if
     constexpr(NativeColor) {
@@ -202,7 +202,7 @@ private:
 
     if
       constexpr(BlendOp == BLEND_SRC_ALPHA) {
-        const uint32_t alpha =
+        uint32_t alpha =
             srcAlpha >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const TColorNative<FORMAT_R5G6B5> c0(inColor);
         return c0.Mul(alpha);
@@ -210,7 +210,7 @@ private:
 
     if
       constexpr(BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
-        const uint32_t alpha =
+        uint32_t alpha =
             (0xff - srcAlpha) >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const TColorNative<FORMAT_R5G6B5> c0(inColor);
         return c0.Mul(alpha);
@@ -241,7 +241,7 @@ public:
 
         if
           constexpr(AlphaBlendSrc) {
-            const uint32_t alpha =
+            uint32_t alpha =
                 cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
             const TColorNative<FORMAT_R5G6B5> c0(dstColor);
             const TColorNative<FORMAT_R5G6B5> c1(srcColor);
@@ -250,7 +250,7 @@ public:
 
         if
           constexpr(AlphaBlendDst) {
-            const uint32_t alpha =
+            uint32_t alpha =
                 cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
             const TColorNative<FORMAT_R5G6B5> c0(srcColor);
             const TColorNative<FORMAT_R5G6B5> c1(dstColor);
@@ -395,7 +395,7 @@ public:
     SurfaceDesc surface0, surface1;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         sampler0 = &rasterData.Samplers[0];
         cEnvColor0 = sampler0->cEnvColor_MaxMipLevel;
 
@@ -403,7 +403,7 @@ public:
           constexpr(!Mip0) { surface0 = sampler0->pMipLevels[0]; }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             sampler1 = &rasterData.Samplers[1];
             cEnvColor1 = sampler1->cEnvColor_MaxMipLevel;
 
@@ -441,8 +441,8 @@ public:
         }
       }
 
-    const fixed4 fOffsetX = fixed4(lx) - rasterData.fRefX;
-    const fixed4 fOffsetY = fixed4(y) - rasterData.fRefY;
+    auto fOffsetX = fixed4(lx) - rasterData.fRefX;
+    auto fOffsetY = fixed4(y) - rasterData.fRefY;
 
     fixedRX fZ, fZdA;
 
@@ -504,7 +504,7 @@ public:
     fixedRX fU0dA, fV0dA, fU1dA, fV1dA;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         fU0dA = rasterData.Registers[REG_TEX0 + 0].m[0];
         fixedRX fU0dB = rasterData.Registers[REG_TEX0 + 0].m[1];
         fixedRX fU0dC = rasterData.Registers[REG_TEX0 + 0].m[2];
@@ -519,7 +519,7 @@ public:
           constexpr(Mip0) { fM0 = rasterData.Registers[REG_MIP0 + 0].m[2]; }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1dA = rasterData.Registers[REG_TEX1 + 0].m[0];
             fixedRX fU1dB = rasterData.Registers[REG_TEX1 + 0].m[1];
             fixedRX fU1dC = rasterData.Registers[REG_TEX1 + 0].m[2];
@@ -555,17 +555,17 @@ public:
 
     if
       constexpr(DepthTest || StencilTest) {
-        uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-        const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
+        auto pDepthStencilBits = rasterData.pDepthStencilBits;
+        int32_t depthStencilPitch = rasterData.DepthStencilPitch;
         pDS =
             lx * DepthStencilStride + y * depthStencilPitch + pDepthStencilBits;
       }
 
-    const uint32_t colorWriteMask = rasterData.ColorWriteMask;
-    uint8_t *const pColorBits = rasterData.pColorBits;
-    const int32_t colorPitch = rasterData.ColorPitch;
+    uint32_t colorWriteMask = rasterData.ColorWriteMask;
+    auto pColorBits = rasterData.pColorBits;
+    int32_t colorPitch = rasterData.ColorPitch;
     uint8_t *pCB = lx * ColorStride + y * colorPitch + pColorBits;
-    uint8_t *const pCBEnd = pCB + (rx - lx) * ColorStride;
+    auto pCBEnd = pCB + (rx - lx) * ColorStride;
 
     Color4 cColor(0xff, 0xff, 0xff, 0xff);
 
@@ -624,7 +624,7 @@ public:
           }
 
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             uint32_t texture;
 
             if
@@ -645,7 +645,7 @@ public:
                 &cColor, texture, cEnvColor0);
 
             if
-              constexpr(Texture1) {
+              constexpr(Texture1 != 0) {
                 if
                   constexpr(Mip1) {
                     texture = TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
@@ -703,7 +703,7 @@ public:
 
         uint32_t color;
 
-        const uint32_t dstColor =
+        uint32_t dstColor =
             *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
 
         if
@@ -746,13 +746,13 @@ public:
         constexpr(InterpolateAlpha) { fA += fAdA; }
 
       if
-        constexpr(Texture0) {
+        constexpr(Texture0 != 0) {
           fU0 += fU0dA;
           fV0 += fV0dA;
         }
 
       if
-        constexpr(Texture1) {
+        constexpr(Texture1 != 0) {
           fU1 += fU1dA;
           fV1 += fV1dA;
         }
@@ -856,7 +856,7 @@ public:
     SurfaceDesc surface0, surface1;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         sampler0 = &rasterData.Samplers[0];
         cEnvColor0 = sampler0->cEnvColor_MaxMipLevel;
 
@@ -864,7 +864,7 @@ public:
           constexpr(!Mip0) { surface0 = sampler0->pMipLevels[0]; }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             sampler1 = &rasterData.Samplers[1];
             cEnvColor1 = sampler1->cEnvColor_MaxMipLevel;
 
@@ -903,8 +903,8 @@ public:
         }
       }
 
-    const fixed4 fOffsetX = fixed4(lx) - rasterData.fRefX;
-    const fixed4 fOffsetY = fixed4(y) - rasterData.fRefY;
+    auto fOffsetX = fixed4(lx) - rasterData.fRefX;
+    auto fOffsetY = fixed4(y) - rasterData.fRefY;
 
     fixedRX fZ, fZdA;
 
@@ -968,7 +968,7 @@ public:
     fixedRX fM0OverW2dA, fM1OverW2dA;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         fRhwdA = rasterData.Registers[REG_RHW].m[0];
         fixedRX fRhwdB = rasterData.Registers[REG_RHW].m[1];
         fixedRX fRhwdC = rasterData.Registers[REG_RHW].m[2];
@@ -997,7 +997,7 @@ public:
           }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fixedRX fU1OverWdA = rasterData.Registers[REG_TEX1 + 0].m[0];
             fixedRX fU1OverWdB = rasterData.Registers[REG_TEX1 + 0].m[1];
             fixedRX fU1OverWdC = rasterData.Registers[REG_TEX1 + 0].m[2];
@@ -1039,7 +1039,7 @@ public:
           }
       }
 
-    const fixedW fW = Math::TInv<fixedW>(fRhw);
+    fixedW fW = Math::TInv<fixedW>(fRhw);
     fixedW fW2;
 
     if
@@ -1049,7 +1049,7 @@ public:
     fixedRX fM0, fM1;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         fU0 = fU0OverW * fW;
         fV0 = fV0OverW * fW;
 
@@ -1064,7 +1064,7 @@ public:
       }
 
     if
-      constexpr(Texture1) {
+      constexpr(Texture1 != 0) {
         fU1 = fU1OverW * fW;
         fV1 = fV1OverW * fW;
 
@@ -1082,26 +1082,26 @@ public:
 
     if
       constexpr(DepthTest || StencilTest) {
-        uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-        const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
+        auto pDepthStencilBits = rasterData.pDepthStencilBits;
+        int32_t depthStencilPitch = rasterData.DepthStencilPitch;
         pDS =
             lx * DepthStencilStride + y * depthStencilPitch + pDepthStencilBits;
       }
 
-    const uint32_t colorWriteMask = rasterData.ColorWriteMask;
-    uint8_t *const pColorBits = rasterData.pColorBits;
-    const int32_t colorPitch = rasterData.ColorPitch;
+    uint32_t colorWriteMask = rasterData.ColorWriteMask;
+    auto pColorBits = rasterData.pColorBits;
+    int32_t colorPitch = rasterData.ColorPitch;
     uint8_t *pCB = lx * ColorStride + y * colorPitch + pColorBits;
     int width = rx - lx;
 
     Color4 cColor(0xff, 0xff, 0xff, 0xff);
 
     do {
-      const uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
-      const uint32_t log2width = Math::iLog2(blockWidth1);
-      const uint32_t blockWidth = 1 << log2width;
+      uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
+      uint32_t log2width = Math::iLog2(blockWidth1);
+      uint32_t blockWidth = 1 << log2width;
       width -= blockWidth;
-      uint8_t *const pCBEnd = pCB + blockWidth * ColorStride;
+      auto pCBEnd = pCB + blockWidth * ColorStride;
 
       fixedRX fdUr0, fdVr0, fdMr0;
       fixedRX fdUr1, fdVr1, fdMr1;
@@ -1109,13 +1109,13 @@ public:
 
       if (log2width) {
         fRhw += fRhwdA << log2width;
-        const fixedW fWr = Math::TInv<fixedW>(fRhw);
+        fixedW fWr = Math::TInv<fixedW>(fRhw);
 
         if
           constexpr(InterpolateMips) { fWr2 = fWr * fWr; }
 
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             fU0OverW += fU0OverWdA << log2width;
             fV0OverW += fV0OverWdA << log2width;
             fdUr0 = (fU0OverW * fWr - fU0) >> log2width;
@@ -1129,7 +1129,7 @@ public:
           }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1OverW += fU1OverWdA << log2width;
             fV1OverW += fV1OverWdA << log2width;
             fdUr1 = (fU1OverW * fWr - fU1) >> log2width;
@@ -1199,7 +1199,7 @@ public:
 
           // Execute texture operations
           if
-            constexpr(Texture0) {
+            constexpr(Texture0 != 0) {
               uint32_t texture;
 
               if
@@ -1220,7 +1220,7 @@ public:
                   &cColor, texture, cEnvColor0);
 
               if
-                constexpr(Texture1) {
+                constexpr(Texture1 != 0) {
                   if
                     constexpr(Mip1) {
                       texture = TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
@@ -1278,7 +1278,7 @@ public:
 
           uint32_t color;
 
-          const uint32_t dstColor =
+          uint32_t dstColor =
               *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
 
           if
@@ -1320,7 +1320,7 @@ public:
           constexpr(InterpolateAlpha) { fA += fAdA; }
 
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             fU0 += fdUr0;
             fV0 += fdVr0;
 
@@ -1329,7 +1329,7 @@ public:
           }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1 += fdUr1;
             fV1 += fdVr1;
 
@@ -1434,7 +1434,7 @@ public:
     SurfaceDesc surface0, surface1;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         sampler0 = &rasterData.Samplers[0];
         cEnvColor0 = sampler0->cEnvColor_MaxMipLevel;
 
@@ -1442,7 +1442,7 @@ public:
           constexpr(!Mip0) { surface0 = sampler0->pMipLevels[0]; }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             sampler1 = &rasterData.Samplers[1];
             cEnvColor1 = sampler1->cEnvColor_MaxMipLevel;
 
@@ -1476,8 +1476,8 @@ public:
         }
       }
 
-    const fixed4 fOffsetX = fixed4(lx) - rasterData.fRefX;
-    const fixed4 fOffsetY = fixed4(y) - rasterData.fRefY;
+    auto fOffsetX = fixed4(lx) - rasterData.fRefX;
+    auto fOffsetY = fixed4(y) - rasterData.fRefY;
 
     fixedRX fZ, fZdA;
 
@@ -1539,7 +1539,7 @@ public:
     fixedRX fU0dA, fV0dA, fU1dA, fV1dA;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         fU0dA = rasterData.Registers[REG_TEX0 + 0].m[0];
         fixedRX fU0dB = rasterData.Registers[REG_TEX0 + 0].m[1];
         fixedRX fU0dC = rasterData.Registers[REG_TEX0 + 0].m[2];
@@ -1554,7 +1554,7 @@ public:
           constexpr(Mip0) { fM0 = rasterData.Registers[REG_MIP0 + 0].m[2]; }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1dA = rasterData.Registers[REG_TEX1 + 0].m[0];
             fixedRX fU1dB = rasterData.Registers[REG_TEX1 + 0].m[1];
             fixedRX fU1dC = rasterData.Registers[REG_TEX1 + 0].m[2];
@@ -1586,13 +1586,13 @@ public:
           }
       }
 
-    const uint32_t colorWriteMask = rasterData.ColorWriteMask;
-    uint8_t *const pColorBits = rasterData.pColorBits;
-    const int32_t colorPitch = rasterData.ColorPitch;
+    uint32_t colorWriteMask = rasterData.ColorWriteMask;
+    auto pColorBits = rasterData.pColorBits;
+    int32_t colorPitch = rasterData.ColorPitch;
     uint8_t *pCB = lx * ColorStride + y * colorPitch + pColorBits;
 
-    uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-    const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
+    auto pDepthStencilBits = rasterData.pDepthStencilBits;
+    int32_t depthStencilPitch = rasterData.DepthStencilPitch;
     uint8_t *pDS =
         lx * DepthStencilStride + y * depthStencilPitch + pDepthStencilBits;
 
@@ -1641,7 +1641,7 @@ public:
         break;
       }
 
-      const int offset = start - count;
+      int offset = start - count;
       start = count;
 
       do {
@@ -1690,7 +1690,7 @@ public:
       //--
 
       pCB += ColorStride * offset;
-      uint8_t *const pCBEnd = pCB + width * ColorStride;
+      auto pCBEnd = pCB + width * ColorStride;
 
       if
         constexpr(InterpolateColor) {
@@ -1703,13 +1703,13 @@ public:
         constexpr(InterpolateAlpha) { fA += fAdA * offset; }
 
       if
-        constexpr(Texture0) {
+        constexpr(Texture0 != 0) {
           fU0 += fU0dA * offset;
           fV0 += fV0dA * offset;
         }
 
       if
-        constexpr(Texture1) {
+        constexpr(Texture1 != 0) {
           fU1 += fU1dA * offset;
           fV1 += fV1dA * offset;
         }
@@ -1728,7 +1728,7 @@ public:
           }
 
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             uint32_t texture;
 
             if
@@ -1749,7 +1749,7 @@ public:
                 &cColor, texture, cEnvColor0);
 
             if
-              constexpr(Texture1) {
+              constexpr(Texture1 != 0) {
                 if
                   constexpr(Mip1) {
                     texture = TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
@@ -1777,7 +1777,7 @@ public:
 
         uint32_t color;
 
-        const uint32_t dstColor =
+        uint32_t dstColor =
             *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
 
         if
@@ -1811,13 +1811,13 @@ public:
           constexpr(InterpolateAlpha) { fA += fAdA; }
 
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             fU0 += fU0dA;
             fV0 += fV0dA;
           }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1 += fU1dA;
             fV1 += fV1dA;
           }
@@ -1921,7 +1921,7 @@ public:
     SurfaceDesc surface0, surface1;
 
     if
-      constexpr(Texture0) {
+      constexpr(Texture0 != 0) {
         sampler0 = &rasterData.Samplers[0];
         cEnvColor0 = sampler0->cEnvColor_MaxMipLevel;
 
@@ -1929,7 +1929,7 @@ public:
           constexpr(!Mip0) { surface0 = sampler0->pMipLevels[0]; }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             sampler1 = &rasterData.Samplers[1];
             cEnvColor1 = sampler1->cEnvColor_MaxMipLevel;
 
@@ -1963,8 +1963,8 @@ public:
         }
       }
 
-    const fixed4 fOffsetX = fixed4(lx) - rasterData.fRefX;
-    const fixed4 fOffsetY = fixed4(y) - rasterData.fRefY;
+    auto fOffsetX = fixed4(lx) - rasterData.fRefX;
+    auto fOffsetY = fixed4(y) - rasterData.fRefY;
 
     fixedRX fZ, fZdA;
 
@@ -1975,7 +1975,7 @@ public:
         if
           constexpr(InterpolateDepth) {
             fZdA = rasterData.Registers[REG_DEPTH].m[0];
-            const fixedRX fZdB = rasterData.Registers[REG_DEPTH].m[1];
+            fixedRX fZdB = rasterData.Registers[REG_DEPTH].m[1];
             fZ += fZdA * fOffsetX + fZdB * fOffsetY;
           }
       }
@@ -1994,22 +1994,22 @@ public:
         if
           constexpr(InterpolateColor) {
             fBdA = rasterData.Registers[REG_COLOR + 0].m[0];
-            const fixedRX fBdB = rasterData.Registers[REG_COLOR + 0].m[1];
+            fixedRX fBdB = rasterData.Registers[REG_COLOR + 0].m[1];
             fB += fBdA * fOffsetX + fBdB * fOffsetY;
 
             fGdA = rasterData.Registers[REG_COLOR + 1].m[0];
-            const fixedRX fGdB = rasterData.Registers[REG_COLOR + 1].m[1];
+            fixedRX fGdB = rasterData.Registers[REG_COLOR + 1].m[1];
             fG += fGdA * fOffsetX + fGdB * fOffsetY;
 
             fRdA = rasterData.Registers[REG_COLOR + 2].m[0];
-            const fixedRX fRdB = rasterData.Registers[REG_COLOR + 2].m[1];
+            fixedRX fRdB = rasterData.Registers[REG_COLOR + 2].m[1];
             fR += fRdA * fOffsetX + fRdB * fOffsetY;
           }
 
         if
           constexpr(InterpolateAlpha) {
             fAdA = rasterData.Registers[REG_COLOR + 3].m[0];
-            const fixedRX fAdB = rasterData.Registers[REG_COLOR + 3].m[1];
+            fixedRX fAdB = rasterData.Registers[REG_COLOR + 3].m[1];
             fA += fAdA * fOffsetX + fAdB * fOffsetY;
           }
 
@@ -2028,20 +2028,20 @@ public:
     fixedRX fM0OverW2dA, fM1OverW2dA;
 
     if
-      constexpr(Texture0) {
-        const fixedRX fRhwdA = rasterData.Registers[REG_RHW].m[0];
-        const fixedRX fRhwdB = rasterData.Registers[REG_RHW].m[1];
-        const fixedRX fRhwdC = rasterData.Registers[REG_RHW].m[2];
+      constexpr(Texture0 != 0) {
+        fixedRX fRhwdA = rasterData.Registers[REG_RHW].m[0];
+        fixedRX fRhwdB = rasterData.Registers[REG_RHW].m[1];
+        fixedRX fRhwdC = rasterData.Registers[REG_RHW].m[2];
         fRhw = fRhwdA * fOffsetX + fRhwdB * fOffsetY + fRhwdC;
 
         fU0OverWdA = rasterData.Registers[REG_TEX0 + 0].m[0];
-        const fixedRX fU0OverWdB = rasterData.Registers[REG_TEX0 + 0].m[1];
-        const fixedRX fU0OverWdC = rasterData.Registers[REG_TEX0 + 0].m[2];
+        fixedRX fU0OverWdB = rasterData.Registers[REG_TEX0 + 0].m[1];
+        fixedRX fU0OverWdC = rasterData.Registers[REG_TEX0 + 0].m[2];
         fU0OverW = fU0OverWdA * fOffsetX + fU0OverWdB * fOffsetY + fU0OverWdC;
 
         fV0OverWdA = rasterData.Registers[REG_TEX0 + 1].m[0];
-        const fixedRX fV0OverWdB = rasterData.Registers[REG_TEX0 + 1].m[1];
-        const fixedRX fV0OverWdC = rasterData.Registers[REG_TEX0 + 1].m[2];
+        fixedRX fV0OverWdB = rasterData.Registers[REG_TEX0 + 1].m[1];
+        fixedRX fV0OverWdC = rasterData.Registers[REG_TEX0 + 1].m[2];
         fV0OverW = fV0OverWdA * fOffsetX + fV0OverWdB * fOffsetY + fV0OverWdC;
 
         if
@@ -2051,23 +2051,23 @@ public:
             if
               constexpr(InterpolateMips & 0x1) {
                 fM0OverW2dA = rasterData.Registers[REG_MIP0].m[0];
-                const fixedRX fM0OverW2dB =
+                fixedRX fM0OverW2dB =
                     rasterData.Registers[REG_MIP0].m[1];
                 fM0OverW2 += fM0OverW2dA * fOffsetX + fM0OverW2dB * fOffsetY;
               }
           }
 
         if
-          constexpr(Texture1) {
+          constexpr(Texture1 != 0) {
             fU1OverWdA = rasterData.Registers[REG_TEX1 + 0].m[0];
-            const fixedRX fU1OverWdB = rasterData.Registers[REG_TEX1 + 0].m[1];
-            const fixedRX fU1OverWdC = rasterData.Registers[REG_TEX1 + 0].m[2];
+            fixedRX fU1OverWdB = rasterData.Registers[REG_TEX1 + 0].m[1];
+            fixedRX fU1OverWdC = rasterData.Registers[REG_TEX1 + 0].m[2];
             fixedRX fU1OverW =
                 fU1OverWdA * fOffsetX + fU1OverWdB * fOffsetY + fU1OverWdC;
 
             fV1OverWdA = rasterData.Registers[REG_TEX1 + 1].m[0];
-            const fixedRX fV1OverWdB = rasterData.Registers[REG_TEX1 + 1].m[1];
-            const fixedRX fV1OverWdC = rasterData.Registers[REG_TEX1 + 1].m[2];
+            fixedRX fV1OverWdB = rasterData.Registers[REG_TEX1 + 1].m[1];
+            fixedRX fV1OverWdC = rasterData.Registers[REG_TEX1 + 1].m[2];
             fixedRX fV1OverW =
                 fV1OverWdA * fOffsetX + fV1OverWdB * fOffsetY + fV1OverWdC;
 
@@ -2078,7 +2078,7 @@ public:
                 if
                   constexpr(InterpolateMips & 0x2) {
                     fM1OverW2dA = rasterData.Registers[REG_MIP1].m[0];
-                    const fixedRX fM1OverW2dB =
+                    fixedRX fM1OverW2dB =
                         rasterData.Registers[REG_MIP1].m[1];
                     fM1OverW2 +=
                         fM1OverW2dA * fOffsetX + fM1OverW2dB * fOffsetY;
@@ -2096,18 +2096,18 @@ public:
         if
           constexpr(InterpolateFog) {
             fFogdA = rasterData.Registers[REG_FOG].m[0];
-            const fixedRX fFogdB = rasterData.Registers[REG_FOG].m[1];
+            fixedRX fFogdB = rasterData.Registers[REG_FOG].m[1];
             fFog += fFogdA * fOffsetX + fFogdB * fOffsetY;
           }
       }
 
-    const uint32_t colorWriteMask = rasterData.ColorWriteMask;
-    uint8_t *const pColorBits = rasterData.pColorBits;
-    const int32_t colorPitch = rasterData.ColorPitch;
+    uint32_t colorWriteMask = rasterData.ColorWriteMask;
+    auto pColorBits = rasterData.pColorBits;
+    int32_t colorPitch = rasterData.ColorPitch;
     uint8_t *pCB = lx * ColorStride + y * colorPitch + pColorBits;
 
-    uint8_t *const pDepthStencilBits = rasterData.pDepthStencilBits;
-    const int32_t depthStencilPitch = rasterData.DepthStencilPitch;
+    auto pDepthStencilBits = rasterData.pDepthStencilBits;
+    int32_t depthStencilPitch = rasterData.DepthStencilPitch;
     uint8_t *pDS =
         lx * DepthStencilStride + y * depthStencilPitch + pDepthStencilBits;
 
@@ -2156,7 +2156,7 @@ public:
         break;
       }
 
-      const int offset = start - count;
+      int offset = start - count;
       start = count;
 
       do {
@@ -2216,7 +2216,7 @@ public:
 
       fRhw += fRhwdA * offset;
 
-      const fixedW fW = Math::TInv<fixedW>(fRhw);
+      fixedW fW = Math::TInv<fixedW>(fRhw);
       fixedW fW2;
 
       if
@@ -2226,7 +2226,7 @@ public:
       fixedRX fM0, fM1;
 
       if
-        constexpr(Texture0) {
+        constexpr(Texture0 != 0) {
           fU0OverW += fU0OverWdA * offset;
           fV0OverW += fV0OverWdA * offset;
 
@@ -2246,7 +2246,7 @@ public:
             }
 
           if
-            constexpr(Texture1) {
+            constexpr(Texture1 != 0) {
               fU1OverW += fU1OverWdA * offset;
               fV1OverW += fV1OverWdA * offset;
 
@@ -2271,14 +2271,14 @@ public:
         constexpr(InterpolateFog) { fFog += fFogdA * offset; }
 
       do {
-        const uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
-        const uint32_t log2width = Math::iLog2(blockWidth1);
-        const uint32_t blockWidth = 1 << log2width;
+        uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
+        uint32_t log2width = Math::iLog2(blockWidth1);
+        uint32_t blockWidth = 1 << log2width;
         width -= blockWidth;
-        uint8_t *const pCBEnd = pCB + blockWidth * ColorStride;
+        auto pCBEnd = pCB + blockWidth * ColorStride;
 
         fRhw += fRhwdA << log2width;
-        const fixedW fWr = Math::TInv<fixedW>(fRhw);
+        fixedW fWr = Math::TInv<fixedW>(fRhw);
         fixedW fWr2;
 
         if
@@ -2288,7 +2288,7 @@ public:
         fixedRX fdMr0, fdMr1;
 
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             fU0OverW += fU0OverWdA << log2width;
             fV0OverW += fV0OverWdA << log2width;
             fdUr0 = (fU0OverW * fWr - fU0) >> log2width;
@@ -2301,7 +2301,7 @@ public:
               }
 
             if
-              constexpr(Texture1) {
+              constexpr(Texture1 != 0) {
                 fU1OverW += fU1OverWdA << log2width;
                 fV1OverW += fV1OverWdA << log2width;
                 fdUr1 = (fU1OverW * fWr - fU1) >> log2width;
@@ -2327,7 +2327,7 @@ public:
 
           // Execute texture operations
           if
-            constexpr(Texture0) {
+            constexpr(Texture0 != 0) {
               uint32_t texture;
 
               if
@@ -2348,7 +2348,7 @@ public:
                   &cColor, texture, cEnvColor0);
 
               if
-                constexpr(Texture1) {
+                constexpr(Texture1 != 0) {
                   if
                     constexpr(Mip1) {
                       texture = TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
@@ -2376,7 +2376,7 @@ public:
 
           uint32_t color;
 
-          const uint32_t dstColor =
+          uint32_t dstColor =
               *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
 
           if
@@ -2410,7 +2410,7 @@ public:
             constexpr(InterpolateAlpha) { fA += fAdA; }
 
           if
-            constexpr(Texture0) {
+            constexpr(Texture0 != 0) {
               fU0 += fdUr0;
               fV0 += fdVr0;
 
@@ -2418,7 +2418,7 @@ public:
                 constexpr(InterpolateMips & 0x1) { fM0 += fdMr0; }
 
               if
-                constexpr(Texture1) {
+                constexpr(Texture1 != 0) {
                   fU1 += fdUr1;
                   fV1 += fdVr1;
 
@@ -2452,7 +2452,7 @@ public:
     if
       constexpr(Perspective) {
         if
-          constexpr(Texture0) {
+          constexpr(Texture0 != 0) {
             if
               constexpr(!AlphaTest && (DepthTest || StencilTest)) {
                 TOptimizedScanlinePZ<Flags, States, Texture0,

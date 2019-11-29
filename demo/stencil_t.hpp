@@ -83,7 +83,7 @@ public:
     memcpy(_boxColors, boxColors, sizeof(boxColors));
 
     // set perspective
-    const float ratio = (float)width / height;
+    float ratio = (float)width / height;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, width, height);

@@ -88,7 +88,7 @@ public:
   HRESULT Insert(const RASTERID &rasterID, IRasterOp *pRasterOp) {
     uint32_t cbTotalSize = m_cbTotalSize;
     if (cbTotalSize > MAX_CACHE_SIZE) {
-      const uint32_t compactSize = cbTotalSize / COMPACT_RATIO;
+      uint32_t compactSize = cbTotalSize / COMPACT_RATIO;
       if (cbTotalSize > compactSize) {
         for (Cache::Iter iter = m_map.GetRBegin(); cbTotalSize > compactSize;) {
           Cache::Iter iterCur = iter--;
@@ -104,7 +104,7 @@ public:
       }
     }
 
-    const uint32_t cbSize = pRasterOp->GetCbSize();
+    uint32_t cbSize = pRasterOp->GetCbSize();
     m_cbTotalSize += cbSize;
 
     return m_map.Insert(rasterID, pRasterOp);

@@ -34,7 +34,7 @@ GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
   ASSERT(ppMatrixStack);
 
   // Create a new object
-  CMatrixStack *pMatrixStack = new CMatrixStack();
+  auto pMatrixStack = new CMatrixStack();
   if (nullptr == pMatrixStack) {
     __glLogError(_T("CMatrixStack() allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;

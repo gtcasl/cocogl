@@ -147,7 +147,7 @@ private:
 
   Entry *GetEntry(uint32_t dwHandle) const {
     // Get the handle entry from the table
-    const uint32_t index = this->GetHandleIndex(dwHandle);
+    uint32_t index = this->GetHandleIndex(dwHandle);
     if (index < m_dwSize) {
       // Validate the handle serial
       Entry *pEntry = m_pEntries + index;

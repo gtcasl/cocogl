@@ -95,7 +95,7 @@ void CGLContext::TexImage2D(GLenum target, GLint level, GLint internalformat,
     return;
   }
 
-  CTexture *const pTexture = this->GetTexture(m_activeTexture);
+  auto pTexture = this->GetTexture(m_activeTexture);
   ASSERT(pTexture);
 
   if ((level < 0) || (level >= MAX_TEXTURE_LEVELS)) {
@@ -201,7 +201,7 @@ void CGLContext::TexSubImage2D(GLenum target, GLint level, GLint xoffset,
     return;
   }
 
-  CTexture *const pTexture = this->GetTexture(m_activeTexture);
+  auto pTexture = this->GetTexture(m_activeTexture);
   ASSERT(pTexture);
 
   if ((level < 0) || (level >= MAX_TEXTURE_LEVELS)) {
@@ -278,7 +278,7 @@ void CGLContext::CopyTexImage2D(GLenum target, GLint level,
     return;
   }
 
-  CTexture *const pTexture = this->GetTexture(m_activeTexture);
+  auto pTexture = this->GetTexture(m_activeTexture);
   ASSERT(pTexture);
 
   if ((level < 0) || (level >= MAX_TEXTURE_LEVELS)) {
@@ -362,7 +362,7 @@ void CGLContext::CopyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
     return;
   }
 
-  CTexture *const pTexture = this->GetTexture(m_activeTexture);
+  auto pTexture = this->GetTexture(m_activeTexture);
   ASSERT(pTexture);
 
   if ((level < 0) || (level >= MAX_TEXTURE_LEVELS)) {
@@ -535,9 +535,9 @@ void CGLContext::DeleteTextures(GLsizei n, const GLuint *phTextures) {
   }
 
   for (const GLuint *phTex = phTextures, *const phEnd = phTex + n; phTex != phEnd; ++phTex) {
-    const GLuint handle = *phTex;
+    GLuint handle = *phTex;
     if (handle) {
-      CTexture *const pTexture =
+      auto pTexture =
           reinterpret_cast<CTexture *>(m_pHandles->Delete(handle, this));
       if (pTexture) {
         // Unbind the texture if bound.
@@ -558,7 +558,7 @@ GLenum CGLContext::BindTexImage(CGLSurface *pSurface, bool bGenMipMaps) {
 
   ASSERT(pSurface);
 
-  CTexture *const pTexture = this->GetTexture(m_activeTexture);
+  auto pTexture = this->GetTexture(m_activeTexture);
   ASSERT(pTexture);
 
   err = pTexture->BindSurface(pSurface, bGenMipMaps);
@@ -573,7 +573,7 @@ GLenum CGLContext::BindTexImage(CGLSurface *pSurface, bool bGenMipMaps) {
 GLenum CGLContext::ReleaseTexImage(CGLSurface *pSurface) {
   GLenum err;
 
-  CTexture *const pTexture = this->GetTexture(m_activeTexture);
+  auto pTexture = this->GetTexture(m_activeTexture);
   ASSERT(pTexture);
 
   err = pTexture->ReleaseSurface(pSurface);
@@ -701,8 +701,8 @@ void CGLContext::CompressedTexImage2D(GLenum target, GLint level,
   }
 
   FormatInfo formatInfo = Format::GetInfo(pixelformat);
-  const int paletteSize = 1 << formatInfo.PaletteBits;
-  const int _imageSize = ((width * formatInfo.PaletteBits) + 7) / 8 * height +
+  int paletteSize = 1 << formatInfo.PaletteBits;
+  int _imageSize = ((width * formatInfo.PaletteBits) + 7) / 8 * height +
                          paletteSize * formatInfo.BytePerPixel;
   if (_imageSize != imageSize) {
     __glError(GL_INVALID_VALUE, _T("CGLContext::CompressedTexImage2D() ")
@@ -854,8 +854,8 @@ void CGLContext::CompressedTexSubImage2D(GLenum target, GLint level,
   }
 
   FormatInfo formatInfo = Format::GetInfo(pixelformat);
-  const int paletteSize = 1 << formatInfo.PaletteBits;
-  const int _imageSize = ((width * formatInfo.PaletteBits) + 7) / 8 * height +
+  int paletteSize = 1 << formatInfo.PaletteBits;
+  int _imageSize = ((width * formatInfo.PaletteBits) + 7) / 8 * height +
                          paletteSize * formatInfo.BytePerPixel;
   if (_imageSize != imageSize) {
     __glError(GL_INVALID_VALUE, _T("CGLContext::CompressedTexSubImage2D() ")

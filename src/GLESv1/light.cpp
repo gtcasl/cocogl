@@ -17,7 +17,7 @@
 #include "context.hpp"
 
 void CGLContext::ActivateLight(GLenum cap, bool bValue) {
-  Light *const pLight = m_lights.GetBegin() + (cap - GL_LIGHT0);
+  auto pLight = m_lights.GetBegin() + (cap - GL_LIGHT0);
   Light *pPrevLight = nullptr;
   Light *pCurLight = m_pActiveLights;
 

@@ -36,7 +36,7 @@ GLenum CBuffer::Create(CBuffer **ppBuffer) {
   ASSERT(ppBuffer);
 
   // Create a new surface object
-  CBuffer *pBuffer = new CBuffer();
+  auto pBuffer = new CBuffer();
   if (nullptr == pBuffer) {
     __glLogError(_T("CBuffer allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
@@ -51,7 +51,7 @@ GLenum CBuffer::Create(CBuffer **ppBuffer) {
 GLenum CBuffer::Initialize(uint32_t size, GLenum usage, const GLvoid *pData) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  uint8_t *const pBits = new uint8_t[size];
+  auto pBits = new uint8_t[size];
   if (nullptr == pBits) {
     __glLogError(_T("CBuffer storage allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;

@@ -18,7 +18,7 @@
 void CGLContext::SetError(GLenum error) { m_error = error; }
 
 GLenum CGLContext::GetError() const {
-  const GLenum error = m_error;
+  GLenum error = m_error;
   m_error = GL_NO_ERROR;
   return error;
 }
@@ -26,17 +26,13 @@ GLenum CGLContext::GetError() const {
 const GLubyte *CGLContext::GetString(GLenum name) {
   switch (name) {
   case GL_VENDOR:
-    return (const GLubyte *)EGL_CONFIG_VENDOR;
-
+    return reinterpret_cast<const GLubyte*>(EGL_CONFIG_VENDOR);
   case GL_VERSION:
-    return (const GLubyte *)EGL_CONFIG_VERSION;
-
+    return reinterpret_cast<const GLubyte*>(EGL_CONFIG_VERSION);
   case GL_RENDERER:
-    return (const GLubyte *)EGL_CONFIG_RENDERER;
-
+    return reinterpret_cast<const GLubyte*>(EGL_CONFIG_RENDERER);
   case GL_EXTENSIONS:
-    return (const GLubyte *)EGL_CONFIG_EXTENSIONS;
-
+    return reinterpret_cast<const GLubyte*>(EGL_CONFIG_EXTENSIONS);
   default:
     __glError(
         GL_INVALID_ENUM,

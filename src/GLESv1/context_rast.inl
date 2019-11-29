@@ -26,9 +26,9 @@ inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
     return;
   }
 
-  const GLenum param = TToGLenum<T>(pParams[0]);
+  GLenum param = TToGLenum<T>(pParams[0]);
 
-  CTexture *const pTexture = m_texUnits[m_activeTexture].GetTexture();
+  auto pTexture = m_texUnits[m_activeTexture].GetTexture();
   ASSERT(pTexture);
 
   switch (pname) {
@@ -118,7 +118,7 @@ template <class T>
 inline void CGLContext::TTexEnv(GLenum env, GLenum pname, const T *pParams) {
   ASSERT(pParams);
 
-  const GLenum param = TToGLenum<T>(pParams[0]);
+  GLenum param = TToGLenum<T>(pParams[0]);
 
   TexUnit &texUnit = m_texUnits[m_activeTexture];
 
@@ -191,7 +191,7 @@ inline void CGLContext::TPointParameter(GLenum pname, const T *pParams) {
   case GL_POINT_SIZE_MIN:
   case GL_POINT_SIZE_MAX:
   case GL_POINT_FADE_THRESHOLD_SIZE: {
-    const floatf param = Math::TCast<floatf>(pParams[0]);
+    auto param = Math::TCast<floatf>(pParams[0]);
     if (param < fZERO) {
       __glError(GL_INVALID_VALUE, _T("CGLContext::TPointParameter() failed, ")
                                   _T("invalid param parameter: %d.\r\n"),

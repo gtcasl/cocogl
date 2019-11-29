@@ -250,18 +250,17 @@ template <uint32_t Address> inline int TAddress(int x) {
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline uint32_t TGetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
                                   fixedRX fV) {
-  const typename TFormatInfo<Format>::TYPE *const pBits =
-      reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
+  auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
           surface.GetBits());
-  const uint32_t logWidth = surface.GetLogWidth();
-  const uint32_t logHeight = surface.GetLogHeight();
+  uint32_t logWidth = surface.GetLogWidth();
+  uint32_t logHeight = surface.GetLogHeight();
 
-  const uint32_t u = TAddress<AddressU>(fU.GetRaw());
-  const uint32_t v = TAddress<AddressV>(fV.GetRaw());
+  uint32_t u = TAddress<AddressU>(fU.GetRaw());
+  uint32_t v = TAddress<AddressV>(fV.GetRaw());
 
-  const uint32_t x = u >> (fixedRX::FRAC - logWidth);
-  const uint32_t y = v >> (fixedRX::FRAC - logHeight);
-  const uint32_t offset = x + (y << logWidth);
+  uint32_t x = u >> (fixedRX::FRAC - logWidth);
+  uint32_t y = v >> (fixedRX::FRAC - logHeight);
+  uint32_t offset = x + (y << logWidth);
 
   return *(pBits + offset);
 }
@@ -269,42 +268,40 @@ inline uint32_t TGetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline TColorNative<Format> TGetTexelColorLnX(const SurfaceDesc &surface,
                                               fixedRX fU, fixedRX fV) {
-  const int lerpBits = TFormatInfo<Format>::LERP;
-  const int lerpMask = (1 << lerpBits) - 1;
+  int lerpBits = TFormatInfo<Format>::LERP;
+  int lerpMask = (1 << lerpBits) - 1;
 
-  const typename TFormatInfo<Format>::TYPE *const pBits =
-      reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
-          surface.GetBits());
-  const uint32_t logWidth = surface.GetLogWidth();
-  const uint32_t logHeight = surface.GetLogHeight();
+  auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(surface.GetBits());
+  uint32_t logWidth = surface.GetLogWidth();
+  uint32_t logHeight = surface.GetLogHeight();
 
-  const uint32_t v0 =
+  uint32_t v0 =
       TAddress<AddressV>(fV.GetRaw() - (fixedRX::HALF >> logHeight));
-  const uint32_t v1 =
+  uint32_t v1 =
       TAddress<AddressV>(fV.GetRaw() + (fixedRX::HALF >> logHeight));
-  const uint32_t u0 =
+  uint32_t u0 =
       TAddress<AddressU>(fU.GetRaw() - (fixedRX::HALF >> logWidth));
-  const uint32_t u1 =
+  uint32_t u1 =
       TAddress<AddressU>(fU.GetRaw() + (fixedRX::HALF >> logWidth));
 
-  const uint32_t logHeightN = fixedRX::FRAC - (logHeight + lerpBits);
-  const uint32_t y1 = v1 >> logHeightN;
-  const uint32_t y0 = v0 >> logHeightN;
-  const uint32_t beta = y0 & lerpMask;
-  const uint32_t y3 = (y1 >> lerpBits) << logWidth;
-  const uint32_t y2 = (y0 >> lerpBits) << logWidth;
+  uint32_t logHeightN = fixedRX::FRAC - (logHeight + lerpBits);
+  uint32_t y1 = v1 >> logHeightN;
+  uint32_t y0 = v0 >> logHeightN;
+  uint32_t beta = y0 & lerpMask;
+  uint32_t y3 = (y1 >> lerpBits) << logWidth;
+  uint32_t y2 = (y0 >> lerpBits) << logWidth;
 
-  const uint32_t logWidthN = fixedRX::FRAC - (logWidth + lerpBits);
-  const uint32_t x1 = u1 >> logWidthN;
-  const uint32_t x0 = u0 >> logWidthN;
-  const uint32_t alpha = x0 & lerpMask;
-  const uint32_t x3 = x1 >> lerpBits;
-  const uint32_t x2 = x0 >> lerpBits;
+  uint32_t logWidthN = fixedRX::FRAC - (logWidth + lerpBits);
+  uint32_t x1 = u1 >> logWidthN;
+  uint32_t x0 = u0 >> logWidthN;
+  uint32_t alpha = x0 & lerpMask;
+  uint32_t x3 = x1 >> lerpBits;
+  uint32_t x2 = x0 >> lerpBits;
 
-  const uint32_t c0 = pBits[y2 + x2];
-  const uint32_t c1 = pBits[y2 + x3];
-  const uint32_t c2 = pBits[y3 + x2];
-  const uint32_t c3 = pBits[y3 + x3];
+  uint32_t c0 = pBits[y2 + x2];
+  uint32_t c1 = pBits[y2 + x3];
+  uint32_t c2 = pBits[y3 + x2];
+  uint32_t c3 = pBits[y3 + x3];
 
   TColorNative<Format> nc0(c0);
   TColorNative<Format> nc1(c1);
@@ -362,7 +359,7 @@ inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
               sampler.pMipLevels[0], fU, fV);
         }
       else {
-        const fixed16 fJ = fixed16::Make(fM.GetRaw());
+        auto fJ = fixed16::Make(fM.GetRaw());
         if (fJ > TConst<fixed16>::One()) {
           return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
               sampler.pMipLevels[0], fU, fV);
@@ -377,19 +374,19 @@ inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
     constexpr(MipFilter == FILTER_NEAREST) {
       if
         constexpr(MinFilter == MagFilter) {
-          const fixed16 fJ = Math::TMax<fixed16>(fixed16::Make(fM.GetRaw()),
+          auto fJ = Math::TMax<fixed16>(fixed16::Make(fM.GetRaw()),
                                                  TConst<fixed16>::One());
 
-          const int mipLevel = Math::TMin<int>(
+          int mipLevel = Math::TMin<int>(
               Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
 
           return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
               sampler.pMipLevels[mipLevel], fU, fV);
         }
       else {
-        const fixed16 fJ = fixed16::Make(fM.GetRaw());
+        auto fJ = fixed16::Make(fM.GetRaw());
         if (fJ > TConst<fixed16>::One()) {
-          const int mipLevel = Math::TMin<int>(
+          int mipLevel = Math::TMin<int>(
               Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
 
           return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
@@ -403,20 +400,20 @@ inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
 
   if
     constexpr(MipFilter == FILTER_LINEAR) {
-      const int lerpBits = TFormatInfo<Format>::LERP;
-      const int lerpMask = (1 << lerpBits) - 1;
+      int lerpBits = TFormatInfo<Format>::LERP;
+      int lerpMask = (1 << lerpBits) - 1;
 
       if
         constexpr(MinFilter == MagFilter) {
-          const fixed16 fJ = Math::TMax<fixed16>(fixed16::Make(fM.GetRaw()),
+          auto fJ = Math::TMax<fixed16>(fixed16::Make(fM.GetRaw()),
                                                  TConst<fixed16>::One());
 
-          const int mipLevel0 = Math::TMin<int>(
+          int mipLevel0 = Math::TMin<int>(
               Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
 
-          const int mipLevel1 =
+          int mipLevel1 =
               Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
-          const int mipLerp =
+          int mipLerp =
               (fJ.GetRaw() >> (mipLevel0 + fixed16::FRAC - lerpBits)) &
               lerpMask;
 
@@ -431,14 +428,14 @@ inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
           return c0.Lerp(c1, mipLerp);
         }
       else {
-        const fixed16 fJ = fixed16::Make(fM.GetRaw());
+        auto fJ = fixed16::Make(fM.GetRaw());
         if (fJ > TConst<fixed16>::One()) {
-          const int mipLevel0 = Math::TMin<int>(
+          int mipLevel0 = Math::TMin<int>(
               Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
 
-          const int mipLevel1 =
+          int mipLevel1 =
               Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
-          const int mipLerp =
+          int mipLerp =
               (fJ.GetRaw() >> (mipLevel0 + fixed16::FRAC - lerpBits)) &
               lerpMask;
 
@@ -639,7 +636,7 @@ void TGetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
     constexpr(BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
       __unreferenced(cDst);
 
-      const int invAlpha = 0xff - cSrc.a;
+      int invAlpha = 0xff - cSrc.a;
       pInOut->r = Math::Mul8(pInOut->r, invAlpha);
       pInOut->g = Math::Mul8(pInOut->g, invAlpha);
       pInOut->b = Math::Mul8(pInOut->b, invAlpha);
@@ -660,7 +657,7 @@ void TGetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
     constexpr(BlendOp == BLEND_ONE_MINUS_DST_ALPHA) {
       __unreferenced(cSrc);
 
-      const int invAlpha = 0xff - cDst.a;
+      int invAlpha = 0xff - cDst.a;
       pInOut->r = Math::Mul8(pInOut->r, invAlpha);
       pInOut->g = Math::Mul8(pInOut->g, invAlpha);
       pInOut->b = Math::Mul8(pInOut->b, invAlpha);
@@ -689,7 +686,7 @@ void TGetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
 
   if
     constexpr(BlendOp == BLEND_SRC_ALPHA_SATURATE) {
-      const int factor = Math::TMin(cSrc.a, 0xff - cDst.a);
+      int factor = Math::TMin(cSrc.a, 0xff - cDst.a);
       pInOut->r = Math::Mul8(pInOut->r, factor);
       pInOut->g = Math::Mul8(pInOut->g, factor);
       pInOut->b = Math::Mul8(pInOut->b, factor);

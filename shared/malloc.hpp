@@ -65,7 +65,7 @@ private:
       // Allocate the first free block
       //
 
-      const uint32_t cbPlacementSize =
+      uint32_t cbPlacementSize =
           __align(sizeof(Page) + sizeof(Block), Block::ALIGN_SIZE);
 
       this->pFreeSList = this->pFreeMList = new (pBuffer_ + sizeof(Page))

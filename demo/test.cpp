@@ -117,8 +117,7 @@ bool LoadTGA(LPCTSTR lpszFileName, GLuint *id) {
   // skip information we don't care about
   fseek(f, 9, SEEK_CUR);
 
-  // read the width, height and bits per pixel (16, 24 or 32). We only will take
-  // care of 24 bits uncompressed TGAs
+  // read the width, height and bits per pixel 
   fread(&width, sizeof(uint16_t), 1, f);
   fread(&height, sizeof(uint16_t), 1, f);
   fread(&bits, sizeof(uint8_t), 1, f);
@@ -126,13 +125,12 @@ bool LoadTGA(LPCTSTR lpszFileName, GLuint *id) {
   // move the file pointer to the pixel data
   fseek(f, headerLength + 1, SEEK_CUR);
 
-  // check if the image is not compressed.
+  // check if the image is not compressed
   if (imageType != 10) {
     switch (bits) {
     case 24:
     case 32: {
-      format = bits >> 3; // Another way to divide between 8. We want to know
-                          // the pixel size in uint8_ts.
+      format = bits >> 3; 
       lineWidth = format * width;
       pixels = new GLubyte[lineWidth * height];
 
@@ -142,19 +140,15 @@ bool LoadTGA(LPCTSTR lpszFileName, GLuint *id) {
         GLubyte *line = &pixels[lineWidth * y];
         fread(line, lineWidth, 1, f);
 
-        //Because the TGA is BGR instead of RGB, we must swap the R and G
-      //components (OGL ES does not have the
-      //GL_BGR_EXT extension
+        //Because the TGA is BGR instead of RGB, we must swap RG components
         for (int i = 0; i < lineWidth; i += format) {
           GLubyte temp = line[i];
           line[i] = line[i + 2];
           line[i + 2] = temp;
         }
       }
-
       break;
     }
-
     default:
       fclose(f);
       *id = 0;

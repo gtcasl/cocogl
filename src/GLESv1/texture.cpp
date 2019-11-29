@@ -34,8 +34,8 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
     return GL_INVALID_VALUE;
   }
 
-  const uint8_t nBPP = Format::GetInfo(format).BytePerPixel;
-  uint8_t *const pbBits = new uint8_t[nBPP * width * height];
+  uint8_t nBPP = Format::GetInfo(format).BytePerPixel;
+  auto pbBits = new uint8_t[nBPP * width * height];
   if (nullptr == pbBits) {
     __glLogError(_T("CSurface2D::Initialize() failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
@@ -105,30 +105,30 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
     return GL_INVALID_VALUE;
   }
 
-  const FormatInfo formatInfo = Format::GetInfo(format);
+  FormatInfo formatInfo = Format::GetInfo(format);
 
-  const uint32_t pixelFormat = Format::GetNativeFormat(format);
+  uint32_t pixelFormat = Format::GetNativeFormat(format);
   const Format::PFN_CONVERTFROM pfnConvertFrom =
       Format::GetConvertFrom(pixelFormat, false);
   const Format::PFN_CONVERTTO pfnConvertTo = Format::GetConvertTo(pixelFormat);
 
-  const uint32_t paletteSize = 1 << formatInfo.PaletteBits;
+  uint32_t paletteSize = 1 << formatInfo.PaletteBits;
 
-  Color4 *const pColorTable = new Color4[paletteSize];
+  auto pColorTable = new Color4[paletteSize];
   if (nullptr == pColorTable) {
     __glLogError(_T("CSurface2D::Initialize() failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
   }
 
-  const uint8_t nBPP = formatInfo.BytePerPixel;
-  const uint8_t *pbPixels = reinterpret_cast<const uint8_t *>(pPixels);
+  uint8_t nBPP = formatInfo.BytePerPixel;
+  auto pbPixels = reinterpret_cast<const uint8_t *>(pPixels);
   for (uint32_t i = 0; i < paletteSize; ++i) {
     (pfnConvertFrom)(&pColorTable[i], pbPixels);
     pbPixels += nBPP;
   }
 
-  const uint32_t surfaceSize = width * height;
-  uint8_t *const pbBits = new uint8_t[nBPP * surfaceSize];
+  uint32_t surfaceSize = width * height;
+  auto pbBits = new uint8_t[nBPP * surfaceSize];
   if (nullptr == pbBits) {
     delete[] pColorTable;
     __glLogError(_T("CSurface2D::Initialize() failed, out of memory.\r\n"));
@@ -223,7 +223,7 @@ GLenum CTexture::Create(CTexture **ppTexture) {
   ASSERT(ppTexture);
 
   // Create a new texture object
-  CTexture *pTexture = new CTexture();
+  auto pTexture = new CTexture();
   if (nullptr == pTexture) {
     __glLogError(_T("CTexture allocation failed, out of memory.\r\n"));
     return GL_OUT_OF_MEMORY;
@@ -294,8 +294,8 @@ GLenum CTexture::GenerateMipmaps() {
 
   CSurface2D &surface = m_surfaces[0];
 
-  const ePixelFormat format = surface.GetFormat();
-  const uint32_t bpp = Format::GetInfo(format).BytePerPixel;
+  ePixelFormat format = surface.GetFormat();
+  uint32_t bpp = Format::GetInfo(format).BytePerPixel;
   uint32_t width = surface.GetWidth();
   uint32_t height = surface.GetHeight();
 
@@ -357,12 +357,12 @@ GLenum CTexture::GenerateMipmaps() {
 
     switch (format) {
     case FORMAT_A8: {
-      const uint8_t *const pSrc = surfaceSrc.GetBits();
-      uint8_t *const pDst = surfaceDst.GetBits();
+      auto pSrc = surfaceSrc.GetBits();
+      auto pDst = surfaceDst.GetBits();
 
       for (uint32_t y = 0; y < height; ++y) {
-        const uint8_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
-        const uint8_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
+        auto pSrc1 = pSrc + (2 * y) * (2 * width);
+        auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A8, false>(&c1, pSrc1 + 2 * x);
@@ -381,12 +381,12 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_L8: {
-      const uint8_t *const pSrc = surfaceSrc.GetBits();
-      uint8_t *const pDst = surfaceDst.GetBits();
+      auto pSrc = surfaceSrc.GetBits();
+      auto pDst = surfaceDst.GetBits();
 
       for (uint32_t y = 0; y < height; ++y) {
-        const uint8_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
-        const uint8_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
+        auto pSrc1 = pSrc + (2 * y) * (2 * width);
+        auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_L8, false>(&c1, pSrc1 + 2 * x);
@@ -405,13 +405,13 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_A8L8: {
-      const uint16_t *const pSrc =
+      auto pSrc =
           reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
-      uint16_t *const pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
+      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
 
       for (uint32_t y = 0; y < height; ++y) {
-        const uint16_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
-        const uint16_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
+        auto pSrc1 = pSrc + (2 * y) * (2 * width);
+        auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A8L8, false>(&c1, pSrc1 + 2 * x);
@@ -431,13 +431,13 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_R5G6B5: {
-      const uint16_t *const pSrc =
+      auto pSrc =
           reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
-      uint16_t *const pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
+      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
 
       for (uint32_t y = 0; y < height; ++y) {
-        const uint16_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
-        const uint16_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
+        auto pSrc1 = pSrc + (2 * y) * (2 * width);
+        auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_R5G6B5, false>(&c1, pSrc1 + 2 * x);
@@ -457,13 +457,13 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_A1R5G5B5: {
-      const uint16_t *const pSrc =
+      auto pSrc =
           reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
-      uint16_t *const pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
+      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
 
       for (uint32_t y = 0; y < height; ++y) {
-        const uint16_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
-        const uint16_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
+        auto pSrc1 = pSrc + (2 * y) * (2 * width);
+        auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A1R5G5B5, false>(&c1, pSrc1 + 2 * x);
@@ -484,13 +484,13 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_A4R4G4B4: {
-      const uint16_t *const pSrc =
+      auto pSrc =
           reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
-      uint16_t *const pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
+      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
 
       for (uint32_t y = 0; y < height; ++y) {
-        const uint16_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
-        const uint16_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
+        auto pSrc1 = pSrc + (2 * y) * (2 * width);
+        auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A4R4G4B4, false>(&c1, pSrc1 + 2 * x);
@@ -511,13 +511,13 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_R8G8B8: {
-      const uint24 *const pSrc =
+      auto pSrc =
           reinterpret_cast<const uint24 *>(surfaceSrc.GetBits());
-      uint24 *const pDst = reinterpret_cast<uint24 *>(surfaceDst.GetBits());
+      auto pDst = reinterpret_cast<uint24 *>(surfaceDst.GetBits());
 
       for (uint32_t y = 0; y < height; ++y) {
-        const uint24 *const pSrc1 = pSrc + (2 * y) * (2 * width);
-        const uint24 *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
+        auto pSrc1 = pSrc + (2 * y) * (2 * width);
+        auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_R8G8B8, false>(&c1, pSrc1 + 2 * x);
@@ -537,13 +537,13 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_A8R8G8B8: {
-      const uint32_t *const pSrc =
+      auto pSrc =
           reinterpret_cast<const uint32_t *>(surfaceSrc.GetBits());
-      uint32_t *const pDst = reinterpret_cast<uint32_t *>(surfaceDst.GetBits());
+      auto pDst = reinterpret_cast<uint32_t *>(surfaceDst.GetBits());
 
       for (uint32_t y = 0; y < height; ++y) {
-        const uint32_t *const pSrc1 = pSrc + (2 * y) * (2 * width);
-        const uint32_t *const pSrc2 = pSrc + (2 * y + 1) * (2 * width);
+        auto pSrc1 = pSrc + (2 * y) * (2 * width);
+        auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
           Format::TConvertFrom<FORMAT_A8R8G8B8, false>(&c1, pSrc1 + 2 * x);
@@ -573,7 +573,7 @@ GLenum CTexture::GenerateMipmaps() {
 bool CTexture::Validate() {
   const CSurface2D &surface0 = this->GetSurface(0);
 
-  const ePixelFormat format = surface0.GetFormat();
+  ePixelFormat format = surface0.GetFormat();
   if (FORMAT_UNKNOWN == format) {
     return false;
   }
@@ -620,7 +620,7 @@ bool TexUnit::Prepare(Sampler *pSampler, TEXTURESTATES *pStates) {
   }
 
   // Update texture states
-  const TexParams texParams = m_pTexture->Params;
+  TexParams texParams = m_pTexture->Params;
 
   switch (texParams.MinFilter) {
   default:

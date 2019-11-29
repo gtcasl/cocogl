@@ -27,7 +27,7 @@ CAllocator::~CAllocator() {
   // Free allocated pages
   Page *pCurPage = m_pPages;
   while (pCurPage) {
-    Page *const pNextPage = pCurPage->pNext;
+    auto pNextPage = pCurPage->pNext;
     this->DeletePage(pCurPage);
     pCurPage = pNextPage;
   }
@@ -40,7 +40,7 @@ CAllocator::Create(CAllocator **ppAllocator, bool execute_access) {
     return E_INVALIDARG;
   }
 
-  CAllocator *pAllocator = new CAllocator(execute_access);
+  auto pAllocator = new CAllocator(execute_access);
   if (nullptr == pAllocator) {
     __debugMsg(1, _T("New CAllocator() failed, out of memory.\r\n"));
     return E_OUTOFMEMORY;
@@ -104,16 +104,16 @@ void *CAllocator::Allocate(uint32_t dwBytes) {
 
   // If the free block we have found is larger than what we are looking for,
   // we may be able to split our free block in two.
-  const uint32_t cbExtraBytes = pFreeBlock->Size - dwBytes;
-  const uint32_t cbBlockSize = __align(sizeof(Block), Block::ALIGN_SIZE);
-  const uint32_t cbMinAllocSize = cbBlockSize + Block::MIN_SIZE;
+  uint32_t cbExtraBytes = pFreeBlock->Size - dwBytes;
+  uint32_t cbBlockSize = __align(sizeof(Block), Block::ALIGN_SIZE);
+  uint32_t cbMinAllocSize = cbBlockSize + Block::MIN_SIZE;
   if (cbExtraBytes >= cbMinAllocSize) {
     // Reduce the free block size to the requested value
     pFreeBlock->Size = dwBytes;
 
     // Allocate a new block to contain the extra buffer
-    uint8_t *const pExtraMem = pFreeBlock->pMem + dwBytes;
-    Block *const pNewBlock = new (pExtraMem)
+    auto pExtraMem = pFreeBlock->pMem + dwBytes;
+    auto pNewBlock = new (pExtraMem)
         Block(pExtraMem + cbBlockSize, cbExtraBytes - cbBlockSize);
 
     // Add the new block to the free list
@@ -169,16 +169,16 @@ void CAllocator::Free(void *ptr) {
   pCurPage->InsertFreeMBlock(pUsedBlock);
 
   // Calculate the aligned block size
-  const uint32_t cbBlockSize = __align(sizeof(Block), Block::ALIGN_SIZE);
+  uint32_t cbBlockSize = __align(sizeof(Block), Block::ALIGN_SIZE);
 
   // Check if we can merge adjacent free blocks from the left.
   if (pUsedBlock->pPrevFreeM) {
     // Calculate the previous memory end address
-    uint8_t *const pPrevMem = pUsedBlock->pPrevFreeM->pMem +
+    auto pPrevMem = pUsedBlock->pPrevFreeM->pMem +
                               pUsedBlock->pPrevFreeM->Size + cbBlockSize;
 
     if (pUsedBlock->pMem == pPrevMem) {
-      Block *const pMergedBlock = pUsedBlock->pPrevFreeM;
+      auto pMergedBlock = pUsedBlock->pPrevFreeM;
 
       // Detach left block from the free size list
       pCurPage->RemoveFreeSBlock(pMergedBlock);
@@ -196,10 +196,10 @@ void CAllocator::Free(void *ptr) {
   // Check if we can merge adjacent free blocks from the right.
   if (pUsedBlock->pNextFreeM) {
     // Calculate the next memory start address
-    uint8_t *const pNextMem = pUsedBlock->pMem + pUsedBlock->Size + cbBlockSize;
+    auto pNextMem = pUsedBlock->pMem + pUsedBlock->Size + cbBlockSize;
 
     if (pUsedBlock->pNextFreeM->pMem == pNextMem) {
-      Block *const pNextBlock = pUsedBlock->pNextFreeM;
+      auto pNextBlock = pUsedBlock->pNextFreeM;
 
       // Detach right block from the free size list
       pCurPage->RemoveFreeSBlock(pNextBlock);
@@ -226,7 +226,7 @@ void CAllocator::Free(void *ptr) {
 CAllocator::Page *CAllocator::NewPage(uint32_t dwCbSize) {
   // Increase buffer size to include the page and first block size
   // also add padding to ensure page aligment
-  const uint32_t cbPlacementSize =
+  uint32_t cbPlacementSize =
       __align(sizeof(Page) + sizeof(Block), Block::ALIGN_SIZE);
   dwCbSize = __align(dwCbSize + cbPlacementSize, Page::ALIGN_SIZE);
 
@@ -243,7 +243,7 @@ CAllocator::Page *CAllocator::NewPage(uint32_t dwCbSize) {
 #else
   auto protection = m_execute_access ? (PROT_READ | PROT_WRITE | PROT_EXEC)
                                      : (PROT_READ | PROT_WRITE);
-  uint8_t *pBuffer = reinterpret_cast<uint8_t *>(
+  auto pBuffer = reinterpret_cast<uint8_t *>(
       mmap(nullptr, dwCbSize, protection, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0));
   if (pBuffer == MAP_FAILED) {
     __debugMsg(1, _T("mmap() failed. error = %d\r\n"), errno);
@@ -252,7 +252,7 @@ CAllocator::Page *CAllocator::NewPage(uint32_t dwCbSize) {
 #endif
 
   // Allocate the page
-  Page *const pNewPage = new (pBuffer) Page(pBuffer, dwCbSize);
+  auto pNewPage = new (pBuffer) Page(pBuffer, dwCbSize);
 
   // Insert the new page into the list
   pNewPage->pNext = m_pPages;

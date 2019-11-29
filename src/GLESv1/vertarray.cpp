@@ -25,13 +25,13 @@ GLenum VertexArray::Prepare(VertexDecoder *pDecoder, int first,
   ASSERT(pDecoder);
 
   int offset = first * this->Stride;
-  const uint8_t *const pBits = this->pBuffer->GetBits();
+  auto pBits = this->pBuffer->GetBits();
   if (pBits) {
     pDecoder->pBits = pBits;
     offset += reinterpret_cast<uintptr_t>(this->pPointer);
-    const uint32_t dataSize = VertexDataSize(this->Format);
-    const int padding = this->Stride - offset - dataSize;
-    const uint32_t bufSize = count * this->Stride - padding;
+    uint32_t dataSize = VertexDataSize(this->Format);
+    int padding = this->Stride - offset - dataSize;
+    uint32_t bufSize = count * this->Stride - padding;
     if (bufSize <= this->pBuffer->GetSize()) {
       pDecoder->pBits = pBits;
     } else {

@@ -106,7 +106,7 @@ template <class T> inline void __safeFree(T *&p) {
 }
 
 template <class T> inline bool __isAligned32(T *ptr) {
-  const size_t offset = ptr - (T *)(nullptr);
+  size_t offset = ptr - (T *)(nullptr);
   return (0 == (offset & 3));
 }
 
@@ -115,7 +115,7 @@ inline size_t __align(size_t offset, size_t alignment) {
 }
 
 template <class T> inline T *__alignPtr(T *ptr, size_t alignment) {
-  const size_t offset = ptr - (T *)(nullptr);
+  size_t offset = ptr - (T *)(nullptr);
   return (T *)(nullptr) + ((offset + alignment - 1) & ~(alignment - 1));
 }
 

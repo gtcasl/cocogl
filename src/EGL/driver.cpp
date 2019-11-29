@@ -53,7 +53,7 @@ CEGLDriver::~CEGLDriver() {
 void CEGLDriver::MakeCurrent(CEGLContext *pContext, std::thread::id dwThreadID,
                              CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead) {
 
-  auto *pCtxCurr = tls_eglctx;
+  auto pCtxCurr = tls_eglctx;
   if (pCtxCurr != pContext) {
     if (pContext) {
       pContext->AddRef();

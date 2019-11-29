@@ -34,6 +34,16 @@ context_cull.o: context_cull.cpp stdafx.h ../../shared/platform.hpp \
  ../../shared/math.inl types.hpp utility.hpp context.hpp raster.hpp \
  tnl.hpp inputasm.hpp device.hpp buffer.hpp light.hpp matstack.hpp \
  vertarray.hpp surface.hpp texture.hpp rastdata.hpp
+texture.o: texture.cpp stdafx.h ../../shared/platform.hpp \
+ ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
+ ../../include/GLES/glext.h ../../shared/utils.hpp \
+ ../../shared/object.hpp ../../shared/malloc.hpp ../../shared/handle.hpp \
+ ../../shared/list.hpp ../../shared/array.hpp ../../shared/map.hpp \
+ ../../shared/rect.hpp ../../shared/color.hpp ../../shared/bitmap.hpp \
+ ../../shared/format.hpp ../../shared/fixed.hpp ../../shared/int24.hpp \
+ ../../shared/math.hpp ../../shared/logger.hpp ../../shared/profiler.hpp \
+ ../../shared/color.inl ../../shared/fixed.inl ../../shared/format.inl \
+ ../../shared/math.inl types.hpp utility.hpp texture.hpp surface.hpp
 context_ia.o: context_ia.cpp stdafx.h ../../shared/platform.hpp \
  ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
  ../../include/GLES/glext.h ../../shared/utils.hpp \
@@ -71,18 +81,6 @@ rastri.o: rastri.cpp stdafx.h ../../shared/platform.hpp \
  ../../shared/math.inl types.hpp utility.hpp raster.hpp tnl.hpp \
  inputasm.hpp device.hpp buffer.hpp light.hpp matstack.hpp vertarray.hpp \
  surface.hpp texture.hpp rastdata.hpp raster.inl
-inputasm.o: inputasm.cpp stdafx.h ../../shared/platform.hpp \
- ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
- ../../include/GLES/glext.h ../../shared/utils.hpp \
- ../../shared/object.hpp ../../shared/malloc.hpp ../../shared/handle.hpp \
- ../../shared/list.hpp ../../shared/array.hpp ../../shared/map.hpp \
- ../../shared/rect.hpp ../../shared/color.hpp ../../shared/bitmap.hpp \
- ../../shared/format.hpp ../../shared/fixed.hpp ../../shared/int24.hpp \
- ../../shared/math.hpp ../../shared/logger.hpp ../../shared/profiler.hpp \
- ../../shared/color.inl ../../shared/fixed.inl ../../shared/format.inl \
- ../../shared/math.inl types.hpp utility.hpp inputasm.hpp device.hpp \
- buffer.hpp light.hpp matstack.hpp vertarray.hpp surface.hpp texture.hpp \
- rastdata.hpp
 driver.o: driver.cpp stdafx.h ../../shared/platform.hpp \
  ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
  ../../include/GLES/glext.h ../../shared/utils.hpp \
@@ -142,28 +140,6 @@ context_textures.o: context_textures.cpp stdafx.h \
  context.hpp raster.hpp tnl.hpp inputasm.hpp device.hpp buffer.hpp \
  light.hpp matstack.hpp vertarray.hpp surface.hpp texture.hpp \
  rastdata.hpp
-texture.o: texture.cpp stdafx.h ../../shared/platform.hpp \
- ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
- ../../include/GLES/glext.h ../../shared/utils.hpp \
- ../../shared/object.hpp ../../shared/malloc.hpp ../../shared/handle.hpp \
- ../../shared/list.hpp ../../shared/array.hpp ../../shared/map.hpp \
- ../../shared/rect.hpp ../../shared/color.hpp ../../shared/bitmap.hpp \
- ../../shared/format.hpp ../../shared/fixed.hpp ../../shared/int24.hpp \
- ../../shared/math.hpp ../../shared/logger.hpp ../../shared/profiler.hpp \
- ../../shared/color.inl ../../shared/fixed.inl ../../shared/format.inl \
- ../../shared/math.inl types.hpp utility.hpp texture.hpp surface.hpp
-light.o: light.cpp stdafx.h ../../shared/platform.hpp \
- ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
- ../../include/GLES/glext.h ../../shared/utils.hpp \
- ../../shared/object.hpp ../../shared/malloc.hpp ../../shared/handle.hpp \
- ../../shared/list.hpp ../../shared/array.hpp ../../shared/map.hpp \
- ../../shared/rect.hpp ../../shared/color.hpp ../../shared/bitmap.hpp \
- ../../shared/format.hpp ../../shared/fixed.hpp ../../shared/int24.hpp \
- ../../shared/math.hpp ../../shared/logger.hpp ../../shared/profiler.hpp \
- ../../shared/color.inl ../../shared/fixed.inl ../../shared/format.inl \
- ../../shared/math.inl types.hpp utility.hpp light.hpp context.hpp \
- raster.hpp tnl.hpp inputasm.hpp device.hpp buffer.hpp matstack.hpp \
- vertarray.hpp surface.hpp texture.hpp rastdata.hpp
 context_caps.o: context_caps.cpp stdafx.h ../../shared/platform.hpp \
  ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
  ../../include/GLES/glext.h ../../shared/utils.hpp \
@@ -187,6 +163,18 @@ context_rast.o: context_rast.cpp stdafx.h ../../shared/platform.hpp \
  ../../shared/color.inl ../../shared/fixed.inl ../../shared/format.inl \
  ../../shared/math.inl types.hpp utility.hpp context.hpp raster.hpp \
  tnl.hpp inputasm.hpp device.hpp buffer.hpp light.hpp matstack.hpp \
+ vertarray.hpp surface.hpp texture.hpp rastdata.hpp
+light.o: light.cpp stdafx.h ../../shared/platform.hpp \
+ ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
+ ../../include/GLES/glext.h ../../shared/utils.hpp \
+ ../../shared/object.hpp ../../shared/malloc.hpp ../../shared/handle.hpp \
+ ../../shared/list.hpp ../../shared/array.hpp ../../shared/map.hpp \
+ ../../shared/rect.hpp ../../shared/color.hpp ../../shared/bitmap.hpp \
+ ../../shared/format.hpp ../../shared/fixed.hpp ../../shared/int24.hpp \
+ ../../shared/math.hpp ../../shared/logger.hpp ../../shared/profiler.hpp \
+ ../../shared/color.inl ../../shared/fixed.inl ../../shared/format.inl \
+ ../../shared/math.inl types.hpp utility.hpp light.hpp context.hpp \
+ raster.hpp tnl.hpp inputasm.hpp device.hpp buffer.hpp matstack.hpp \
  vertarray.hpp surface.hpp texture.hpp rastdata.hpp
 context_query.o: context_query.cpp stdafx.h ../../shared/platform.hpp \
  ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
@@ -212,6 +200,18 @@ rastpoint.o: rastpoint.cpp stdafx.h ../../shared/platform.hpp \
  ../../shared/math.inl types.hpp utility.hpp raster.hpp tnl.hpp \
  inputasm.hpp device.hpp buffer.hpp light.hpp matstack.hpp vertarray.hpp \
  surface.hpp texture.hpp rastdata.hpp
+inputasm.o: inputasm.cpp stdafx.h ../../shared/platform.hpp \
+ ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
+ ../../include/GLES/glext.h ../../shared/utils.hpp \
+ ../../shared/object.hpp ../../shared/malloc.hpp ../../shared/handle.hpp \
+ ../../shared/list.hpp ../../shared/array.hpp ../../shared/map.hpp \
+ ../../shared/rect.hpp ../../shared/color.hpp ../../shared/bitmap.hpp \
+ ../../shared/format.hpp ../../shared/fixed.hpp ../../shared/int24.hpp \
+ ../../shared/math.hpp ../../shared/logger.hpp ../../shared/profiler.hpp \
+ ../../shared/color.inl ../../shared/fixed.inl ../../shared/format.inl \
+ ../../shared/math.inl types.hpp utility.hpp inputasm.hpp device.hpp \
+ buffer.hpp light.hpp matstack.hpp vertarray.hpp surface.hpp texture.hpp \
+ rastdata.hpp
 clipper.o: clipper.cpp stdafx.h ../../shared/platform.hpp \
  ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
  ../../include/GLES/glext.h ../../shared/utils.hpp \
@@ -305,10 +305,7 @@ rastline.o: rastline.cpp stdafx.h ../../shared/platform.hpp \
  ../../shared/math.inl types.hpp utility.hpp raster.hpp tnl.hpp \
  inputasm.hpp device.hpp buffer.hpp light.hpp matstack.hpp vertarray.hpp \
  surface.hpp texture.hpp rastdata.hpp raster.inl
-dllmain.o: dllmain.cpp context.hpp raster.hpp tnl.hpp inputasm.hpp \
- device.hpp buffer.hpp light.hpp matstack.hpp vertarray.hpp surface.hpp \
- texture.hpp rastdata.hpp context_query.inl context_rast.inl \
- context_tnl.inl driver.hpp stdafx.h ../../shared/platform.hpp \
+dllmain.o: dllmain.cpp stdafx.h ../../shared/platform.hpp \
  ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
  ../../include/GLES/glext.h ../../shared/utils.hpp \
  ../../shared/object.hpp ../../shared/malloc.hpp ../../shared/handle.hpp \
@@ -317,7 +314,10 @@ dllmain.o: dllmain.cpp context.hpp raster.hpp tnl.hpp inputasm.hpp \
  ../../shared/format.hpp ../../shared/fixed.hpp ../../shared/int24.hpp \
  ../../shared/math.hpp ../../shared/logger.hpp ../../shared/profiler.hpp \
  ../../shared/color.inl ../../shared/fixed.inl ../../shared/format.inl \
- ../../shared/math.inl types.hpp utility.hpp
+ ../../shared/math.inl types.hpp utility.hpp context.hpp raster.hpp \
+ tnl.hpp inputasm.hpp device.hpp buffer.hpp light.hpp matstack.hpp \
+ vertarray.hpp surface.hpp texture.hpp rastdata.hpp context_query.inl \
+ context_rast.inl context_tnl.inl driver.hpp
 buffer.o: buffer.cpp stdafx.h ../../shared/platform.hpp \
  ../../include/GLES/gl.h ../../include/GLES/glplatform.h glcommon.hpp \
  ../../include/GLES/glext.h ../../shared/utils.hpp \

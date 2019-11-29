@@ -105,9 +105,8 @@ inline TFixed<F, T>::TFixed(uint8_t rhs) {
 template <uint32_t F, typename T>
 template <uint32_t F2, typename T2>
 inline TFixed<F, T>::TFixed(TFixed<F2, T2> rhs) {
-  m_value = detail::TFixedShifter<T, T2, (F2 - F)>::call(rhs.m_value);
-  ASSERT((detail::TFixedShifter<int64_t, int64_t, (F2 - F)>::call(
-             rhs.m_value)) == m_value);
+  m_value = detail::TFixedShifter<T, T2, static_cast<int>(F2) - static_cast<int>(F)>::call(rhs.m_value);
+  ASSERT((detail::TFixedShifter<int64_t, int64_t, static_cast<int>(F2) - static_cast<int>(F)>::call(rhs.m_value)) == m_value);
 }
 
 template <uint32_t F, typename T>
@@ -379,14 +378,14 @@ inline TFixed<F, T> operator/(uint16_t lhs, TFixed<F, T> rhs) {
 
 template <uint32_t F, typename T>
 inline TFixed<F, T> operator*(TFixed<F, T> lhs, int rhs) {
-  const T value = static_cast<T>(lhs.m_value * rhs);
+  auto value = static_cast<T>(lhs.m_value * rhs);
   ASSERT((lhs.m_value * static_cast<int64_t>(rhs)) == value);
   return TFixed<F, T>::Make(value);
 }
 
 template <uint32_t F, typename T>
 inline TFixed<F, T> operator<<(TFixed<F, T> lhs, int rhs) {
-  const T value = static_cast<T>(lhs.m_value << rhs);
+  auto value = static_cast<T>(lhs.m_value << rhs);
   ASSERT((lhs.m_value << static_cast<int64_t>(rhs)) == value);
   return TFixed<F, T>::Make(value);
 }
@@ -399,13 +398,13 @@ inline TFixed<F, T> operator*(int lhs, TFixed<F, T> rhs) {
 template <uint32_t F, typename T>
 inline TFixed<F, T> operator/(TFixed<F, T> lhs, int rhs) {
   ASSERT(rhs);
-  const T value = static_cast<T>(lhs.m_value / rhs);
+  auto value = static_cast<T>(lhs.m_value / rhs);
   return TFixed<F, T>::Make(value);
 }
 
 template <uint32_t F, typename T>
 inline TFixed<F, T> operator>>(TFixed<F, T> lhs, int rhs) {
-  const T value = static_cast<T>(lhs.m_value >> rhs);
+  auto value = static_cast<T>(lhs.m_value >> rhs);
   return TFixed<F, T>::Make(value);
 }
 
@@ -416,14 +415,14 @@ inline TFixed<F, T> operator/(int lhs, TFixed<F, T> rhs) {
 
 template <uint32_t F, typename T>
 inline TFixed<F, T> operator*(TFixed<F, T> lhs, uint32_t rhs) {
-  const T value = static_cast<T>(lhs.m_value << rhs);
+  auto value = static_cast<T>(lhs.m_value << rhs);
   ASSERT((lhs.m_value << static_cast<int64_t>(rhs)) == value);
   return TFixed<F, T>::Make(value);
 }
 
 template <uint32_t F, typename T>
 inline TFixed<F, T> operator<<(TFixed<F, T> lhs, uint32_t rhs) {
-  const T value = static_cast<T>(lhs.m_value << rhs);
+  auto value = static_cast<T>(lhs.m_value << rhs);
   ASSERT((lhs.m_value << static_cast<int64_t>(rhs)) == value);
   return TFixed<F, T>::Make(value);
 }
@@ -436,13 +435,13 @@ inline TFixed<F, T> operator*(uint32_t lhs, TFixed<F, T> rhs) {
 template <uint32_t F, typename T>
 inline TFixed<F, T> operator/(TFixed<F, T> lhs, uint32_t rhs) {
   ASSERT(rhs);
-  const T value = static_cast<T>(lhs.m_value / rhs);
+  auto value = static_cast<T>(lhs.m_value / rhs);
   return TFixed<F, T>::Make(value);
 }
 
 template <uint32_t F, typename T>
 inline TFixed<F, T> operator>>(TFixed<F, T> lhs, uint32_t rhs) {
-  const T value = static_cast<T>(lhs.m_value >> rhs);
+  auto value = static_cast<T>(lhs.m_value >> rhs);
   return TFixed<F, T>::Make(value);
 }
 

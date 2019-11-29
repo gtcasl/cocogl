@@ -140,7 +140,7 @@ EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
   // Find the insertion sort iterator
   ConfigList::Iter iter = m_configs.GetBegin();
   for (ConfigList::Iter iterEnd = m_configs.GetEnd(); iter != iterEnd; ++iter) {
-    const int cmp = CConfig::Compare(*iter, pConfig);
+    int cmp = CConfig::Compare(*iter, pConfig);
     if (cmp >= 0) {
       break;
     }

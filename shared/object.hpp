@@ -33,7 +33,7 @@ public:
 
   virtual long Release() const {
     ASSERT(m_lRefCount > 0);
-    const long lRefCount = --m_lRefCount;
+    long lRefCount = --m_lRefCount;
     if (0 == lRefCount) {
       delete this;
     }

@@ -79,7 +79,7 @@ const TCHAR *EngineToString(EGLint engine) {
 EGLAPI EGLint EGLAPIENTRY eglGetError() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  const EGLint err = g_driver.GetError();
+  EGLint err = g_driver.GetError();
 
   __eglLog(_T(" - eglGetError()=%d\r\n"), err);
 
@@ -455,8 +455,8 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
 
   if (pAttrib_list) {
     while (EGL_NONE != *pAttrib_list) {
-      const EGLint name = *pAttrib_list++;
-      const EGLint value = *pAttrib_list++;
+      EGLint name = *pAttrib_list++;
+      EGLint value = *pAttrib_list++;
 
       switch (name) {
       case EGL_WIDTH:
@@ -1048,7 +1048,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQueryContext(EGLDisplay display,
   }
 
   // Find the context object from the handle table
-  CEGLContext *pContext = g_driver.TGetObject<CEGLContext *>(context, pDisplay);
+  auto pContext = g_driver.TGetObject<CEGLContext *>(context, pDisplay);
   if (nullptr == pContext) {
     __eglError(EGL_BAD_CONTEXT, _T("Invalid context handle.\r\n"));
     return EGL_FALSE;
