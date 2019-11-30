@@ -17,9 +17,9 @@
 #include "context.hpp"
 
 void CGLContext::ActivateLight(GLenum cap, bool bValue) {
-  auto pLight = m_lights.GetBegin() + (cap - GL_LIGHT0);
+  auto pLight = lights_.data() + (cap - GL_LIGHT0);
   Light *pPrevLight = nullptr;
-  Light *pCurLight = m_pActiveLights;
+  Light *pCurLight = pActiveLights_;
 
   if (bValue) {
     // Add the light to the active list ( sorted by address )
@@ -34,7 +34,7 @@ void CGLContext::ActivateLight(GLenum cap, bool bValue) {
       if (pPrevLight) {
         pPrevLight->pNext = pLight;
       } else {
-        m_pActiveLights = pLight;
+        pActiveLights_ = pLight;
       }
     }
   } else {
@@ -44,7 +44,7 @@ void CGLContext::ActivateLight(GLenum cap, bool bValue) {
         if (pPrevLight) {
           pPrevLight->pNext = pCurLight->pNext;
         } else {
-          m_pActiveLights = pCurLight->pNext;
+          pActiveLights_ = pCurLight->pNext;
         }
 
         break;

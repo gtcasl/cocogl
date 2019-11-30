@@ -19,18 +19,18 @@ private:
   GLfloat _box[12 * 6];
   GLfloat _floorVertices[12];
 
-  GLuint m_texture;
-  float m_xrot;
-  float m_yrot;
-  float m_yval;
-  bool m_yup;
+  GLuint texture_;
+  float xrot_;
+  float yrot_;
+  float yval_;
+  bool yup_;
 
 public:
   CStencilTest() {
-    m_xrot = 0.0f;
-    m_yrot = 0.0f;
-    m_yval = 1.0f;
-    m_yup = true;
+    xrot_ = 0.0f;
+    yrot_ = 0.0f;
+    yval_ = 1.0f;
+    yup_ = true;
   }
 
   ~CStencilTest() {}
@@ -112,10 +112,10 @@ public:
 
     glEnableClientState(GL_COLOR_ARRAY);
 
-    glTranslatef(0.0f, m_yval, 0.0f);
+    glTranslatef(0.0f, yval_, 0.0f);
 
-    glRotatef(m_xrot, 1.0f, 0.0f, 0.0f);
-    glRotatef(m_yrot, 0.0f, 1.0f, 0.0f);
+    glRotatef(xrot_, 1.0f, 0.0f, 0.0f);
+    glRotatef(yrot_, 0.0f, 1.0f, 0.0f);
 
     glVertexPointer(3, GL_FLOAT, 0, _box);
 
@@ -134,16 +134,16 @@ public:
   }
 
   void OnRender() {
-    m_xrot += 2.0f;
-    m_yrot += 3.0f;
+    xrot_ += 2.0f;
+    yrot_ += 3.0f;
 
-    m_yval += m_yup ? 0.02f : -0.02f;
+    yval_ += yup_ ? 0.02f : -0.02f;
 
-    if (m_yval > 2.0f)
-      m_yup = false;
+    if (yval_ > 2.0f)
+      yup_ = false;
 
-    if (m_yval < 1.0f)
-      m_yup = true;
+    if (yval_ < 1.0f)
+      yup_ = true;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glLoadIdentity();
@@ -196,5 +196,5 @@ public:
     drawCube();
   }
 
-  void OnDestroy() { glDeleteTextures(1, &m_texture); }
+  void OnDestroy() { glDeleteTextures(1, &texture_); }
 };

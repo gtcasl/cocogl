@@ -24,14 +24,14 @@ protected:
   CInputAssembler() {}
   ~CInputAssembler() {}
 
-  VertexArray m_positionArray;
-  VertexArray m_normalArray;
-  VertexArray m_colorArray;
-  VertexArray m_texCoordArrays[MAX_TEXTURES];
-  VertexArray m_pointSizeArray;
+  VertexArray positionArray_;
+  VertexArray normalArray_;
+  VertexArray colorArray_;
+  VertexArray texCoordArrays_[MAX_TEXTURES];
+  VertexArray pointSizeArray_;
 
-  VECTOR4 m_vColor;
-  VECTOR3 m_vNormal;
-  VECTOR2 m_vTexCoords[MAX_TEXTURES];
-  floatf m_fPointSize;
+  VECTOR4 vColor_;
+  VECTOR3 vNormal_;
+  VECTOR2 vTexCoords_[MAX_TEXTURES];
+  floatf fPointSize_;
 };

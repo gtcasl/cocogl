@@ -19,7 +19,7 @@ void CGLContext::ShadeModel(GLenum mode) {
   switch (mode) {
   case GL_FLAT:
   case GL_SMOOTH:
-    m_caps.ShadeModel = ShadeModelFromEnum(mode);
+    caps_.ShadeModel = ShadeModelFromEnum(mode);
     break;
 
   default:
@@ -33,28 +33,29 @@ void CGLContext::ShadeModel(GLenum mode) {
 
 void CGLContext::Scissor(GLint x, GLint y, GLsizei width, GLsizei height) {
   if ((width < 0) || (height < 0)) {
-    __glError(GL_INVALID_VALUE, _T("CGLContext::Scissor() failed, invalid ")
-                                _T("width=%d or height=%d parameters.\r\n"),
+    __glError(GL_INVALID_VALUE,
+              _T("CGLContext::Scissor() failed, invalid ")
+              _T("width=%d or height=%d parameters.\r\n"),
               width, height);
     return;
   }
 
-  m_scissor.left = x;
-  m_scissor.top = y;
-  m_scissor.right = x + width;
-  m_scissor.bottom = y + height;
+  scissor_.left = x;
+  scissor_.top = y;
+  scissor_.right = x + width;
+  scissor_.bottom = y + height;
 
-  m_dirtyFlags.ScissorRECT = 1;
+  dirtyFlags_.ScissorRECT = 1;
 }
 
 void CGLContext::SampleCoverage(floatf value, GLboolean invert) {
-  m_sampleCoverage.fValue = Math::TSat(value);
-  m_sampleCoverage.bInvert = invert ? true : false;
+  sampleCoverage_.fValue = Math::TSat(value);
+  sampleCoverage_.bInvert = invert ? true : false;
 }
 
 void CGLContext::PolygonOffset(floatf factor, floatf units) {
-  m_polygonOffset.fFactor = factor;
-  m_polygonOffset.fUnits = units;
+  polygonOffset_.fFactor = factor;
+  polygonOffset_.fUnits = units;
 }
 
 void CGLContext::PointSize(floatf size) {
@@ -66,7 +67,7 @@ void CGLContext::PointSize(floatf size) {
     return;
   }
 
-  m_fPointSize = size;
+  fPointSize_ = size;
 }
 
 void CGLContext::LineWidth(floatf width) {
@@ -78,7 +79,7 @@ void CGLContext::LineWidth(floatf width) {
     return;
   }
 
-  m_fLineWidth = width;
+  fLineWidth_ = width;
 }
 
 void CGLContext::AlphaFunc(GLenum func, floatf ref) {
@@ -91,8 +92,8 @@ void CGLContext::AlphaFunc(GLenum func, floatf ref) {
   case GL_NOTEQUAL:
   case GL_GEQUAL:
   case GL_ALWAYS:
-    m_rasterStates.AlphaFunc = CompareFuncFromEnum(func);
-    m_rasterData.AlphaRef =
+    rasterStates_.AlphaFunc = CompareFuncFromEnum(func);
+    rasterData_.AlphaRef =
         static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(ref)));
     break;
 
@@ -115,9 +116,9 @@ void CGLContext::StencilFunc(GLenum func, GLint ref, GLuint mask) {
   case GL_NOTEQUAL:
   case GL_GEQUAL:
   case GL_ALWAYS:
-    m_rasterStates.StencilFunc = CompareFuncFromEnum(func);
-    m_rasterData.StencilRef = static_cast<uint8_t>(ref);
-    m_rasterData.StencilMask = static_cast<uint8_t>(mask);
+    rasterStates_.StencilFunc = CompareFuncFromEnum(func);
+    rasterData_.StencilRef = static_cast<uint8_t>(ref);
+    rasterData_.StencilMask = static_cast<uint8_t>(mask);
     break;
 
   default:
@@ -157,9 +158,9 @@ void CGLContext::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
     }
   }
 
-  m_rasterStates.StencilFail = results[0];
-  m_rasterStates.StencilZFail = results[1];
-  m_rasterStates.StencilZPass = results[2];
+  rasterStates_.StencilFail = results[0];
+  rasterStates_.StencilZFail = results[1];
+  rasterStates_.StencilZPass = results[2];
 }
 
 void CGLContext::DepthFunc(GLenum func) {
@@ -172,7 +173,7 @@ void CGLContext::DepthFunc(GLenum func) {
   case GL_NOTEQUAL:
   case GL_GEQUAL:
   case GL_ALWAYS:
-    m_rasterStates.DepthFunc = CompareFuncFromEnum(func);
+    rasterStates_.DepthFunc = CompareFuncFromEnum(func);
     break;
 
   default:
@@ -195,12 +196,13 @@ void CGLContext::BlendFunc(GLenum sfactor, GLenum dfactor) {
   case GL_DST_COLOR:
   case GL_ONE_MINUS_DST_COLOR:
   case GL_SRC_ALPHA_SATURATE:
-    m_rasterStates.BlendSrc = BlendFuncFromEnum(sfactor);
+    rasterStates_.BlendSrc = BlendFuncFromEnum(sfactor);
     break;
 
   default:
-    __glError(GL_INVALID_ENUM, _T("CGLContext::BlendFunc() failed, invalid ")
-                               _T("sfactor parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::BlendFunc() failed, invalid ")
+              _T("sfactor parameter: %d.\r\n"),
               sfactor);
     return;
   }
@@ -214,12 +216,13 @@ void CGLContext::BlendFunc(GLenum sfactor, GLenum dfactor) {
   case GL_ONE_MINUS_SRC_ALPHA:
   case GL_DST_ALPHA:
   case GL_ONE_MINUS_DST_ALPHA:
-    m_rasterStates.BlendDst = BlendFuncFromEnum(dfactor);
+    rasterStates_.BlendDst = BlendFuncFromEnum(dfactor);
     break;
 
   default:
-    __glError(GL_INVALID_ENUM, _T("CGLContext::BlendFunc() failed, invalid ")
-                               _T("dfactor parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::BlendFunc() failed, invalid ")
+              _T("dfactor parameter: %d.\r\n"),
               dfactor);
     return;
   }
@@ -243,7 +246,7 @@ void CGLContext::LogicOp(GLenum opcode) {
   case GL_OR_INVERTED:
   case GL_NAND:
   case GL_SET:
-    m_rasterStates.LogicFunc = LogicOpFromEnum(opcode);
+    rasterStates_.LogicFunc = LogicOpFromEnum(opcode);
     break;
 
   default:

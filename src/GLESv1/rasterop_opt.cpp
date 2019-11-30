@@ -35,7 +35,7 @@ l_optimizedScanlines[] = {
 
 COptimizedRasterOp::COptimizedRasterOp(PFN_Scanline pfnScanline) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
-  m_pfnScanline = pfnScanline;
+  pfnScanline_ = pfnScanline;
 }
 
 COptimizedRasterOp::~COptimizedRasterOp() {
@@ -46,7 +46,7 @@ GLenum COptimizedRasterOp::Create(IRasterOp **ppRasterOp,
                                   const RASTERID &rasterID) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  ASSERT(ppRasterOp);
+  assert(ppRasterOp);
 
   // First lookup the optimized scanline table
   for (uint32_t i = 0; i < __countof(l_optimizedScanlines); ++i) {

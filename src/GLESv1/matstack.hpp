@@ -21,23 +21,23 @@ public:
   static GLenum Create(CMatrixStack **ppMatrixStack, uint8_t size);
 
   void ToIdentity() {
-    m_pMatrices[m_curIndex].ToIdentity();
+    pMatrices_[curIndex_].ToIdentity();
     this->SetIdentity(true);
   }
 
   void SetMatrix(const MATRIX44 &matrix) {
-    m_pMatrices[m_curIndex] = matrix;
+    pMatrices_[curIndex_] = matrix;
     this->SetIdentity(false);
   }
 
-  const MATRIX44 &GetMatrix() const { return m_pMatrices[m_curIndex]; }
+  const MATRIX44 &GetMatrix() const { return pMatrices_[curIndex_]; }
 
   bool Push() {
-    if (m_curIndex + 1 < m_size) {
-      m_pMatrices[m_curIndex + 1] = m_pMatrices[m_curIndex];
-      m_identityMask = (m_identityMask & ~(2 << m_curIndex)) |
-                       ((m_identityMask & (1 << m_curIndex)) << 1);
-      ++m_curIndex;
+    if (curIndex_ + 1 < size_) {
+      pMatrices_[curIndex_ + 1] = pMatrices_[curIndex_];
+      identityMask_ = (identityMask_ & ~(2 << curIndex_)) |
+                      ((identityMask_ & (1 << curIndex_)) << 1);
+      ++curIndex_;
       return true;
     }
 
@@ -45,22 +45,22 @@ public:
   }
 
   bool Pop() {
-    if (m_curIndex > 0) {
-      --m_curIndex;
+    if (curIndex_ > 0) {
+      --curIndex_;
       return true;
     }
 
     return false;
   }
 
-  bool IsIdentity() const { return m_identityMask & (1 << m_curIndex); }
+  bool IsIdentity() const { return identityMask_ & (1 << curIndex_); }
 
-  uint32_t GetSize() const { return m_size; }
+  uint32_t GetSize() const { return size_; }
 
   template <class T> void TGetTop(T *pDst) const {
-    ASSERT(pDst);
+    assert(pDst);
 
-    auto pSrc = m_pMatrices[m_curIndex]._m;
+    auto pSrc = pMatrices_[curIndex_]._m;
     for (uint32_t i = 0; i < 16; ++i) {
       pDst[i] = Math::TCast<T>(pSrc[i]);
     }
@@ -73,14 +73,14 @@ private:
 
   void SetIdentity(bool bValue) {
     if (bValue) {
-      m_identityMask |= (1 << m_curIndex);
+      identityMask_ |= (1 << curIndex_);
     } else {
-      m_identityMask &= ~(1 << m_curIndex);
+      identityMask_ &= ~(1 << curIndex_);
     }
   }
 
-  MATRIX44 *m_pMatrices;
-  uint16_t m_identityMask;
-  uint8_t m_curIndex;
-  uint8_t m_size;
+  MATRIX44 *pMatrices_;
+  uint16_t identityMask_;
+  uint8_t curIndex_;
+  uint8_t size_;
 };

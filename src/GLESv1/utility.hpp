@@ -18,14 +18,14 @@ template <class T> GLenum TToGLenum(T param);
 
 template <class T> class TAddressOf {
 public:
-  TAddressOf(const T &value) : m_value(value) {}
+  TAddressOf(const T &value) : value_(value) {}
 
-  operator const T *() const { return &m_value; }
+  operator const T *() const { return &value_; }
 
-  operator T *() { return &m_value; }
+  operator T *() { return &value_; }
 
 private:
-  T m_value;
+  T value_;
 };
 
 #ifndef COCOGL_API_PROFILE
@@ -45,7 +45,7 @@ inline bool __glSucceeded(uint32_t err) { return (err == GL_NO_ERROR); }
   g_logger.Write(_T("*** Error in file %s at line %d.\r\n"), _T(__FILE__),     \
                  __LINE__);                                                    \
   g_logger.Write(__VA_ARGS__);                                                 \
-  ASSERT(false);
+  assert(false);
 #else
 #define __glLog(...)
 #define __glLogError(...)
@@ -136,24 +136,24 @@ public:
   };
 
   TBitPtr(const void *ptr) {
-    m_ptr = reinterpret_cast<const T *>(ptr);
-    m_shift = (sizeof(T) << 3) - BITS;
+    ptr_ = reinterpret_cast<const T *>(ptr);
+    shift_ = (sizeof(T) << 3) - BITS;
   }
 
-  T operator*() const { return (*m_ptr >> m_shift) & MASK; }
+  T operator*() const { return (*ptr_ >> shift_) & MASK; }
 
   const TBitPtr &operator++() {
-    if (m_shift >= BITS) {
-      m_shift -= BITS;
+    if (shift_ >= BITS) {
+      shift_ -= BITS;
     } else {
-      m_shift = (sizeof(T) << 3) - BITS;
-      ++m_ptr;
+      shift_ = (sizeof(T) << 3) - BITS;
+      ++ptr_;
     }
 
     return *this;
   }
 
 private:
-  const T *m_ptr;
-  uint32_t m_shift;
+  const T *ptr_;
+  uint32_t shift_;
 };

@@ -17,20 +17,20 @@
 
 thread_local CGLContext *tls_glctx = nullptr;
 
-CGLDriver::CGLDriver() : m_pHandles(nullptr), m_pRasterCache(nullptr) {
+CGLDriver::CGLDriver() : handles_(nullptr), pRasterCache_(nullptr) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   GLenum err;
 
   // Create the handle table
-  err = GLERROR_FROM_HRESULT(CHandleTable::Create(&m_pHandles));
+  err = GLERROR_FROM_HRESULT(CHandleTable::Create(&handles_));
   if (__glFailed(err)) {
     __glLogError(_T("CHandleTable::Create() failed, err = %x.\r\n"), err);
     return;
   }
 
   // Create the raster cache
-  err = CRasterCache::Create(&m_pRasterCache);
+  err = CRasterCache::Create(&pRasterCache_);
   if (__glFailed(err)) {
     __glLogError(_T("CRasterCache::Create() failed, err = %x.\r\n"), err);
     return;
@@ -41,12 +41,12 @@ CGLDriver::~CGLDriver() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   __safeRelease(tls_glctx);
-  __safeRelease(m_pRasterCache);
+  __safeRelease(pRasterCache_);
 
-  if (m_pHandles) {
+  if (handles_) {
     {
       // Release all generated driver handles
-      auto enumerator = m_pHandles->GetEnumerator(this);
+      auto enumerator = handles_->GetEnumerator(this);
       while (!enumerator.IsEnd()) {
         reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
       }
@@ -54,17 +54,17 @@ CGLDriver::~CGLDriver() {
 
     {
       // Release all other generated handles
-      auto enumerator = m_pHandles->GetEnumerator(nullptr);
+      auto enumerator = handles_->GetEnumerator(nullptr);
       while (!enumerator.IsEnd()) {
         reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
       }
     }
 
     // The handle table should now be empty
-    ASSERT(0 == m_pHandles->GetNumHandles());
+    assert(0 == handles_->GetNumHandles());
 
     // Release the handle table
-    m_pHandles->Release();
+    handles_->Release();
   }
 }
 

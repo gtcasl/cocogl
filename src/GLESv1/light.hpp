@@ -25,27 +25,27 @@ struct Light {
   };
 
   void SetColor(GLenum pname, const VECTOR4 &color) {
-    ASSERT((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
-    m_vColors[pname - COLORS_FIRST] = color;
+    assert((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
+    vColors_[pname - COLORS_FIRST] = color;
   }
 
   const VECTOR4 &GetColor(GLenum pname) const {
-    ASSERT((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
-    return m_vColors[pname - COLORS_FIRST];
+    assert((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
+    return vColors_[pname - COLORS_FIRST];
   }
 
   void SetAttenuation(GLenum pname, floatf value) {
-    ASSERT((pname >= ATTENUATIONS_FIRST) && (pname <= ATTENUATIONS_LAST));
-    m_fAttenuations[pname - ATTENUATIONS_FIRST] = value;
+    assert((pname >= ATTENUATIONS_FIRST) && (pname <= ATTENUATIONS_LAST));
+    fAttenuations_[pname - ATTENUATIONS_FIRST] = value;
   }
 
   floatf GetAttenuation(GLenum pname) const {
-    ASSERT((pname >= ATTENUATIONS_FIRST) && (pname <= ATTENUATIONS_LAST));
-    return m_fAttenuations[pname - ATTENUATIONS_FIRST];
+    assert((pname >= ATTENUATIONS_FIRST) && (pname <= ATTENUATIONS_LAST));
+    return fAttenuations_[pname - ATTENUATIONS_FIRST];
   }
 
 private:
-  VECTOR4 m_vColors[COLORS_SIZE];
+  VECTOR4 vColors_[COLORS_SIZE];
 
 public:
   LIGHTFLAGS Flags;
@@ -60,7 +60,7 @@ public:
   VECTOR3 vScaledSpecular;
 
 private:
-  floatf m_fAttenuations[ATTENUATIONS_SIZE];
+  floatf fAttenuations_[ATTENUATIONS_SIZE];
 
 public:
   Light *pNext;
@@ -75,15 +75,15 @@ public:
   };
 
   void SetColor(GLenum pname, const VECTOR4 &color) {
-    ASSERT((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
-    m_vColors[pname - COLORS_FIRST] = color;
+    assert((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
+    vColors_[pname - COLORS_FIRST] = color;
   }
 
   const VECTOR4 &GetColor(GLenum pname) const {
-    ASSERT((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
-    return m_vColors[pname - COLORS_FIRST];
+    assert((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
+    return vColors_[pname - COLORS_FIRST];
   }
 
 private:
-  VECTOR4 m_vColors[COLORS_SIZE];
+  VECTOR4 vColors_[COLORS_SIZE];
 };

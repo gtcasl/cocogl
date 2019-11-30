@@ -21,91 +21,85 @@ template <uint32_t Format> struct TColorNative {
   TColorNative() {}
 
   explicit TColorNative(uint32_t value) {
-    if
-      constexpr(Format == FORMAT_A8) { this->Low = value; }
+    if constexpr (Format == FORMAT_A8) {
+      this->Low = value;
+    }
 
-    if
-      constexpr(Format == FORMAT_L8) { this->Low = value; }
+    if constexpr (Format == FORMAT_L8) {
+      this->Low = value;
+    }
 
-    if
-      constexpr(Format == FORMAT_A8L8) {
-        this->Low = (value | (value << 8)) & 0x00ff00ff;
-      }
+    if constexpr (Format == FORMAT_A8L8) {
+      this->Low = (value | (value << 8)) & 0x00ff00ff;
+    }
 
-    if
-      constexpr(Format == FORMAT_R5G6B5) {
-        this->Low = (value | (value << 16)) & 0x07e0f81f;
-      }
+    if constexpr (Format == FORMAT_R5G6B5) {
+      this->Low = (value | (value << 16)) & 0x07e0f81f;
+    }
 
-    if
-      constexpr(Format == FORMAT_A4R4G4B4) {
-        this->Low = (value | (value << 12)) & 0x0f0f0f0f;
-      }
+    if constexpr (Format == FORMAT_A4R4G4B4) {
+      this->Low = (value | (value << 12)) & 0x0f0f0f0f;
+    }
 
-    if
-      constexpr(Format == FORMAT_A8R8G8B8) {
-        this->Low = value & 0x00ff00ff;
-        this->High = (value >> 8) & 0x00ff00ff;
-      }
+    if constexpr (Format == FORMAT_A8R8G8B8) {
+      this->Low = value & 0x00ff00ff;
+      this->High = (value >> 8) & 0x00ff00ff;
+    }
   }
 
   operator uint32_t() const {
-    if
-      constexpr(Format == FORMAT_A8) { return this->Low; }
+    if constexpr (Format == FORMAT_A8) {
+      return this->Low;
+    }
 
-    if
-      constexpr(Format == FORMAT_L8) { return this->Low; }
+    if constexpr (Format == FORMAT_L8) {
+      return this->Low;
+    }
 
-    if
-      constexpr(Format == FORMAT_A8L8) {
-        return (uint16_t)(this->Low | (this->Low >> 8));
-      }
+    if constexpr (Format == FORMAT_A8L8) {
+      return (uint16_t)(this->Low | (this->Low >> 8));
+    }
 
-    if
-      constexpr(Format == FORMAT_R5G6B5) {
-        return (uint16_t)(this->Low | (this->Low >> 16));
-      }
+    if constexpr (Format == FORMAT_R5G6B5) {
+      return (uint16_t)(this->Low | (this->Low >> 16));
+    }
 
-    if
-      constexpr(Format == FORMAT_A4R4G4B4) {
-        return (uint16_t)(this->Low | (this->Low >> 12));
-      }
+    if constexpr (Format == FORMAT_A4R4G4B4) {
+      return (uint16_t)(this->Low | (this->Low >> 12));
+    }
 
-    if
-      constexpr(Format == FORMAT_A8R8G8B8) {
-        return this->Low | (this->High << 8);
-      }
+    if constexpr (Format == FORMAT_A8R8G8B8) {
+      return this->Low | (this->High << 8);
+    }
   }
 
   TColorNative<Format> Mul(uint32_t frac) const {
     TColorNative<Format> result;
 
-    if
-      constexpr(Format == FORMAT_A8) { result.Low = (this->Low * frac) >> 8; }
+    if constexpr (Format == FORMAT_A8) {
+      result.Low = (this->Low * frac) >> 8;
+    }
 
-    if
-      constexpr(Format == FORMAT_L8) { result.Low = (this->Low * frac) >> 8; }
+    if constexpr (Format == FORMAT_L8) {
+      result.Low = (this->Low * frac) >> 8;
+    }
 
-    if
-      constexpr(Format == FORMAT_A8L8) {
-        result.Low = ((this->Low * frac) >> 8) & 0x00ff00ff;
-      }
+    if constexpr (Format == FORMAT_A8L8) {
+      result.Low = ((this->Low * frac) >> 8) & 0x00ff00ff;
+    }
 
-    if
-      constexpr(Format == FORMAT_R5G6B5) {
-        result.Low = ((this->Low * frac) >> 5) & 0x07e0f81f;
-      }
+    if constexpr (Format == FORMAT_R5G6B5) {
+      result.Low = ((this->Low * frac) >> 5) & 0x07e0f81f;
+    }
 
-    if
-      constexpr(Format == FORMAT_A4R4G4B4) {
-        result.Low = ((this->Low * frac) >> 4) & 0x0f0f0f0f;
-      }
+    if constexpr (Format == FORMAT_A4R4G4B4) {
+      result.Low = ((this->Low * frac) >> 4) & 0x0f0f0f0f;
+    }
 
-    if
-      constexpr(Format == FORMAT_A8R8G8B8) {
-        result.Low = ((this->Low * frac) >> 8) & 0x00ff00ff;
-        result.High = ((this->High * frac) >> 8) & 0x00ff00ff;
-      }
+    if constexpr (Format == FORMAT_A8R8G8B8) {
+      result.Low = ((this->Low * frac) >> 8) & 0x00ff00ff;
+      result.High = ((this->High * frac) >> 8) & 0x00ff00ff;
+    }
 
     return result;
   }
@@ -114,41 +108,35 @@ template <uint32_t Format> struct TColorNative {
                             uint32_t frac) const {
     TColorNative<Format> result;
 
-    if
-      constexpr(Format == FORMAT_A8) {
-        result.Low = this->Low + (((c1.Low - this->Low) * frac) >> 8);
-      }
+    if constexpr (Format == FORMAT_A8) {
+      result.Low = this->Low + (((c1.Low - this->Low) * frac) >> 8);
+    }
 
-    if
-      constexpr(Format == FORMAT_L8) {
-        result.Low = this->Low + (((c1.Low - this->Low) * frac) >> 8);
-      }
+    if constexpr (Format == FORMAT_L8) {
+      result.Low = this->Low + (((c1.Low - this->Low) * frac) >> 8);
+    }
 
-    if
-      constexpr(Format == FORMAT_A8L8) {
-        result.Low =
-            (this->Low + (((c1.Low - this->Low) * frac) >> 8)) & 0x00ff00ff;
-      }
+    if constexpr (Format == FORMAT_A8L8) {
+      result.Low =
+          (this->Low + (((c1.Low - this->Low) * frac) >> 8)) & 0x00ff00ff;
+    }
 
-    if
-      constexpr(Format == FORMAT_R5G6B5) {
-        result.Low =
-            (this->Low + (((c1.Low - this->Low) * frac) >> 5)) & 0x07e0f81f;
-      }
+    if constexpr (Format == FORMAT_R5G6B5) {
+      result.Low =
+          (this->Low + (((c1.Low - this->Low) * frac) >> 5)) & 0x07e0f81f;
+    }
 
-    if
-      constexpr(Format == FORMAT_A4R4G4B4) {
-        result.Low =
-            (this->Low + (((c1.Low - this->Low) * frac) >> 4)) & 0x0f0f0f0f;
-      }
+    if constexpr (Format == FORMAT_A4R4G4B4) {
+      result.Low =
+          (this->Low + (((c1.Low - this->Low) * frac) >> 4)) & 0x0f0f0f0f;
+    }
 
-    if
-      constexpr(Format == FORMAT_A8R8G8B8) {
-        result.Low =
-            (this->Low + (((c1.Low - this->Low) * frac) >> 8)) & 0x00ff00ff;
-        result.High =
-            (this->High + (((c1.High - this->High) * frac) >> 8)) & 0x00ff00ff;
-      }
+    if constexpr (Format == FORMAT_A8R8G8B8) {
+      result.Low =
+          (this->Low + (((c1.Low - this->Low) * frac) >> 8)) & 0x00ff00ff;
+      result.High =
+          (this->High + (((c1.High - this->High) * frac) >> 8)) & 0x00ff00ff;
+    }
 
     return result;
   }
@@ -156,37 +144,41 @@ template <uint32_t Format> struct TColorNative {
 
 template <uint32_t Compare> inline bool TCompare(uint32_t a, uint32_t b) {
 
-  if
-    constexpr(Compare == COMPARE_NEVER) {
-      __unreferenced(a);
-      __unreferenced(b);
-      return false;
-    }
+  if constexpr (Compare == COMPARE_NEVER) {
+    __unreferenced(a);
+    __unreferenced(b);
+    return false;
+  }
 
-  if
-    constexpr(Compare == COMPARE_LESS) { return (a < b); }
+  if constexpr (Compare == COMPARE_LESS) {
+    return (a < b);
+  }
 
-  if
-    constexpr(Compare == COMPARE_EQUAL) { return (a == b); }
+  if constexpr (Compare == COMPARE_EQUAL) {
+    return (a == b);
+  }
 
-  if
-    constexpr(Compare == COMPARE_LEQUAL) { return (a <= b); }
+  if constexpr (Compare == COMPARE_LEQUAL) {
+    return (a <= b);
+  }
 
-  if
-    constexpr(Compare == COMPARE_GREATER) { return (a > b); }
+  if constexpr (Compare == COMPARE_GREATER) {
+    return (a > b);
+  }
 
-  if
-    constexpr(Compare == COMPARE_NOTEQUAL) { return (a != b); }
+  if constexpr (Compare == COMPARE_NOTEQUAL) {
+    return (a != b);
+  }
 
-  if
-    constexpr(Compare == COMPARE_GEQUAL) { return (a >= b); }
+  if constexpr (Compare == COMPARE_GEQUAL) {
+    return (a >= b);
+  }
 
-  if
-    constexpr(Compare == COMPARE_ALWAYS) {
-      __unreferenced(a);
-      __unreferenced(b);
-      return true;
-    }
+  if constexpr (Compare == COMPARE_ALWAYS) {
+    __unreferenced(a);
+    __unreferenced(b);
+    return true;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -194,55 +186,49 @@ template <uint32_t Compare> inline bool TCompare(uint32_t a, uint32_t b) {
 template <uint32_t StencilOp>
 inline uint32_t TStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
 
-  if
-    constexpr(StencilOp == STENCIL_KEEP) {
-      __unreferenced(stencilRef);
-      return stencilValue;
-    }
+  if constexpr (StencilOp == STENCIL_KEEP) {
+    __unreferenced(stencilRef);
+    return stencilValue;
+  }
 
-  if
-    constexpr(StencilOp == STENCIL_REPLACE) {
-      __unreferenced(stencilValue);
-      return stencilRef;
-    }
+  if constexpr (StencilOp == STENCIL_REPLACE) {
+    __unreferenced(stencilValue);
+    return stencilRef;
+  }
 
-  if
-    constexpr(StencilOp == STENCIL_INCR) {
-      __unreferenced(stencilRef);
-      return stencilValue + (stencilValue != 0xffff) ? 1 : 0;
-    }
+  if constexpr (StencilOp == STENCIL_INCR) {
+    __unreferenced(stencilRef);
+    return stencilValue + (stencilValue != 0xffff) ? 1 : 0;
+  }
 
-  if
-    constexpr(StencilOp == STENCIL_DECR) {
-      __unreferenced(stencilRef);
-      return stencilValue - (stencilValue != 0) ? 1 : 0;
-    }
+  if constexpr (StencilOp == STENCIL_DECR) {
+    __unreferenced(stencilRef);
+    return stencilValue - (stencilValue != 0) ? 1 : 0;
+  }
 
-  if
-    constexpr(StencilOp == STENCIL_ZERO) {
-      __unreferenced(stencilValue);
-      __unreferenced(stencilRef);
-      return 0;
-    }
+  if constexpr (StencilOp == STENCIL_ZERO) {
+    __unreferenced(stencilValue);
+    __unreferenced(stencilRef);
+    return 0;
+  }
 
-  if
-    constexpr(StencilOp == STENCIL_INVERT) {
-      __unreferenced(stencilRef);
-      return ~stencilValue;
-    }
+  if constexpr (StencilOp == STENCIL_INVERT) {
+    __unreferenced(stencilRef);
+    return ~stencilValue;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t Address> inline int TAddress(int x) {
 
-  if
-    constexpr(Address == ADDRESS_WRAP) { return x & fixedRX::MASK; }
+  if constexpr (Address == ADDRESS_WRAP) {
+    return x & fixedRX::MASK;
+  }
 
-  if
-    constexpr(Address == ADDRESS_CLAMP) {
-      return Math::TClamp<int>(x, 0, fixedRX::MASK);
-    }
+  if constexpr (Address == ADDRESS_CLAMP) {
+    return Math::TClamp<int>(x, 0, fixedRX::MASK);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -251,12 +237,12 @@ template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline uint32_t TGetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
                                   fixedRX fV) {
   auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
-          surface.GetBits());
+      surface.GetBits());
   uint32_t logWidth = surface.GetLogWidth();
   uint32_t logHeight = surface.GetLogHeight();
 
-  uint32_t u = TAddress<AddressU>(fU.GetRaw());
-  uint32_t v = TAddress<AddressV>(fV.GetRaw());
+  uint32_t u = TAddress<AddressU>(fU.data());
+  uint32_t v = TAddress<AddressV>(fV.data());
 
   uint32_t x = u >> (fixedRX::FRAC - logWidth);
   uint32_t y = v >> (fixedRX::FRAC - logHeight);
@@ -271,18 +257,15 @@ inline TColorNative<Format> TGetTexelColorLnX(const SurfaceDesc &surface,
   int lerpBits = TFormatInfo<Format>::LERP;
   int lerpMask = (1 << lerpBits) - 1;
 
-  auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(surface.GetBits());
+  auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
+      surface.GetBits());
   uint32_t logWidth = surface.GetLogWidth();
   uint32_t logHeight = surface.GetLogHeight();
 
-  uint32_t v0 =
-      TAddress<AddressV>(fV.GetRaw() - (fixedRX::HALF >> logHeight));
-  uint32_t v1 =
-      TAddress<AddressV>(fV.GetRaw() + (fixedRX::HALF >> logHeight));
-  uint32_t u0 =
-      TAddress<AddressU>(fU.GetRaw() - (fixedRX::HALF >> logWidth));
-  uint32_t u1 =
-      TAddress<AddressU>(fU.GetRaw() + (fixedRX::HALF >> logWidth));
+  uint32_t v0 = TAddress<AddressV>(fV.data() - (fixedRX::HALF >> logHeight));
+  uint32_t v1 = TAddress<AddressV>(fV.data() + (fixedRX::HALF >> logHeight));
+  uint32_t u0 = TAddress<AddressU>(fU.data() - (fixedRX::HALF >> logWidth));
+  uint32_t u1 = TAddress<AddressU>(fU.data() + (fixedRX::HALF >> logWidth));
 
   uint32_t logHeightN = fixedRX::FRAC - (logHeight + lerpBits);
   uint32_t y1 = v1 >> logHeightN;
@@ -320,140 +303,123 @@ template <uint32_t Filter, uint32_t Format, uint32_t AddressU,
           uint32_t AddressV>
 inline uint32_t TGetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
                                fixedRX fV) {
-  if
-    constexpr(Filter == FILTER_NEAREST) {
-      return TGetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV);
-    }
+  if constexpr (Filter == FILTER_NEAREST) {
+    return TGetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV);
+  }
 
-  if
-    constexpr(Filter == FILTER_LINEAR) {
-      return TGetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
-    }
+  if constexpr (Filter == FILTER_LINEAR) {
+    return TGetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
+  }
 }
 
 template <uint32_t Filter, uint32_t Format, uint32_t AddressU,
           uint32_t AddressV>
 inline TColorNative<Format> TGetMinFilterX(const SurfaceDesc &surface,
                                            fixedRX fU, fixedRX fV) {
-  if
-    constexpr(Filter == FILTER_NEAREST) {
-      return TColorNative<Format>(
-          TGetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
-    }
+  if constexpr (Filter == FILTER_NEAREST) {
+    return TColorNative<Format>(
+        TGetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
+  }
 
-  if
-    constexpr(Filter == FILTER_LINEAR) {
-      return TGetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
-    }
+  if constexpr (Filter == FILTER_LINEAR) {
+    return TGetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
+  }
 }
 
 template <uint32_t MipFilter, uint32_t MinFilter, uint32_t MagFilter,
           uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
                                fixedRX fM) {
-  if
-    constexpr(MipFilter == FILTER_NONE) {
-      if
-        constexpr(MinFilter == MagFilter) {
-          return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
-              sampler.pMipLevels[0], fU, fV);
-        }
-      else {
-        auto fJ = fixed16::Make(fM.GetRaw());
-        if (fJ > TConst<fixed16>::One()) {
-          return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
-              sampler.pMipLevels[0], fU, fV);
-        } else {
-          return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(
-              sampler.pMipLevels[0], fU, fV);
-        }
+  if constexpr (MipFilter == FILTER_NONE) {
+    if constexpr (MinFilter == MagFilter) {
+      return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
+          sampler.pMipLevels[0], fU, fV);
+    } else {
+      auto fJ = fixed16::make(fM.data());
+      if (fJ > TConst<fixed16>::One()) {
+        return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
+            sampler.pMipLevels[0], fU, fV);
+      } else {
+        return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(
+            sampler.pMipLevels[0], fU, fV);
       }
     }
+  }
 
-  if
-    constexpr(MipFilter == FILTER_NEAREST) {
-      if
-        constexpr(MinFilter == MagFilter) {
-          auto fJ = Math::TMax<fixed16>(fixed16::Make(fM.GetRaw()),
-                                                 TConst<fixed16>::One());
+  if constexpr (MipFilter == FILTER_NEAREST) {
+    if constexpr (MinFilter == MagFilter) {
+      auto fJ =
+          Math::TMax<fixed16>(fixed16::make(fM.data()), TConst<fixed16>::One());
 
-          int mipLevel = Math::TMin<int>(
-              Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
+      int mipLevel = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+                                     sampler.MaxMipLevel);
 
-          return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
-              sampler.pMipLevels[mipLevel], fU, fV);
-        }
-      else {
-        auto fJ = fixed16::Make(fM.GetRaw());
-        if (fJ > TConst<fixed16>::One()) {
-          int mipLevel = Math::TMin<int>(
-              Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
+      return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
+          sampler.pMipLevels[mipLevel], fU, fV);
+    } else {
+      auto fJ = fixed16::make(fM.data());
+      if (fJ > TConst<fixed16>::One()) {
+        int mipLevel = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+                                       sampler.MaxMipLevel);
 
-          return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
-              sampler.pMipLevels[mipLevel], fU, fV);
-        } else {
-          return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(
-              sampler.pMipLevels[0], fU, fV);
-        }
+        return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
+            sampler.pMipLevels[mipLevel], fU, fV);
+      } else {
+        return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(
+            sampler.pMipLevels[0], fU, fV);
       }
     }
+  }
 
-  if
-    constexpr(MipFilter == FILTER_LINEAR) {
-      int lerpBits = TFormatInfo<Format>::LERP;
-      int lerpMask = (1 << lerpBits) - 1;
+  if constexpr (MipFilter == FILTER_LINEAR) {
+    int lerpBits = TFormatInfo<Format>::LERP;
+    int lerpMask = (1 << lerpBits) - 1;
 
-      if
-        constexpr(MinFilter == MagFilter) {
-          auto fJ = Math::TMax<fixed16>(fixed16::Make(fM.GetRaw()),
-                                                 TConst<fixed16>::One());
+    if constexpr (MinFilter == MagFilter) {
+      auto fJ =
+          Math::TMax<fixed16>(fixed16::make(fM.data()), TConst<fixed16>::One());
 
-          int mipLevel0 = Math::TMin<int>(
-              Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
+      int mipLevel0 = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+                                      sampler.MaxMipLevel);
 
-          int mipLevel1 =
-              Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
-          int mipLerp =
-              (fJ.GetRaw() >> (mipLevel0 + fixed16::FRAC - lerpBits)) &
-              lerpMask;
+      int mipLevel1 = Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
+      int mipLerp =
+          (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
-          const TColorNative<Format> c0 =
-              TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-                  sampler.pMipLevels[mipLevel0], fU, fV);
+      const TColorNative<Format> c0 =
+          TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
+              sampler.pMipLevels[mipLevel0], fU, fV);
 
-          const TColorNative<Format> c1 =
-              TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-                  sampler.pMipLevels[mipLevel1], fU, fV);
+      const TColorNative<Format> c1 =
+          TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
+              sampler.pMipLevels[mipLevel1], fU, fV);
 
-          return c0.Lerp(c1, mipLerp);
-        }
-      else {
-        auto fJ = fixed16::Make(fM.GetRaw());
-        if (fJ > TConst<fixed16>::One()) {
-          int mipLevel0 = Math::TMin<int>(
-              Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
+      return c0.Lerp(c1, mipLerp);
+    } else {
+      auto fJ = fixed16::make(fM.data());
+      if (fJ > TConst<fixed16>::One()) {
+        int mipLevel0 = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+                                        sampler.MaxMipLevel);
 
-          int mipLevel1 =
-              Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
-          int mipLerp =
-              (fJ.GetRaw() >> (mipLevel0 + fixed16::FRAC - lerpBits)) &
-              lerpMask;
+        int mipLevel1 = Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
+        int mipLerp =
+            (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
-          const TColorNative<Format> c0 =
-              TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-                  sampler.pMipLevels[mipLevel0], fU, fV);
+        const TColorNative<Format> c0 =
+            TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
+                sampler.pMipLevels[mipLevel0], fU, fV);
 
-          const TColorNative<Format> c1 =
-              TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-                  sampler.pMipLevels[mipLevel1], fU, fV);
+        const TColorNative<Format> c1 =
+            TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
+                sampler.pMipLevels[mipLevel1], fU, fV);
 
-          return c0.Lerp(c1, mipLerp);
-        } else {
-          return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(
-              sampler.pMipLevels[0], fU, fV);
-        }
+        return c0.Lerp(c1, mipLerp);
+      } else {
+        return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(
+            sampler.pMipLevels[0], fU, fV);
       }
     }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -464,119 +430,108 @@ void TGetTexEnvColorA(Color4 *pInOut, const Color4 &cTexture,
 
   __unreferenced(cEnvColor);
 
-  if
-    constexpr(EnvMode == ENVMODE_ADD) {
-      pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
-    }
+  if constexpr (EnvMode == ENVMODE_ADD) {
+    pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_BLEND) {
-      pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
-    }
+  if constexpr (EnvMode == ENVMODE_BLEND) {
+    pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_REPLACE) { pInOut->a = cTexture.a; }
+  if constexpr (EnvMode == ENVMODE_REPLACE) {
+    pInOut->a = cTexture.a;
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_MODULATE) {
-      pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
-    }
+  if constexpr (EnvMode == ENVMODE_MODULATE) {
+    pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_DECAL) { pInOut->a = cTexture.a; }
+  if constexpr (EnvMode == ENVMODE_DECAL) {
+    pInOut->a = cTexture.a;
+  }
 }
 
 template <uint32_t EnvMode>
 void TGetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
                         ColorARGB cEnvColor) {
 
-  if
-    constexpr(EnvMode == ENVMODE_ADD) {
-      __unreferenced(cEnvColor);
-      pInOut->r = Math::Add8(pInOut->r, cTexture.r);
-      pInOut->g = Math::Add8(pInOut->g, cTexture.g);
-      pInOut->b = Math::Add8(pInOut->b, cTexture.b);
-    }
+  if constexpr (EnvMode == ENVMODE_ADD) {
+    __unreferenced(cEnvColor);
+    pInOut->r = Math::Add8(pInOut->r, cTexture.r);
+    pInOut->g = Math::Add8(pInOut->g, cTexture.g);
+    pInOut->b = Math::Add8(pInOut->b, cTexture.b);
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_BLEND) {
-      pInOut->r = Math::Lerp8(pInOut->r, cEnvColor.r, cTexture.r);
-      pInOut->g = Math::Lerp8(pInOut->g, cEnvColor.g, cTexture.g);
-      pInOut->b = Math::Lerp8(pInOut->b, cEnvColor.b, cTexture.b);
-    }
+  if constexpr (EnvMode == ENVMODE_BLEND) {
+    pInOut->r = Math::Lerp8(pInOut->r, cEnvColor.r, cTexture.r);
+    pInOut->g = Math::Lerp8(pInOut->g, cEnvColor.g, cTexture.g);
+    pInOut->b = Math::Lerp8(pInOut->b, cEnvColor.b, cTexture.b);
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_REPLACE) {
-      __unreferenced(cEnvColor);
-      pInOut->r = cTexture.r;
-      pInOut->g = cTexture.g;
-      pInOut->b = cTexture.b;
-    }
+  if constexpr (EnvMode == ENVMODE_REPLACE) {
+    __unreferenced(cEnvColor);
+    pInOut->r = cTexture.r;
+    pInOut->g = cTexture.g;
+    pInOut->b = cTexture.b;
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_MODULATE) {
-      __unreferenced(cEnvColor);
-      pInOut->r = Math::Mul8(pInOut->r, cTexture.r);
-      pInOut->g = Math::Mul8(pInOut->g, cTexture.g);
-      pInOut->b = Math::Mul8(pInOut->b, cTexture.b);
-    }
+  if constexpr (EnvMode == ENVMODE_MODULATE) {
+    __unreferenced(cEnvColor);
+    pInOut->r = Math::Mul8(pInOut->r, cTexture.r);
+    pInOut->g = Math::Mul8(pInOut->g, cTexture.g);
+    pInOut->b = Math::Mul8(pInOut->b, cTexture.b);
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_DECAL) {
-      __unreferenced(cEnvColor);
-      pInOut->r = cTexture.r;
-      pInOut->g = cTexture.g;
-      pInOut->b = cTexture.b;
-    }
+  if constexpr (EnvMode == ENVMODE_DECAL) {
+    __unreferenced(cEnvColor);
+    pInOut->r = cTexture.r;
+    pInOut->g = cTexture.g;
+    pInOut->b = cTexture.b;
+  }
 }
 
 template <uint32_t EnvMode>
 void TGetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
                          ColorARGB cEnvColor) {
 
-  if
-    constexpr(EnvMode == ENVMODE_ADD) {
-      __unreferenced(cEnvColor);
-      pInOut->r = Math::Add8(pInOut->r, cTexture.r);
-      pInOut->g = Math::Add8(pInOut->g, cTexture.g);
-      pInOut->b = Math::Add8(pInOut->b, cTexture.b);
-      pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
-    }
+  if constexpr (EnvMode == ENVMODE_ADD) {
+    __unreferenced(cEnvColor);
+    pInOut->r = Math::Add8(pInOut->r, cTexture.r);
+    pInOut->g = Math::Add8(pInOut->g, cTexture.g);
+    pInOut->b = Math::Add8(pInOut->b, cTexture.b);
+    pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_BLEND) {
-      pInOut->r = Math::Lerp8(pInOut->r, cEnvColor.r, cTexture.r);
-      pInOut->g = Math::Lerp8(pInOut->g, cEnvColor.g, cTexture.g);
-      pInOut->b = Math::Lerp8(pInOut->b, cEnvColor.b, cTexture.b);
-      pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
-    }
+  if constexpr (EnvMode == ENVMODE_BLEND) {
+    pInOut->r = Math::Lerp8(pInOut->r, cEnvColor.r, cTexture.r);
+    pInOut->g = Math::Lerp8(pInOut->g, cEnvColor.g, cTexture.g);
+    pInOut->b = Math::Lerp8(pInOut->b, cEnvColor.b, cTexture.b);
+    pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_REPLACE) {
-      __unreferenced(cEnvColor);
-      pInOut->r = cTexture.r;
-      pInOut->g = cTexture.g;
-      pInOut->b = cTexture.b;
-      pInOut->a = cTexture.a;
-    }
+  if constexpr (EnvMode == ENVMODE_REPLACE) {
+    __unreferenced(cEnvColor);
+    pInOut->r = cTexture.r;
+    pInOut->g = cTexture.g;
+    pInOut->b = cTexture.b;
+    pInOut->a = cTexture.a;
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_MODULATE) {
-      __unreferenced(cEnvColor);
-      pInOut->r = Math::Mul8(pInOut->r, cTexture.r);
-      pInOut->g = Math::Mul8(pInOut->g, cTexture.g);
-      pInOut->b = Math::Mul8(pInOut->b, cTexture.b);
-      pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
-    }
+  if constexpr (EnvMode == ENVMODE_MODULATE) {
+    __unreferenced(cEnvColor);
+    pInOut->r = Math::Mul8(pInOut->r, cTexture.r);
+    pInOut->g = Math::Mul8(pInOut->g, cTexture.g);
+    pInOut->b = Math::Mul8(pInOut->b, cTexture.b);
+    pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
+  }
 
-  if
-    constexpr(EnvMode == ENVMODE_DECAL) {
-      __unreferenced(cEnvColor);
-      pInOut->r = Math::Lerp8(pInOut->r, cTexture.r, cTexture.a);
-      pInOut->g = Math::Lerp8(pInOut->g, cTexture.g, cTexture.a);
-      pInOut->b = Math::Lerp8(pInOut->b, cTexture.b, cTexture.a);
-      pInOut->a = cTexture.a;
-    }
+  if constexpr (EnvMode == ENVMODE_DECAL) {
+    __unreferenced(cEnvColor);
+    pInOut->r = Math::Lerp8(pInOut->r, cTexture.r, cTexture.a);
+    pInOut->g = Math::Lerp8(pInOut->g, cTexture.g, cTexture.a);
+    pInOut->b = Math::Lerp8(pInOut->b, cTexture.b, cTexture.a);
+    pInOut->a = cTexture.a;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -584,113 +539,102 @@ void TGetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
 template <uint32_t BlendOp>
 void TGetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
 
-  if
-    constexpr(BlendOp == BLEND_ZERO) {
-      __unreferenced(cSrc);
-      __unreferenced(cDst);
+  if constexpr (BlendOp == BLEND_ZERO) {
+    __unreferenced(cSrc);
+    __unreferenced(cDst);
 
-      pInOut->r = 0;
-      pInOut->g = 0;
-      pInOut->b = 0;
-      pInOut->a = 0;
-    }
+    pInOut->r = 0;
+    pInOut->g = 0;
+    pInOut->b = 0;
+    pInOut->a = 0;
+  }
 
-  if
-    constexpr(BlendOp == BLEND_ONE) {
-      __unreferenced(pInOut);
-      __unreferenced(cSrc);
-      __unreferenced(cDst);
-    }
+  if constexpr (BlendOp == BLEND_ONE) {
+    __unreferenced(pInOut);
+    __unreferenced(cSrc);
+    __unreferenced(cDst);
+  }
 
-  if
-    constexpr(BlendOp == BLEND_SRC_COLOR) {
-      __unreferenced(cDst);
+  if constexpr (BlendOp == BLEND_SRC_COLOR) {
+    __unreferenced(cDst);
 
-      pInOut->r = Math::Mul8(pInOut->r, cSrc.r);
-      pInOut->g = Math::Mul8(pInOut->g, cSrc.g);
-      pInOut->b = Math::Mul8(pInOut->b, cSrc.b);
-      pInOut->a = Math::Mul8(pInOut->a, cSrc.a);
-    }
+    pInOut->r = Math::Mul8(pInOut->r, cSrc.r);
+    pInOut->g = Math::Mul8(pInOut->g, cSrc.g);
+    pInOut->b = Math::Mul8(pInOut->b, cSrc.b);
+    pInOut->a = Math::Mul8(pInOut->a, cSrc.a);
+  }
 
-  if
-    constexpr(BlendOp == BLEND_ONE_MINUS_SRC_COLOR) {
-      __unreferenced(cDst);
+  if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_COLOR) {
+    __unreferenced(cDst);
 
-      pInOut->r = Math::Mul8(pInOut->r, 0xff - cSrc.r);
-      pInOut->g = Math::Mul8(pInOut->g, 0xff - cSrc.g);
-      pInOut->b = Math::Mul8(pInOut->b, 0xff - cSrc.b);
-      pInOut->a = Math::Mul8(pInOut->a, 0xff - cSrc.a);
-    }
+    pInOut->r = Math::Mul8(pInOut->r, 0xff - cSrc.r);
+    pInOut->g = Math::Mul8(pInOut->g, 0xff - cSrc.g);
+    pInOut->b = Math::Mul8(pInOut->b, 0xff - cSrc.b);
+    pInOut->a = Math::Mul8(pInOut->a, 0xff - cSrc.a);
+  }
 
-  if
-    constexpr(BlendOp == BLEND_SRC_ALPHA) {
-      __unreferenced(cDst);
+  if constexpr (BlendOp == BLEND_SRC_ALPHA) {
+    __unreferenced(cDst);
 
-      pInOut->r = Math::Mul8(pInOut->r, cSrc.a);
-      pInOut->g = Math::Mul8(pInOut->g, cSrc.a);
-      pInOut->b = Math::Mul8(pInOut->b, cSrc.a);
-      pInOut->a = Math::Mul8(pInOut->a, cSrc.a);
-    }
+    pInOut->r = Math::Mul8(pInOut->r, cSrc.a);
+    pInOut->g = Math::Mul8(pInOut->g, cSrc.a);
+    pInOut->b = Math::Mul8(pInOut->b, cSrc.a);
+    pInOut->a = Math::Mul8(pInOut->a, cSrc.a);
+  }
 
-  if
-    constexpr(BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
-      __unreferenced(cDst);
+  if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
+    __unreferenced(cDst);
 
-      int invAlpha = 0xff - cSrc.a;
-      pInOut->r = Math::Mul8(pInOut->r, invAlpha);
-      pInOut->g = Math::Mul8(pInOut->g, invAlpha);
-      pInOut->b = Math::Mul8(pInOut->b, invAlpha);
-      pInOut->a = Math::Mul8(pInOut->a, invAlpha);
-    }
+    int invAlpha = 0xff - cSrc.a;
+    pInOut->r = Math::Mul8(pInOut->r, invAlpha);
+    pInOut->g = Math::Mul8(pInOut->g, invAlpha);
+    pInOut->b = Math::Mul8(pInOut->b, invAlpha);
+    pInOut->a = Math::Mul8(pInOut->a, invAlpha);
+  }
 
-  if
-    constexpr(BlendOp == BLEND_DST_ALPHA) {
-      __unreferenced(cSrc);
+  if constexpr (BlendOp == BLEND_DST_ALPHA) {
+    __unreferenced(cSrc);
 
-      pInOut->r = Math::Mul8(pInOut->r, cDst.a);
-      pInOut->g = Math::Mul8(pInOut->g, cDst.a);
-      pInOut->b = Math::Mul8(pInOut->b, cDst.a);
-      pInOut->a = Math::Mul8(pInOut->a, cDst.a);
-    }
+    pInOut->r = Math::Mul8(pInOut->r, cDst.a);
+    pInOut->g = Math::Mul8(pInOut->g, cDst.a);
+    pInOut->b = Math::Mul8(pInOut->b, cDst.a);
+    pInOut->a = Math::Mul8(pInOut->a, cDst.a);
+  }
 
-  if
-    constexpr(BlendOp == BLEND_ONE_MINUS_DST_ALPHA) {
-      __unreferenced(cSrc);
+  if constexpr (BlendOp == BLEND_ONE_MINUS_DST_ALPHA) {
+    __unreferenced(cSrc);
 
-      int invAlpha = 0xff - cDst.a;
-      pInOut->r = Math::Mul8(pInOut->r, invAlpha);
-      pInOut->g = Math::Mul8(pInOut->g, invAlpha);
-      pInOut->b = Math::Mul8(pInOut->b, invAlpha);
-      pInOut->a = Math::Mul8(pInOut->a, invAlpha);
-    }
+    int invAlpha = 0xff - cDst.a;
+    pInOut->r = Math::Mul8(pInOut->r, invAlpha);
+    pInOut->g = Math::Mul8(pInOut->g, invAlpha);
+    pInOut->b = Math::Mul8(pInOut->b, invAlpha);
+    pInOut->a = Math::Mul8(pInOut->a, invAlpha);
+  }
 
-  if
-    constexpr(BlendOp == BLEND_DST_COLOR) {
-      __unreferenced(cSrc);
+  if constexpr (BlendOp == BLEND_DST_COLOR) {
+    __unreferenced(cSrc);
 
-      pInOut->r = Math::Mul8(pInOut->r, cDst.r);
-      pInOut->g = Math::Mul8(pInOut->g, cDst.g);
-      pInOut->b = Math::Mul8(pInOut->b, cDst.b);
-      pInOut->a = Math::Mul8(pInOut->a, cDst.a);
-    }
+    pInOut->r = Math::Mul8(pInOut->r, cDst.r);
+    pInOut->g = Math::Mul8(pInOut->g, cDst.g);
+    pInOut->b = Math::Mul8(pInOut->b, cDst.b);
+    pInOut->a = Math::Mul8(pInOut->a, cDst.a);
+  }
 
-  if
-    constexpr(BlendOp == BLEND_ONE_MINUS_DST_COLOR) {
-      __unreferenced(cSrc);
+  if constexpr (BlendOp == BLEND_ONE_MINUS_DST_COLOR) {
+    __unreferenced(cSrc);
 
-      pInOut->r = Math::Mul8(pInOut->r, 0xff - cDst.r);
-      pInOut->g = Math::Mul8(pInOut->g, 0xff - cDst.g);
-      pInOut->b = Math::Mul8(pInOut->b, 0xff - cDst.b);
-      pInOut->a = Math::Mul8(pInOut->a, 0xff - cDst.a);
-    }
+    pInOut->r = Math::Mul8(pInOut->r, 0xff - cDst.r);
+    pInOut->g = Math::Mul8(pInOut->g, 0xff - cDst.g);
+    pInOut->b = Math::Mul8(pInOut->b, 0xff - cDst.b);
+    pInOut->a = Math::Mul8(pInOut->a, 0xff - cDst.a);
+  }
 
-  if
-    constexpr(BlendOp == BLEND_SRC_ALPHA_SATURATE) {
-      int factor = Math::TMin(cSrc.a, 0xff - cDst.a);
-      pInOut->r = Math::Mul8(pInOut->r, factor);
-      pInOut->g = Math::Mul8(pInOut->g, factor);
-      pInOut->b = Math::Mul8(pInOut->b, factor);
-    }
+  if constexpr (BlendOp == BLEND_SRC_ALPHA_SATURATE) {
+    int factor = Math::TMin(cSrc.a, 0xff - cDst.a);
+    pInOut->r = Math::Mul8(pInOut->r, factor);
+    pInOut->g = Math::Mul8(pInOut->g, factor);
+    pInOut->b = Math::Mul8(pInOut->b, factor);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -698,79 +642,83 @@ void TGetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
 template <uint32_t LogicOp>
 uint32_t TLogicOp(uint32_t srcColor, uint32_t dstColor) {
 
-  if
-    constexpr(LogicOp == LOGICOP_CLEAR) {
-      __unreferenced(srcColor);
-      __unreferenced(dstColor);
-      return 0;
-    }
+  if constexpr (LogicOp == LOGICOP_CLEAR) {
+    __unreferenced(srcColor);
+    __unreferenced(dstColor);
+    return 0;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_AND) { return srcColor & dstColor; }
+  if constexpr (LogicOp == LOGICOP_AND) {
+    return srcColor & dstColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_AND_REVERSE) { return srcColor & ~dstColor; }
+  if constexpr (LogicOp == LOGICOP_AND_REVERSE) {
+    return srcColor & ~dstColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_COPY) {
-      __unreferenced(dstColor);
-      return srcColor;
-    }
+  if constexpr (LogicOp == LOGICOP_COPY) {
+    __unreferenced(dstColor);
+    return srcColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_AND_INVERTED) { return ~srcColor & dstColor; }
+  if constexpr (LogicOp == LOGICOP_AND_INVERTED) {
+    return ~srcColor & dstColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_NOOP) {
-      __unreferenced(srcColor);
-      return dstColor;
-    }
+  if constexpr (LogicOp == LOGICOP_NOOP) {
+    __unreferenced(srcColor);
+    return dstColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_XOR) { return srcColor ^ dstColor; }
+  if constexpr (LogicOp == LOGICOP_XOR) {
+    return srcColor ^ dstColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_OR) { return srcColor | dstColor; }
+  if constexpr (LogicOp == LOGICOP_OR) {
+    return srcColor | dstColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_NOR) { return ~(srcColor | dstColor); }
+  if constexpr (LogicOp == LOGICOP_NOR) {
+    return ~(srcColor | dstColor);
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_EQUIV) { return ~(srcColor ^ dstColor); }
+  if constexpr (LogicOp == LOGICOP_EQUIV) {
+    return ~(srcColor ^ dstColor);
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_INVERT) {
-      __unreferenced(srcColor);
-      return ~dstColor;
-    }
+  if constexpr (LogicOp == LOGICOP_INVERT) {
+    __unreferenced(srcColor);
+    return ~dstColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_OR_REVERSE) { return srcColor | ~dstColor; }
+  if constexpr (LogicOp == LOGICOP_OR_REVERSE) {
+    return srcColor | ~dstColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_COPY_INVERTED) {
-      __unreferenced(dstColor);
-      return ~srcColor;
-    }
+  if constexpr (LogicOp == LOGICOP_COPY_INVERTED) {
+    __unreferenced(dstColor);
+    return ~srcColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_OR_INVERTED) { return ~srcColor | dstColor; }
+  if constexpr (LogicOp == LOGICOP_OR_INVERTED) {
+    return ~srcColor | dstColor;
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_NAND) { return ~(srcColor & dstColor); }
+  if constexpr (LogicOp == LOGICOP_NAND) {
+    return ~(srcColor & dstColor);
+  }
 
-  if
-    constexpr(LogicOp == LOGICOP_SET) {
-      __unreferenced(srcColor);
-      __unreferenced(dstColor);
-      return 0xffffffff;
-    }
+  if constexpr (LogicOp == LOGICOP_SET) {
+    __unreferenced(srcColor);
+    __unreferenced(dstColor);
+    return 0xffffffff;
+  }
 }
 
 inline void ToColor4(Color4 *pColor, fixedRX fA, fixedRX fR, fixedRX fG,
                      fixedRX fB) {
-  pColor->b = fB.GetRaw() >> fixedRC::FRAC;
-  pColor->g = fG.GetRaw() >> fixedRC::FRAC;
-  pColor->r = fR.GetRaw() >> fixedRC::FRAC;
-  pColor->a = fA.GetRaw() >> fixedRC::FRAC;
+  pColor->b = fB.data() >> fixedRC::FRAC;
+  pColor->g = fG.data() >> fixedRC::FRAC;
+  pColor->r = fR.data() >> fixedRC::FRAC;
+  pColor->a = fA.data() >> fixedRC::FRAC;
 }

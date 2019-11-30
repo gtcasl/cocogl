@@ -25,13 +25,13 @@ public:
                        EGLint blue, EGLint alpha, EGLint depth, EGLint stencil);
 
   EGLint GetAttribute(EGLint name) const {
-    ASSERT((name >= ATTRIBUTES_FIRST) && (name <= ATTRIBUTES_LAST));
-    return m_attributes[name - ATTRIBUTES_FIRST];
+    assert((name >= ATTRIBUTES_FIRST) && (name <= ATTRIBUTES_LAST));
+    return attributes_[name - ATTRIBUTES_FIRST];
   }
 
   void SetAttribute(GLint name, GLint value) {
-    ASSERT((name >= ATTRIBUTES_FIRST) && (name <= ATTRIBUTES_LAST));
-    m_attributes[name - ATTRIBUTES_FIRST] = value;
+    assert((name >= ATTRIBUTES_FIRST) && (name <= ATTRIBUTES_LAST));
+    attributes_[name - ATTRIBUTES_FIRST] = value;
   }
 
   EGLint GetAtttribute(EGLint name, EGLint *pValue) const;
@@ -46,5 +46,5 @@ private:
 
   ~CConfig();
 
-  EGLint m_attributes[ATTRIBUTES_SIZE];
+  EGLint attributes_[ATTRIBUTES_SIZE];
 };

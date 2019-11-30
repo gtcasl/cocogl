@@ -20,19 +20,19 @@ struct GSDHeader {
 };
 
 CMesh::CMesh() 
-: m_num_indices(0)
-, m_num_vertices(0)
-, m_pIndices(nullptr)
-, m_pGeometry(nullptr)
-, m_pNormals(nullptr)
-, m_pTexCoords(nullptr)
+: num__indices(0)
+, num__vertices(0)
+, pIndices_(nullptr)
+, pGeometry_(nullptr)
+, pNormals_(nullptr)
+, pTexCoords_(nullptr)
 {}
 
 CMesh::~CMesh() {
-  delete[] m_pIndices;
-  delete[] m_pGeometry;
-  delete[] m_pNormals;
-  delete[] m_pTexCoords;
+  delete[] pIndices_;
+  delete[] pGeometry_;
+  delete[] pNormals_;
+  delete[] pTexCoords_;
 }
 
 bool CMesh::OnInitialize(LPCTSTR lpszFileName) {
@@ -58,12 +58,12 @@ bool CMesh::OnInitialize(LPCTSTR lpszFileName) {
       break;
 
     // read the object name  
-    size = fread(m_name, 1, sizeof(char) * 128, file); 
+    size = fread(name_, 1, sizeof(char) * 128, file); 
     if (size != sizeof(char) * 128)
       break;
 
     // Read the name of the parent object
-    size = fread(m_parentName, 1, sizeof(char) * 128, file); 
+    size = fread(parentName_, 1, sizeof(char) * 128, file); 
     if (size != sizeof(char) * 128)
       break;
 
@@ -79,36 +79,36 @@ bool CMesh::OnInitialize(LPCTSTR lpszFileName) {
 
     // read indices
     auto indices = new uint32_t[num_indices];
-    m_pIndices = new GLshort[num_indices];
+    pIndices_ = new GLshort[num_indices];
     size = fread(indices, 1, sizeof(uint32_t) * num_indices, file);
     if (size != sizeof(uint32_t) * num_indices)
       break;
 
     // read vertex data (1 vertex = 3 float4)
-    m_pGeometry = new float[num_vertices * 3];
-    size = fread(m_pGeometry, 1, num_vertices * 3 * sizeof(float), file);
+    pGeometry_ = new float[num_vertices * 3];
+    size = fread(pGeometry_, 1, num_vertices * 3 * sizeof(float), file);
     if (size != num_vertices * 3 * sizeof(float))
       break;
 
     // read texture coordinates  (1 texcoord = 2 float4)
-    m_pTexCoords = new float[num_vertices * 2];
-    size = fread(m_pTexCoords, 1, num_vertices * 2 * sizeof(float), file);
+    pTexCoords_ = new float[num_vertices * 2];
+    size = fread(pTexCoords_, 1, num_vertices * 2 * sizeof(float), file);
     if (size != num_vertices * 2 * sizeof(float))
       break;
 
     // read normals data (1 normal = 3 float4)
-    m_pNormals = new float[num_vertices * 3];
-    size = fread(m_pNormals, 1, num_vertices * 3 * sizeof(float), file);
+    pNormals_ = new float[num_vertices * 3];
+    size = fread(pNormals_, 1, num_vertices * 3 * sizeof(float), file);
     if (size != num_vertices * 3 * sizeof(float))
       break;
 
     // Convert data to optimized data types for OpenGL ES (GLfixed and GLshort)
     for (uint32_t i = 0; i < num_indices; i++) {
-      m_pIndices[i] = (GLshort)indices[i];
+      pIndices_[i] = (GLshort)indices[i];
     }
 
-    m_num_indices = num_indices;
-    m_num_vertices = num_vertices;
+    num__indices = num_indices;
+    num__vertices = num_vertices;
     status = true;
     break;
   }
@@ -125,15 +125,15 @@ bool CMesh::OnInitialize(LPCTSTR lpszFileName) {
 
 void CMesh::OnRender() {
   glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, 0, m_pGeometry);
+  glVertexPointer(3, GL_FLOAT, 0, pGeometry_);
 
   glEnableClientState(GL_NORMAL_ARRAY);
-  glNormalPointer(GL_FLOAT, 0, m_pNormals);
+  glNormalPointer(GL_FLOAT, 0, pNormals_);
 
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, 0, m_pTexCoords);
+  glTexCoordPointer(2, GL_FLOAT, 0, pTexCoords_);
 
-  glDrawElements(GL_TRIANGLES, m_num_indices, GL_UNSIGNED_SHORT, m_pIndices);
+  glDrawElements(GL_TRIANGLES, num__indices, GL_UNSIGNED_SHORT, pIndices_);
 
   glDisableClientState(GL_VERTEX_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);

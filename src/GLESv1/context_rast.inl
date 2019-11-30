@@ -17,19 +17,20 @@
 template <class T>
 inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
                                       const T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   if (target != GL_TEXTURE_2D) {
-    __glError(GL_INVALID_ENUM, _T("CGLContext::TTexParameter() failed, ")
-                               _T("invalid target parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::TTexParameter() failed, ")
+              _T("invalid target parameter: %d.\r\n"),
               target);
     return;
   }
 
   GLenum param = TToGLenum<T>(pParams[0]);
 
-  auto pTexture = m_texUnits[m_activeTexture].GetTexture();
-  ASSERT(pTexture);
+  auto pTexture = texUnits_[activeTexture_].GetTexture();
+  assert(pTexture);
 
   switch (pname) {
   case GL_TEXTURE_MIN_FILTER:
@@ -45,8 +46,9 @@ inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
       break;
 
     default:
-      __glError(GL_INVALID_VALUE, _T("CGLContext::TTexParameter() failed, ")
-                                  _T("invalid param parameter: %d.\r\n"),
+      __glError(GL_INVALID_VALUE,
+                _T("CGLContext::TTexParameter() failed, ")
+                _T("invalid param parameter: %d.\r\n"),
                 param);
       return;
     }
@@ -62,8 +64,9 @@ inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
       break;
 
     default:
-      __glError(GL_INVALID_VALUE, _T("CGLContext::TTexParameter() failed, ")
-                                  _T("invalid param parameter: %d.\r\n"),
+      __glError(GL_INVALID_VALUE,
+                _T("CGLContext::TTexParameter() failed, ")
+                _T("invalid param parameter: %d.\r\n"),
                 param);
       return;
     }
@@ -78,8 +81,9 @@ inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
       break;
 
     default:
-      __glError(GL_INVALID_VALUE, _T("CGLContext::TTexParameter() failed, ")
-                                  _T("invalid param parameter: %d.\r\n"),
+      __glError(GL_INVALID_VALUE,
+                _T("CGLContext::TTexParameter() failed, ")
+                _T("invalid param parameter: %d.\r\n"),
                 param);
       return;
     }
@@ -94,8 +98,9 @@ inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
       break;
 
     default:
-      __glError(GL_INVALID_VALUE, _T("CGLContext::TTexParameter() failed, ")
-                                  _T("invalid param parameter: %d.\r\n"),
+      __glError(GL_INVALID_VALUE,
+                _T("CGLContext::TTexParameter() failed, ")
+                _T("invalid param parameter: %d.\r\n"),
                 param);
       return;
     }
@@ -107,8 +112,9 @@ inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
     break;
 
   default:
-    __glError(GL_INVALID_ENUM, _T("CGLContext::TTexParameter() failed, ")
-                               _T("invalid pname parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::TTexParameter() failed, ")
+              _T("invalid pname parameter: %d.\r\n"),
               pname);
     return;
   }
@@ -116,11 +122,11 @@ inline void CGLContext::TTexParameter(GLenum target, GLenum pname,
 
 template <class T>
 inline void CGLContext::TTexEnv(GLenum env, GLenum pname, const T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   GLenum param = TToGLenum<T>(pParams[0]);
 
-  TexUnit &texUnit = m_texUnits[m_activeTexture];
+  TexUnit &texUnit = texUnits_[activeTexture_];
 
   switch (env) {
   case GL_TEXTURE_ENV:
@@ -136,8 +142,9 @@ inline void CGLContext::TTexEnv(GLenum env, GLenum pname, const T *pParams) {
         break;
 
       default:
-        __glError(GL_INVALID_ENUM, _T("CGLContext::TTexEnv() failed, invalid ")
-                                   _T("pname parameter: %d.\r\n"),
+        __glError(GL_INVALID_ENUM,
+                  _T("CGLContext::TTexEnv() failed, invalid ")
+                  _T("pname parameter: %d.\r\n"),
                   pname);
         return;
       }
@@ -185,7 +192,7 @@ inline void CGLContext::TTexEnv(GLenum env, GLenum pname, const T *pParams) {
 
 template <class T>
 inline void CGLContext::TPointParameter(GLenum pname, const T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   switch (pname) {
   case GL_POINT_SIZE_MIN:
@@ -193,27 +200,29 @@ inline void CGLContext::TPointParameter(GLenum pname, const T *pParams) {
   case GL_POINT_FADE_THRESHOLD_SIZE: {
     auto param = Math::TCast<floatf>(pParams[0]);
     if (param < fZERO) {
-      __glError(GL_INVALID_VALUE, _T("CGLContext::TPointParameter() failed, ")
-                                  _T("invalid param parameter: %d.\r\n"),
+      __glError(GL_INVALID_VALUE,
+                _T("CGLContext::TPointParameter() failed, ")
+                _T("invalid param parameter: %d.\r\n"),
                 param);
       return;
     }
 
-    m_pointParams.Set(pname, param);
+    pointParams_.Set(pname, param);
   }
 
   break;
 
   case GL_POINT_DISTANCE_ATTENUATION:
-    m_pointParams.vAttenuation.x = Math::TCast<floatf>(pParams[0]);
-    m_pointParams.vAttenuation.y = Math::TCast<floatf>(pParams[1]);
-    m_pointParams.vAttenuation.z = Math::TCast<floatf>(pParams[2]);
+    pointParams_.vAttenuation.x = Math::TCast<floatf>(pParams[0]);
+    pointParams_.vAttenuation.y = Math::TCast<floatf>(pParams[1]);
+    pointParams_.vAttenuation.z = Math::TCast<floatf>(pParams[2]);
 
     break;
 
   default:
-    __glError(GL_INVALID_ENUM, _T("CGLContext::TPointParameter() failed, ")
-                               _T("invalid pname parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::TPointParameter() failed, ")
+              _T("invalid pname parameter: %d.\r\n"),
               pname);
     return;
   }

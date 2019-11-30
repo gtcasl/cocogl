@@ -37,7 +37,7 @@ struct detector<Default, std::void_t<Op<Args...>>, Op, Args...> {
   using value_t = std::true_type;
   using type = Op<Args...>;
 };
-}
+} // namespace detail
 
 template <template <class...> class Op, class... Args>
 using detected_t =
@@ -142,9 +142,9 @@ inline uint32_t Ctz(uint32_t rhs) { return 31 - Clz(rhs & -(int)rhs); }
 #endif
 
 #ifdef NDEBUG
-#define __no_default ASSERT(0)
+#define __no_default assert(0)
 #else
-#define __no_default ASSERT(false);
+#define __no_default assert(false);
 #endif
 
 template <typename... Args> void __unreferenced(Args &&...) {}

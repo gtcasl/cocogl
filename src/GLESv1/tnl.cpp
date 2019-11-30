@@ -121,19 +121,20 @@ static const CTNL::PFN_VERTEXDECODE g_processPointSize[] = {
 };
 
 static const CTNL::PFN_VERTEXDECODE g_processFog[] = {
-    &CTNL::TProcessFog<FogLinear>, &CTNL::TProcessFog<FogExp>,
+    &CTNL::TProcessFog<FogLinear>,
+    &CTNL::TProcessFog<FogExp>,
     &CTNL::TProcessFog<FogExp2>,
 };
 
 GLenum CTNL::SetupTNLStates(GLenum mode, int first, unsigned count) {
   GLenum err;
 
-  auto rasterFlags = m_rasterID.Flags;
+  auto rasterFlags = rasterID_.Flags;
 
-  m_TNLFlags.Value = 0;
+  TNLFlags_.Value = 0;
 
-  if (m_vertexStates.Position) {
-    err = m_positionArray.Prepare(&m_positionDecode, first, count);
+  if (vertexStates_.Position) {
+    err = positionArray_.Prepare(&positionDecode_, first, count);
     if (__glFailed(err)) {
       __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
       return err;
@@ -143,39 +144,39 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, unsigned count) {
     return GL_INVALID_OPERATION;
   }
 
-  unsigned uiFormatType = (m_positionArray.Format - VERTEX_BYTE2) / 4;
-  unsigned uiFormatSize = m_positionArray.Format - 1 - uiFormatType * 4;
+  unsigned uiFormatType = (positionArray_.Format - VERTEX_BYTE2) / 4;
+  unsigned uiFormatSize = positionArray_.Format - 1 - uiFormatType * 4;
   unsigned uiFunc = uiFormatType * 3 + uiFormatSize - 1;
-  ASSERT(uiFunc < __countof(g_decodePosition));
-  m_pfnDecodePosition = g_decodePosition[uiFunc];
+  assert(uiFunc < __countof(g_decodePosition));
+  pfnDecodePosition_ = g_decodePosition[uiFunc];
 
   unsigned numVertives = count + CLIP_BUFFER_SIZE;
 
-  m_clipVerticesBaseIndex = count;
+  clipVerticesBaseIndex_ = count;
 
   uint8_t *pbVertexData = nullptr;
 
-  m_pbVertexData[VERTEXDATA_FLAGS] = pbVertexData;
+  pbVertexData_[VERTEXDATA_FLAGS] = pbVertexData;
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(uint16_t), 4);
 
-  m_pbVertexData[VERTEXDATA_WORLDPOS] = pbVertexData;
+  pbVertexData_[VERTEXDATA_WORLDPOS] = pbVertexData;
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(VECTOR4), 4);
 
-  m_pbVertexData[VERTEXDATA_CLIPPOS] = pbVertexData;
+  pbVertexData_[VERTEXDATA_CLIPPOS] = pbVertexData;
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(VECTOR4), 4);
 
-  m_pbVertexData[VERTEXDATA_SCREENPOS] = pbVertexData;
+  pbVertexData_[VERTEXDATA_SCREENPOS] = pbVertexData;
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(RDVECTOR), 4);
 
-  if (m_dirtyFlags.ModelViewProj) {
+  if (dirtyFlags_.ModelViewProj) {
     this->UpdateModelViewProj();
   }
 
-  if (m_dirtyFlags.ScreenXform) {
+  if (dirtyFlags_.ScreenXform) {
     this->UpdateScreenXform();
   }
 
-  if (m_caps.ClipPlanes) {
+  if (caps_.ClipPlanes) {
     this->UpdateClipPlanes();
   }
 
@@ -209,42 +210,40 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, unsigned count) {
 
   unsigned buffSize = pbVertexData - (uint8_t *)nullptr;
 
-  err = GLERROR_FROM_HRESULT(m_vertexBuffer.Resize(buffSize));
-  if (__glFailed(err)) {
-    __glLogError(_T("TArray::Resize() failed, err = %d.\r\n"), err);
-    return err;
-  }
+  vertexBuffer_.resize(buffSize);
 
   // Update vertex buffer offsets
   {
-    unsigned offset = m_vertexBuffer.GetBegin() - (uint8_t *)nullptr;
+    unsigned offset = vertexBuffer_.data() - (uint8_t *)nullptr;
     for (unsigned i = 0; i < VERTEXDATA_SIZE; ++i) {
-      m_pbVertexData[i] += offset;
+      pbVertexData_[i] += offset;
     }
-    m_pbVertexColor += offset;
+    pbVertexColor_ += offset;
   }
 
   return GL_NO_ERROR;
 }
 
 void CTNL::ProcessVertices(unsigned count) {
-  auto flags = m_TNLFlags;
+  auto flags = TNLFlags_;
 
-  auto pwFlags = reinterpret_cast<uint16_t*>(m_pbVertexData[VERTEXDATA_FLAGS]);
-  auto pvWorldPos = reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_WORLDPOS]);
-  auto pvClipPos = reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_CLIPPOS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+  auto pvWorldPos =
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_WORLDPOS]);
+  auto pvClipPos =
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
 
   // Decode vertices
-  (m_pfnDecodePosition)(pvWorldPos, m_positionDecode.pBits,
-                        m_positionDecode.Stride, count);
+  (pfnDecodePosition_)(pvWorldPos, positionDecode_.pBits,
+                       positionDecode_.Stride, count);
 
   unsigned clipUnion = 0;
 
   for (unsigned i = 0; i < count; ++i) {
     // Tranform vertex position to clip space
-    Math::Mul(&pvClipPos[i], pvWorldPos[i], m_mModelViewProj);
+    Math::Mul(&pvClipPos[i], pvWorldPos[i], mModelViewProj_);
 
     // Compute frustum clipping flags
     auto clipFlags = this->CalcClipFlags(pvClipPos[i]);
@@ -273,24 +272,23 @@ void CTNL::ProcessVertices(unsigned count) {
   }
 
   if (flags.PointSize) {
-    (this->*m_pfnPointSize)(count);
+    (this->*pfnPointSize_)(count);
   }
 
   if (flags.Color) {
-    (this->*m_pfnColor)(count);
+    (this->*pfnColor_)(count);
   }
 
   if (flags.TexCoords) {
-    for (unsigned i = 0, j = 0, mask = m_caps.Texture2D; mask;
-         mask >>= 1, ++i) {
+    for (unsigned i = 0, j = 0, mask = caps_.Texture2D; mask; mask >>= 1, ++i) {
       if (mask & 0x1) {
-        (this->*m_pfnTexCoords[i])(j++, i, count);
+        (this->*pfnTexCoords_[i])(j++, i, count);
       }
     }
   }
 
   if (flags.Fog) {
-    (this->*m_pfnFog)(count);
+    (this->*pfnFog_)(count);
   }
 }
 
@@ -322,19 +320,20 @@ unsigned CTNL::CalcClipFlags(const VECTOR4 &vPosition) {
 unsigned CTNL::CalcUserClipFlags(unsigned count) {
   unsigned clipUnion = 0;
 
-  auto pwFlags = reinterpret_cast<uint16_t*>(m_pbVertexData[VERTEXDATA_FLAGS]);
-  auto pvClipPos = reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_CLIPPOS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+  auto pvClipPos =
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
 
   for (unsigned i = 0; i < count; ++i) {
     unsigned clipFlags = 0;
 
     auto &vClipPos = pvClipPos[i];
 
-    for (unsigned j = 0, activeMask = m_caps.ClipPlanes; activeMask;
+    for (unsigned j = 0, activeMask = caps_.ClipPlanes; activeMask;
          ++j, activeMask >>= 1) {
       if (activeMask & 1) {
-        ASSERT(j < m_vClipPlanesCS.GetSize());
-        auto fDist = Math::TDot<floatf>(vClipPos, m_vClipPlanesCS[j]);
+        assert(j < vClipPlanesCS_.size());
+        auto fDist = Math::TDot<floatf>(vClipPos, vClipPlanesCS_[j]);
         clipFlags |= (*(const unsigned *)&fDist >> 31) << (CLIP_PLANE0 + j);
       }
     }
@@ -348,16 +347,16 @@ unsigned CTNL::CalcUserClipFlags(unsigned count) {
 
 void CTNL::XformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
                             unsigned count) {
-  ASSERT(pRDVertex);
-  ASSERT(pvClipPos);
+  assert(pRDVertex);
+  assert(pvClipPos);
 
-  auto iScaleX = m_screenXform.iScaleX;
-  auto iScaleY = m_screenXform.iScaleY;
-  auto fScaleZ = m_screenXform.fScaleZ;
+  auto iScaleX = screenXform_.iScaleX;
+  auto iScaleY = screenXform_.iScaleY;
+  auto fScaleZ = screenXform_.fScaleZ;
 
-  auto fMinX = m_screenXform.fMinX;
-  auto fMinY = m_screenXform.fMinY;
-  auto fMinZ = m_screenXform.fMinZ;
+  auto fMinX = screenXform_.fMinX;
+  auto fMinY = screenXform_.fMinY;
+  auto fMinZ = screenXform_.fMinZ;
 
   for (unsigned i = 0; i < count; ++i) {
     if (!Math::TIsZero(pvClipPos[i].w - fONE)) {
@@ -381,12 +380,13 @@ void CTNL::XformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
 }
 
 void CTNL::XformEyeSpace(unsigned count) {
-  auto &matEyeXform = m_pMsModelView->GetMatrix();
+  auto &matEyeXform = pMsModelView_->GetMatrix();
 
-  auto pvWorldPos = reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_WORLDPOS]);
-  auto pvEyePos = reinterpret_cast<VECTOR3*>(m_pbVertexData[VERTEXDATA_EYEPOS]);
+  auto pvWorldPos =
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_WORLDPOS]);
+  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
 
-  if (m_TNLFlags.EyeSpace) {
+  if (TNLFlags_.EyeSpace) {
     for (unsigned i = 0; i < count; ++i) {
       Math::Mul(&pvEyePos[i], pvWorldPos[i], matEyeXform);
     }
@@ -400,14 +400,15 @@ void CTNL::XformEyeSpace(unsigned count) {
 }
 
 void CTNL::ProcessPointSize(unsigned count) {
-  auto pvEyePos = reinterpret_cast<VECTOR3*>(m_pbVertexData[VERTEXDATA_EYEPOS]);
-  auto pfPointSizes = reinterpret_cast<fixed4*>(m_pbVertexData[VERTEXDATA_POINTSIZE]);
+  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
+  auto pfPointSizes =
+      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
 
-  auto &vAttenuation = m_pointParams.vAttenuation;
+  auto &vAttenuation = pointParams_.vAttenuation;
 
-  auto fPointSize = m_fPointSize;
+  auto fPointSize = fPointSize_;
 
-  if (!m_TNLFlags.PointSizeQAttn) {
+  if (!TNLFlags_.PointSizeQAttn) {
     if (!Math::TIsZero(vAttenuation.x - fONE)) {
       fPointSize *= Math::TInvSqrt(vAttenuation.x);
     } else {
@@ -416,10 +417,10 @@ void CTNL::ProcessPointSize(unsigned count) {
   }
 
   for (unsigned i = 0; i < count; ++i) {
-    if (m_TNLFlags.PointSizeQAttn) {
+    if (TNLFlags_.PointSizeQAttn) {
       auto fEyeDist = Math::TAbs(pvEyePos[i].z);
       auto fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
-                             vAttenuation.y * fEyeDist + vAttenuation.x;
+                     vAttenuation.y * fEyeDist + vAttenuation.x;
       if (!Math::TIsZero(fInvAtt - fONE)) {
         fPointSize *= Math::TInvSqrt(fInvAtt);
       }
@@ -431,13 +432,13 @@ void CTNL::ProcessPointSize(unsigned count) {
 
 void CTNL::ProcessColor(unsigned count) {
   auto pcFrontColors =
-      reinterpret_cast<ColorARGB*>(m_pbVertexData[VERTEXDATA_FRONTCOLOR]);
+      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
 
   // Clamp the color
-  ColorARGB cColor(Math::TToUNORM8(Math::TSat(m_vColor.w)),
-                   Math::TToUNORM8(Math::TSat(m_vColor.x)),
-                   Math::TToUNORM8(Math::TSat(m_vColor.y)),
-                   Math::TToUNORM8(Math::TSat(m_vColor.z)));
+  ColorARGB cColor(Math::TToUNORM8(Math::TSat(vColor_.w)),
+                   Math::TToUNORM8(Math::TSat(vColor_.x)),
+                   Math::TToUNORM8(Math::TSat(vColor_.y)),
+                   Math::TToUNORM8(Math::TSat(vColor_.z)));
 
   for (unsigned i = 0; i < count; ++i) {
     pcFrontColors[i] = cColor;
@@ -447,8 +448,8 @@ void CTNL::ProcessColor(unsigned count) {
 void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal,
                                   const VECTOR4 &vVertexColor) {
-  for (auto *pLight = m_pActiveLights; pLight; pLight = pLight->pNext) {
-    VECTOR3 vL;         // Light vector
+  for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
+    VECTOR3 vL;       // Light vector
     auto fAtt = fONE; // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
@@ -517,7 +518,7 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       auto fDotNH = Math::TDot<floatf>(vNormal, vH);
       if (fDotNH > fZERO) {
         // Compute the specular coefficient
-        auto fCoeff = Math::TPow(fDotNH, m_fMatShininess);
+        auto fCoeff = Math::TPow(fDotNH, fMatShininess_);
         if (!Math::TIsZero(fCoeff)) {
           vFrontDS.x += pLight->vScaledSpecular.x * fCoeff;
           vFrontDS.y += pLight->vScaledSpecular.y * fCoeff;
@@ -534,8 +535,8 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 
 void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal) {
-  for (auto *pLight = m_pActiveLights; pLight; pLight = pLight->pNext) {
-    VECTOR3 vL;         // Light vector
+  for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
+    VECTOR3 vL;       // Light vector
     auto fAtt = fONE; // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
@@ -603,7 +604,7 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       auto fDotNH = Math::TDot<floatf>(vNormal, vH);
       if (fDotNH > fZERO) {
         // Compute the specular coefficient
-        auto fCoeff = Math::TPow(fDotNH, m_fMatShininess);
+        auto fCoeff = Math::TPow(fDotNH, fMatShininess_);
         if (!Math::TIsZero(fCoeff)) {
           vFrontDS.x += pLight->vScaledSpecular.x * fCoeff;
           vFrontDS.y += pLight->vScaledSpecular.y * fCoeff;
@@ -621,10 +622,10 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal,
                                   const VECTOR4 &vVertexColor) {
-  for (auto *pLight = m_pActiveLights; pLight; pLight = pLight->pNext) {
-    VECTOR3 vL;         // Light vector
-    VECTOR3 vH;         // Halfway vector
-    auto fAtt = fONE;   // Attenuation distance
+  for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
+    VECTOR3 vL;       // Light vector
+    VECTOR3 vH;       // Halfway vector
+    auto fAtt = fONE; // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
       // Get the light direction
@@ -696,7 +697,7 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 
     if (fDotNH > fZERO) {
       // Compute the specular coefficient
-      auto fCoeff = Math::TPow(fDotNH, m_fMatShininess);
+      auto fCoeff = Math::TPow(fDotNH, fMatShininess_);
       if (!Math::TIsZero(fCoeff)) {
         vColor.x += pLight->vScaledSpecular.x * fCoeff;
         vColor.y += pLight->vScaledSpecular.y * fCoeff;
@@ -726,9 +727,9 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 
 void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal) {
-  for (auto *pLight = m_pActiveLights; pLight; pLight = pLight->pNext) {
-    VECTOR3 vL;         // Light vector
-    VECTOR3 vH;         // Halfway vector
+  for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
+    VECTOR3 vL;       // Light vector
+    VECTOR3 vH;       // Halfway vector
     auto fAtt = fONE; // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
@@ -800,7 +801,7 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 
     if (fDotNH > fZERO) {
       // Compute the specular coefficient
-      auto fCoeff = Math::TPow(fDotNH, m_fMatShininess);
+      auto fCoeff = Math::TPow(fDotNH, fMatShininess_);
       if (!Math::TIsZero(fCoeff)) {
         vColor.x += pLight->vScaledSpecular.x * fCoeff;
         vColor.y += pLight->vScaledSpecular.y * fCoeff;
@@ -830,12 +831,13 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 
 void CTNL::ProcessTexCoords(unsigned dstIndex, unsigned srcIndex,
                             unsigned count) {
-  auto pvTexCoords = reinterpret_cast<TEXCOORD2*>(m_pbVertexData[VERTEXDATA_TEXCOORD0 + dstIndex]);
+  auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
+      pbVertexData_[VERTEXDATA_TEXCOORD0 + dstIndex]);
 
-  auto vIn = m_vTexCoords[srcIndex];
+  auto vIn = vTexCoords_[srcIndex];
 
-  if (!m_pMsTexCoords[srcIndex]->IsIdentity()) {
-    Math::Mul(&vIn, vIn, m_pMsTexCoords[srcIndex]->GetMatrix());
+  if (!pMsTexCoords_[srcIndex]->IsIdentity()) {
+    Math::Mul(&vIn, vIn, pMsTexCoords_[srcIndex]->GetMatrix());
   }
 
   for (unsigned k = 0; k < count; ++k) {
@@ -847,40 +849,40 @@ void CTNL::ProcessTexCoords(unsigned dstIndex, unsigned srcIndex,
 GLenum CTNL::UpdatePoints(uint8_t **ppbVertexData, int first, unsigned count) {
   GLenum err;
 
-  if (m_vertexStates.PointSize) {
-    err = m_pointSizeArray.Prepare(&m_pointSizeDecode, first, count);
+  if (vertexStates_.PointSize) {
+    err = pointSizeArray_.Prepare(&pointSizeDecode_, first, count);
     if (__glFailed(err)) {
       __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
       return err;
     }
   } else {
-    m_pointSizeDecode.pBits = nullptr;
+    pointSizeDecode_.pBits = nullptr;
   }
 
-  if (!Math::TIsZero(m_pointParams.vAttenuation.y) ||
-      !Math::TIsZero(m_pointParams.vAttenuation.z)) {
-    m_TNLFlags.PointSizeQAttn = 1;
-    m_TNLFlags.EyeSpaceZ = 1;
+  if (!Math::TIsZero(pointParams_.vAttenuation.y) ||
+      !Math::TIsZero(pointParams_.vAttenuation.z)) {
+    TNLFlags_.PointSizeQAttn = 1;
+    TNLFlags_.EyeSpaceZ = 1;
   }
 
-  m_pbVertexData[VERTEXDATA_POINTSIZE] = *ppbVertexData;
+  pbVertexData_[VERTEXDATA_POINTSIZE] = *ppbVertexData;
   *ppbVertexData = __alignPtr(
       *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(fixed4), 4);
 
-  if (m_pointSizeDecode.pBits) {
-    unsigned uiFunc = (m_pointSizeArray.Format - VERTEX_FIXED) / 4;
+  if (pointSizeDecode_.pBits) {
+    unsigned uiFunc = (pointSizeArray_.Format - VERTEX_FIXED) / 4;
 
-    if (m_TNLFlags.PointSizeQAttn) {
+    if (TNLFlags_.PointSizeQAttn) {
       uiFunc += 2;
     }
 
-    ASSERT(uiFunc < __countof(g_processPointSize));
-    m_pfnPointSize = g_processPointSize[uiFunc];
+    assert(uiFunc < __countof(g_processPointSize));
+    pfnPointSize_ = g_processPointSize[uiFunc];
   } else {
-    m_pfnPointSize = &CTNL::ProcessPointSize;
+    pfnPointSize_ = &CTNL::ProcessPointSize;
   }
 
-  m_TNLFlags.PointSize = 1;
+  TNLFlags_.PointSize = 1;
 
   return GL_NO_ERROR;
 }
@@ -888,40 +890,40 @@ GLenum CTNL::UpdatePoints(uint8_t **ppbVertexData, int first, unsigned count) {
 GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, unsigned count) {
   GLenum err;
 
-  if (m_vertexStates.Color) {
-    err = m_colorArray.Prepare(&m_colorDecode, first, count);
+  if (vertexStates_.Color) {
+    err = colorArray_.Prepare(&colorDecode_, first, count);
     if (__glFailed(err)) {
       __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
       return err;
     }
   } else {
-    m_colorDecode.pBits = nullptr;
+    colorDecode_.pBits = nullptr;
   }
 
-  m_pbVertexData[VERTEXDATA_FRONTCOLOR] = *ppbVertexData;
-  m_pbVertexColor = *ppbVertexData;
+  pbVertexData_[VERTEXDATA_FRONTCOLOR] = *ppbVertexData;
+  pbVertexColor_ = *ppbVertexData;
   *ppbVertexData = __alignPtr(
       *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
 
-  m_cullStates.bTwoSidedLighting = false;
+  cullStates_.bTwoSidedLighting = false;
 
-  if (m_caps.Lighting) {
+  if (caps_.Lighting) {
     err = this->UpdateLighting(ppbVertexData, first, count);
     if (__glFailed(err)) {
       __glLogError(_T("CTNL::UpdateLighting() failed, err = %d.\r\n"), err);
       return err;
     }
   } else {
-    if (m_colorDecode.pBits) {
-      unsigned uiFunc = (m_colorArray.Format - VERTEX_FIXED4) / 4;
-      ASSERT(uiFunc < __countof(g_processVertexColor));
-      m_pfnColor = g_processVertexColor[uiFunc];
+    if (colorDecode_.pBits) {
+      unsigned uiFunc = (colorArray_.Format - VERTEX_FIXED4) / 4;
+      assert(uiFunc < __countof(g_processVertexColor));
+      pfnColor_ = g_processVertexColor[uiFunc];
     } else {
-      m_pfnColor = &CTNL::ProcessColor;
+      pfnColor_ = &CTNL::ProcessColor;
     }
   }
 
-  m_TNLFlags.Color = 1;
+  TNLFlags_.Color = 1;
 
   return GL_NO_ERROR;
 }
@@ -930,73 +932,72 @@ GLenum CTNL::UpdateLighting(uint8_t **ppbVertexData, int first,
                             unsigned count) {
   GLenum err;
 
-  if (m_dirtyFlags.ModelViewInvT33) {
+  if (dirtyFlags_.ModelViewInvT33) {
     this->UpdateModelViewInvT33();
   }
 
-  if (m_vertexStates.Normal) {
-    err = m_normalArray.Prepare(&m_normalDecode, first, count);
+  if (vertexStates_.Normal) {
+    err = normalArray_.Prepare(&normalDecode_, first, count);
     if (__glFailed(err)) {
       __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
       return err;
     }
   } else {
-    m_normalDecode.pBits = nullptr;
+    normalDecode_.pBits = nullptr;
   }
 
-  if (m_normalDecode.pBits) {
-    m_TNLFlags.Normalize = m_caps.Normalize;
+  if (normalDecode_.pBits) {
+    TNLFlags_.Normalize = caps_.Normalize;
   } else {
-    if (m_dirtyFlags.NormalizeNormal) {
+    if (dirtyFlags_.NormalizeNormal) {
       this->UpdateNormal();
     }
   }
 
-  if (m_dirtyFlags.ScaledAmbient) {
+  if (dirtyFlags_.ScaledAmbient) {
     this->UpdateMaterial();
   }
 
-  if (m_dirtyFlags.Lights) {
+  if (dirtyFlags_.Lights) {
     this->SetupLights();
   }
 
-  if (m_pActiveLights) {
-    m_TNLFlags.EyeSpace = 1;
+  if (pActiveLights_) {
+    TNLFlags_.EyeSpace = 1;
 
-    if (m_dirtyLights.Ambient || m_dirtyLights.Diffuse ||
-        m_dirtyLights.Specular) {
+    if (dirtyLights_.Ambient || dirtyLights_.Diffuse || dirtyLights_.Specular) {
       this->UpdateLights();
     }
   }
 
   unsigned uiFunc = 0;
 
-  if (m_normalDecode.pBits) {
-    uiFunc = 1 + (m_normalArray.Format - VERTEX_BYTE3) / 4;
+  if (normalDecode_.pBits) {
+    uiFunc = 1 + (normalArray_.Format - VERTEX_BYTE3) / 4;
   }
 
-  if (m_caps.ColorMaterial) {
+  if (caps_.ColorMaterial) {
     unsigned _uiFunc = 1;
 
-    if (m_colorDecode.pBits) {
-      _uiFunc += 1 + (m_normalArray.Format - VERTEX_FIXED4) / 4;
+    if (colorDecode_.pBits) {
+      _uiFunc += 1 + (normalArray_.Format - VERTEX_FIXED4) / 4;
     }
 
     uiFunc += _uiFunc * 5;
   }
 
-  if (m_caps.TwoSidedLighting) {
-    m_cullStates.bTwoSidedLighting = true;
+  if (caps_.TwoSidedLighting) {
+    cullStates_.bTwoSidedLighting = true;
 
-    m_pbVertexData[VERTEXDATA_BACKCOLOR] = *ppbVertexData;
+    pbVertexData_[VERTEXDATA_BACKCOLOR] = *ppbVertexData;
     *ppbVertexData = __alignPtr(
         *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
 
     uiFunc += 5 * 5;
   }
 
-  ASSERT(uiFunc < __countof(g_processLighting));
-  m_pfnColor = g_processLighting[uiFunc];
+  assert(uiFunc < __countof(g_processLighting));
+  pfnColor_ = g_processLighting[uiFunc];
 
   return GL_NO_ERROR;
 }
@@ -1005,198 +1006,199 @@ GLenum CTNL::UpdateTexcoords(uint8_t **ppbVertexData, int first,
                              unsigned count) {
   GLenum err;
 
-  for (unsigned i = 0, j = 0, mask = m_caps.Texture2D; mask; mask >>= 1, ++i) {
+  for (unsigned i = 0, j = 0, mask = caps_.Texture2D; mask; mask >>= 1, ++i) {
     if (mask & 0x1) {
-      if ((m_vertexStates.TexCoords >> i) & 0x1) {
-        err = m_texCoordArrays[i].Prepare(&m_texCoordDecodes[i], first, count);
+      if ((vertexStates_.TexCoords >> i) & 0x1) {
+        err = texCoordArrays_[i].Prepare(&texCoordDecodes_[i], first, count);
         if (__glFailed(err)) {
           __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
           return err;
         }
       } else {
-        m_texCoordDecodes[i].pBits = nullptr;
+        texCoordDecodes_[i].pBits = nullptr;
       }
 
-      m_pbVertexData[VERTEXDATA_TEXCOORD0 + j++] = *ppbVertexData;
+      pbVertexData_[VERTEXDATA_TEXCOORD0 + j++] = *ppbVertexData;
       *ppbVertexData = __alignPtr(
           *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(TEXCOORD2), 4);
 
-      if (m_texCoordDecodes[i].pBits) {
-        unsigned uiFormatType = (m_texCoordArrays[i].Format - VERTEX_BYTE2) / 4;
-        unsigned uiFormatSize = m_texCoordArrays[i].Format - 1 - uiFormatType * 4;
+      if (texCoordDecodes_[i].pBits) {
+        unsigned uiFormatType = (texCoordArrays_[i].Format - VERTEX_BYTE2) / 4;
+        unsigned uiFormatSize =
+            texCoordArrays_[i].Format - 1 - uiFormatType * 4;
         unsigned uiFunc = uiFormatType * 3 + uiFormatSize - 1;
 
-        if (!m_pMsTexCoords[i]->IsIdentity()) {
+        if (!pMsTexCoords_[i]->IsIdentity()) {
           uiFunc += 12;
         }
 
-        ASSERT(uiFunc < __countof(g_processTexcoords));
-        m_pfnTexCoords[i] = g_processTexcoords[uiFunc];
+        assert(uiFunc < __countof(g_processTexcoords));
+        pfnTexCoords_[i] = g_processTexcoords[uiFunc];
       } else {
-        m_pfnTexCoords[i] = &CTNL::ProcessTexCoords;
+        pfnTexCoords_[i] = &CTNL::ProcessTexCoords;
       }
     }
   }
 
-  m_TNLFlags.TexCoords = m_caps.Texture2D;
+  TNLFlags_.TexCoords = caps_.Texture2D;
 
   return GL_NO_ERROR;
 }
 
 void CTNL::UpdateFog(uint8_t **ppbVertexData, int /*first*/, unsigned count) {
-  m_TNLFlags.Fog = 1;
-  m_TNLFlags.EyeSpaceZ = 1;
+  TNLFlags_.Fog = 1;
+  TNLFlags_.EyeSpaceZ = 1;
 
-  if (m_dirtyFlags.FogRatio) {
-    auto fFogStart = m_fog.GetFactor(GL_FOG_START);
-    auto fFogEnd = m_fog.GetFactor(GL_FOG_END);
+  if (dirtyFlags_.FogRatio) {
+    auto fFogStart = fog_.GetFactor(GL_FOG_START);
+    auto fFogEnd = fog_.GetFactor(GL_FOG_END);
 
     if (fFogStart != fFogEnd) {
-      m_fog.fRatio = Math::TInv<fixedRF>(fFogEnd - fFogStart);
+      fog_.fRatio = Math::TInv<fixedRF>(fFogEnd - fFogStart);
     } else {
-      m_fog.fRatio = TConst<fixedRF>::Zero();
+      fog_.fRatio = TConst<fixedRF>::Zero();
     }
 
-    m_dirtyFlags.FogRatio = 0;
+    dirtyFlags_.FogRatio = 0;
   }
 
-  m_pbVertexData[VERTEXDATA_FOG] = *ppbVertexData;
+  pbVertexData_[VERTEXDATA_FOG] = *ppbVertexData;
   *ppbVertexData = __alignPtr(
       *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(float20), 4);
 
-  unsigned uiFunc = m_fog.Mode;
-  ASSERT(uiFunc < __countof(g_processFog));
-  m_pfnFog = g_processFog[uiFunc];
+  unsigned uiFunc = fog_.Mode;
+  assert(uiFunc < __countof(g_processFog));
+  pfnFog_ = g_processFog[uiFunc];
 }
 
 void CTNL::UpdateModelViewInvT44() {
   MATRIX44 matTmp;
-  Math::Inverse(&matTmp, m_pMsModelView->GetMatrix());
-  Math::Transpose(&m_mModelViewInvT, matTmp);
-  m_dirtyFlags.ModelViewInvT44 = 0;
+  Math::Inverse(&matTmp, pMsModelView_->GetMatrix());
+  Math::Transpose(&mModelViewInvT_, matTmp);
+  dirtyFlags_.ModelViewInvT44 = 0;
 
-  if (!m_caps.RescaleNormal) {
-    m_dirtyFlags.ModelViewInvT33 = 0;
-    m_dirtyFlags.NormalizeNormal = 1;
+  if (!caps_.RescaleNormal) {
+    dirtyFlags_.ModelViewInvT33 = 0;
+    dirtyFlags_.NormalizeNormal = 1;
   }
 }
 
 void CTNL::UpdateModelViewProj() {
-  Math::Mul(&m_mModelViewProj, m_pMsProjection->GetMatrix(),
-            m_pMsModelView->GetMatrix());
+  Math::Mul(&mModelViewProj_, pMsProjection_->GetMatrix(),
+            pMsModelView_->GetMatrix());
 
-  m_dirtyFlags.ModelViewProj = 0;
+  dirtyFlags_.ModelViewProj = 0;
 }
 
 void CTNL::UpdateScreenXform() {
-  m_screenXform.fMinX =
-      static_cast<fixed4>((m_viewport.left + m_viewport.right) / 2);
-  m_screenXform.iScaleX = (m_viewport.right - m_viewport.left) / 2;
+  screenXform_.fMinX =
+      static_cast<fixed4>((viewport_.left + viewport_.right) / 2);
+  screenXform_.iScaleX = (viewport_.right - viewport_.left) / 2;
 
-  m_screenXform.fMinY =
-      static_cast<fixed4>((m_viewport.top + m_viewport.bottom) / 2);
-  m_screenXform.iScaleY = (m_viewport.bottom - m_viewport.top) / 2;
+  screenXform_.fMinY =
+      static_cast<fixed4>((viewport_.top + viewport_.bottom) / 2);
+  screenXform_.iScaleY = (viewport_.bottom - viewport_.top) / 2;
 
-  m_screenXform.fMinZ =
-      static_cast<float20>((m_depthRange.fNear + m_depthRange.fFar) / 2);
-  m_screenXform.fScaleZ = (m_depthRange.fFar - m_depthRange.fNear) / 2;
+  screenXform_.fMinZ =
+      static_cast<float20>((depthRange_.fNear + depthRange_.fFar) / 2);
+  screenXform_.fScaleZ = (depthRange_.fFar - depthRange_.fNear) / 2;
 
-  m_dirtyFlags.ScreenXform = 0;
+  dirtyFlags_.ScreenXform = 0;
 }
 
 void CTNL::UpdateClipPlanes() {
-  m_TNLFlags.UserClipPlanes = 1;
+  TNLFlags_.UserClipPlanes = 1;
 
-  if (m_dirtyFlags.ClipPlanesCS) {
-    if (m_dirtyFlags.ProjectionInvT) {
+  if (dirtyFlags_.ClipPlanesCS) {
+    if (dirtyFlags_.ProjectionInvT) {
       this->UpdateProjectionInvT();
     }
 
-    unsigned updateMask = m_dirtyFlags.ClipPlanesCS & m_caps.ClipPlanes;
+    unsigned updateMask = dirtyFlags_.ClipPlanesCS & caps_.ClipPlanes;
     for (unsigned i = 0; updateMask; ++i, updateMask >>= 1) {
       if (updateMask & 1) {
-        ASSERT(i < m_vClipPlanesES.GetSize());
-        ASSERT(i < m_vClipPlanesCS.GetSize());
-        Math::Mul(&m_vClipPlanesCS[i], m_vClipPlanesES[i], m_mProjectionInvT);
+        assert(i < vClipPlanesES_.size());
+        assert(i < vClipPlanesCS_.size());
+        Math::Mul(&vClipPlanesCS_[i], vClipPlanesES_[i], mProjectionInvT_);
       }
     }
 
-    m_dirtyFlags.ClipPlanesCS = 0;
+    dirtyFlags_.ClipPlanesCS = 0;
   }
 }
 
 void CTNL::UpdateProjectionInvT() {
   MATRIX44 matTmp;
-  Math::Inverse(&matTmp, m_pMsProjection->GetMatrix());
-  Math::Transpose(&m_mProjectionInvT, matTmp);
+  Math::Inverse(&matTmp, pMsProjection_->GetMatrix());
+  Math::Transpose(&mProjectionInvT_, matTmp);
 
-  m_dirtyFlags.ProjectionInvT = 0;
+  dirtyFlags_.ProjectionInvT = 0;
 }
 
 void CTNL::UpdateModelViewInvT33() {
   MATRIX44 matTmp;
-  Math::Inverse33(&matTmp, m_pMsModelView->GetMatrix());
+  Math::Inverse33(&matTmp, pMsModelView_->GetMatrix());
 
-  if (m_caps.RescaleNormal) {
+  if (caps_.RescaleNormal) {
     auto fSum = (matTmp._31 * matTmp._31) + (matTmp._32 * matTmp._32) +
-                        (matTmp._33 * matTmp._33);
+                (matTmp._33 * matTmp._33);
 
     if (!Math::TIsZero(fSum - fONE)) {
       auto fFactor = Math::TInvSqrt(fSum);
 
-      m_mModelViewInvT._11 = matTmp._11 * fFactor;
-      m_mModelViewInvT._21 = matTmp._21 * fFactor;
-      m_mModelViewInvT._31 = matTmp._31 * fFactor;
+      mModelViewInvT_._11 = matTmp._11 * fFactor;
+      mModelViewInvT_._21 = matTmp._21 * fFactor;
+      mModelViewInvT_._31 = matTmp._31 * fFactor;
 
-      m_mModelViewInvT._12 = matTmp._12 * fFactor;
-      m_mModelViewInvT._22 = matTmp._22 * fFactor;
-      m_mModelViewInvT._32 = matTmp._32 * fFactor;
+      mModelViewInvT_._12 = matTmp._12 * fFactor;
+      mModelViewInvT_._22 = matTmp._22 * fFactor;
+      mModelViewInvT_._32 = matTmp._32 * fFactor;
 
-      m_mModelViewInvT._13 = matTmp._13 * fFactor;
-      m_mModelViewInvT._23 = matTmp._23 * fFactor;
-      m_mModelViewInvT._33 = matTmp._33 * fFactor;
+      mModelViewInvT_._13 = matTmp._13 * fFactor;
+      mModelViewInvT_._23 = matTmp._23 * fFactor;
+      mModelViewInvT_._33 = matTmp._33 * fFactor;
     }
   } else {
-    m_mModelViewInvT = matTmp;
+    mModelViewInvT_ = matTmp;
   }
 
-  m_dirtyFlags.ModelViewInvT33 = 0;
-  m_dirtyFlags.NormalizeNormal = 1;
+  dirtyFlags_.ModelViewInvT33 = 0;
+  dirtyFlags_.NormalizeNormal = 1;
 }
 
 void CTNL::UpdateNormal() {
   // Transform the normal to world space
-  Math::Mul(&m_vNormNormal, m_vNormal, m_mModelViewInvT);
+  Math::Mul(&vNormNormal_, vNormal_, mModelViewInvT_);
 
   // Normalize the normal
-  Math::Normalize(&m_vNormNormal);
+  Math::Normalize(&vNormNormal_);
 
-  m_dirtyFlags.NormalizeNormal = 0;
+  dirtyFlags_.NormalizeNormal = 0;
 }
 
 void CTNL::UpdateMaterial() {
-  auto &vMaterialAmbient = m_material.GetColor(GL_AMBIENT);
-  auto &vMaterialDiffuse = m_material.GetColor(GL_DIFFUSE);
+  auto &vMaterialAmbient = material_.GetColor(GL_AMBIENT);
+  auto &vMaterialDiffuse = material_.GetColor(GL_DIFFUSE);
 
-  m_vScaledAmbient.x = vMaterialAmbient.x * m_vLightModelAmbient.x;
-  m_vScaledAmbient.y = vMaterialAmbient.y * m_vLightModelAmbient.y;
-  m_vScaledAmbient.z = vMaterialAmbient.z * m_vLightModelAmbient.z;
-  m_vScaledAmbient.w = vMaterialDiffuse.w;
+  vScaledAmbient_.x = vMaterialAmbient.x * vLightModelAmbient_.x;
+  vScaledAmbient_.y = vMaterialAmbient.y * vLightModelAmbient_.y;
+  vScaledAmbient_.z = vMaterialAmbient.z * vLightModelAmbient_.z;
+  vScaledAmbient_.w = vMaterialDiffuse.w;
 
-  m_dirtyFlags.ScaledAmbient = 0;
+  dirtyFlags_.ScaledAmbient = 0;
 }
 
 void CTNL::SetupLights() {
-  m_pActiveLights = nullptr;
+  pActiveLights_ = nullptr;
   Light *pLight = nullptr;
 
-  for (unsigned i = 0, activeMask = m_caps.Lights; activeMask;
+  for (unsigned i = 0, activeMask = caps_.Lights; activeMask;
        ++i, activeMask >>= 1) {
     if (activeMask & 1) {
       if (nullptr == pLight) {
-        m_pActiveLights = pLight = &m_lights[i];
+        pActiveLights_ = pLight = &lights_[i];
       } else {
-        pLight->pNext = &m_lights[i];
+        pLight->pNext = &lights_[i];
         pLight = pLight->pNext;
       }
 
@@ -1204,18 +1206,18 @@ void CTNL::SetupLights() {
     }
   }
 
-  m_dirtyFlags.Lights = 0;
+  dirtyFlags_.Lights = 0;
 }
 
 void CTNL::UpdateLights() {
-  auto &vMaterialAmbient = m_material.GetColor(GL_AMBIENT);
-  auto &vMaterialDiffuse = m_material.GetColor(GL_DIFFUSE);
-  auto &vMaterialSpecular = m_material.GetColor(GL_SPECULAR);
+  auto &vMaterialAmbient = material_.GetColor(GL_AMBIENT);
+  auto &vMaterialDiffuse = material_.GetColor(GL_DIFFUSE);
+  auto &vMaterialSpecular = material_.GetColor(GL_SPECULAR);
 
-  auto dirtyLights = m_dirtyLights;
+  auto dirtyLights = dirtyLights_;
 
-  for (auto *pLight = m_pActiveLights; pLight; pLight = pLight->pNext) {
-    unsigned mask = 1 << (pLight - m_lights.GetBegin());
+  for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
+    unsigned mask = 1 << (pLight - lights_.data());
 
     if (dirtyLights.Ambient & mask) {
       auto &vLightAmbient = pLight->GetColor(GL_AMBIENT);
@@ -1269,17 +1271,17 @@ void CTNL::UpdateLights() {
     }
   }
 
-  m_dirtyLights.Value = 0;
+  dirtyLights_.Value = 0;
 }
 
 void CTNL::UpdateMatrixDirtyFlags() {
-  if (m_pMatrixStack == m_pMsModelView) {
-    m_dirtyFlags.ModelViewInvT44 = 1;
-    m_dirtyFlags.ModelViewInvT33 = 1;
-    m_dirtyFlags.ModelViewProj = 1;
-  } else if (m_pMatrixStack == m_pMsProjection) {
-    m_dirtyFlags.ModelViewProj = 1;
-    m_dirtyFlags.ProjectionInvT = 1;
-    m_dirtyFlags.ClipPlanesCS = CLIPPLANES_MASK;
+  if (pMatrixStack_ == pMsModelView_) {
+    dirtyFlags_.ModelViewInvT44 = 1;
+    dirtyFlags_.ModelViewInvT33 = 1;
+    dirtyFlags_.ModelViewProj = 1;
+  } else if (pMatrixStack_ == pMsProjection_) {
+    dirtyFlags_.ModelViewProj = 1;
+    dirtyFlags_.ProjectionInvT = 1;
+    dirtyFlags_.ClipPlanesCS = CLIPPLANES_MASK;
   }
 }

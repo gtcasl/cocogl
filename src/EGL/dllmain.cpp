@@ -341,7 +341,8 @@ eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
   err = g_driver.RegisterObject(&dwHandle, pSurface, HANDLE_SURFACE, pDisplay);
   if (__eglFailed(err)) {
     __safeRelease(pSurface);
-    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"), err);
+    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"),
+               err);
     return EGL_NO_SURFACE;
   }
 
@@ -405,7 +406,8 @@ eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
   err = g_driver.RegisterObject(&dwHandle, pSurface, HANDLE_SURFACE, pDisplay);
   if (__eglFailed(err)) {
     __safeRelease(pSurface);
-    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"), err);
+    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"),
+               err);
     return EGL_NO_SURFACE;
   }
 
@@ -506,7 +508,8 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
   err = g_driver.RegisterObject(&dwHandle, pSurface, HANDLE_SURFACE, pDisplay);
   if (__eglFailed(err)) {
     __safeRelease(pSurface);
-    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"), err);
+    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"),
+               err);
     return EGL_NO_SURFACE;
   }
 
@@ -532,8 +535,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglDestroySurface(EGLDisplay display,
   }
 
   // Remove the surface object from the handle table
-  auto pSurface =
-      g_driver.UnregisterObject<CEGLSurface *>(surface, pDisplay);
+  auto pSurface = g_driver.UnregisterObject<CEGLSurface *>(surface, pDisplay);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE, _T("Invalid surface handle.\r\n"));
     return EGL_FALSE;
@@ -835,7 +837,8 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
   err = g_driver.RegisterObject(&dwHandle, pContext, HANDLE_CONTEXT, pDisplay);
   if (__eglFailed(err)) {
     __safeRelease(pContext);
-    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"), err);
+    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"),
+               err);
     return EGL_NO_CONTEXT;
   }
 
@@ -861,8 +864,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglDestroyContext(EGLDisplay display,
   }
 
   // Remove the context object from the handle table
-  auto pContext =
-      g_driver.UnregisterObject<CEGLContext *>(context, pDisplay);
+  auto pContext = g_driver.UnregisterObject<CEGLContext *>(context, pDisplay);
   if (nullptr == pContext) {
     __eglError(EGL_BAD_CONTEXT, _T("Invalid context handle.\r\n"));
     return EGL_FALSE;

@@ -20,18 +20,18 @@
 GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
                                        uint32_t count, uint32_t *pMin,
                                        uint32_t *pMax) {
-  ASSERT(ppvIndices);
+  assert(ppvIndices);
 
   const GLvoid *pvIndices = *ppvIndices;
   auto pBufElements = this->GetBufferObject(GL_ELEMENT_ARRAY_BUFFER);
-  ASSERT(pBufElements);
+  assert(pBufElements);
 
   auto pBits = pBufElements->GetBits();
   if (pBits) {
     uint32_t stride = GLSizeOf(type);
     uint32_t size = pBufElements->GetSize();
     auto offset = static_cast<const uint8_t *>(pvIndices) -
-                            static_cast<const uint8_t *>(nullptr);
+                  static_cast<const uint8_t *>(nullptr);
     if ((offset + stride * count) <= size) {
       pvIndices = pBits + offset;
     } else {
@@ -50,8 +50,7 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
 
   switch (type) {
   case GL_UNSIGNED_SHORT: {
-    auto pwIndices =
-        reinterpret_cast<const uint16_t *>(pvIndices);
+    auto pwIndices = reinterpret_cast<const uint16_t *>(pvIndices);
     for (uint32_t i = 0; i < count; ++i) {
       uint32_t value = pwIndices[i];
       if (value < min) {
@@ -67,8 +66,7 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
   break;
 
   case GL_UNSIGNED_BYTE: {
-    auto pbIndices =
-        reinterpret_cast<const uint8_t *>(pvIndices);
+    auto pbIndices = reinterpret_cast<const uint8_t *>(pvIndices);
     for (uint32_t i = 0; i < count; ++i) {
       uint32_t value = pbIndices[i];
       if (value < min) {

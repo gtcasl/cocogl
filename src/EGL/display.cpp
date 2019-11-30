@@ -18,38 +18,38 @@
 CDisplay::CDisplay(EGLNativeDisplayType hNative, CHandleTable *pHandles) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  ASSERT(pHandles);
+  assert(pHandles);
   pHandles->AddRef();
-  m_pHandles = pHandles;
+  handles_ = pHandles;
 
-  m_hNative = hNative;
-  m_bInitialized = false;
+  hNative_ = hNative;
+  bInitialized_ = false;
 }
 
 CDisplay::~CDisplay() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  if (m_hNative) {
+  if (hNative_) {
 #if defined(_WIN32)
-    ReleaseDC(m_hNative);
+    ReleaseDC(hNative_);
 #elif defined(__linux__)
-    XCloseDisplay(m_hNative);
+    XCloseDisplay(hNative_);
 #endif
   }
 
-  auto enumerator = m_pHandles->GetEnumerator(this);
+  auto enumerator = handles_->GetEnumerator(this);
   while (!enumerator.IsEnd()) {
     reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
   }
 
-  __safeRelease(m_pHandles);
+  __safeRelease(handles_);
 }
 
 EGLint CDisplay::Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC,
                         CHandleTable *pHandles) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  ASSERT(pHandles && ppDisplay);
+  assert(pHandles && ppDisplay);
 
   // Create a new display object
   auto pDisplay = new CDisplay(hDC, pHandles);
@@ -70,8 +70,8 @@ EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
 
   EGLint err;
 
-  if (!m_bInitialized) {
-  #if defined(COCOGL_RASTER_R5G6B5)
+  if (!bInitialized_) {
+#if defined(COCOGL_RASTER_R5G6B5)
     err = this->CreateConfig(5, 6, 5, 0, 0, 0);
     if (__eglFailed(err)) {
       __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
@@ -89,7 +89,7 @@ EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
       __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
       return err;
     }
-  #elif defined (COCOGL_RASTER_A8R8G8B8)
+#elif defined(COCOGL_RASTER_A8R8G8B8)
     err = this->CreateConfig(8, 8, 8, 8, 0, 0);
     if (__eglFailed(err)) {
       __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
@@ -107,9 +107,9 @@ EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
       __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
       return err;
     }
-  #endif
+#endif
 
-    m_bInitialized = true;
+    bInitialized_ = true;
   }
 
   if (pMajor) {
@@ -138,8 +138,8 @@ EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
   }
 
   // Find the insertion sort iterator
-  ConfigList::Iter iter = m_configs.GetBegin();
-  for (ConfigList::Iter iterEnd = m_configs.GetEnd(); iter != iterEnd; ++iter) {
+  auto iter = configs_.begin();
+  for (auto iterEnd = configs_.end(); iter != iterEnd; ++iter) {
     int cmp = CConfig::Compare(*iter, pConfig);
     if (cmp >= 0) {
       break;
@@ -147,18 +147,13 @@ EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
   }
 
   // Insert the config object into sorted list
-  err = EGLERROR_FROM_HRESULT(m_configs.Insert(iter, pConfig));
-  if (__eglFailed(err)) {
-    __safeRelease(pConfig);
-    __eglLogError(_T("TList::InsertAfter() failed, err = %d.\r\n"), err);
-    return err;
-  }
+  configs_.insert(iter, pConfig);
 
   uint32_t dwHandle;
 
   // Add the config object into handle table
   err = EGLERROR_FROM_HRESULT(
-      m_pHandles->Insert(&dwHandle, pConfig, HANDLE_CONFIG, this));
+      handles_->Insert(&dwHandle, pConfig, HANDLE_CONFIG, this));
   if (__eglFailed(err)) {
     __safeRelease(pConfig);
     __eglLogError(_T("CHandleTable::Insert() failed, err = %d.\r\n"), err);
@@ -172,10 +167,10 @@ EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
 }
 
 EGLint CDisplay::QueryString(LPCSTR *plpValue, EGLint name) {
-  ASSERT(plpValue);
+  assert(plpValue);
 
   // Verify that the display was initialized
-  if (!m_bInitialized) {
+  if (!bInitialized_) {
     __eglLogError(_T("The display was not initialized.\r\n"));
     return EGL_NOT_INITIALIZED;
   }
@@ -206,22 +201,20 @@ EGLint CDisplay::ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
   EGLint err;
 
   // Verify that the display was initialized
-  if (!m_bInitialized) {
+  if (!bInitialized_) {
     __eglLogError(_T("The display was not initialized.\r\n"));
     return EGL_NOT_INITIALIZED;
   }
 
   if (nullptr == pConfigs) {
     // Allow all config objects to be evaluated
-    config_size = m_configs.GetSize();
+    config_size = configs_.size();
   }
 
   int num_config = 0;
-
-  for (CDisplay::ConfigList::Iter iter = m_configs.GetBegin(),
-                                  iterEnd = m_configs.GetEnd();
-       (iter != iterEnd) && (num_config < config_size);) {
-    auto pConfig = *iter++;
+  for (auto pConfig : configs_) {
+    if (num_config >= config_size)
+      break;
 
     bool bResult;
     err = pConfig->Matches(pAttrib_list, &bResult);
@@ -232,8 +225,8 @@ EGLint CDisplay::ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
 
     if (bResult) {
       if (pConfigs) {
-        auto dwHandle = m_pHandles->FindHandle(pConfig, this);
-        ASSERT(dwHandle);
+        auto dwHandle = handles_->FindHandle(pConfig, this);
+        assert(dwHandle);
         pConfigs[num_config] = reinterpret_cast<EGLConfig>(dwHandle);
       }
 

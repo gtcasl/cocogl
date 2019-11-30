@@ -15,12 +15,12 @@
 
 class CSceneTest : public CTestBase {
 private:
-  CMesh m_mesh;
-  int m_rotation;
-  float m_lightRotation;
+  CMesh mesh_;
+  int rotation_;
+  float lightRotation_;
 
 public:
-  CSceneTest() : m_rotation(0), m_lightRotation(0) {}
+  CSceneTest() : rotation_(0), lightRotation_(0) {}
 
   bool OnInitialize(uint32_t width, uint32_t height) {
     /*Remember: because we are programming for a mobile device, we cant
@@ -79,7 +79,7 @@ public:
     glEnable(GL_FOG);
 
     // Load our scene file
-    return m_mesh.OnInitialize(_T("media/scene.gsd"));
+    return mesh_.OnInitialize(_T("media/scene.gsd"));
   }
 
   void OnRender() {
@@ -92,13 +92,13 @@ public:
      on the mesh*/
     glTranslatef(0, -5, -40);
     glRotatef(20, 1, 0, 0);
-    glRotatef(m_rotation, 0, 1, 0);
+    glRotatef(rotation_, 0, 1, 0);
 
     // With x and z we compute the points of a circle, with a radius = 30, and
     // the velocity = LightRotation
     float x = 0, z = 0;
-    x = 30 * sin(m_lightRotation); // we have to use float4, because we do not
-    z = 30 * cos(m_lightRotation); // have a fixed point version of sin and cos
+    x = 30 * sin(lightRotation_); // we have to use float4, because we do not
+    z = 30 * cos(lightRotation_); // have a fixed point version of sin and cos
     float lightPosition[] = {0, 10, 0, 1};
     lightPosition[0] = x;
     lightPosition[2] = z;
@@ -107,9 +107,9 @@ public:
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
     // render mesh
-    m_mesh.OnRender();
+    mesh_.OnRender();
 
-    ++m_rotation;
-    m_lightRotation += 0.2f;
+    ++rotation_;
+    lightRotation_ += 0.2f;
   }
 };

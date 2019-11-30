@@ -16,7 +16,7 @@
 
 template <class T>
 inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   if ((light - GL_LIGHT0) >= MAX_LIGHTS) {
     __glError(
@@ -29,7 +29,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
   VECTOR4 vParam;
 
   uint32_t index = light - GL_LIGHT0;
-  Light &_light = m_lights[index];
+  Light &_light = lights_[index];
 
   switch (pname) {
   case GL_AMBIENT:
@@ -43,12 +43,12 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
 
     if (GL_POSITION == pname) {
       _light.Flags.DirectionalLight = Math::TIsZero(vParam.w) ? 1 : 0;
-      Math::Mul(&_light.vPosition, vParam, m_pMsModelView->GetMatrix());
+      Math::Mul(&_light.vPosition, vParam, pMsModelView_->GetMatrix());
     } else {
       _light.SetColor(pname, vParam);
     }
 
-    m_dirtyLights.States[pname - GL_AMBIENT] |= (1 << index);
+    dirtyLights_.States[pname - GL_AMBIENT] |= (1 << index);
   }
 
   break;
@@ -58,12 +58,12 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
     vParam.y = Math::TCast<floatf>(pParams[1]);
     vParam.z = Math::TCast<floatf>(pParams[2]);
 
-    if (m_dirtyFlags.ModelViewInvT33) {
+    if (dirtyFlags_.ModelViewInvT33) {
       this->UpdateModelViewInvT33();
     }
 
     Math::Mul(&_light.vSpotDirection, reinterpret_cast<const VECTOR3 &>(vParam),
-              m_mModelViewInvT);
+              mModelViewInvT_);
   }
 
   break;
@@ -127,24 +127,25 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
 
 template <class T>
 inline void CGLContext::TLightModel(GLenum pname, const T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   switch (pname) {
   case GL_LIGHT_MODEL_TWO_SIDE:
-    m_caps.TwoSidedLighting = (Math::TCast<floatf>(pParams[0]) != fZERO);
+    caps_.TwoSidedLighting = (Math::TCast<floatf>(pParams[0]) != fZERO);
     break;
 
   case GL_LIGHT_MODEL_AMBIENT:
-    m_vLightModelAmbient.x = Math::TCast<floatf>(pParams[0]);
-    m_vLightModelAmbient.y = Math::TCast<floatf>(pParams[1]);
-    m_vLightModelAmbient.z = Math::TCast<floatf>(pParams[2]);
-    m_vLightModelAmbient.w = Math::TCast<floatf>(pParams[3]);
-    m_dirtyFlags.ScaledAmbient = 1;
+    vLightModelAmbient_.x = Math::TCast<floatf>(pParams[0]);
+    vLightModelAmbient_.y = Math::TCast<floatf>(pParams[1]);
+    vLightModelAmbient_.z = Math::TCast<floatf>(pParams[2]);
+    vLightModelAmbient_.w = Math::TCast<floatf>(pParams[3]);
+    dirtyFlags_.ScaledAmbient = 1;
     break;
 
   default:
-    __glError(GL_INVALID_ENUM, _T("CGLContext::TLightModel() failed, invalid ")
-                               _T("pname parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::TLightModel() failed, invalid ")
+              _T("pname parameter: %d.\r\n"),
               pname);
     return;
   }
@@ -152,7 +153,7 @@ inline void CGLContext::TLightModel(GLenum pname, const T *pParams) {
 
 template <class T>
 inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   if (face != GL_FRONT_AND_BACK) {
     __glError(
@@ -168,7 +169,7 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
   case GL_AMBIENT:
   case GL_DIFFUSE:
   case GL_AMBIENT_AND_DIFFUSE:
-    m_dirtyFlags.ScaledAmbient = 1;
+    dirtyFlags_.ScaledAmbient = 1;
     [[fallthrough]];
   case GL_SPECULAR:
   case GL_EMISSION: {
@@ -178,16 +179,16 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
     vParam.w = Math::TCast<floatf>(pParams[3]);
 
     if (GL_EMISSION == pname) {
-      m_vMatEmissive = vParam;
+      vMatEmissive_ = vParam;
     } else {
       if (GL_AMBIENT_AND_DIFFUSE == pname) {
-        m_material.SetColor(GL_AMBIENT, vParam);
-        m_dirtyLights.States[0] = LIGHTS_MASK;
+        material_.SetColor(GL_AMBIENT, vParam);
+        dirtyLights_.States[0] = LIGHTS_MASK;
         pname = GL_DIFFUSE;
       }
 
-      m_material.SetColor(pname, vParam);
-      m_dirtyLights.States[pname - GL_AMBIENT] = LIGHTS_MASK;
+      material_.SetColor(pname, vParam);
+      dirtyLights_.States[pname - GL_AMBIENT] = LIGHTS_MASK;
     }
   }
 
@@ -196,13 +197,14 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
   case GL_SHININESS: {
     vParam.x = Math::TCast<floatf>(pParams[0]);
     if ((vParam.x < fZERO) || (vParam.x > f128)) {
-      __glError(GL_INVALID_VALUE, _T("CGLContext::TMaterial() failed, invalid ")
-                                  _T("param parameter: %d.\r\n"),
+      __glError(GL_INVALID_VALUE,
+                _T("CGLContext::TMaterial() failed, invalid ")
+                _T("param parameter: %d.\r\n"),
                 vParam.x);
       return;
     }
 
-    m_fMatShininess = vParam.x;
+    fMatShininess_ = vParam.x;
   }
 
   break;
@@ -218,7 +220,7 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
 
 template <class T>
 inline void CGLContext::TFog(GLenum pname, const T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   switch (pname) {
   case GL_FOG_MODE: {
@@ -227,7 +229,7 @@ inline void CGLContext::TFog(GLenum pname, const T *pParams) {
     case GL_LINEAR:
     case GL_EXP:
     case GL_EXP2:
-      m_fog.Mode = static_cast<eFogMode>(FogModeFromEnum(param));
+      fog_.Mode = static_cast<eFogMode>(FogModeFromEnum(param));
       break;
 
     default:
@@ -243,18 +245,18 @@ inline void CGLContext::TFog(GLenum pname, const T *pParams) {
 
   case GL_FOG_START:
   case GL_FOG_END:
-    m_dirtyFlags.FogRatio = 1;
+    dirtyFlags_.FogRatio = 1;
     [[fallthrough]];
   case GL_FOG_DENSITY:
-    m_fog.SetFactor(pname, Math::TCast<floatf>(pParams[0]));
+    fog_.SetFactor(pname, Math::TCast<floatf>(pParams[0]));
     break;
 
   case GL_FOG_COLOR:
-    m_vFogColor.x = Math::TCast<floatf>(pParams[0]);
-    m_vFogColor.y = Math::TCast<floatf>(pParams[1]);
-    m_vFogColor.z = Math::TCast<floatf>(pParams[2]);
-    m_vFogColor.w = Math::TCast<floatf>(pParams[3]);
-    m_dirtyFlags.FogColor = 1;
+    vFogColor_.x = Math::TCast<floatf>(pParams[0]);
+    vFogColor_.y = Math::TCast<floatf>(pParams[1]);
+    vFogColor_.z = Math::TCast<floatf>(pParams[2]);
+    vFogColor_.w = Math::TCast<floatf>(pParams[3]);
+    dirtyFlags_.FogColor = 1;
     break;
 
   default:

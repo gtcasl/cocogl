@@ -22,7 +22,7 @@ uint32_t VertexArray::GetBufferHandle() const {
 
 GLenum VertexArray::Prepare(VertexDecoder *pDecoder, int first,
                             uint32_t count) {
-  ASSERT(pDecoder);
+  assert(pDecoder);
 
   int offset = first * this->Stride;
   auto pBits = this->pBuffer->GetBits();

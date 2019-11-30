@@ -27,30 +27,31 @@ public:
 
   template <class T> inline T TGetObject(void *handle) const {
     return reinterpret_cast<T>(
-        m_pHandles->GetObject(reinterpret_cast<intptr_t>(handle), this));
+        handles_->GetObject(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T> inline T UnregisterObject(void *handle) const {
     return reinterpret_cast<T>(
-        m_pHandles->Delete(reinterpret_cast<intptr_t>(handle), this));
+        handles_->Delete(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T> inline T TGetObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        m_pHandles->GetObject(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_->GetObject(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
-  template <class T> inline T UnregisterObject(void *handle, void *pOwner) const {
+  template <class T>
+  inline T UnregisterObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        m_pHandles->Delete(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_->Delete(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
   uint32_t GetHandle(const void *pObject) {
-    return m_pHandles->FindHandle(pObject, this);
+    return handles_->FindHandle(pObject, this);
   }
 
   uint32_t GetHandle(const void *pObject, void *pOwner) {
-    return m_pHandles->FindHandle(pObject, pOwner);
+    return handles_->FindHandle(pObject, pOwner);
   }
 
   void MakeCurrent(CEGLContext *pContext, std::thread::id dwThreadID,
@@ -59,12 +60,11 @@ public:
   CEGLContext *GetCurrentContext() const;
 
   EGLint RegisterObject(uint32_t *pdwHandle, void *pObject, uint8_t type,
-                   void *pOwner) {
+                        void *pOwner) {
     return EGLERROR_FROM_HRESULT(
-        m_pHandles->Insert(pdwHandle, pObject, type, pOwner));
+        handles_->Insert(pdwHandle, pObject, type, pOwner));
   }
 
 private:
-
-  CHandleTable *m_pHandles;
+  CHandleTable *handles_;
 };

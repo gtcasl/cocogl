@@ -14,6 +14,8 @@
 //
 #pragma once
 
+#include "logger.hpp"
+
 class CLogger;
 
 class CProfiler {
@@ -23,5 +25,5 @@ public:
   ~CProfiler();
 
 private:
-  CLogger &m_logger;
+  CLogger &logger_;
 };

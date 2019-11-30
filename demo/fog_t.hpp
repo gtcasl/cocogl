@@ -17,14 +17,14 @@ class CFogTest : public CTestBase {
 private:
   GLfloat _box[12 * 6];
   GLfloat _texCoords[8 * 6];
-  GLuint m_texture;
-  float m_xrot;
-  float m_yrot;
+  GLuint texture_;
+  float xrot_;
+  float yrot_;
 
 public:
   CFogTest() {
-    m_xrot = 0.0f;
-    m_yrot = 0.0f;
+    xrot_ = 0.0f;
+    yrot_ = 0.0f;
   }
 
   ~CFogTest() {}
@@ -69,7 +69,7 @@ public:
 
     static const float matAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-    if (!LoadTGA(_T("media/block.tga"), &m_texture))
+    if (!LoadTGA(_T("media/block.tga"), &texture_))
       return false;
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -119,16 +119,16 @@ public:
   }
 
   void OnRender() {
-    m_xrot += 2.0f;
-    m_yrot += 3.0f;
+    xrot_ += 2.0f;
+    yrot_ += 3.0f;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
     glTranslatef(0.0f, 0.0f, -5.0f);
 
-    glRotatef(m_xrot, 1.0f, 0.0f, 0.0f);
-    glRotatef(m_yrot, 0.0f, 1.0f, 0.0f);
+    glRotatef(xrot_, 1.0f, 0.0f, 0.0f);
+    glRotatef(yrot_, 0.0f, 1.0f, 0.0f);
 
     glScalef(2.0f, 2.0f, 2.0f);
 
@@ -154,5 +154,5 @@ public:
     glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
   }
 
-  void OnDestroy() { glDeleteTextures(1, &m_texture); }
+  void OnDestroy() { glDeleteTextures(1, &texture_); }
 };

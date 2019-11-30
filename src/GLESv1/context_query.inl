@@ -23,23 +23,24 @@ extern const GLint g_compressedFormats[] = {
 template <class T>
 inline void CGLContext::TGetClipPlane(GLenum plane, T eqn[4]) {
   if ((plane - GL_CLIP_PLANE0) >= MAX_CLIPPLANES) {
-    __glError(GL_INVALID_ENUM, _T("CGLContext::TGetClipPlane() failed, ")
-                               _T("invalid plane parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::TGetClipPlane() failed, ")
+              _T("invalid plane parameter: %d.\r\n"),
               plane);
     return;
   }
 
   uint32_t index = plane - GL_CLIP_PLANE0;
 
-  eqn[0] = Math::TCast<T>(m_vClipPlanesES[index].x);
-  eqn[1] = Math::TCast<T>(m_vClipPlanesES[index].y);
-  eqn[2] = Math::TCast<T>(m_vClipPlanesES[index].z);
-  eqn[3] = Math::TCast<T>(m_vClipPlanesES[index].w);
+  eqn[0] = Math::TCast<T>(vClipPlanesES_[index].x);
+  eqn[1] = Math::TCast<T>(vClipPlanesES_[index].y);
+  eqn[2] = Math::TCast<T>(vClipPlanesES_[index].z);
+  eqn[3] = Math::TCast<T>(vClipPlanesES_[index].w);
 }
 
 template <class T>
 inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   if ((light - GL_LIGHT0) >= MAX_LIGHTS) {
     __glError(
@@ -50,7 +51,7 @@ inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
   }
 
   uint32_t index = light - GL_LIGHT0;
-  Light &_light = m_lights[index];
+  Light &_light = lights_[index];
 
   switch (pname) {
   case GL_AMBIENT:
@@ -100,11 +101,12 @@ inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
 
 template <class T>
 inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   if (face != GL_FRONT && face != GL_BACK) {
-    __glError(GL_INVALID_ENUM, _T("CGLContext::TGetMaterial() failed, invalid ")
-                               _T("face parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::TGetMaterial() failed, invalid ")
+              _T("face parameter: %d.\r\n"),
               face);
     return;
   }
@@ -113,26 +115,27 @@ inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
   case GL_AMBIENT:
   case GL_DIFFUSE:
   case GL_SPECULAR:
-    pParams[0] = Math::TCast<T>(m_material.GetColor(pname).x);
-    pParams[1] = Math::TCast<T>(m_material.GetColor(pname).y);
-    pParams[2] = Math::TCast<T>(m_material.GetColor(pname).z);
-    pParams[3] = Math::TCast<T>(m_material.GetColor(pname).w);
+    pParams[0] = Math::TCast<T>(material_.GetColor(pname).x);
+    pParams[1] = Math::TCast<T>(material_.GetColor(pname).y);
+    pParams[2] = Math::TCast<T>(material_.GetColor(pname).z);
+    pParams[3] = Math::TCast<T>(material_.GetColor(pname).w);
     break;
 
   case GL_EMISSION:
-    pParams[0] = Math::TCast<T>(m_vMatEmissive.x);
-    pParams[1] = Math::TCast<T>(m_vMatEmissive.y);
-    pParams[2] = Math::TCast<T>(m_vMatEmissive.z);
-    pParams[3] = Math::TCast<T>(m_vMatEmissive.w);
+    pParams[0] = Math::TCast<T>(vMatEmissive_.x);
+    pParams[1] = Math::TCast<T>(vMatEmissive_.y);
+    pParams[2] = Math::TCast<T>(vMatEmissive_.z);
+    pParams[3] = Math::TCast<T>(vMatEmissive_.w);
     break;
 
   case GL_SHININESS:
-    pParams[0] = Math::TCast<T>(m_fMatShininess);
+    pParams[0] = Math::TCast<T>(fMatShininess_);
     break;
 
   default:
-    __glError(GL_INVALID_ENUM, _T("CGLContext::TGetMaterial() failed, invalid ")
-                               _T("pname parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::TGetMaterial() failed, invalid ")
+              _T("pname parameter: %d.\r\n"),
               pname);
     return;
   }
@@ -140,9 +143,9 @@ inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
 
 template <class T>
 inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
-  TexUnit &texUnit = m_texUnits[m_activeTexture];
+  TexUnit &texUnit = texUnits_[activeTexture_];
 
   switch (env) {
   case GL_TEXTURE_ENV:
@@ -159,8 +162,9 @@ inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
       break;
 
     default:
-      __glError(GL_INVALID_ENUM, _T("CGLContext::TGetTexEnv() failed, invalid ")
-                                 _T("pname parameter: %d.\r\n"),
+      __glError(GL_INVALID_ENUM,
+                _T("CGLContext::TGetTexEnv() failed, invalid ")
+                _T("pname parameter: %d.\r\n"),
                 pname);
       return;
     }
@@ -179,17 +183,18 @@ inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
 template <class T>
 inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
                                          T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   if (target != GL_TEXTURE_2D) {
-    __glError(GL_INVALID_ENUM, _T("CGLContext::TGetTexParameter() failed, ")
-                               _T("invalid target parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::TGetTexParameter() failed, ")
+              _T("invalid target parameter: %d.\r\n"),
               target);
     return;
   }
 
-  auto pTexture = this->GetTexture(m_activeTexture);
-  ASSERT(pTexture);
+  auto pTexture = this->GetTexture(activeTexture_);
+  assert(pTexture);
 
   switch (pname) {
   case GL_TEXTURE_MIN_FILTER:
@@ -213,38 +218,39 @@ inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
     break;
 
   default:
-    __glError(GL_INVALID_ENUM, _T("CGLContext::TGetTexParameter() failed, ")
-                               _T("invalid pname parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::TGetTexParameter() failed, ")
+              _T("invalid pname parameter: %d.\r\n"),
               pname);
     return;
   }
 }
 
 template <> inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   switch (pname) {
   case GL_LIGHT_MODEL_TWO_SIDE:
-    pParams[0] = m_caps.TwoSidedLighting;
+    pParams[0] = caps_.TwoSidedLighting;
     break;
 
   case GL_COLOR_WRITEMASK:
-    pParams[0] = (m_cColorWriteMask.r != 0);
-    pParams[1] = (m_cColorWriteMask.g != 0);
-    pParams[2] = (m_cColorWriteMask.b != 0);
-    pParams[3] = (m_cColorWriteMask.a != 0);
+    pParams[0] = (cColorWriteMask_.r != 0);
+    pParams[1] = (cColorWriteMask_.g != 0);
+    pParams[2] = (cColorWriteMask_.b != 0);
+    pParams[3] = (cColorWriteMask_.a != 0);
     break;
 
   case GL_DEPTH_WRITEMASK:
-    pParams[0] = (m_depthWriteMask != 0);
+    pParams[0] = (depthWriteMask_ != 0);
     break;
 
   case GL_SAMPLE_COVERAGE_INVERT:
-    pParams[0] = m_sampleCoverage.bInvert;
+    pParams[0] = sampleCoverage_.bInvert;
     break;
 
   case GL_COORD_REPLACE_OES:
-    pParams[0] = m_texUnits[m_activeTexture].bCoordReplace;
+    pParams[0] = texUnits_[activeTexture_].bCoordReplace;
     break;
 
   default:
@@ -256,7 +262,7 @@ template <> inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
 }
 
 template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   switch (pname) {
   case GL_ALIASED_POINT_SIZE_RANGE:
@@ -270,31 +276,31 @@ template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_SUBPIXEL_BITS:
-    pParams[0] = m_pSurfDraw->GetAttribute(GL_SUBPIXEL_BITS);
+    pParams[0] = pSurfDraw_->GetAttribute(GL_SUBPIXEL_BITS);
     break;
 
   case GL_RED_BITS:
-    pParams[0] = m_pSurfDraw->GetAttribute(GL_RED_BITS);
+    pParams[0] = pSurfDraw_->GetAttribute(GL_RED_BITS);
     break;
 
   case GL_GREEN_BITS:
-    pParams[0] = m_pSurfDraw->GetAttribute(GL_GREEN_BITS);
+    pParams[0] = pSurfDraw_->GetAttribute(GL_GREEN_BITS);
     break;
 
   case GL_BLUE_BITS:
-    pParams[0] = m_pSurfDraw->GetAttribute(GL_BLUE_BITS);
+    pParams[0] = pSurfDraw_->GetAttribute(GL_BLUE_BITS);
     break;
 
   case GL_ALPHA_BITS:
-    pParams[0] = m_pSurfDraw->GetAttribute(GL_ALPHA_BITS);
+    pParams[0] = pSurfDraw_->GetAttribute(GL_ALPHA_BITS);
     break;
 
   case GL_DEPTH_BITS:
-    pParams[0] = m_pSurfDraw->GetAttribute(GL_DEPTH_BITS);
+    pParams[0] = pSurfDraw_->GetAttribute(GL_DEPTH_BITS);
     break;
 
   case GL_STENCIL_BITS:
-    pParams[0] = m_pSurfDraw->GetAttribute(GL_STENCIL_BITS);
+    pParams[0] = pSurfDraw_->GetAttribute(GL_STENCIL_BITS);
     break;
 
   case GL_COMPRESSED_TEXTURE_FORMATS:
@@ -316,15 +322,15 @@ template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_MAX_MODELVIEW_STACK_DEPTH:
-    pParams[0] = m_pMsModelView->GetSize();
+    pParams[0] = pMsModelView_->GetSize();
     break;
 
   case GL_MAX_PROJECTION_STACK_DEPTH:
-    pParams[0] = m_pMsProjection->GetSize();
+    pParams[0] = pMsProjection_->GetSize();
     break;
 
   case GL_MAX_TEXTURE_STACK_DEPTH:
-    pParams[0] = m_pMsTexCoords[m_activeTexture]->GetSize();
+    pParams[0] = pMsTexCoords_[activeTexture_]->GetSize();
     break;
 
   case GL_MAX_TEXTURE_SIZE:
@@ -349,75 +355,75 @@ template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_VERTEX_ARRAY_SIZE:
-    pParams[0] = DecodeDataSize(m_positionArray.Format);
+    pParams[0] = DecodeDataSize(positionArray_.Format);
     break;
 
   case GL_VERTEX_ARRAY_STRIDE:
-    pParams[0] = m_positionArray.Stride;
+    pParams[0] = positionArray_.Stride;
     break;
 
   case GL_VERTEX_ARRAY_TYPE:
-    pParams[0] = DecodeDataType(m_positionArray.Format);
+    pParams[0] = DecodeDataType(positionArray_.Format);
     break;
 
   case GL_NORMAL_ARRAY_STRIDE:
-    pParams[0] = m_normalArray.Stride;
+    pParams[0] = normalArray_.Stride;
     break;
 
   case GL_NORMAL_ARRAY_TYPE:
-    pParams[0] = DecodeDataType(m_normalArray.Format);
+    pParams[0] = DecodeDataType(normalArray_.Format);
     break;
 
   case GL_COLOR_ARRAY_SIZE:
-    pParams[0] = DecodeDataSize(m_colorArray.Format);
+    pParams[0] = DecodeDataSize(colorArray_.Format);
     break;
 
   case GL_COLOR_ARRAY_STRIDE:
-    pParams[0] = m_colorArray.Stride;
+    pParams[0] = colorArray_.Stride;
     break;
 
   case GL_COLOR_ARRAY_TYPE:
-    pParams[0] = DecodeDataType(m_colorArray.Format);
+    pParams[0] = DecodeDataType(colorArray_.Format);
     break;
 
   case GL_TEXTURE_COORD_ARRAY_SIZE:
-    pParams[0] = DecodeDataSize(m_texCoordArrays[m_clientActiveTexture].Format);
+    pParams[0] = DecodeDataSize(texCoordArrays_[clientActiveTexture_].Format);
     break;
 
   case GL_TEXTURE_COORD_ARRAY_STRIDE:
-    pParams[0] = m_texCoordArrays[m_clientActiveTexture].Stride;
+    pParams[0] = texCoordArrays_[clientActiveTexture_].Stride;
     break;
 
   case GL_TEXTURE_COORD_ARRAY_TYPE:
-    pParams[0] = DecodeDataType(m_texCoordArrays[m_clientActiveTexture].Format);
+    pParams[0] = DecodeDataType(texCoordArrays_[clientActiveTexture_].Format);
     break;
 
   case GL_POINT_SIZE_ARRAY_TYPE_OES:
-    pParams[0] = DecodeDataType(m_pointSizeArray.Format);
+    pParams[0] = DecodeDataType(pointSizeArray_.Format);
     break;
 
   case GL_POINT_SIZE_ARRAY_STRIDE_OES:
-    pParams[0] = m_pointSizeArray.Stride;
+    pParams[0] = pointSizeArray_.Stride;
     break;
 
   case GL_VERTEX_ARRAY_BUFFER_BINDING:
-    pParams[0] = m_positionArray.GetBufferHandle();
+    pParams[0] = positionArray_.GetBufferHandle();
     break;
 
   case GL_NORMAL_ARRAY_BUFFER_BINDING:
-    pParams[0] = m_normalArray.GetBufferHandle();
+    pParams[0] = normalArray_.GetBufferHandle();
     break;
 
   case GL_COLOR_ARRAY_BUFFER_BINDING:
-    pParams[0] = m_colorArray.GetBufferHandle();
+    pParams[0] = colorArray_.GetBufferHandle();
     break;
 
   case GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING:
-    pParams[0] = m_texCoordArrays[m_clientActiveTexture].GetBufferHandle();
+    pParams[0] = texCoordArrays_[clientActiveTexture_].GetBufferHandle();
     break;
 
   case GL_POINT_SIZE_ARRAY_BUFFER_BINDING_OES:
-    pParams[0] = m_pointSizeArray.GetBufferHandle();
+    pParams[0] = pointSizeArray_.GetBufferHandle();
     break;
 
   case GL_ARRAY_BUFFER_BINDING:
@@ -433,97 +439,97 @@ template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_UNPACK_ALIGNMENT:
-    pParams[0] = m_unpackAlignment;
+    pParams[0] = unpackAlignment_;
     break;
 
   case GL_PACK_ALIGNMENT:
-    pParams[0] = m_packAlignment;
+    pParams[0] = packAlignment_;
     break;
 
   case GL_STENCIL_CLEAR_VALUE:
-    pParams[0] = m_clearStencil;
+    pParams[0] = clearStencil_;
     break;
 
   case GL_SCISSOR_BOX:
-    pParams[0] = m_scissor.left;
-    pParams[1] = m_scissor.top;
-    pParams[2] = m_scissor.right - m_scissor.left;
-    pParams[3] = m_scissor.bottom - m_scissor.top;
+    pParams[0] = scissor_.left;
+    pParams[1] = scissor_.top;
+    pParams[2] = scissor_.right - scissor_.left;
+    pParams[3] = scissor_.bottom - scissor_.top;
     break;
 
   case GL_VIEWPORT:
-    pParams[0] = m_viewport.left;
-    pParams[1] = m_viewport.top;
-    pParams[2] = m_viewport.right - m_viewport.left;
-    pParams[3] = m_viewport.bottom - m_viewport.top;
+    pParams[0] = viewport_.left;
+    pParams[1] = viewport_.top;
+    pParams[2] = viewport_.right - viewport_.left;
+    pParams[3] = viewport_.bottom - viewport_.top;
     break;
 
   case GL_STENCIL_WRITEMASK:
-    pParams[0] = m_stencilWriteMask;
+    pParams[0] = stencilWriteMask_;
     break;
 
   case GL_STENCIL_VALUE_MASK:
-    pParams[0] = m_rasterData.StencilMask;
+    pParams[0] = rasterData_.StencilMask;
     break;
 
   case GL_STENCIL_REF:
-    pParams[0] = m_rasterData.StencilRef;
+    pParams[0] = rasterData_.StencilRef;
     break;
 
   case GL_ALPHA_TEST_FUNC:
-    pParams[0] = EnumFromCompareFunc(m_rasterStates.AlphaFunc);
+    pParams[0] = EnumFromCompareFunc(rasterStates_.AlphaFunc);
     break;
 
   case GL_STENCIL_FUNC:
-    pParams[0] = EnumFromCompareFunc(m_rasterStates.StencilFunc);
+    pParams[0] = EnumFromCompareFunc(rasterStates_.StencilFunc);
     break;
 
   case GL_STENCIL_FAIL:
-    pParams[0] = EnumFromStencilOp(m_rasterStates.StencilFail);
+    pParams[0] = EnumFromStencilOp(rasterStates_.StencilFail);
     break;
 
   case GL_STENCIL_PASS_DEPTH_FAIL:
-    pParams[0] = EnumFromStencilOp(m_rasterStates.StencilZFail);
+    pParams[0] = EnumFromStencilOp(rasterStates_.StencilZFail);
     break;
 
   case GL_STENCIL_PASS_DEPTH_PASS:
-    pParams[0] = EnumFromStencilOp(m_rasterStates.StencilZPass);
+    pParams[0] = EnumFromStencilOp(rasterStates_.StencilZPass);
     break;
 
   case GL_DEPTH_FUNC:
-    pParams[0] = EnumFromCompareFunc(m_rasterStates.DepthFunc);
+    pParams[0] = EnumFromCompareFunc(rasterStates_.DepthFunc);
     break;
 
   case GL_LOGIC_OP_MODE:
-    pParams[0] = EnumFromLogicOp(m_rasterStates.LogicFunc);
+    pParams[0] = EnumFromLogicOp(rasterStates_.LogicFunc);
     break;
 
   case GL_BLEND_SRC:
-    pParams[0] = EnumFromBlendFunc(m_rasterStates.BlendSrc);
+    pParams[0] = EnumFromBlendFunc(rasterStates_.BlendSrc);
     break;
 
   case GL_BLEND_DST:
-    pParams[0] = EnumFromBlendFunc(m_rasterStates.BlendDst);
+    pParams[0] = EnumFromBlendFunc(rasterStates_.BlendDst);
     break;
 
   case GL_FOG_MODE:
-    pParams[0] = EnumFromFogMode(m_fog.Mode);
+    pParams[0] = EnumFromFogMode(fog_.Mode);
     break;
 
   case GL_SHADE_MODEL:
-    pParams[0] = EnumFromShadeModel(m_caps.ShadeModel);
+    pParams[0] = EnumFromShadeModel(caps_.ShadeModel);
     break;
 
   case GL_CULL_FACE_MODE:
-    pParams[0] = EnumFromCullFace(m_cullStates.CullFace);
+    pParams[0] = EnumFromCullFace(cullStates_.CullFace);
     break;
 
   case GL_FRONT_FACE:
-    pParams[0] = EnumFromFrontFace(m_cullStates.FrontFace);
+    pParams[0] = EnumFromFrontFace(cullStates_.FrontFace);
     break;
 
   case GL_MATRIX_MODE:
-    pParams[0] = m_matrixMode;
+    pParams[0] = matrixMode_;
     break;
 
   case GL_ACTIVE_TEXTURE:
@@ -532,23 +538,23 @@ template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_PERSPECTIVE_CORRECTION_HINT:
-    pParams[0] = EnumFromHint(m_hints.Perspective);
+    pParams[0] = EnumFromHint(hints_.Perspective);
     break;
 
   case GL_POINT_SMOOTH_HINT:
-    pParams[0] = EnumFromHint(m_hints.PointSmooth);
+    pParams[0] = EnumFromHint(hints_.PointSmooth);
     break;
 
   case GL_LINE_SMOOTH_HINT:
-    pParams[0] = EnumFromHint(m_hints.LineSmooth);
+    pParams[0] = EnumFromHint(hints_.LineSmooth);
     break;
 
   case GL_FOG_HINT:
-    pParams[0] = EnumFromHint(m_hints.Fog);
+    pParams[0] = EnumFromHint(hints_.Fog);
     break;
 
   case GL_GENERATE_MIPMAP_HINT:
-    pParams[0] = EnumFromHint(m_hints.GenerateMipmap);
+    pParams[0] = EnumFromHint(hints_.GenerateMipmap);
     break;
 
   // GL Extensions
@@ -566,124 +572,123 @@ template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
 }
 
 template <class T> inline void CGLContext::TGet(GLenum pname, T *pParams) {
-  ASSERT(pParams);
+  assert(pParams);
 
   switch (pname) {
   case GL_CURRENT_COLOR:
-    pParams[0] = Math::TCast<T>(m_vColor.x);
-    pParams[1] = Math::TCast<T>(m_vColor.y);
-    pParams[2] = Math::TCast<T>(m_vColor.z);
-    pParams[3] = Math::TCast<T>(m_vColor.w);
+    pParams[0] = Math::TCast<T>(vColor_.x);
+    pParams[1] = Math::TCast<T>(vColor_.y);
+    pParams[2] = Math::TCast<T>(vColor_.z);
+    pParams[3] = Math::TCast<T>(vColor_.w);
     break;
 
   case GL_DEPTH_CLEAR_VALUE:
-    pParams[0] = Math::TCast<T>(m_fClearDepth);
+    pParams[0] = Math::TCast<T>(fClearDepth_);
     break;
 
   case GL_CURRENT_TEXTURE_COORDS:
-    pParams[0] = Math::TCast<T>(m_vTexCoords[m_activeTexture].x);
-    pParams[1] = Math::TCast<T>(m_vTexCoords[m_activeTexture].y);
+    pParams[0] = Math::TCast<T>(vTexCoords_[activeTexture_].x);
+    pParams[1] = Math::TCast<T>(vTexCoords_[activeTexture_].y);
     pParams[2] = Math::TCast<T>(fZERO);
     pParams[3] = Math::TCast<T>(fONE);
     break;
 
   case GL_CURRENT_NORMAL:
-    pParams[0] = Math::TCast<T>(m_vNormal.x);
-    pParams[1] = Math::TCast<T>(m_vNormal.y);
-    pParams[2] = Math::TCast<T>(m_vNormal.z);
+    pParams[0] = Math::TCast<T>(vNormal_.x);
+    pParams[1] = Math::TCast<T>(vNormal_.y);
+    pParams[2] = Math::TCast<T>(vNormal_.z);
     break;
 
   case GL_MODELVIEW_MATRIX:
-    m_pMsModelView->TGetTop<T>(pParams);
+    pMsModelView_->TGetTop<T>(pParams);
     break;
 
   case GL_PROJECTION_MATRIX:
-    m_pMsProjection->TGetTop<T>(pParams);
+    pMsProjection_->TGetTop<T>(pParams);
     break;
 
   case GL_TEXTURE_MATRIX:
-    m_pMsTexCoords[m_activeTexture]->TGetTop<T>(pParams);
+    pMsTexCoords_[activeTexture_]->TGetTop<T>(pParams);
     break;
 
   case GL_FOG_COLOR:
-    pParams[0] = Math::TCast<T>(m_vFogColor.x);
-    pParams[1] = Math::TCast<T>(m_vFogColor.y);
-    pParams[2] = Math::TCast<T>(m_vFogColor.z);
-    pParams[3] = Math::TCast<T>(m_vFogColor.w);
+    pParams[0] = Math::TCast<T>(vFogColor_.x);
+    pParams[1] = Math::TCast<T>(vFogColor_.y);
+    pParams[2] = Math::TCast<T>(vFogColor_.z);
+    pParams[3] = Math::TCast<T>(vFogColor_.w);
     break;
 
   case GL_FOG_DENSITY:
-    pParams[0] = Math::TCast<T>(m_fog.GetFactor(GL_FOG_DENSITY));
+    pParams[0] = Math::TCast<T>(fog_.GetFactor(GL_FOG_DENSITY));
     break;
 
   case GL_FOG_START:
-    pParams[0] = Math::TCast<T>(m_fog.GetFactor(GL_FOG_START));
+    pParams[0] = Math::TCast<T>(fog_.GetFactor(GL_FOG_START));
     break;
 
   case GL_FOG_END:
-    pParams[0] = Math::TCast<T>(m_fog.GetFactor(GL_FOG_END));
+    pParams[0] = Math::TCast<T>(fog_.GetFactor(GL_FOG_END));
     break;
 
   case GL_ALPHA_TEST_REF:
-    pParams[0] = Math::TFromUNORM8<T>(m_rasterData.AlphaRef);
+    pParams[0] = Math::TFromUNORM8<T>(rasterData_.AlphaRef);
     break;
 
   case GL_LIGHT_MODEL_AMBIENT:
-    pParams[0] = Math::TCast<T>(m_vLightModelAmbient.x);
-    pParams[1] = Math::TCast<T>(m_vLightModelAmbient.y);
-    pParams[2] = Math::TCast<T>(m_vLightModelAmbient.z);
-    pParams[3] = Math::TCast<T>(m_vLightModelAmbient.w);
+    pParams[0] = Math::TCast<T>(vLightModelAmbient_.x);
+    pParams[1] = Math::TCast<T>(vLightModelAmbient_.y);
+    pParams[2] = Math::TCast<T>(vLightModelAmbient_.z);
+    pParams[3] = Math::TCast<T>(vLightModelAmbient_.w);
     break;
 
   case GL_COLOR_CLEAR_VALUE:
-    pParams[0] = Math::TCast<T>(m_vClearColor.x);
-    pParams[1] = Math::TCast<T>(m_vClearColor.y);
-    pParams[2] = Math::TCast<T>(m_vClearColor.z);
-    pParams[3] = Math::TCast<T>(m_vClearColor.w);
+    pParams[0] = Math::TCast<T>(vClearColor_.x);
+    pParams[1] = Math::TCast<T>(vClearColor_.y);
+    pParams[2] = Math::TCast<T>(vClearColor_.z);
+    pParams[3] = Math::TCast<T>(vClearColor_.w);
     break;
 
   case GL_POLYGON_OFFSET_UNITS:
-    pParams[0] = Math::TCast<T>(m_polygonOffset.fUnits);
+    pParams[0] = Math::TCast<T>(polygonOffset_.fUnits);
     break;
 
   case GL_POLYGON_OFFSET_FACTOR:
-    pParams[0] = Math::TCast<T>(m_polygonOffset.fFactor);
+    pParams[0] = Math::TCast<T>(polygonOffset_.fFactor);
     break;
 
   case GL_SAMPLE_COVERAGE_VALUE:
-    pParams[0] = Math::TCast<T>(m_sampleCoverage.fValue);
+    pParams[0] = Math::TCast<T>(sampleCoverage_.fValue);
     break;
 
   case GL_POINT_SIZE_MIN:
-    pParams[0] = Math::TCast<T>(m_pointParams.Get(GL_POINT_SIZE_MIN));
+    pParams[0] = Math::TCast<T>(pointParams_.Get(GL_POINT_SIZE_MIN));
     break;
 
   case GL_POINT_SIZE_MAX:
-    pParams[0] = Math::TCast<T>(m_pointParams.Get(GL_POINT_SIZE_MAX));
+    pParams[0] = Math::TCast<T>(pointParams_.Get(GL_POINT_SIZE_MAX));
     break;
 
   case GL_POINT_FADE_THRESHOLD_SIZE:
-    pParams[0] =
-        Math::TCast<T>(m_pointParams.Get(GL_POINT_FADE_THRESHOLD_SIZE));
+    pParams[0] = Math::TCast<T>(pointParams_.Get(GL_POINT_FADE_THRESHOLD_SIZE));
     break;
 
   case GL_POINT_DISTANCE_ATTENUATION:
-    pParams[0] = Math::TCast<T>(m_pointParams.vAttenuation.x);
-    pParams[1] = Math::TCast<T>(m_pointParams.vAttenuation.y);
-    pParams[2] = Math::TCast<T>(m_pointParams.vAttenuation.z);
+    pParams[0] = Math::TCast<T>(pointParams_.vAttenuation.x);
+    pParams[1] = Math::TCast<T>(pointParams_.vAttenuation.y);
+    pParams[2] = Math::TCast<T>(pointParams_.vAttenuation.z);
     break;
 
   case GL_DEPTH_RANGE:
-    pParams[0] = Math::TCast<T>(m_depthRange.fNear);
-    pParams[1] = Math::TCast<T>(m_depthRange.fFar);
+    pParams[0] = Math::TCast<T>(depthRange_.fNear);
+    pParams[1] = Math::TCast<T>(depthRange_.fFar);
     break;
 
   case GL_POINT_SIZE:
-    pParams[0] = Math::TCast<T>(m_fPointSize);
+    pParams[0] = Math::TCast<T>(fPointSize_);
     break;
 
   case GL_LINE_WIDTH:
-    pParams[0] = Math::TCast<T>(m_fLineWidth);
+    pParams[0] = Math::TCast<T>(fLineWidth_);
     break;
 
   default:
@@ -698,7 +703,7 @@ template <class T> inline void CGLContext::TGet(GLenum pname, T *pParams) {
 
 template <class T>
 inline GLbitfield CGLContext::TQueryMatrix(T *pMantissa, GLint exponent[16]) {
-  const MATRIX44 &matrix = m_pMatrixStack->GetMatrix();
+  const MATRIX44 &matrix = pMatrixStack_->GetMatrix();
 
   for (uint32_t i = 0; i < 16; ++i) {
     pMantissa[i] = static_cast<T>(matrix._m[i]);

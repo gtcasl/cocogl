@@ -15,13 +15,13 @@
 
 class CQuadTest : public CTestBase {
 private:
-  GLuint m_texture;
-  uint32_t m_testcase;
+  GLuint texture_;
+  uint32_t testcase_;
 
 public:
   CQuadTest() {
-    m_texture = 0;
-    m_testcase = 21;
+    texture_ = 0;
+    testcase_ = 21;
   }
 
   bool OnInitialize(uint32_t width, uint32_t height) {
@@ -32,11 +32,11 @@ public:
     */
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    if (!LoadTGA(_T("media/lady.tga"), &m_texture))
+    if (!LoadTGA(_T("media/lady.tga"), &texture_))
       return false;
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glBindTexture(GL_TEXTURE_2D, texture_);
 
     /*
     In order to set a viewport that fits entirely our window, we need
@@ -103,7 +103,7 @@ public:
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 
-    switch (m_testcase) {
+    switch (testcase_) {
     case 0:
       glDisable(GL_TEXTURE_2D);
       glShadeModel(GL_FLAT);
@@ -338,14 +338,14 @@ public:
   }
 
   void OnKeyNext() {
-    if (m_testcase < 22) {
-      ++m_testcase;
+    if (testcase_ < 22) {
+      ++testcase_;
     }
   }
 
   void OnKeyPrev() {
-    if (m_testcase > 0) {
-      --m_testcase;
+    if (testcase_ > 0) {
+      --testcase_;
     }
   }
 };

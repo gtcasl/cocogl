@@ -18,15 +18,15 @@
 void CGLContext::MatrixMode(GLenum mode) {
   switch (mode) {
   case GL_MODELVIEW:
-    m_pMatrixStack = m_pMsModelView;
+    pMatrixStack_ = pMsModelView_;
     break;
 
   case GL_PROJECTION:
-    m_pMatrixStack = m_pMsProjection;
+    pMatrixStack_ = pMsProjection_;
     break;
 
   case GL_TEXTURE:
-    m_pMatrixStack = m_pMsTexCoords[m_activeTexture];
+    pMatrixStack_ = pMsTexCoords_[activeTexture_];
     break;
 
   case GL_MATRIX_PALETTE_OES:
@@ -40,11 +40,11 @@ void CGLContext::MatrixMode(GLenum mode) {
     return;
   }
 
-  m_matrixMode = mode;
+  matrixMode_ = mode;
 }
 
 void CGLContext::PushMatrix() {
-  if (!m_pMatrixStack->Push()) {
+  if (!pMatrixStack_->Push()) {
     __glError(GL_STACK_OVERFLOW, _T("CGLContext::PushMatrix() failed, the ")
                                  _T("current matrix stack is full.\r\n"));
     return;
@@ -52,7 +52,7 @@ void CGLContext::PushMatrix() {
 }
 
 void CGLContext::PopMatrix() {
-  if (!m_pMatrixStack->Pop()) {
+  if (!pMatrixStack_->Pop()) {
     __glError(GL_STACK_UNDERFLOW, _T("CGLContext::PopMatrix() failed, the ")
                                   _T("current matrix stack contains only a ")
                                   _T("single matrix.\r\n"));
@@ -63,14 +63,14 @@ void CGLContext::PopMatrix() {
 }
 
 void CGLContext::LoadIdentity() {
-  if (!m_pMatrixStack->IsIdentity()) {
-    m_pMatrixStack->ToIdentity();
+  if (!pMatrixStack_->IsIdentity()) {
+    pMatrixStack_->ToIdentity();
     this->UpdateMatrixDirtyFlags();
   }
 }
 
 void CGLContext::LoadMatrix(const MATRIX44 &matrix) {
-  m_pMatrixStack->SetMatrix(matrix);
+  pMatrixStack_->SetMatrix(matrix);
   this->UpdateMatrixDirtyFlags();
 }
 
@@ -124,8 +124,8 @@ void CGLContext::Scale(floatf x, floatf y, floatf z) {
 void CGLContext::Translate(floatf x, floatf y, floatf z) {
   MATRIX44 matrix, matTmp;
   Math::Translate(&matrix, x, y, z);
-  Math::Mul(&matTmp, m_pMatrixStack->GetMatrix(), matrix);
-  m_pMatrixStack->SetMatrix(matTmp);
+  Math::Mul(&matTmp, pMatrixStack_->GetMatrix(), matrix);
+  pMatrixStack_->SetMatrix(matTmp);
   this->UpdateMatrixDirtyFlags();
 }
 
@@ -137,7 +137,7 @@ void CGLContext::Rotate(floatf angle, floatf x, floatf y, floatf z) {
 
 void CGLContext::Multiply(const MATRIX44 &matrix) {
   MATRIX44 matTmp;
-  Math::Mul(&matTmp, m_pMatrixStack->GetMatrix(), matrix);
-  m_pMatrixStack->SetMatrix(matTmp);
+  Math::Mul(&matTmp, pMatrixStack_->GetMatrix(), matrix);
+  pMatrixStack_->SetMatrix(matTmp);
   this->UpdateMatrixDirtyFlags();
 }

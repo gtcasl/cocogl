@@ -43,17 +43,9 @@ typedef const char *LPCTSTR;
 #define _vftprintf vfprintf
 #define _sntprintf snprintf
 
-#ifndef ASSERT
-#ifndef NDEBUG
-#define ASSERT(x) assert(x)
-#else
-#define ASSERT(x)
-#endif
-#endif
-
 #define HRESULT uint32_t
-#define SUCCEEDED(hr) (0 == ((hr) >> 31))
-#define FAILED(hr) (0 != ((hr) >> 31))
+#define SUCCEEDED(hr) 0 == ((hr) >> 31)
+#define FAILED(hr) 0 != ((hr) >> 31)
 
 #define S_OK 0x00000000
 #define S_FALSE 0x00000001

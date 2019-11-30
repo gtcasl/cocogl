@@ -17,10 +17,10 @@
 #include "buffer.hpp"
 #include "light.hpp"
 #include "matstack.hpp"
-#include "vertarray.hpp"
 #include "surface.hpp"
 #include "texture.hpp"
 #include "rastdata.hpp"
+#include "vertarray.hpp"
 
 class CDevice : public CObject {
 protected:
@@ -39,8 +39,8 @@ protected:
   ~CDevice() {}
 
   CBuffer *GetBufferObject(GLenum target) const {
-    ASSERT((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
-    return m_bufferObjects[target - BUFFER_OBJECTS_FIRST];
+    assert((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
+    return bufferObjects_[target - BUFFER_OBJECTS_FIRST];
   }
 
   void SetBufferObject(GLenum target, CBuffer *pBuffer) {
@@ -53,64 +53,64 @@ protected:
       pBufCurr->Release();
     }
 
-    ASSERT((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
-    m_bufferObjects[target - BUFFER_OBJECTS_FIRST] = pBuffer;
+    assert((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
+    bufferObjects_[target - BUFFER_OBJECTS_FIRST] = pBuffer;
   }
 
   uint32_t GetBufferObjectHandle(GLenum target) const {
-    ASSERT((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
-    CBuffer *pBuffer = m_bufferObjects[target - BUFFER_OBJECTS_FIRST];
+    assert((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
+    CBuffer *pBuffer = bufferObjects_[target - BUFFER_OBJECTS_FIRST];
     return pBuffer ? pBuffer->GetHandle() : static_cast<uint32_t>(HANDLE_NONE);
   }
 
   uint32_t GetBoundTextureHandle() const {
-    auto pTexture = m_texUnits[m_activeTexture].GetTexture();
-    ASSERT(pTexture);
+    auto pTexture = texUnits_[activeTexture_].GetTexture();
+    assert(pTexture);
     return pTexture->GetHandle();
   }
 
   CTexture *GetTexture(uint32_t unit) const {
-    ASSERT(unit < MAX_TEXTURES);
-    return m_texUnits[unit].GetTexture();
+    assert(unit < MAX_TEXTURES);
+    return texUnits_[unit].GetTexture();
   }
 
   void SetTexture(uint32_t unit, CTexture *pTexture) {
-    ASSERT(unit < MAX_TEXTURES);
-    m_texUnits[unit].SetTexture(pTexture);
+    assert(unit < MAX_TEXTURES);
+    texUnits_[unit].SetTexture(pTexture);
   }
 
-  mutable GLenum m_error;
+  mutable GLenum error_;
 
-  const CDevice *m_pCtxShared;
-  CGLSurface *m_pSurfDraw;
-  CGLSurface *m_pSurfRead;
-  CHandleTable *m_pHandles;
+  const CDevice *pCtxShared_;
+  CGLSurface *pSurfDraw_;
+  CGLSurface *pSurfRead_;
+  CHandleTable *handles_;
 
-  CBuffer *m_bufferObjects[BUFFER_OBJECTS_SIZE];
-  CTexture *m_pTexDefault;
-  CBuffer *m_pBufDefault;
-  CRasterCache *m_pRasterCache;
+  CBuffer *bufferObjects_[BUFFER_OBJECTS_SIZE];
+  CTexture *pTexDefault_;
+  CBuffer *pBufDefault_;
+  CRasterCache *pRasterCache_;
 
 #ifdef GL_COCOJIT
-  CG::CAssembler *m_pCGAssembler;
+  CG::CAssembler *pCGAssembler_;
 #endif
 
-  uint32_t m_packAlignment;
-  uint32_t m_unpackAlignment;
-  SampleCoverage m_sampleCoverage;
+  uint32_t packAlignment_;
+  uint32_t unpackAlignment_;
+  SampleCoverage sampleCoverage_;
 
-  TexUnit m_texUnits[MAX_TEXTURES];
-  uint32_t m_activeTexture;
-  uint32_t m_clientActiveTexture;
+  TexUnit texUnits_[MAX_TEXTURES];
+  uint32_t activeTexture_;
+  uint32_t clientActiveTexture_;
 
-  Rect m_scissor;
-  Rect m_viewport;
-  DepthRange m_depthRange;
+  Rect scissor_;
+  Rect viewport_;
+  DepthRange depthRange_;
 
-  RASTERSTATES m_rasterStates;
-  VertexStates m_vertexStates;
-  GLCAPS m_caps;
-  HINTS m_hints;
-  DirtyFlags m_dirtyFlags;
-  DirtyLights m_dirtyLights;
+  RASTERSTATES rasterStates_;
+  VertexStates vertexStates_;
+  GLCAPS caps_;
+  HINTS hints_;
+  DirtyFlags dirtyFlags_;
+  DirtyLights dirtyLights_;
 };

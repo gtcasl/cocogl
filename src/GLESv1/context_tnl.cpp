@@ -24,35 +24,36 @@ void CGLContext::ClipPlane(GLenum plane, const VECTOR4 &equation) {
     return;
   }
 
-  if (m_dirtyFlags.ModelViewInvT44) {
+  if (dirtyFlags_.ModelViewInvT44) {
     this->UpdateModelViewInvT44();
   }
 
   uint32_t index = (plane - GL_CLIP_PLANE0);
-  Math::Mul(&m_vClipPlanesES[index], equation, m_mModelViewInvT);
+  Math::Mul(&vClipPlanesES_[index], equation, mModelViewInvT_);
 
-  m_dirtyFlags.ClipPlanesCS |= (1 << index);
+  dirtyFlags_.ClipPlanesCS |= (1 << index);
 }
 
 void CGLContext::DepthRange(floatf zNear, floatf zFar) {
-  m_depthRange.fNear = Math::TSat(zNear);
-  m_depthRange.fFar = Math::TSat(zFar);
+  depthRange_.fNear = Math::TSat(zNear);
+  depthRange_.fFar = Math::TSat(zFar);
 
-  m_dirtyFlags.ScreenXform = 1;
+  dirtyFlags_.ScreenXform = 1;
 }
 
 void CGLContext::Viewport(GLint x, GLint y, GLsizei width, GLsizei height) {
   if ((width < 0) || (height < 0)) {
-    __glError(GL_INVALID_VALUE, _T("CGLContext::Viewport() failed, invalid ")
-                                _T("width=%d or height=%d parameters.\r\n"),
+    __glError(GL_INVALID_VALUE,
+              _T("CGLContext::Viewport() failed, invalid ")
+              _T("width=%d or height=%d parameters.\r\n"),
               width, height);
     return;
   }
 
-  m_viewport.left = x;
-  m_viewport.top = y;
-  m_viewport.right = x + width;
-  m_viewport.bottom = y + height;
+  viewport_.left = x;
+  viewport_.top = y;
+  viewport_.right = x + width;
+  viewport_.bottom = y + height;
 
-  m_dirtyFlags.ScreenXform = 1;
+  dirtyFlags_.ScreenXform = 1;
 }

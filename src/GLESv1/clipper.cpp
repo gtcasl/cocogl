@@ -17,31 +17,30 @@
 #include "raster.inl"
 
 template <class R> inline float TScalar(float lhs, float rhs) {
-  ASSERT(lhs != rhs);
+  assert(lhs != rhs);
   return static_cast<R>(lhs / (lhs - rhs));
 }
 
-template <class R, uint32_t T>
-inline R TScalar(TFixed<T> lhs, TFixed<T> rhs) {
-  ASSERT(lhs.GetRaw() != rhs.GetRaw());
-  int diff = lhs.GetRaw() - rhs.GetRaw();
-  return R::Make((static_cast<int64_t>(lhs.GetRaw()) << R::FRAC) / diff);
+template <class R, uint32_t T> inline R TScalar(TFixed<T> lhs, TFixed<T> rhs) {
+  assert(lhs.data() != rhs.data());
+  int diff = lhs.data() - rhs.data();
+  return R::make((static_cast<int64_t>(lhs.data()) << R::FRAC) / diff);
 }
 
 template <uint32_t T>
 inline int CullSign(TFixed<T> x0, TFixed<T> y0, TFixed<T> w0, TFixed<T> x1,
                     TFixed<T> y1, TFixed<T> w1, TFixed<T> x2, TFixed<T> y2,
                     TFixed<T> w2) {
-  auto _x0 = static_cast<int64_t>(x0.GetRaw());
-  auto _x1 = static_cast<int64_t>(x1.GetRaw());
-  auto _x2 = static_cast<int64_t>(x2.GetRaw());
+  auto _x0 = static_cast<int64_t>(x0.data());
+  auto _x1 = static_cast<int64_t>(x1.data());
+  auto _x2 = static_cast<int64_t>(x2.data());
 
   int SHIFT = 2 * TFixed<T>::FRAC - 12;
 
   int64_t sign12 =
-      (w0.GetRaw() * ((_x1 * y2.GetRaw() - _x2 * y1.GetRaw()) >> SHIFT) -
-       w1.GetRaw() * ((_x0 * y2.GetRaw() - _x2 * y0.GetRaw()) >> SHIFT) +
-       w2.GetRaw() * ((_x0 * y1.GetRaw() - _x1 * y0.GetRaw()) >> SHIFT)) >>
+      (w0.data() * ((_x1 * y2.data() - _x2 * y1.data()) >> SHIFT) -
+       w1.data() * ((_x0 * y2.data() - _x2 * y0.data()) >> SHIFT) +
+       w2.data() * ((_x0 * y1.data() - _x1 * y0.data()) >> SHIFT)) >>
       TFixed<T>::FRAC;
 
   if (sign12 < 0) {
@@ -56,7 +55,7 @@ inline int CullSign(TFixed<T> x0, TFixed<T> y0, TFixed<T> w0, TFixed<T> x1,
 inline int CullSign(float x0, float y0, float w0, float x1, float y1, float w1,
                     float x2, float y2, float w2) {
   float sign = (w0 * (x1 * y2 - x2 * y1) - w1 * (x0 * y2 - x2 * y0) +
-                      w2 * (x0 * y1 - x1 * y0));
+                w2 * (x0 * y1 - x1 * y0));
 
   if (sign < 0) {
     return -1;
@@ -70,11 +69,11 @@ inline int CullSign(float x0, float y0, float w0, float x1, float y1, float w1,
 bool CRasterizer::CullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   bool bIsCulled;
 
-  CullStates cullStates = m_cullStates;
+  CullStates cullStates = cullStates_;
 
   if (CULL_FRONT_AND_BACK != cullStates.CullFace) {
     auto pvClipPos =
-        reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_CLIPPOS]);
+        reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
     const VECTOR4 &v0 = pvClipPos[i0];
     const VECTOR4 &v1 = pvClipPos[i1];
     const VECTOR4 &v2 = pvClipPos[i2];
@@ -109,7 +108,7 @@ bool CRasterizer::CullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   }
 
   uint32_t colorIndex = cullStates.bTwoSidedLighting && bIsCulled;
-  m_pbVertexColor = m_pbVertexData[VERTEXDATA_COLOR0 + colorIndex];
+  pbVertexColor_ = pbVertexData_[VERTEXDATA_COLOR0 + colorIndex];
 
   return true;
 }
@@ -117,13 +116,12 @@ bool CRasterizer::CullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 void CRasterizer::RasterClippedLine(uint32_t i0, uint32_t i1,
                                     uint32_t clipUnion) {
   auto pvClipPos =
-      reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_CLIPPOS]);
-  auto pwFlags =
-      reinterpret_cast<uint16_t*>(m_pbVertexData[VERTEXDATA_FLAGS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
 
-  uint32_t iNext = m_clipVerticesBaseIndex;
+  uint32_t iNext = clipVerticesBaseIndex_;
   uint32_t iFrom = i0;
   uint32_t iTo = i1;
 
@@ -174,9 +172,9 @@ void CRasterizer::RasterClippedLine(uint32_t i0, uint32_t i1,
       case CLIP_PLANE3:
       case CLIP_PLANE4:
       case CLIP_PLANE5:
-        ASSERT(plane < __countof(m_vClipPlanesCS));
-        fDistA = Math::TDot<floatf>(vFrom, m_vClipPlanesCS[plane]);
-        fDistB = Math::TDot<floatf>(vTo, m_vClipPlanesCS[plane]);
+        assert(plane < __countof(vClipPlanesCS_));
+        fDistA = Math::TDot<floatf>(vFrom, vClipPlanesCS_[plane]);
+        fDistB = Math::TDot<floatf>(vTo, vClipPlanesCS_[plane]);
         break;
       }
 
@@ -212,14 +210,13 @@ void CRasterizer::RasterClippedLine(uint32_t i0, uint32_t i1,
 void CRasterizer::RasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
                                         uint32_t clipUnion) {
   auto pvClipPos =
-      reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_CLIPPOS]);
-  auto pwFlags =
-      reinterpret_cast<uint16_t*>(m_pbVertexData[VERTEXDATA_FLAGS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
 
   uint32_t clipVertices[2][CLIP_BUFFER_SIZE];
-  uint32_t iTmpVertices = m_clipVerticesBaseIndex;
+  uint32_t iTmpVertices = clipVerticesBaseIndex_;
   uint32_t *pSrc = clipVertices[0];
   uint32_t *pDst = clipVertices[1];
 
@@ -308,7 +305,7 @@ uint32_t CRasterizer::UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
                                        uint32_t *pSrc, uint32_t *pDst,
                                        uint32_t *pTmp) {
   auto pvClipPos =
-      reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_CLIPPOS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
 
   floatf fDistA, fDistB;
 
@@ -319,16 +316,16 @@ uint32_t CRasterizer::UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
   uint32_t nClipVertices = 0;
 
   plane -= CLIP_PLANE0;
-  ASSERT(plane < m_vClipPlanesCS.GetSize());
+  assert(plane < vClipPlanesCS_.size());
 
-  for (fDistB = Math::TDot<floatf>(pvClipPos[iVB], m_vClipPlanesCS[plane]);
+  for (fDistB = Math::TDot<floatf>(pvClipPos[iVB], vClipPlanesCS_[plane]);
        nNumVertices--; iVB = iVA, fDistB = fDistA) {
     iVA = *pSrc++;
-    fDistA = Math::TDot<floatf>(pvClipPos[iVA], m_vClipPlanesCS[plane]);
+    fDistA = Math::TDot<floatf>(pvClipPos[iVA], vClipPlanesCS_[plane]);
 
     if (fDistB >= fZERO) {
       // Add vertex to the current list
-      ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
+      assert(nClipVertices < CLIP_BUFFER_SIZE);
       pDst[nClipVertices++] = iVB;
       if (fDistA >= fZERO) {
         continue;
@@ -341,7 +338,7 @@ uint32_t CRasterizer::UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
     this->InterpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
 
     // Add the new vertex to the current list
-    ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
+    assert(nClipVertices < CLIP_BUFFER_SIZE);
     pDst[nClipVertices++] = iTmp++;
   }
 
@@ -352,11 +349,12 @@ uint32_t CRasterizer::UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
 
 void CRasterizer::InterpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
                                     floatf fDistB, uint32_t i2) {
-  auto pwFlags = reinterpret_cast<uint16_t*>(m_pbVertexData[VERTEXDATA_FLAGS]);
-  auto pvClipPos = reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_CLIPPOS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+  auto pvClipPos =
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
 
   auto fScalar = TScalar<float30>(fDistA, fDistB);
-  ASSERT((fScalar >= TConst<float30>::Zero()) &&
+  assert((fScalar >= TConst<float30>::Zero()) &&
          (fScalar <= TConst<float30>::One()));
 
   pvClipPos[i2].x = Math::Lerpf(pvClipPos[i0].x, pvClipPos[i1].x, fScalar);
@@ -364,10 +362,10 @@ void CRasterizer::InterpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
   pvClipPos[i2].z = Math::Lerpf(pvClipPos[i0].z, pvClipPos[i1].z, fScalar);
   pvClipPos[i2].w = Math::Lerpf(pvClipPos[i0].w, pvClipPos[i1].w, fScalar);
 
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
 
   if (rasterFlags.Color) {
-    auto pcColors = reinterpret_cast<ColorARGB*>(m_pbVertexColor);
+    auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_);
 
     pcColors[i2] =
         ColorARGB(Math::Lerp(pcColors[i0].a, pcColors[i1].a, fScalar),
@@ -378,8 +376,8 @@ void CRasterizer::InterpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
 
   if (rasterFlags.NumTextures) {
     for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
-      auto pvTexCoords =
-          reinterpret_cast<TEXCOORD2*>(m_pbVertexData[VERTEXDATA_TEXCOORD0 + i]);
+      auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
+          pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
       pvTexCoords[i2].m[0] =
           Math::Lerpf(pvTexCoords[i0].m[0], pvTexCoords[i1].m[0], fScalar);
       pvTexCoords[i2].m[1] =
@@ -388,7 +386,7 @@ void CRasterizer::InterpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
   }
 
   if (rasterFlags.Fog) {
-    auto pfFogs = reinterpret_cast<float20*>(m_pbVertexData[VERTEXDATA_FOG]);
+    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);
     pfFogs[i2] = Math::Lerpf(pfFogs[i0], pfFogs[i1], fScalar);
   }
 

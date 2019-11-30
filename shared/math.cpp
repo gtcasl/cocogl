@@ -67,7 +67,6 @@ uint32_t iSqrt(uint32_t rhs) {
       g += b;
       rhs -= tmp;
     }
-
     b >>= 1;
   } while (s--);
 
@@ -76,9 +75,8 @@ uint32_t iSqrt(uint32_t rhs) {
 
 // By Ken Turkowski's Inverse Square Root from "Graphics Gems V".
 template <> fixed16 TInvSqrt(fixed16 rhs) {
-  int value = rhs.GetRaw();
-
-  ASSERT(value > 0);
+  int value = rhs.data();
+  assert(value > 0);
 
   // Check for values that fall within supported range
   if (value & 0x7ffffffc) {
@@ -104,9 +102,9 @@ template <> fixed16 TInvSqrt(fixed16 rhs) {
     x = static_cast<int>(
         ((x >> 1) * ((3 << 16) - ((((a * x) >> 16) * x) >> 16))) >> 16);
 
-    return fixed16::Make(x);
+    return fixed16::make(x);
   } else {
-    return fixed16::Make(0x7fffffff);
+    return fixed16::make(0x7fffffff);
   }
 }
 
@@ -119,8 +117,8 @@ template <> fixed16 TPow(fixed16 lhs, fixed16 rhs) {
   // =  2^(log2(X)*y - y*exp)
   // =  2^( - (-log2(X)*y + y*exp) )
 
-  int x = lhs.GetRaw();
-  int y = rhs.GetRaw();
+  int x = lhs.data();
+  int y = rhs.data();
 
   if ((x < fixed16::ONE) && (y > 0)) {
     if (x) {
@@ -140,7 +138,7 @@ template <> fixed16 TPow(fixed16 lhs, fixed16 rhs) {
         p = __fpmul(x, __alog_tab[p + 1] - __alog_tab[p]) + __alog_tab[p];
         p >>= exp;
 
-        return fixed16::Make(p);
+        return fixed16::make(p);
       }
     }
 
@@ -152,14 +150,14 @@ template <> fixed16 TPow(fixed16 lhs, fixed16 rhs) {
 
 //--
 template <> fixed16 TPow2(fixed16 rhs) {
-  ASSERT((rhs.To<int>() >= 0) && (rhs.To<int>() < 32));
+  assert((static_cast<int>(rhs) >= 0) && (static_cast<int>(rhs) < 32));
 
   const uint32_t x5log2 = 0xb17217f8; // round(2^32*log(2))
   const int x5d3 = 0x55555555;        // round(2^32/3)
 
   int n, d, q, r;
 
-  n = (rhs.GetRaw() << 10); // Convert to N.26
+  n = (rhs.data() << 10); // Convert to N.26
   d = n << 6;
   n = n >> 26;
 
@@ -191,7 +189,7 @@ template <> fixed16 TPow2(fixed16 rhs) {
       n = r << (16 - n);
     }
 
-    return fixed16::Make(n);
+    return fixed16::make(n);
   }
 
   return TConst<fixed16>::Zero();
@@ -202,7 +200,7 @@ template <> fixed16 TSin(fixed16 rhs) {
   const int TWOPI = 411775;
   const int INVTWOPI = 10430;
 
-  int value = rhs.GetRaw();
+  int value = rhs.data();
   while (value < 0) {
     value += TWOPI;
   }
@@ -212,9 +210,9 @@ template <> fixed16 TSin(fixed16 rhs) {
   value >>= 4;
 
   int result = (value & 0x400) ? __fp_sin_table[0x3ff - (value & 0x3ff)]
-                                     : __fp_sin_table[value & 0x3ff];
+                               : __fp_sin_table[value & 0x3ff];
 
-  return fixed16::Make((value & 0x800) ? -result : result);
+  return fixed16::make((value & 0x800) ? -result : result);
 }
 
 // By Ken Turkowski's Fixed Point Square Root from "Graphics Gems V".
@@ -222,7 +220,7 @@ template <> fixed16 TCos(fixed16 rhs) {
   const int TWOPI = 411775;
   const int INVTWOPI = 10430;
 
-  int value = rhs.GetRaw();
+  int value = rhs.data();
   while (value < 0) {
     value += TWOPI;
   }
@@ -233,12 +231,11 @@ template <> fixed16 TCos(fixed16 rhs) {
   value >>= 4;
 
   int result = (value & 0x400) ? __fp_sin_table[0x3ff - (value & 0x3ff)]
-                                     : __fp_sin_table[value & 0x3ff];
+                               : __fp_sin_table[value & 0x3ff];
 
-  return fixed16::Make((value & 0x800) ? -result : result);
+  return fixed16::make((value & 0x800) ? -result : result);
 }
 
-//--
 int Inverse32(int value) {
   // Calculate the sign
   int sign = 1;

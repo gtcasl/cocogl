@@ -24,38 +24,38 @@ public:
 
   CGLContext *GetCurrentContext() const;
 
-  CHandleTable *GetHandles() const { return m_pHandles; }
+  CHandleTable *GetHandles() const { return handles_; }
 
-  CRasterCache *GetRasterCache() const { return m_pRasterCache; }
+  CRasterCache *GetRasterCache() const { return pRasterCache_; }
 
   template <class T> inline T TGetObject(void *handle) const {
     return reinterpret_cast<T>(
-        m_pHandles->GetObject(reinterpret_cast<intptr_t>(handle), this));
+        handles_->GetObject(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T> inline T UnregisterObject(void *handle) const {
     return reinterpret_cast<T>(
-        m_pHandles->Delete(reinterpret_cast<intptr_t>(handle), this));
+        handles_->Delete(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T> inline T TGetObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        m_pHandles->GetObject(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_->GetObject(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
-  template <class T> inline T UnregisterObject(void *handle, void *pOwner) const {
+  template <class T>
+  inline T UnregisterObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        m_pHandles->Delete(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_->Delete(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
   GLenum RegisterObject(void *pObject, uint8_t type, void *pOwner,
-                   uint32_t *pdwHandle) {
+                        uint32_t *pdwHandle) {
     return GLERROR_FROM_HRESULT(
-        m_pHandles->Insert(pdwHandle, pObject, type, pOwner));
+        handles_->Insert(pdwHandle, pObject, type, pOwner));
   }
 
 private:
-
-  CHandleTable *m_pHandles;
-  CRasterCache *m_pRasterCache;
+  CHandleTable *handles_;
+  CRasterCache *pRasterCache_;
 };

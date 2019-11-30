@@ -15,68 +15,63 @@
 #include "stdafx.h"
 #include <stdarg.h>
 
-CLogger::CLogger(LPCTSTR lpszFileName, LPCTSTR lpszMode) 
-  : m_pFile(nullptr)
-  , m_indent(0) {
+CLogger::CLogger(LPCTSTR lpszFileName, LPCTSTR lpszMode)
+    : file_(nullptr), indent_(0) {
   if (lpszFileName) {
     auto hr = this->Open(lpszFileName, lpszMode);
-    if FAILED(hr) {
+    if (FAILED(hr)) {
       _tprintf(_T("error: couldn't open log file: %s"), lpszFileName);
     }
-
   }
 }
 
 CLogger::~CLogger() {
-  if (m_pFile) {
-    fclose(m_pFile);
+  if (file_) {
+    fclose(file_);
   }
 }
 
-void CLogger::SetIndent(uint32_t indent) { m_indent = indent; }
+void CLogger::SetIndent(uint32_t indent) { indent_ = indent; }
 
-uint32_t CLogger::GetIndent() const { return m_indent; }
+uint32_t CLogger::GetIndent() const { return indent_; }
 
 void CLogger::IncrIndent() {
-  ASSERT(m_indent < MAX_INDENT);
-  ++m_indent;
+  assert(indent_ < MAX_INDENT);
+  ++indent_;
 }
 
 void CLogger::DecrIndent() {
-  ASSERT(m_indent);
-  --m_indent;
+  assert(indent_);
+  --indent_;
 }
 
 HRESULT CLogger::Open(LPCTSTR lpszFileName, LPCTSTR lpszMode) {
-  if ((nullptr == lpszFileName) || (nullptr == lpszMode)) {
+  if ((nullptr == lpszFileName) || (nullptr == lpszMode))
     return E_INVALIDARG;
-  }
 
-  m_pFile = _tfopen(lpszFileName, lpszMode);
-  if (nullptr == m_pFile) {
+  file_ = _tfopen(lpszFileName, lpszMode);
+  if (nullptr == file_)
     return E_FAIL;
-  }
 
   return S_OK;
 }
 
 HRESULT CLogger::Write(const TCHAR *pszFormat, ...) {
-  if (nullptr == m_pFile) 
+  if (nullptr == file_)
     return E_FAIL;
-    
-  if ((nullptr == pszFormat) || (0 == *pszFormat)) {
-    return S_OK;
-  }
 
-  uint32_t indent = m_indent;
+  if ((nullptr == pszFormat) || (0 == *pszFormat))
+    return S_OK;
+
+  uint32_t indent = indent_;
   while (indent--) {
-    _ftprintf(m_pFile, _T("  "));
+    _ftprintf(file_, _T("  "));
   }
 
   va_list arglist;
   va_start(arglist, pszFormat);
 
-  _vftprintf(m_pFile, pszFormat, arglist);
+  _vftprintf(file_, pszFormat, arglist);
 
   va_end(arglist);
 
@@ -84,19 +79,18 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, ...) {
 }
 
 HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
-  if (nullptr == m_pFile) 
+  if (nullptr == file_)
     return E_FAIL;
 
-  if ((nullptr == pszFormat) || (0 == *pszFormat)) {
+  if ((nullptr == pszFormat) || (0 == *pszFormat))
     return S_OK;
-  }
 
-  uint32_t indent = m_indent;
+  uint32_t indent = indent_;
   while (indent--) {
-    _ftprintf(m_pFile, _T("  "));
+    _ftprintf(file_, _T("  "));
   }
 
-  _vftprintf(m_pFile, pszFormat, arglist);
+  _vftprintf(file_, pszFormat, arglist);
 
   return S_OK;
 }
@@ -104,7 +98,7 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
 ///////////////////////////////////////////////////////////////////////////////
 
 CProfiler::CProfiler(CLogger &logger, const TCHAR *pszFunc, ...)
-    : m_logger(logger) {
+    : logger_(logger) {
   va_list arglist;
   va_start(arglist, pszFunc);
   logger.Write(pszFunc, arglist);
@@ -112,4 +106,4 @@ CProfiler::CProfiler(CLogger &logger, const TCHAR *pszFunc, ...)
   va_end(arglist);
 }
 
-CProfiler::~CProfiler() { m_logger.DecrIndent(); }
+CProfiler::~CProfiler() { logger_.DecrIndent(); }

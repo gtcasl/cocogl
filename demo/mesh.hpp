@@ -23,12 +23,12 @@ public:
 
   void OnRender();
 private:
-  char m_name[128];
-  char m_parentName[128];
-  GLshort m_num_indices;
-  GLshort m_num_vertices;
-  GLshort *m_pIndices;
-  GLfloat *m_pGeometry;
-  GLfloat *m_pNormals;
-  GLfloat *m_pTexCoords;
+  char name_[128];
+  char parentName_[128];
+  GLshort num__indices;
+  GLshort num__vertices;
+  GLshort *pIndices_;
+  GLfloat *pGeometry_;
+  GLfloat *pNormals_;
+  GLfloat *pTexCoords_;
 };

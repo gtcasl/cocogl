@@ -20,31 +20,31 @@
 CEGLContext::CEGLContext(CDisplay *pDisplay, CConfig *pConfig) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  ASSERT(pDisplay);
+  assert(pDisplay);
   pDisplay->AddRef();
-  m_pDisplay = pDisplay;
+  pDisplay_ = pDisplay;
 
-  ASSERT(pConfig);
+  assert(pConfig);
   pConfig->AddRef();
-  m_pConfig = pConfig;
+  pConfig_ = pConfig;
 
-  m_pSurfDraw = nullptr;
-  m_pSurfRead = nullptr;
+  pSurfDraw_ = nullptr;
+  pSurfRead_ = nullptr;
 
-  m_glContext = nullptr;
+  glContext_ = nullptr;
 }
 
 CEGLContext::~CEGLContext() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  if (m_glContext) {
-    __glDestroyContext(m_glContext);
+  if (glContext_) {
+    __glDestroyContext(glContext_);
   }
 
-  __safeRelease(m_pSurfDraw);
-  __safeRelease(m_pSurfRead);
-  __safeRelease(m_pConfig);
-  __safeRelease(m_pDisplay);
+  __safeRelease(pSurfDraw_);
+  __safeRelease(pSurfRead_);
+  __safeRelease(pConfig_);
+  __safeRelease(pDisplay_);
 }
 
 EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
@@ -53,7 +53,7 @@ EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
 
   EGLint err;
 
-  ASSERT(pDisplay && pConfig && ppContext);
+  assert(pDisplay && pConfig && ppContext);
 
   // Create a new context object
   auto pContext = new CEGLContext(pDisplay, pConfig);
@@ -85,9 +85,9 @@ EGLint CEGLContext::Initialize(CEGLContext *pCtxShared) {
   // Create the GL context
   if (pCtxShared) {
     err = EGLERROR_FROM_GLERROR(
-        __glCreateContext(pCtxShared->m_glContext, &m_glContext));
+        __glCreateContext(pCtxShared->glContext_, &glContext_));
   } else {
-    err = EGLERROR_FROM_GLERROR(__glCreateContext(nullptr, &m_glContext));
+    err = EGLERROR_FROM_GLERROR(__glCreateContext(nullptr, &glContext_));
   }
 
   if (__eglFailed(err)) {
@@ -103,7 +103,7 @@ EGLint CEGLContext::GetAttribute(EGLint name, EGLint *pValue) {
 
   switch (name) {
   case EGL_CONFIG_ID:
-    value = m_pConfig->GetAttribute(EGL_CONFIG_ID);
+    value = pConfig_->GetAttribute(EGL_CONFIG_ID);
     break;
 
   default:
@@ -120,25 +120,25 @@ EGLint CEGLContext::GetAttribute(EGLint name, EGLint *pValue) {
 
 void CEGLContext::SetBindings(std::thread::id dwThreadID,
                               CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead) {
-  m_dwThreadID = dwThreadID;
+  dwThreadID_ = dwThreadID;
 
   if (pSurfDraw) {
     pSurfDraw->AddRef();
   }
 
-  if (m_pSurfDraw) {
-    m_pSurfDraw->Release();
+  if (pSurfDraw_) {
+    pSurfDraw_->Release();
   }
 
-  m_pSurfDraw = pSurfDraw;
+  pSurfDraw_ = pSurfDraw;
 
   if (pSurfRead) {
     pSurfRead->AddRef();
   }
 
-  if (m_pSurfRead) {
-    m_pSurfRead->Release();
+  if (pSurfRead_) {
+    pSurfRead_->Release();
   }
 
-  m_pSurfRead = pSurfRead;
+  pSurfRead_ = pSurfRead;
 }

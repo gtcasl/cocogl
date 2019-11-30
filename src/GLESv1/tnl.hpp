@@ -13,6 +13,7 @@
 // INDEMNITIES.
 //
 #pragma once
+
 #include "inputasm.hpp"
 
 typedef void (*PFN_DECODEPOSITION)(VECTOR4 *pOut, const uint8_t *pbIn,
@@ -130,54 +131,54 @@ protected:
 
   void UpdateMatrixDirtyFlags();
 
-  TArray<uint8_t> m_vertexBuffer;
+  std::vector<uint8_t> vertexBuffer_;
 
-  CMatrixStack *m_pMsModelView;
-  CMatrixStack *m_pMsProjection;
-  CMatrixStack *m_pMsTexCoords[MAX_TEXTURES];
-  CMatrixStack *m_pMatrixStack;
-  GLenum m_matrixMode;
+  CMatrixStack *pMsModelView_;
+  CMatrixStack *pMsProjection_;
+  CMatrixStack *pMsTexCoords_[MAX_TEXTURES];
+  CMatrixStack *pMatrixStack_;
+  GLenum matrixMode_;
 
-  TArray<VECTOR4> m_vClipPlanesES;
-  TArray<Light> m_lights;
-  Material m_material;
+  std::vector<VECTOR4> vClipPlanesES_;
+  std::vector<Light> lights_;
+  Material material_;
 
-  MATRIX44 m_mProjectionInvT;
-  TArray<VECTOR4> m_vClipPlanesCS;
+  MATRIX44 mProjectionInvT_;
+  std::vector<VECTOR4> vClipPlanesCS_;
 
-  MATRIX44 m_mModelViewInvT;
-  VECTOR4 m_vLightModelAmbient;
-  VECTOR4 m_vScaledAmbient;
-  VECTOR4 m_vMatEmissive;
-  VECTOR3 m_vNormNormal;
-  Light *m_pActiveLights;
-  floatf m_fMatShininess;
+  MATRIX44 mModelViewInvT_;
+  VECTOR4 vLightModelAmbient_;
+  VECTOR4 vScaledAmbient_;
+  VECTOR4 vMatEmissive_;
+  VECTOR3 vNormNormal_;
+  Light *pActiveLights_;
+  floatf fMatShininess_;
 
-  Fog m_fog;
-  PointParams m_pointParams;
+  Fog fog_;
+  PointParams pointParams_;
 
-  MATRIX44 m_mModelViewProj;
-  ScreenXform m_screenXform;
+  MATRIX44 mModelViewProj_;
+  ScreenXform screenXform_;
 
-  PFN_DECODEPOSITION m_pfnDecodePosition;
-  PFN_VERTEXDECODE m_pfnPointSize;
-  PFN_VERTEXDECODE m_pfnColor;
-  PFN_DECODETEXCOORD m_pfnTexCoords[MAX_TEXTURES];
-  PFN_VERTEXDECODE m_pfnFog;
+  PFN_DECODEPOSITION pfnDecodePosition_;
+  PFN_VERTEXDECODE pfnPointSize_;
+  PFN_VERTEXDECODE pfnColor_;
+  PFN_DECODETEXCOORD pfnTexCoords_[MAX_TEXTURES];
+  PFN_VERTEXDECODE pfnFog_;
 
-  VertexDecoder m_positionDecode;
-  VertexDecoder m_normalDecode;
-  VertexDecoder m_colorDecode;
-  VertexDecoder m_texCoordDecodes[MAX_TEXTURES];
-  VertexDecoder m_pointSizeDecode;
+  VertexDecoder positionDecode_;
+  VertexDecoder normalDecode_;
+  VertexDecoder colorDecode_;
+  VertexDecoder texCoordDecodes_[MAX_TEXTURES];
+  VertexDecoder pointSizeDecode_;
 
-  uint8_t *m_pbVertexData[VERTEXDATA_SIZE];
-  uint8_t *m_pbVertexColor;
-  uint32_t m_clipVerticesBaseIndex;
+  uint8_t *pbVertexData_[VERTEXDATA_SIZE];
+  uint8_t *pbVertexColor_;
+  uint32_t clipVerticesBaseIndex_;
 
-  TNLFLAGS m_TNLFlags;
+  TNLFLAGS TNLFlags_;
 
-  RASTERID m_rasterID;
+  RASTERID rasterID_;
 
-  CullStates m_cullStates;
+  CullStates cullStates_;
 };

@@ -14,33 +14,28 @@
 //
 #pragma once
 
+#include <cstring>
+#include <list>
 #include <mutex>
-#include <string.h>
 #include <thread>
 
 #include <platform.hpp>
+#include <utils.hpp>
+#include <bitmap.hpp>
+#include <color.hpp>
+#include <fixed.hpp>
+#include <format.hpp>
+#include <handle.hpp>
+#include <int24.hpp>
+#include <logger.hpp>
+#include <math.hpp>
+#include <object.hpp>
+#include <profiler.hpp>
+#include <rect.hpp>
+#include <EGL/egl.h>
 #include <GLES/gl.h>
 #include "../GLESv1/glcommon.hpp"
 #include <GLES/glext.h>
-#include <EGL/egl.h>
-#include <utils.hpp>
-#include <object.hpp>
-#include <handle.hpp>
-#include <malloc.hpp>
-#include <list.hpp>
-#include <rect.hpp>
-#include <color.hpp>
-#include <bitmap.hpp>
-#include <format.hpp>
-#include <fixed.hpp>
-#include <int24.hpp>
-#include <math.hpp>
-#include <logger.hpp>
-#include <profiler.hpp>
-#include <color.inl>
-#include <fixed.inl>
-#include <format.inl>
-#include <math.inl>
 #include "types.hpp"
 #include "utility.hpp"
 

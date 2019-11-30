@@ -17,8 +17,7 @@
 #include "raster.inl"
 
 void CRasterizer::DrawLine(uint32_t i0, uint32_t i1) {
-  auto pwFlags =
-      reinterpret_cast<uint16_t*>(m_pbVertexData[VERTEXDATA_FLAGS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   uint32_t flags0 = pwFlags[i0];
   uint32_t flags1 = pwFlags[i1];
 
@@ -46,28 +45,28 @@ void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
   }
 
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
 
-  auto pfnScanline = m_rasterData.pRasterOp->GetScanline();
+  auto pfnScanline = rasterData_.pRasterOp->GetScanline();
 
-  auto fLineWidth = Math::TCast<fixedDDA>(m_fLineWidth);
-  auto fRndCeil = fixedDDA::Make(fixedDDA::MASK) - TConst<fixedDDA>::Half();
+  auto fLineWidth = Math::TCast<fixedDDA>(fLineWidth_);
+  auto fRndCeil = fixedDDA::make(fixedDDA::MASK) - TConst<fixedDDA>::Half();
 
   auto i4dx = v1.x - v0.x;
   auto i4dy = v1.y - v0.y;
 
 #ifdef COCOGL_RASTER_PROFILE
   auto start_time = std::chrono::high_resolution_clock::now();
-  m_rasterData.pRasterOp->StartProfile(
+  rasterData_.pRasterOp->StartProfile(
       Math::TCast<int>(Math::TAbs(i4dx) + Math::TAbs(i4dy)));
 #endif
 
   if (Math::TAbs(i4dx) > Math::TAbs(i4dy)) {
     // Set the reference offset
-    m_rasterData.fRefX = v0.x - TConst<fixed4>::Half();
-    m_rasterData.fRefY = v0.y - TConst<fixed4>::Half();
+    rasterData_.fRefX = v0.x - TConst<fixed4>::Half();
+    rasterData_.fRefY = v0.y - TConst<fixed4>::Half();
 
     // X-axis sort
     const RDVECTOR *vertices[2] = {&v0, &v1};
@@ -84,11 +83,11 @@ void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
 
     auto fddy = Math::TMul<fixedDDA>(i4y1 - i4y0, gradient.fRatio);
 
-    auto x0 = Math::TMax<int>(
-        Math::TCeili<int>(i4x0 - TConst<fixed4>::Half()), m_scissorRect.left);
+    auto x0 = Math::TMax<int>(Math::TCeili<int>(i4x0 - TConst<fixed4>::Half()),
+                              scissorRect_.left);
 
-    auto x1 = Math::TMin<int>(
-        Math::TCeili<int>(i4x1 - TConst<fixed4>::Half()), m_scissorRect.right);
+    auto x1 = Math::TMin<int>(Math::TCeili<int>(i4x1 - TConst<fixed4>::Half()),
+                              scissorRect_.right);
 
     auto i4X0Diff = fixed4(x0) - (i4x0 - TConst<fixed4>::Half());
 
@@ -97,11 +96,11 @@ void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
     fixedDDA fby = fty + fLineWidth;
 
     for (int x = x0; x < x1; ++x) {
-      auto y0 = Math::TMax<int>(Math::TCast<int>(fty), m_scissorRect.top);
-      auto y1 =  Math::TMin<int>(Math::TCast<int>(fby), m_scissorRect.bottom);
+      auto y0 = Math::TMax<int>(Math::TCast<int>(fty), scissorRect_.top);
+      auto y1 = Math::TMin<int>(Math::TCast<int>(fby), scissorRect_.bottom);
 
       for (int y = y0; y < y1; ++y) {
-        (pfnScanline)(m_rasterData, y, x, x + 1);
+        (pfnScanline)(rasterData_, y, x, x + 1);
       }
 
       fty += fddy;
@@ -109,8 +108,8 @@ void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
     }
   } else {
     // Set the reference offset
-    m_rasterData.fRefX = v0.x - TConst<fixed4>::Half();
-    m_rasterData.fRefY = v0.y - TConst<fixed4>::Half();
+    rasterData_.fRefX = v0.x - TConst<fixed4>::Half();
+    rasterData_.fRefY = v0.y - TConst<fixed4>::Half();
 
     // Y-axis sort
     const RDVECTOR *vertices[2] = {&v0, &v1};
@@ -127,11 +126,11 @@ void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
 
     auto fddx = Math::TMul<fixedDDA>(i4x1 - i4x0, gradient.fRatio);
 
-    auto y0 = Math::TMax<int>(
-        Math::TCeili<int>(i4y0 - TConst<fixed4>::Half()), m_scissorRect.top);
+    auto y0 = Math::TMax<int>(Math::TCeili<int>(i4y0 - TConst<fixed4>::Half()),
+                              scissorRect_.top);
 
-    auto y1 = Math::TMin<int>(
-        Math::TCeili<int>(i4y1 - TConst<fixed4>::Half()), m_scissorRect.bottom);
+    auto y1 = Math::TMin<int>(Math::TCeili<int>(i4y1 - TConst<fixed4>::Half()),
+                              scissorRect_.bottom);
 
     auto i4Y0Diff = fixed4(y0) - (i4y0 - TConst<fixed4>::Half());
 
@@ -140,11 +139,10 @@ void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
     fixedDDA frx = flx + fLineWidth;
 
     for (int y = y0; y < y1; ++y) {
-      int x0 = Math::TMax<int>(Math::TCast<int>(flx), m_scissorRect.left);
-      int x1 =
-          Math::TMin<int>(Math::TCast<int>(frx), m_scissorRect.right);
+      int x0 = Math::TMax<int>(Math::TCast<int>(flx), scissorRect_.left);
+      int x1 = Math::TMin<int>(Math::TCast<int>(frx), scissorRect_.right);
 
-      (pfnScanline)(m_rasterData, y, x0, x1);
+      (pfnScanline)(rasterData_, y, x0, x1);
 
       flx += fddx;
       frx += fddx;
@@ -155,17 +153,17 @@ void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
   auto end_time = std::chrono::high_resolution_clock::now();
   auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(
       end_time - start_time);
-  m_rasterData.pRasterOp->EndProfile(elapsed_time.count());
+  rasterData_.pRasterOp->EndProfile(elapsed_time.count());
 #endif
 }
 
 bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
                                       uint32_t i1) {
-  auto rasterFlags = m_rasterID.Flags;
-  auto pRegister = m_rasterData.Registers;
+  auto rasterFlags = rasterID_.Flags;
+  auto pRegister = rasterData_.Registers;
 
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
 
@@ -197,7 +195,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
     if (fixed16(Math::TAbs(delta)) > TConst<fixed16>::Epsilon()) {
       pRegister->m[attribIdx] = pGradient->TCalcDelta<fixedRX>(delta);
       pRegister->m[attribIdx ^ 0x1] = TConst<fixedRX>::Zero();
-      m_rasterID.Flags.InterpolateDepth = 1;
+      rasterID_.Flags.InterpolateDepth = 1;
     } else {
       pRegister->m[0] = TConst<fixedRX>::Zero();
       pRegister->m[1] = TConst<fixedRX>::Zero();
@@ -207,7 +205,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
   }
 
   if (rasterFlags.Color) {
-    auto pcColors = reinterpret_cast<ColorARGB*>(m_pbVertexColor);
+    auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_);
     ColorARGB c0 = pcColors[i0];
     ColorARGB c1 = pcColors[i1];
 
@@ -227,8 +225,8 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
         pRegister[i].m[2] = static_cast<fixedRX>(c0.m[i]) >> fixed8::FRAC;
       }
 
-      m_rasterID.Flags.InterpolateColor = (interpolateMask & 0x7) ? 1 : 0;
-      m_rasterID.Flags.InterpolateAlpha = interpolateMask >> 3;
+      rasterID_.Flags.InterpolateColor = (interpolateMask & 0x7) ? 1 : 0;
+      rasterID_.Flags.InterpolateAlpha = interpolateMask >> 3;
     } else {
       for (uint32_t i = 0; i < 4; ++i) {
         pRegister[i].m[0] = TConst<fixedRX>::Zero();
@@ -242,9 +240,10 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
 
   if (rasterFlags.NumTextures) {
     for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
-      ASSERT(i < MAX_TEXTURES);
+      assert(i < MAX_TEXTURES);
 
-      auto vTexCoords = reinterpret_cast<TEXCOORD2*>(m_pbVertexData[VERTEXDATA_TEXCOORD0 + i]);
+      auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(
+          pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
       auto &uv0 = vTexCoords[i0];
       auto &uv1 = vTexCoords[i1];
 
@@ -263,7 +262,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
   }
 
   if (rasterFlags.Fog) {
-    auto pfFogs = reinterpret_cast<float20*>(m_pbVertexData[VERTEXDATA_FOG]);
+    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);
     auto fFog0 = pfFogs[i0];
     auto fFog1 = pfFogs[i1];
 
@@ -271,7 +270,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
     if (fixedRX(Math::TAbs(delta)) > TConst<fixedRX>::Epsilon()) {
       pRegister->m[attribIdx] = pGradient->TCalcDelta<fixedRX>(delta);
       pRegister->m[attribIdx ^ 0x1] = TConst<fixedRX>::Zero();
-      m_rasterID.Flags.InterpolateFog = 1;
+      rasterID_.Flags.InterpolateFog = 1;
     } else {
       pRegister->m[0] = TConst<fixedRX>::Zero();
       pRegister->m[1] = TConst<fixedRX>::Zero();

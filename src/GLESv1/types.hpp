@@ -331,17 +331,17 @@ struct Fog {
   eFogMode Mode;
 
   void SetFactor(GLenum pname, floatf fValue) {
-    ASSERT(pname >= FACTORS_FIRST && pname <= FACTORS_LAST);
-    m_factors[pname - FACTORS_FIRST] = fValue;
+    assert(pname >= FACTORS_FIRST && pname <= FACTORS_LAST);
+    factors_[pname - FACTORS_FIRST] = fValue;
   }
 
   floatf GetFactor(GLenum pname) const {
-    ASSERT(pname >= FACTORS_FIRST && pname <= FACTORS_LAST);
-    return m_factors[pname - FACTORS_FIRST];
+    assert(pname >= FACTORS_FIRST && pname <= FACTORS_LAST);
+    return factors_[pname - FACTORS_FIRST];
   }
 
 private:
-  floatf m_factors[FACTORS_SIZE];
+  floatf factors_[FACTORS_SIZE];
 
 public:
   fixedRF fRatio;
@@ -357,17 +357,17 @@ struct PointParams {
   VECTOR3 vAttenuation;
 
   floatf Get(GLenum pname) {
-    ASSERT(pname >= PARAMS_FIRST && pname <= PARAMS_LAST);
-    return m_params[pname - PARAMS_FIRST];
+    assert(pname >= PARAMS_FIRST && pname <= PARAMS_LAST);
+    return params_[pname - PARAMS_FIRST];
   }
 
   void Set(GLenum pname, floatf fValue) {
-    ASSERT(pname >= PARAMS_FIRST && pname <= PARAMS_LAST);
-    m_params[pname - PARAMS_FIRST] = fValue;
+    assert(pname >= PARAMS_FIRST && pname <= PARAMS_LAST);
+    params_[pname - PARAMS_FIRST] = fValue;
   }
 
 private:
-  floatf m_params[PARAMS_SIZE];
+  floatf params_[PARAMS_SIZE];
 };
 
 enum eHint {
@@ -728,7 +728,8 @@ struct RASTERFLAGS {
       __enum_bitfield(16, 17, INTERPOLATECOLOR, 1),
       __enum_bitfield(17, 18, INTERPOLATEALPHA, 1),
       __enum_bitfield(18, 19, INTERPOLATEMIPS, MAX_TEXTURES),
-      __enum_bitfield(19, 20, INTERPOLATEFOG, 1), __enum_bitfield_end
+      __enum_bitfield(19, 20, INTERPOLATEFOG, 1),
+      __enum_bitfield_end
 
       DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT union {
     uint32_t Value;

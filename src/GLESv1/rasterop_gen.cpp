@@ -262,7 +262,7 @@ static const PFN_Blend s_pfnBlendTable[] = {
     TBlend<FORMAT_R5G6B5, BLEND_DST_COLOR, BLEND_ONE_MINUS_DST_ALPHA>,
     TBlend<FORMAT_R5G6B5, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE_MINUS_DST_ALPHA>,
     TBlend<FORMAT_R5G6B5, BLEND_SRC_ALPHA_SATURATE, BLEND_ONE_MINUS_DST_ALPHA>,
-  #elif defined (COCOGL_RASTER_A8R8G8B8)                 
+#elif defined(COCOGL_RASTER_A8R8G8B8)
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_ZERO>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
@@ -301,12 +301,16 @@ static const PFN_Blend s_pfnBlendTable[] = {
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA,
+           BLEND_ONE_MINUS_SRC_COLOR>,
     TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA,
+           BLEND_ONE_MINUS_SRC_COLOR>,
     TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE_MINUS_SRC_COLOR>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE_MINUS_SRC_COLOR>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR,
+           BLEND_ONE_MINUS_SRC_COLOR>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE,
+           BLEND_ONE_MINUS_SRC_COLOR>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_SRC_ALPHA>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_SRC_ALPHA>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
@@ -323,12 +327,16 @@ static const PFN_Blend s_pfnBlendTable[] = {
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA,
+           BLEND_ONE_MINUS_SRC_ALPHA>,
     TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA,
+           BLEND_ONE_MINUS_SRC_ALPHA>,
     TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE_MINUS_SRC_ALPHA>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE_MINUS_SRC_ALPHA>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR,
+           BLEND_ONE_MINUS_SRC_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE,
+           BLEND_ONE_MINUS_SRC_ALPHA>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_DST_ALPHA>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_DST_ALPHA>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
@@ -345,13 +353,17 @@ static const PFN_Blend s_pfnBlendTable[] = {
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     TBlend<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA,
+           BLEND_ONE_MINUS_DST_ALPHA>,
     TBlend<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA,
+           BLEND_ONE_MINUS_DST_ALPHA>,
     TBlend<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE_MINUS_DST_ALPHA>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR, BLEND_ONE_MINUS_DST_ALPHA>,
-    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE, BLEND_ONE_MINUS_DST_ALPHA>,
-  #endif
+    TBlend<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR,
+           BLEND_ONE_MINUS_DST_ALPHA>,
+    TBlend<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE,
+           BLEND_ONE_MINUS_DST_ALPHA>,
+#endif
 };
 
 static const PFN_WriteColor s_pfnWriteColorTable[] = {
@@ -388,7 +400,7 @@ static const PFN_WriteColor s_pfnWriteColorTable[] = {
     TWriteColor<FORMAT_R5G6B5, true, LOGICOP_OR_INVERTED>,
     TWriteColor<FORMAT_R5G6B5, true, LOGICOP_NAND>,
     TWriteColor<FORMAT_R5G6B5, true, LOGICOP_SET>,
-  #elif defined(COCOGL_RASTER_A8R8G8B8)
+#elif defined(COCOGL_RASTER_A8R8G8B8)
     TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_CLEAR>,
     TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND>,
     TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND_REVERSE>,
@@ -421,7 +433,7 @@ static const PFN_WriteColor s_pfnWriteColorTable[] = {
     TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR_INVERTED>,
     TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NAND>,
     TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_SET>,
-  #endif
+#endif
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -429,15 +441,15 @@ static const PFN_WriteColor s_pfnWriteColorTable[] = {
 CGenericRasterOp::CGenericRasterOp(const RASTERID &rasterID) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  m_rasterID = rasterID;
-  m_colorStride = 0;
-  m_depthStencilStride = 0;
-  m_pfnAlphaTest = nullptr;
-  m_pfnStencilTest = nullptr;
-  m_pfnDepthTest = nullptr;
-  m_pfnBlend = nullptr;
-  m_pfnWriteColor = nullptr;
-  m_pfnScanline = nullptr;
+  rasterID_ = rasterID;
+  colorStride_ = 0;
+  depthStencilStride_ = 0;
+  pfnAlphaTest_ = nullptr;
+  pfnStencilTest_ = nullptr;
+  pfnDepthTest_ = nullptr;
+  pfnBlend_ = nullptr;
+  pfnWriteColor_ = nullptr;
+  pfnScanline_ = nullptr;
 }
 
 CGenericRasterOp::~CGenericRasterOp() {
@@ -450,7 +462,7 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
 
   GLenum err;
 
-  ASSERT(ppRasterOp);
+  assert(ppRasterOp);
 
   // Create a new rasterOp object
   auto pRasterOp = new CGenericRasterOp(rasterID);
@@ -478,15 +490,15 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
 GLenum CGenericRasterOp::Initialize() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
 
-  m_colorStride = Format::GetInfo(rasterFlags.ColorFormat).BytePerPixel;
+  colorStride_ = Format::GetInfo(rasterFlags.ColorFormat).BytePerPixel;
 
   // Select depth function
   if (rasterFlags.DepthTest || rasterFlags.StencilTest) {
     this->SelectDepthStencilFunc();
   } else {
-    m_depthStencilStride = 0;
+    depthStencilStride_ = 0;
   }
 
   // Select sampler function
@@ -517,65 +529,64 @@ GLenum CGenericRasterOp::Initialize() {
   uint32_t Tex1 = (rasterFlags.NumTextures > 1) ? (bTexMip1 ? 2 : 1) : 0;
   uint32_t Fog = rasterFlags.Fog ? 1 : 0;
 
-  uint32_t index =
-      1 * Depth + 2 * Color + 4 * Tex0 + 12 * Tex1 + 36 * Fog;
+  uint32_t index = 1 * Depth + 2 * Color + 4 * Tex0 + 12 * Tex1 + 36 * Fog;
 
-  ASSERT(index < __countof(l_genericScanlines));
-  m_pfnScanline = (rasterFlags.Perspective)
-                      ? l_genericScanlines[index].pfnPerspective
-                      : l_genericScanlines[index].pfnAffine;
+  assert(index < __countof(l_genericScanlines));
+  pfnScanline_ = (rasterFlags.Perspective)
+                     ? l_genericScanlines[index].pfnPerspective
+                     : l_genericScanlines[index].pfnAffine;
 
   return GL_NO_ERROR;
 }
 
 void CGenericRasterOp::SelectDepthStencilFunc() {
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
-  RASTERSTATES rasterStates = m_rasterID.States;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
+  RASTERSTATES rasterStates = rasterID_.States;
 
   if (rasterFlags.DepthTest) {
     uint32_t index = rasterStates.DepthFunc;
-    ASSERT(index < __countof(s_pfnCompare));
-    m_pfnDepthTest = s_pfnCompare[index];
+    assert(index < __countof(s_pfnCompare));
+    pfnDepthTest_ = s_pfnCompare[index];
   } else {
-    m_pfnDepthTest = TCompare<COMPARE_ALWAYS>;
+    pfnDepthTest_ = TCompare<COMPARE_ALWAYS>;
   }
 
-  m_depthStencilStride =
+  depthStencilStride_ =
       Format::GetInfo(rasterFlags.DepthStencilFormat).BytePerPixel;
 
   if (rasterFlags.StencilTest) {
     uint32_t index = rasterStates.StencilFunc;
-    ASSERT(index < __countof(s_pfnCompare));
-    m_pfnStencilTest = s_pfnCompare[index];
+    assert(index < __countof(s_pfnCompare));
+    pfnStencilTest_ = s_pfnCompare[index];
   }
 }
 
 void CGenericRasterOp::SelectSamplerFunc() {
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
   for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
-    TEXTURESTATES texState = m_rasterID.Textures[i];
+    TEXTURESTATES texState = rasterID_.Textures[i];
 
     uint32_t baseIndex = 1 * texState.AddressV + 2 * texState.AddressU +
-                               4 * (texState.Format - 1);
+                         4 * (texState.Format - 1);
 
     uint32_t minIndex = baseIndex + 20 * (texState.MinFilter - 1);
 
-    ASSERT(minIndex < __countof(l_pfnGetTexelColorTable));
-    m_samplers[i].pfnGetTexelColorMin = l_pfnGetTexelColorTable[minIndex];
+    assert(minIndex < __countof(l_pfnGetTexelColorTable));
+    samplers_[i].pfnGetTexelColorMin = l_pfnGetTexelColorTable[minIndex];
 
     uint32_t magIndex = baseIndex + 20 * (texState.MagFilter - 1);
 
-    ASSERT(magIndex < __countof(l_pfnGetTexelColorTable));
-    m_samplers[i].pfnGetTexelColorMag = l_pfnGetTexelColorTable[magIndex];
+    assert(magIndex < __countof(l_pfnGetTexelColorTable));
+    samplers_[i].pfnGetTexelColorMag = l_pfnGetTexelColorTable[magIndex];
   }
 }
 
 void CGenericRasterOp::SelectTexEnvFunc() {
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
   for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
     uint32_t index;
 
-    switch (m_rasterID.Textures[i].Format) {
+    switch (rasterID_.Textures[i].Format) {
     default:
       __no_default;
 
@@ -597,46 +608,46 @@ void CGenericRasterOp::SelectTexEnvFunc() {
       break;
     }
 
-    index = m_rasterID.Textures[i].EnvMode + index * ENVMODE_SIZE_;
-    ASSERT(index < __countof(s_pfnGetTexEnvColorTable));
-    m_samplers[i].pfnGetTexEnvColor = s_pfnGetTexEnvColorTable[index];
+    index = rasterID_.Textures[i].EnvMode + index * ENVMODE_SIZE_;
+    assert(index < __countof(s_pfnGetTexEnvColorTable));
+    samplers_[i].pfnGetTexEnvColor = s_pfnGetTexEnvColorTable[index];
   }
 }
 
 void CGenericRasterOp::SelectAlphaTestFunc() {
-  RASTERSTATES rasterStates = m_rasterID.States;
+  RASTERSTATES rasterStates = rasterID_.States;
 
   uint32_t index = rasterStates.AlphaFunc;
-  ASSERT(index < __countof(s_pfnCompare));
-  m_pfnAlphaTest = s_pfnCompare[index];
+  assert(index < __countof(s_pfnCompare));
+  pfnAlphaTest_ = s_pfnCompare[index];
 }
 
 void CGenericRasterOp::SelectBlendFunc() {
-  RASTERSTATES rasterStates = m_rasterID.States;
-  uint32_t index =
-      rasterStates.BlendDst * BLEND_SIZE_ + rasterStates.BlendSrc;
+  RASTERSTATES rasterStates = rasterID_.States;
+  uint32_t index = rasterStates.BlendDst * BLEND_SIZE_ + rasterStates.BlendSrc;
 
-  ASSERT(index < __countof(s_pfnBlendTable));
-  m_pfnBlend = s_pfnBlendTable[index];
+  assert(index < __countof(s_pfnBlendTable));
+  pfnBlend_ = s_pfnBlendTable[index];
 }
 
 void CGenericRasterOp::SelectWriteColorFunc() {
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
-  RASTERSTATES rasterStates = m_rasterID.States;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
+  RASTERSTATES rasterStates = rasterID_.States;
 
   bool bColorWriteMask = rasterFlags.ColorWriteMask;
   uint32_t logicFunc =
-      (rasterFlags.LogicOp ? rasterStates.LogicFunc : static_cast<uint32_t>(LOGICOP_COPY));
+      (rasterFlags.LogicOp ? rasterStates.LogicFunc
+                           : static_cast<uint32_t>(LOGICOP_COPY));
   uint32_t index = 1 * logicFunc + LOGICOP_SIZE_ * bColorWriteMask;
 
-  ASSERT(index < __countof(s_pfnWriteColorTable));
-  m_pfnWriteColor = s_pfnWriteColorTable[index];
+  assert(index < __countof(s_pfnWriteColorTable));
+  pfnWriteColor_ = s_pfnWriteColorTable[index];
 }
 
 bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
                                      uint32_t depthValue,
                                      void *pDSBuffer) const {
-  ASSERT(pDSBuffer);
+  assert(pDSBuffer);
 
   auto pRasterOp =
       reinterpret_cast<const CGenericRasterOp *>(rasterData.pRasterOp);
@@ -656,9 +667,9 @@ bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
 
   uint32_t writeMask = rasterData.StencilWriteMask << 16;
 
-  bool bStencilTest = (pRasterOp->m_pfnStencilTest)(_stencilRef, _stencilValue);
+  bool bStencilTest = (pRasterOp->pfnStencilTest_)(_stencilRef, _stencilValue);
   if (bStencilTest) {
-    if ((pRasterOp->m_pfnDepthTest)(depthValue, _depthValue)) {
+    if ((pRasterOp->pfnDepthTest_)(depthValue, _depthValue)) {
       stencilOp = static_cast<eStencilOp>(rasterStates.StencilZPass);
 
       if (rasterFlags.DepthWrite) {
@@ -716,60 +727,60 @@ void CGenericRasterOp::GetSamplerColor(Color4 *pOut, uint32_t unit,
                                        fixedRX fV, fixedRX fM) const {
   const Sampler &sampler = rasterData.Samplers[unit];
 
-  switch (m_rasterID.Textures[unit].MipFilter) {
+  switch (rasterID_.Textures[unit].MipFilter) {
   default:
     __no_default;
   case FILTER_NONE: {
-    auto fJ = fixed16::Make(fM.GetRaw());
+    auto fJ = fixed16::make(fM.data());
     if (fJ > TConst<fixed16>::One()) {
-      (m_samplers[unit].pfnGetTexelColorMin)(pOut, sampler.pMipLevels[0], fU,
-                                             fV);
+      (samplers_[unit].pfnGetTexelColorMin)(pOut, sampler.pMipLevels[0], fU,
+                                            fV);
     } else {
-      (m_samplers[unit].pfnGetTexelColorMag)(pOut, sampler.pMipLevels[0], fU,
-                                             fV);
+      (samplers_[unit].pfnGetTexelColorMag)(pOut, sampler.pMipLevels[0], fU,
+                                            fV);
     }
 
     break;
   }
   case FILTER_NEAREST: {
-    auto fJ = fixed16::Make(fM.GetRaw());
+    auto fJ = fixed16::make(fM.data());
     if (fJ > TConst<fixed16>::One()) {
-      int mipLevel = Math::TMin<int>(
-          Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
+      int mipLevel = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+                                     sampler.MaxMipLevel);
 
-      (m_samplers[unit].pfnGetTexelColorMin)(pOut, sampler.pMipLevels[mipLevel],
-                                             fU, fV);
+      (samplers_[unit].pfnGetTexelColorMin)(pOut, sampler.pMipLevels[mipLevel],
+                                            fU, fV);
     } else {
-      (m_samplers[unit].pfnGetTexelColorMag)(pOut, sampler.pMipLevels[0], fU,
-                                             fV);
+      (samplers_[unit].pfnGetTexelColorMag)(pOut, sampler.pMipLevels[0], fU,
+                                            fV);
     }
 
     break;
   }
 
   case FILTER_LINEAR: {
-    auto fJ = fixed16::Make(fM.GetRaw());
+    auto fJ = fixed16::make(fM.data());
     if (fJ > TConst<fixed16>::One()) {
       Color4 tmp;
 
-      int mipLevel0 = Math::TMin<int>(
-          Math::iLog2(fJ.GetRaw()) - fixed16::FRAC, sampler.MaxMipLevel);
+      int mipLevel0 = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+                                      sampler.MaxMipLevel);
 
       int mipLevel1 = Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
-      int mipLerp = (fJ.GetRaw() >> (mipLevel0 + 8)) - fixed8::ONE;
+      int mipLerp = (fJ.data() >> (mipLevel0 + 8)) - fixed8::ONE;
 
-      (m_samplers[unit].pfnGetTexelColorMin)(
-          pOut, sampler.pMipLevels[mipLevel0], fU, fV);
-      (m_samplers[unit].pfnGetTexelColorMin)(
-          &tmp, sampler.pMipLevels[mipLevel1], fU, fV);
+      (samplers_[unit].pfnGetTexelColorMin)(pOut, sampler.pMipLevels[mipLevel0],
+                                            fU, fV);
+      (samplers_[unit].pfnGetTexelColorMin)(&tmp, sampler.pMipLevels[mipLevel1],
+                                            fU, fV);
 
       pOut->r = Math::Lerp8(pOut->r, tmp.r, mipLerp);
       pOut->g = Math::Lerp8(pOut->g, tmp.g, mipLerp);
       pOut->b = Math::Lerp8(pOut->b, tmp.b, mipLerp);
       pOut->a = Math::Lerp8(pOut->a, tmp.a, mipLerp);
     } else {
-      (m_samplers[unit].pfnGetTexelColorMag)(pOut, sampler.pMipLevels[0], fU,
-                                             fV);
+      (samplers_[unit].pfnGetTexelColorMag)(pOut, sampler.pMipLevels[0], fU,
+                                            fV);
     }
 
     break;
@@ -780,7 +791,7 @@ void CGenericRasterOp::GetSamplerColor(Color4 *pOut, uint32_t unit,
 void CGenericRasterOp::ApplyFog(const RasterData &rasterData, Color4 *pInOut,
                                 fixedRX fFactor) {
   const Color4 &cFogColor = rasterData.cFogColor;
-  int factor = fFactor.GetRaw();
+  int factor = fFactor.data();
 
   pInOut->r =
       cFogColor.r + ((factor * (pInOut->r - cFogColor.r)) >> fixedRX::FRAC);

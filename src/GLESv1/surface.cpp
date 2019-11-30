@@ -19,12 +19,12 @@
 CGLSurface::CGLSurface() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  memset(&m_pColorDesc, 0, sizeof(m_pColorDesc));
-  memset(&m_pDepthStencilDesc, 0, sizeof(m_pDepthStencilDesc));
+  memset(&pColorDesc_, 0, sizeof(pColorDesc_));
+  memset(&pDepthStencilDesc_, 0, sizeof(pDepthStencilDesc_));
 
-  m_pfnColorConv = &CGLSurface::ColorConvNoop;
-  m_pfnColorFill = &CGLSurface::ColorFillNoop;
-  m_pfnDepthStencilFill = &CGLSurface::ColorFillNoop;
+  pfnColorConv_ = &CGLSurface::ColorConvNoop;
+  pfnColorFill_ = &CGLSurface::ColorFillNoop;
+  pfnDepthStencilFill_ = &CGLSurface::ColorFillNoop;
 
   for (uint32_t i = ATTRIBUTES_FIRST; i <= ATTRIBUTES_LAST; ++i) {
     this->SetAttribute(i, 0);
@@ -40,7 +40,7 @@ GLenum CGLSurface::Create(CGLSurface **ppSurface,
 
   GLenum err;
 
-  ASSERT(ppSurface);
+  assert(ppSurface);
 
   // Create a new surface object
   auto pSurface = new CGLSurface();
@@ -69,31 +69,31 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   if (pColorDesc && pColorDesc->pBits) {
-    m_pColorDesc = *pColorDesc;
+    pColorDesc_ = *pColorDesc;
 
     // Set color fill function
     switch (pColorDesc->Format) {
     case FORMAT_R5G6B5:
-      m_pfnColorConv = Format::TConvertTo<FORMAT_R5G6B5>;
-      m_pfnColorFill = &CGLSurface::TColorFill<uint16_t>;
+      pfnColorConv_ = Format::TConvertTo<FORMAT_R5G6B5>;
+      pfnColorFill_ = &CGLSurface::TColorFill<uint16_t>;
       this->SetAttribute(GL_RED_BITS, 5);
       this->SetAttribute(GL_GREEN_BITS, 6);
       this->SetAttribute(GL_BLUE_BITS, 5);
       this->SetAttribute(GL_ALPHA_BITS, 0);
       break;
 
-    /*case FORMAT_R8G8B8:
-        m_pfnColorConv = Format::TConvertTo<FORMAT_B8G8R8>;
-        m_pfnColorFill = &CGLSurface::TColorFill<uint24>;
-        this->SetAttribute(GL_RED_BITS,   8);
-        this->SetAttribute(GL_GREEN_BITS, 8);
-        this->SetAttribute(GL_BLUE_BITS,  8);
-        this->SetAttribute(GL_ALPHA_BITS, 0);
-        break;*/
+      /*case FORMAT_R8G8B8:
+          pfnColorConv_ = Format::TConvertTo<FORMAT_B8G8R8>;
+          pfnColorFill_ = &CGLSurface::TColorFill<uint24_t>;
+          this->SetAttribute(GL_RED_BITS,   8);
+          this->SetAttribute(GL_GREEN_BITS, 8);
+          this->SetAttribute(GL_BLUE_BITS,  8);
+          this->SetAttribute(GL_ALPHA_BITS, 0);
+          break;*/
 
     case FORMAT_A8R8G8B8:
-      m_pfnColorConv = Format::TConvertTo<FORMAT_A8B8G8R8>;
-      m_pfnColorFill = &CGLSurface::TColorFill<uint32_t>;
+      pfnColorConv_ = Format::TConvertTo<FORMAT_A8B8G8R8>;
+      pfnColorFill_ = &CGLSurface::TColorFill<uint32_t>;
       this->SetAttribute(GL_RED_BITS, 8);
       this->SetAttribute(GL_GREEN_BITS, 8);
       this->SetAttribute(GL_BLUE_BITS, 8);
@@ -107,9 +107,8 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
     }
 
     if ((pColorDesc->Width & 0x1) // The width is a multiple of 2
-        ||
-        !__isAligned32(
-            pColorDesc->pBits)) // The buffer address is uint32_t aligned
+        || !__isAligned32(
+               pColorDesc->pBits)) // The buffer address is uint32_t aligned
     {
       __glLogError(_T("CGLSurface::Initialize() failed, invalid color buffer ")
                    _T("alignment.\r\n"));
@@ -118,17 +117,17 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
   }
 
   if (pDepthStencilDesc && pDepthStencilDesc->pBits) {
-    m_pDepthStencilDesc = *pDepthStencilDesc;
+    pDepthStencilDesc_ = *pDepthStencilDesc;
 
     switch (pDepthStencilDesc->Format) {
     case FORMAT_X8S8D16:
-      m_pfnDepthStencilFill = &CGLSurface::TColorFill<uint32_t>;
+      pfnDepthStencilFill_ = &CGLSurface::TColorFill<uint32_t>;
       this->SetAttribute(GL_DEPTH_BITS, 16);
       this->SetAttribute(GL_STENCIL_BITS, 8);
       break;
 
     case FORMAT_D16:
-      m_pfnDepthStencilFill = &CGLSurface::TColorFill<uint16_t>;
+      pfnDepthStencilFill_ = &CGLSurface::TColorFill<uint16_t>;
       this->SetAttribute(GL_DEPTH_BITS, 16);
       this->SetAttribute(GL_STENCIL_BITS, 0);
       break;
@@ -169,12 +168,12 @@ GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
     uint32_t bmiColors[3];
   } bmp_info;
 
-  uint8_t nBPP = Format::GetInfo(m_pColorDesc.Format).BytePerPixel;
-  
+  uint8_t nBPP = Format::GetInfo(pColorDesc_.Format).BytePerPixel;
+
   bmp_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-  bmp_info.bmiHeader.biWidth = m_pColorDesc.Width;
-  bmp_info.bmiHeader.biHeight = m_pColorDesc.Height;
-  bmp_info.bmiHeader.biPlanes = 1;      
+  bmp_info.bmiHeader.biWidth = pColorDesc_.Width;
+  bmp_info.bmiHeader.biHeight = pColorDesc_.Height;
+  bmp_info.bmiHeader.biPlanes = 1;
   bmp_info.bmiHeader.biXPelsPerMeter = 0;
   bmp_info.bmiHeader.biYPelsPerMeter = 0;
   bmp_info.bmiHeader.biClrUsed = 0;
@@ -189,7 +188,8 @@ GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
     bmp_info.bmiColors[1] = 0x07E0;
     bmp_info.bmiColors[2] = 0x001F;
     infoSize = sizeof(bmp_info_header_t);
-  } if (3 == nBPP || 4 == nBPP) {
+  }
+  if (3 == nBPP || 4 == nBPP) {
     bmp_info.bmiHeader.biBitCount = 24;
     bmp_info.bmiHeader.biCompression = BI_RGB;
     infoSize = sizeof(BITMAPINFOHEADER);
@@ -197,14 +197,16 @@ GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
     return GL_INVALID_OPERATION;
   }
 
-  bmp_info.bmiHeader.biSizeImage = m_pColorDesc.Height * bmp_info.bmiHeader.biWidth * (bmp_info.bmiHeader.biBitCount / 8);
+  bmp_info.bmiHeader.biSizeImage = pColorDesc_.Height *
+                                   bmp_info.bmiHeader.biWidth *
+                                   (bmp_info.bmiHeader.biBitCount / 8);
   header.bfOffBits = sizeof(BITMAPFILEHEADER) + infoSize;
-  header.bfSize = header.bfOffBits + bmp_info.bmiHeader.biSizeImage;  
+  header.bfSize = header.bfOffBits + bmp_info.bmiHeader.biSizeImage;
 
-  auto pBits = m_pColorDesc.pBits;
-  if (m_pColorDesc.Pitch < 0) {
-    bmp_info.bmiHeader.biHeight *= -1;  
-    int32_t offset = m_pColorDesc.Pitch * (m_pColorDesc.Height  - 1);
+  auto pBits = pColorDesc_.pBits;
+  if (pColorDesc_.Pitch < 0) {
+    bmp_info.bmiHeader.biHeight *= -1;
+    int32_t offset = pColorDesc_.Pitch * (pColorDesc_.Height - 1);
     pBits += offset;
   }
 
@@ -225,14 +227,16 @@ GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
   }
 
   if (4 == nBPP) {
-    for (uint32_t offset = 0; offset < bmp_info.bmiHeader.biSizeImage; offset += 3) {
-      if (fwrite(pBits + (4 * (offset/3)), 1, 3, pFile) != 3) {
+    for (uint32_t offset = 0; offset < bmp_info.bmiHeader.biSizeImage;
+         offset += 3) {
+      if (fwrite(pBits + (4 * (offset / 3)), 1, 3, pFile) != 3) {
         fclose(pFile);
         return GL_OUT_OF_MEMORY;
       }
     }
   } else {
-    if (fwrite(pBits, 1, bmp_info.bmiHeader.biSizeImage, pFile) != bmp_info.bmiHeader.biSizeImage) {
+    if (fwrite(pBits, 1, bmp_info.bmiHeader.biSizeImage, pFile) !=
+        bmp_info.bmiHeader.biSizeImage) {
       fclose(pFile);
       return GL_OUT_OF_MEMORY;
     }

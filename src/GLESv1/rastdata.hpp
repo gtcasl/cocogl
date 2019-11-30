@@ -32,25 +32,22 @@ public:
   void StartProfile(uint32_t numPixels);
   void EndProfile(float elapsedTime);
   void LogProfile(const RASTERID &rasterID);
-  const ProfileCounter &GetProfile() const { return m_profile; }
+  const ProfileCounter &GetProfile() const { return profile_; }
 
 private:
-  ProfileCounter m_profile;
+  ProfileCounter profile_;
 #endif
 };
 
 class CRasterCache : public CObject {
 public:
   ~CRasterCache() {
-#ifndef NDEBUG    
-    if (m_slowRasterIDs.GetSize()) {
+#ifndef NDEBUG
+    if (slowRasterIDs_.size() != 0) {
       __glLog(_T("BEGIN MAKE_SCANLINE().\r\n"));
-      for (TList<RASTERID>::Iter iter = m_slowRasterIDs.GetBegin(),
-                                 iterEnd = m_slowRasterIDs.GetEnd();
-           iter != iterEnd; ++iter) {
-        __glLog(_T("MAKE_SCANLINE(%d,%d,%d,%d),\r\n"), iter->Flags.Value,
-                iter->States.Value, iter->Textures[0].Value,
-                iter->Textures[1].Value);
+      for (auto &rid : slowRasterIDs_) {
+        __glLog(_T("MAKE_SCANLINE(%d,%d,%d,%d),\r\n"), rid.Flags.Value,
+                rid.States.Value, rid.Textures[0].Value, rid.Textures[1].Value);
       }
       __glLog(_T("END MAKE_SCANLINE().\r\n"));
     }
@@ -59,7 +56,7 @@ public:
     {
       // Copy the cache list
       Cache::List sortedList;
-      if (SUCCEEDED(m_map.ToList(&sortedList))) {
+      if (SUCCEEDED(map_.ToList(&sortedList))) {
         // Sort the list
         sortedList.Sort(ProfileCompare);
 
@@ -74,46 +71,44 @@ public:
 #endif
 
     // Delete cache entries
-    for (Cache::Iter iter = m_map.GetBegin(), iterEnd = m_map.GetEnd();
-         iter != iterEnd;) {
-      Cache::Iter iterCur = iter++;
-      __safeRelease(iterCur->Second);
+    for (auto &it : map_) {
+      __safeRelease(it.second);
     }
   }
 
-  bool Lookup(IRasterOp **ppRasterOp, const RASTERID &rasterID) {
-    return m_map.Lookup(rasterID, ppRasterOp);
+  bool Lookup(const RASTERID &rasterID, IRasterOp **ppRasterOp) {
+    assert(ppRasterOp);
+    auto it = map_.find(rasterID);
+    if (it == map_.end())
+      return false;
+    *ppRasterOp = it->second;
+    return true;
   }
 
-  HRESULT Insert(const RASTERID &rasterID, IRasterOp *pRasterOp) {
-    uint32_t cbTotalSize = m_cbTotalSize;
+  void Insert(const RASTERID &rasterID, IRasterOp *pRasterOp) {
+    uint32_t cbTotalSize = cbTotalSize_;
     if (cbTotalSize > MAX_CACHE_SIZE) {
       uint32_t compactSize = cbTotalSize / COMPACT_RATIO;
       if (cbTotalSize > compactSize) {
-        for (Cache::Iter iter = m_map.GetRBegin(); cbTotalSize > compactSize;) {
-          Cache::Iter iterCur = iter--;
-
-          cbTotalSize -= iterCur->Second->GetCbSize();
-
-          __safeRelease(iterCur->Second);
-
-          m_map.Erase(iterCur->First);
+        for (auto iter = map_.rbegin(); cbTotalSize > compactSize;) {
+          auto iterCur = iter--;
+          cbTotalSize -= iterCur->second->GetCbSize();
+          __safeRelease(iterCur->second);
+          map_.erase(iterCur->first);
         }
-
-        m_cbTotalSize = cbTotalSize;
+        cbTotalSize_ = cbTotalSize;
       }
     }
 
     uint32_t cbSize = pRasterOp->GetCbSize();
-    m_cbTotalSize += cbSize;
-
-    return m_map.Insert(rasterID, pRasterOp);
+    cbTotalSize_ += cbSize;
+    map_.insert(std::make_pair(rasterID, pRasterOp));
   }
 
   static GLenum Create(CRasterCache **ppRasterCache) {
     __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-    ASSERT(ppRasterCache);
+    assert(ppRasterCache);
 
     // Create a new raster cache
     CRasterCache *pRasterCache = new CRasterCache();
@@ -128,21 +123,16 @@ public:
     return GL_NO_ERROR;
   }
 
-  HRESULT TrackSlowRasterID(const RASTERID &rasterID) {
-    for (TList<RASTERID>::Iter iter = m_slowRasterIDs.GetBegin(),
-                               iterEnd = m_slowRasterIDs.GetEnd();
-         iter != iterEnd; ++iter) {
-      if (*iter == rasterID) {
-        return S_OK;
+  void TrackSlowRasterID(const RASTERID &rasterID) {
+    for (auto &rid : slowRasterIDs_) {
+      if (rid == rasterID) {
+        return;
       }
     }
-
-    return m_slowRasterIDs.PushBack(rasterID);
+    slowRasterIDs_.push_back(rasterID);
   }
 
 private:
-  typedef TMap<RASTERID, IRasterOp *, 1> Cache;
-
 #ifdef COCOGL_RASTER_PROFILE
 
   static bool ProfileCompare(const Cache::List::Type &lhs,
@@ -157,13 +147,13 @@ private:
     COMPACT_RATIO = 4,
   };
 
-  CRasterCache() { m_cbTotalSize = 0; }
+  CRasterCache() { cbTotalSize_ = 0; }
 
-  Cache m_map;
+  std::map<RASTERID, IRasterOp *> map_;
 
-  TList<RASTERID> m_slowRasterIDs;
+  std::list<RASTERID> slowRasterIDs_;
 
-  uint32_t m_cbTotalSize;
+  uint32_t cbTotalSize_;
 };
 
 struct Register {

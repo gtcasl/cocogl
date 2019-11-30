@@ -38,11 +38,11 @@ public:
 
   EGLint CopyBuffer(EGLNativePixmapType hPixmap);
 
-  CConfig *GetConfig() const { return m_pConfig; }
+  CConfig *GetConfig() const { return pConfig_; }
 
-  EGLint GetType() const { return m_surfaceType; }
+  EGLint GetType() const { return surfaceType_; }
 
-  __GLSurface GetNativeData() const { return m_glSurface; }
+  __GLSurface GetNativeData() const { return glSurface_; }
 
   EGLint BindTexture();
 
@@ -75,31 +75,31 @@ private:
 
   void GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc);
 
-  CDisplay *m_pDisplay;
-  CConfig *m_pConfig;
-  EGLint m_surfaceType;
+  CDisplay *pDisplay_;
+  CConfig *pConfig_;
+  EGLint surfaceType_;
 
-  bool m_bBoundTexture;
-  EGLint m_width;
-  EGLint m_height;
-  EGLint m_largestPBuffer;
-  GLuint m_texFormat;
-  EGLint m_texTarget;
-  EGLint m_mipTexture;
-  EGLint m_mipLevel;
+  bool bBoundTexture_;
+  EGLint width_;
+  EGLint height_;
+  EGLint largestPBuffer_;
+  GLuint texFormat_;
+  EGLint texTarget_;
+  EGLint mipTexture_;
+  EGLint mipLevel_;
 
 #if defined(_WIN32)
-  HDC m_hDC;
-  HBITMAP m_hBitmap;
-  bool m_bExternalBitmap;
+  HDC hDC_;
+  HBITMAP hBitmap_;
+  bool bExternalBitmap_;
 #elif defined(__linux__)
-  XImage *m_pImage;
-  Drawable m_drawable;
-  GC m_gc;
+  XImage *pImage_;
+  Drawable drawable_;
+  GC gc_;
 #endif
 
-  uint8_t *m_pDepthStencilBits;
-  uint8_t **m_ppBuffers;
-  uint32_t m_mipLevels;
-  __GLSurface m_glSurface;
+  uint8_t *pDepthStencilBits_;
+  uint8_t **ppBuffers_;
+  uint32_t mipLevels_;
+  __GLSurface glSurface_;
 };

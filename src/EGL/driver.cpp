@@ -20,11 +20,11 @@
 thread_local CEGLContext *tls_eglctx = nullptr;
 thread_local EGLint tls_eglerror = EGL_SUCCESS;
 
-CEGLDriver::CEGLDriver() : m_pHandles(nullptr) {
+CEGLDriver::CEGLDriver() : handles_(nullptr) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
   // Create the handle table
-  auto err = EGLERROR_FROM_HRESULT(CHandleTable::Create(&m_pHandles));
+  auto err = EGLERROR_FROM_HRESULT(CHandleTable::Create(&handles_));
   if (__eglFailed(err)) {
     __eglLogError(_T("CHandleTable::Create() failed, err = %x.\r\n"), err);
   }
@@ -35,18 +35,18 @@ CEGLDriver::~CEGLDriver() {
 
   __safeRelease(tls_eglctx);
 
-  if (m_pHandles) {
+  if (handles_) {
     // Release all generated driver handles
-    auto enumerator = m_pHandles->GetEnumerator(this);
+    auto enumerator = handles_->GetEnumerator(this);
     while (!enumerator.IsEnd()) {
       reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
     }
 
     // The handle table should now be empty
-    ASSERT(0 == m_pHandles->GetNumHandles());
+    assert(0 == handles_->GetNumHandles());
 
     // Release the handle table
-    m_pHandles->Release();
+    handles_->Release();
   }
 }
 
@@ -87,7 +87,7 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
 
   EGLint err;
 
-  ASSERT(pdwHandle);
+  assert(pdwHandle);
 
   if (EGL_DEFAULT_DISPLAY == display_id) {
 // Set the default display ID
@@ -99,11 +99,10 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
   }
 
   // Look up for an existing display
-  auto enumerator = m_pHandles->GetEnumerator(this);
+  auto enumerator = handles_->GetEnumerator(this);
   while (!enumerator.IsEnd()) {
     if (HANDLE_DISPLAY == enumerator.GetType()) {
-      auto pDisplay =
-          reinterpret_cast<CDisplay *>(enumerator.GetObject());
+      auto pDisplay = reinterpret_cast<CDisplay *>(enumerator.GetObject());
       if (display_id == pDisplay->GetNativeHandle()) {
         *pdwHandle = enumerator.GetHandle();
         return EGL_SUCCESS;
@@ -116,7 +115,7 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
   CDisplay *pDisplay;
 
   // Create a new display object
-  err = CDisplay::Create(&pDisplay, display_id, m_pHandles);
+  err = CDisplay::Create(&pDisplay, display_id, handles_);
   if (nullptr == pDisplay) {
     __eglLogError(_T("CDisplay::Create() failed, err = %d.\r\n"), err);
     return err;
@@ -124,7 +123,7 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
 
   // Add the display to the handle table
   err = EGLERROR_FROM_HRESULT(
-      m_pHandles->Insert(pdwHandle, pDisplay, HANDLE_DISPLAY, this));
+      handles_->Insert(pdwHandle, pDisplay, HANDLE_DISPLAY, this));
   if (__eglFailed(err)) {
     __safeRelease(pDisplay);
     __eglLogError(_T("CHandleTable::InsertObject() failed, err = %x.\r\n"),

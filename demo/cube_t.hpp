@@ -15,10 +15,10 @@
 
 class CCubeTest : public CTestBase {
 private:
-  int m_rotation;
+  int rotation_;
 
 public:
-  CCubeTest() : m_rotation(0) {}
+  CCubeTest() : rotation_(0) {}
 
   bool OnInitialize(uint32_t width, uint32_t height) {
     /*Remember: because we are programming for a mobile device, we cant
@@ -95,7 +95,7 @@ public:
     glLoadIdentity();
 
     glRotatef(45, 1.f, 0, 0);
-    glRotatef(m_rotation, 0, 1.0f, 0);
+    glRotatef(rotation_, 0, 1.0f, 0);
 
     // Enable the vertices array
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -124,6 +124,6 @@ public:
 
     glDisableClientState(GL_VERTEX_ARRAY);
 
-    ++m_rotation;
+    ++rotation_;
   }
 };

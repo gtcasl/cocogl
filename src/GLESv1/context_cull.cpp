@@ -19,7 +19,7 @@ void CGLContext::FrontFace(GLenum mode) {
   switch (mode) {
   case GL_CW:
   case GL_CCW:
-    m_cullStates.FrontFace = static_cast<uint8_t>(FrontFaceFromEnum(mode));
+    cullStates_.FrontFace = static_cast<uint8_t>(FrontFaceFromEnum(mode));
     break;
 
   default:
@@ -36,7 +36,7 @@ void CGLContext::CullFace(GLenum mode) {
   case GL_FRONT:
   case GL_BACK:
   case GL_FRONT_AND_BACK:
-    m_cullStates.CullFace = static_cast<uint8_t>(CullFaceFromEnum(mode));
+    cullStates_.CullFace = static_cast<uint8_t>(CullFaceFromEnum(mode));
     break;
 
   default:

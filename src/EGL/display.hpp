@@ -12,6 +12,7 @@
 // OR INDEMNITIES.
 //
 #pragma once
+
 #include "config.hpp"
 #include "context.hpp"
 #include "surface.hpp"
@@ -20,8 +21,6 @@ class CConfig;
 
 class CDisplay : public CObject {
 public:
-  typedef TList<CConfig *> ConfigList;
-
   static EGLint Create(CDisplay **ppDisplay, EGLNativeDisplayType hNative,
                        CHandleTable *pHandles);
 
@@ -32,9 +31,9 @@ public:
   EGLint ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
                       EGLint config_size, EGLint *pNum_config);
 
-  EGLNativeDisplayType GetNativeHandle() const { return m_hNative; }
+  EGLNativeDisplayType GetNativeHandle() const { return hNative_; }
 
-  bool IsInitialized() const { return m_bInitialized; }
+  bool IsInitialized() const { return bInitialized_; }
 
 private:
   CDisplay(EGLNativeDisplayType hDC, CHandleTable *pHandles);
@@ -43,8 +42,8 @@ private:
   EGLint CreateConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
                       EGLint depth, EGLint stencil);
 
-  CHandleTable *m_pHandles;
-  EGLNativeDisplayType m_hNative;
-  ConfigList m_configs;
-  bool m_bInitialized;
+  CHandleTable *handles_;
+  EGLNativeDisplayType hNative_;
+  std::list<CConfig *> configs_;
+  bool bInitialized_;
 };

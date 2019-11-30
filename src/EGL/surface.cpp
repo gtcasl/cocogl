@@ -19,76 +19,76 @@
 CEGLSurface::CEGLSurface(CDisplay *pDisplay, EGLint surfaceType,
                          CConfig *pConfig) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
-  ASSERT(pDisplay);
-  ASSERT(pConfig);
+  assert(pDisplay);
+  assert(pConfig);
 
   // pDisplay->AddRef(); - prevent cyclic reference with display
-  m_pDisplay = pDisplay;
+  pDisplay_ = pDisplay;
 
   pConfig->AddRef();
-  m_pConfig = pConfig;
+  pConfig_ = pConfig;
 
-  m_surfaceType = surfaceType;
+  surfaceType_ = surfaceType;
 
-  m_width = 0;
-  m_height = 0;
-  m_largestPBuffer = EGL_FALSE;
-  m_texFormat = EGL_NO_TEXTURE;
-  m_texTarget = EGL_NO_TEXTURE;
-  m_mipTexture = EGL_FALSE;
-  m_mipLevel = 0;
-  m_bBoundTexture = false;
+  width_ = 0;
+  height_ = 0;
+  largestPBuffer_ = EGL_FALSE;
+  texFormat_ = EGL_NO_TEXTURE;
+  texTarget_ = EGL_NO_TEXTURE;
+  mipTexture_ = EGL_FALSE;
+  mipLevel_ = 0;
+  bBoundTexture_ = false;
 
 #if defined(_WIN32)
-  m_hDC = nullptr;
-  m_hBitmap = nullptr;
-  bool m_bExternalBitmap = false;
+  hDC_ = nullptr;
+  hBitmap_ = nullptr;
+  bool bExternalBitmap_ = false;
 #elif defined(__linux__)
-  m_pImage = nullptr;
-  m_drawable = 0;
-  m_gc = 0;
+  pImage_ = nullptr;
+  drawable_ = 0;
+  gc_ = 0;
 #endif
 
-  m_pDepthStencilBits = nullptr;
-  m_ppBuffers = nullptr;
-  m_mipLevels = 0;
-  m_glSurface = nullptr;
+  pDepthStencilBits_ = nullptr;
+  ppBuffers_ = nullptr;
+  mipLevels_ = 0;
+  glSurface_ = nullptr;
 }
 
 CEGLSurface::~CEGLSurface() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  __safeDeleteArray(m_pDepthStencilBits);
+  __safeDeleteArray(pDepthStencilBits_);
 
-  if (m_ppBuffers) {
-    for (uint32_t i = 0; i < m_mipLevels; ++i) {
-      delete[] m_ppBuffers[i];
+  if (ppBuffers_) {
+    for (uint32_t i = 0; i < mipLevels_; ++i) {
+      delete[] ppBuffers_[i];
     }
 
-    delete[] m_ppBuffers;
+    delete[] ppBuffers_;
   }
 
-  if (m_glSurface) {
-    __glDestroySurface(m_glSurface);
+  if (glSurface_) {
+    __glDestroySurface(glSurface_);
   }
 
 #if defined(_WIN32)
-  if (m_hDC) {
-    DeleteDC(m_hDC);
+  if (hDC_) {
+    DeleteDC(hDC_);
   }
-  if (m_hBitmap && m_bExternalBitmap)
-    DeletObject(m_hBitmap);
+  if (hBitmap_ && bExternalBitmap_)
+    DeletObject(hBitmap_);
 }
 #elif defined(__linux__)
-  if (m_pImage) {
-    XDestroyImage(m_pImage);
+  if (pImage_) {
+    XDestroyImage(pImage_);
   }
-  if (m_gc) {
-    XFreeGC(m_pDisplay->GetNativeHandle(), m_gc);
+  if (gc_) {
+    XFreeGC(pDisplay_->GetNativeHandle(), gc_);
   }
 #endif
 
-__safeRelease(m_pConfig);
+__safeRelease(pConfig_);
 }
 
 EGLint CEGLSurface::CreateWND(CEGLSurface **ppSurface, CDisplay *display,
@@ -98,7 +98,7 @@ EGLint CEGLSurface::CreateWND(CEGLSurface **ppSurface, CDisplay *display,
 
   EGLint err;
 
-  ASSERT(ppSurface);
+  assert(ppSurface);
 
   // Create a new surface object
   auto pSurface = new CEGLSurface(display, surfaceType, pConfig);
@@ -129,7 +129,7 @@ EGLint CEGLSurface::CreatePXM(CEGLSurface **ppSurface, CDisplay *display,
 
   EGLint err;
 
-  ASSERT(ppSurface);
+  assert(ppSurface);
 
   // Create a new surface object
   auto pSurface = new CEGLSurface(display, surfaceType, pConfig);
@@ -162,7 +162,7 @@ EGLint CEGLSurface::CreatePBF(CEGLSurface **ppSurface, CDisplay *display,
 
   EGLint err;
 
-  ASSERT(ppSurface);
+  assert(ppSurface);
 
   // Create a new surface object
   auto pSurface = new CEGLSurface(display, surfaceType, pConfig);
@@ -203,8 +203,8 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
     return EGL_BAD_ALLOC;
   }
 
-  m_width = rect.right - rect.left;
-  m_height = rect.bottom - rect.top;
+  width_ = rect.right - rect.left;
+  height_ = rect.bottom - rect.top;
 
   // Retrieve the window device context
   HDC hDC = ::GetWindowDC(hWnd);
@@ -220,7 +220,7 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   ::ReleaseDC(hWnd, hDC);
 
   // Retrieve the config bits per pixels
-  int cBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
+  int cBPP = pConfig_->GetAttribute(EGL_BUFFER_SIZE);
 
   struct BitmapInfo {
     BITMAPINFOHEADER bmiHeader;
@@ -228,12 +228,12 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   } bmpInfo;
 
   bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-  bmpInfo.bmiHeader.biWidth = m_width;
-  bmpInfo.bmiHeader.biHeight = m_height;
+  bmpInfo.bmiHeader.biWidth = width_;
+  bmpInfo.bmiHeader.biHeight = height_;
   bmpInfo.bmiHeader.biPlanes = 1;
   bmpInfo.bmiHeader.biBitCount = static_cast<uint16_t>(cBPP);
   bmpInfo.bmiHeader.biCompression = BI_RGB;
-  bmpInfo.bmiHeader.biSizeImage = m_width * m_height * (cBPP >> 3);
+  bmpInfo.bmiHeader.biSizeImage = width_ * height_ * (cBPP >> 3);
   bmpInfo.bmiHeader.biXPelsPerMeter = 0;
   bmpInfo.bmiHeader.biYPelsPerMeter = 0;
   bmpInfo.bmiHeader.biClrUsed = 0;
@@ -272,42 +272,43 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   colorDesc.Width = bitmap.bmWidth;
   colorDesc.Height = bitmap.bmHeight;
 
-  m_hBitmap = hBitmap;
-  m_hDC = hCompatDC;
-  m_bExternalBitmap = true;
+  hBitmap_ = hBitmap;
+  hDC_ = hCompatDC;
+  bExternalBitmap_ = true;
 #elif defined(__linux__)
   Window root;
   int32_t x, y;
   uint32_t width, height;
   uint32_t border, depth;
 
-  auto status = XGetGeometry(m_pDisplay->GetNativeHandle(), hWnd, &root, &x, &y,
+  auto status = XGetGeometry(pDisplay_->GetNativeHandle(), hWnd, &root, &x, &y,
                              &width, &height, &border, &depth);
   if (0 == status) {
     __eglLogError(_T("::XGetGeometry() failed, status=%d.\r\n"), status);
     return EGL_BAD_ALLOC;
   }
-  
-  auto image = XGetImage(m_pDisplay->GetNativeHandle(), hWnd, 0, 0, width,
+
+  auto image = XGetImage(pDisplay_->GetNativeHandle(), hWnd, 0, 0, width,
                          height, AllPlanes, ZPixmap);
   if (nullptr == image) {
     __eglLogError(_T("::XGetImage() failed.\r\n"));
     return EGL_BAD_ALLOC;
   }
 
-  m_gc = XCreateGC(m_pDisplay->GetNativeHandle(), hWnd, 0, nullptr);
-  m_drawable = hWnd;
-  m_pImage = image;
+  gc_ = XCreateGC(pDisplay_->GetNativeHandle(), hWnd, 0, nullptr);
+  drawable_ = hWnd;
+  pImage_ = image;
 
   colorDesc.Format = CEGLSurface::GetColorFormat(image->bits_per_pixel);
-  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data) + image->bytes_per_line * (image->height - 1);
+  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data) +
+                    image->bytes_per_line * (image->height - 1);
   colorDesc.Width = image->width;
   colorDesc.Height = image->height;
   colorDesc.Pitch = -image->bytes_per_line;
 #endif
 
-  m_width = colorDesc.Width;
-  m_height = colorDesc.Height;
+  width_ = colorDesc.Width;
+  height_ = colorDesc.Height;
 
   // Build the depth stencil description
   GLSurfaceDesc depthStencilDesc;
@@ -321,7 +322,7 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
 
   // Create the GL surface
   err = EGLERROR_FROM_GLERROR(
-      __glCreateSurface(&colorDesc, &depthStencilDesc, &m_glSurface));
+      __glCreateSurface(&colorDesc, &depthStencilDesc, &glSurface_));
   if (__eglFailed(err)) {
     __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
     return err;
@@ -353,7 +354,7 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   colorDesc.Width = bitmap.bmWidth;
   colorDesc.Height = bitmap.bmHeight;
 
-  hDC hCompatDC = ::CreateCompatibleDC(m_pDisplay - GetNativeHandle());
+  hDC hCompatDC = ::CreateCompatibleDC(pDisplay_ - GetNativeHandle());
   if (nullptr == hCompatDC) {
     __eglLogError(_T("::CreateCompatibleDC() failed, hr = %x.\r\n"),
                   HRESULT_FROM_WIN32(::GetLastError()));
@@ -361,34 +362,36 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   }
 
   ::SelectObject(hCompatDC, hPixmap);
-  m_hDC = hCompatDC;
-  m_hBitmap = hPixmap;
+  hDC_ = hCompatDC;
+  hBitmap_ = hPixmap;
 #elif defined(__linux__)
   Window root;
   int32_t x, y;
   uint32_t width, height;
   uint32_t border, depth;
 
-  auto status = XGetGeometry(m_pDisplay->GetNativeHandle(), hPixmap, &root, &x,
+  auto status = XGetGeometry(pDisplay_->GetNativeHandle(), hPixmap, &root, &x,
                              &y, &width, &height, &border, &depth);
   if (0 == status) {
     __eglLogError(_T("::XGetGeometry() failed, status=%d.\r\n"), status);
     return EGL_BAD_ALLOC;
   }
-  
-  auto image = XGetImage(m_pDisplay->GetNativeHandle(), hPixmap, 0, 0, width,
+
+  auto image = XGetImage(pDisplay_->GetNativeHandle(), hPixmap, 0, 0, width,
                          height, AllPlanes, ZPixmap);
   if (nullptr == image) {
     __eglLogError(_T("::XGetImage() failed.\r\n"));
     return EGL_BAD_ALLOC;
   }
 
-  m_gc = XCreateGC(m_pDisplay->GetNativeHandle(), hPixmap, 0, nullptr);
-  m_drawable = hPixmap;
-  m_pImage = image;
+  gc_ = XCreateGC(pDisplay_->GetNativeHandle(), hPixmap, 0, nullptr);
+  drawable_ = hPixmap;
+  pImage_ = image;
 
   colorDesc.Format = CEGLSurface::GetColorFormat(image->bits_per_pixel);
-  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data) + image->bytes_per_line * (image->height - 1);;
+  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data) +
+                    image->bytes_per_line * (image->height - 1);
+  ;
   colorDesc.Width = image->width;
   colorDesc.Height = image->height;
   colorDesc.Pitch = -image->bytes_per_line;
@@ -396,14 +399,14 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
 
   // Check if the config matches the window bpp
   auto cBPP = Format::GetInfo(colorDesc.Format).BytePerPixel * 8;
-  if (cBPP != m_pConfig->GetAttribute(EGL_BUFFER_SIZE)) {
+  if (cBPP != pConfig_->GetAttribute(EGL_BUFFER_SIZE)) {
     __eglLogError(_T("The config's buffer size doesn't match the window's ")
                   _T("bits per pixel.\r\n"));
     return EGL_BAD_MATCH;
   }
 
-  m_width = colorDesc.Width;
-  m_height = colorDesc.Height;
+  width_ = colorDesc.Width;
+  height_ = colorDesc.Height;
 
   // Build the depth stencil description
   GLSurfaceDesc depthStencilDesc;
@@ -417,7 +420,7 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
 
   // Create the GL surface
   err = EGLERROR_FROM_GLERROR(
-      __glCreateSurface(&colorDesc, &depthStencilDesc, &m_glSurface));
+      __glCreateSurface(&colorDesc, &depthStencilDesc, &glSurface_));
   if (__eglFailed(err)) {
     __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
     return err;
@@ -433,15 +436,15 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
 
   EGLint err;
 
-  m_width = width;
-  m_height = height;
-  m_texTarget = texTarget;
-  m_texFormat = texFormat;
-  m_largestPBuffer = largestPBuffer; // Not applicable for software renderers
-  m_mipLevels = 0;
+  width_ = width;
+  height_ = height;
+  texTarget_ = texTarget;
+  texFormat_ = texFormat;
+  largestPBuffer_ = largestPBuffer; // Not applicable for software renderers
+  mipLevels_ = 0;
 
   if (width && height) {
-    m_mipLevels = 1;
+    mipLevels_ = 1;
 
     if (EGL_TEXTURE_2D == texTarget) {
       if ((width < 0) || (width > MAX_PBUFFER_WIDTH) ||
@@ -461,24 +464,24 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
       }
 
       if (bGenMipMaps) {
-        m_mipLevels = Math::TMax(Math::iLog2(width), Math::iLog2(height));
+        mipLevels_ = Math::TMax(Math::iLog2(width), Math::iLog2(height));
       }
     }
 
     // Allocate mipmap array
-    m_ppBuffers = new uint8_t *[m_mipLevels];
-    if (nullptr == m_ppBuffers) {
+    ppBuffers_ = new uint8_t *[mipLevels_];
+    if (nullptr == ppBuffers_) {
       __eglLogError(_T("CEGLSurface::Initialize() failed, out of memory.\r\n"));
       return EGL_BAD_ALLOC;
     }
 
-    uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
-    uint32_t mipLevels = m_mipLevels;
+    uint32_t nBPP = pConfig_->GetAttribute(EGL_BUFFER_SIZE);
+    uint32_t mipLevels = mipLevels_;
 
     for (uint32_t i = 0, _width = width, _height = height; i < mipLevels; ++i) {
       // Allocate mipmap level
-      m_ppBuffers[i] = new uint8_t[_width * _height * (nBPP / 8)];
-      if (nullptr == m_ppBuffers[i]) {
+      ppBuffers_[i] = new uint8_t[_width * _height * (nBPP / 8)];
+      if (nullptr == ppBuffers_[i]) {
         __eglLogError(
             _T("CEGLSurface::Initialize() failed, out of memory.\r\n"));
         return EGL_BAD_ALLOC;
@@ -495,7 +498,7 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
 
     // Build the color surface description
     GLSurfaceDesc colorDesc;
-    colorDesc.pBits = reinterpret_cast<uint8_t *>(m_ppBuffers[0]);
+    colorDesc.pBits = reinterpret_cast<uint8_t *>(ppBuffers_[0]);
     colorDesc.Format = CEGLSurface::GetColorFormat(nBPP);
     colorDesc.Pitch = width * (nBPP) / 8;
     colorDesc.Width = width;
@@ -513,14 +516,15 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
 
     // Create the GL surface
     err = EGLERROR_FROM_GLERROR(
-        __glCreateSurface(&colorDesc, &depthStencilDesc, &m_glSurface));
+        __glCreateSurface(&colorDesc, &depthStencilDesc, &glSurface_));
     if (__eglFailed(err)) {
       __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
       return err;
     }
   } else {
     // Create the GL surface
-    err = EGLERROR_FROM_GLERROR(__glCreateSurface(nullptr, nullptr, &m_glSurface));
+    err =
+        EGLERROR_FROM_GLERROR(__glCreateSurface(nullptr, nullptr, &glSurface_));
     if (__eglFailed(err)) {
       __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
       return err;
@@ -534,41 +538,41 @@ EGLint CEGLSurface::BindTexture() {
   EGLint err;
 
   // Check if we have a texture bindable surface
-  if ((EGL_PBUFFER_BIT != m_surfaceType) || (EGL_TEXTURE_2D != m_texTarget)) {
+  if ((EGL_PBUFFER_BIT != surfaceType_) || (EGL_TEXTURE_2D != texTarget_)) {
     __eglLogError(_T("CEGLSurface::BindTexture() failed, the surface is not a ")
                   _T("pbuffer supporting texture binding.\r\n"));
     return EGL_BAD_SURFACE;
   }
 
-  if (m_bBoundTexture) {
+  if (bBoundTexture_) {
     __eglLogError(_T("CEGLSurface::BindTexture() failed, the buffer is ")
                   _T("already bound to a texture.\r\n"));
     return EGL_BAD_ACCESS;
   }
 
-  if (EGL_NO_TEXTURE == m_texFormat) {
+  if (EGL_NO_TEXTURE == texFormat_) {
     __eglLogError(
         _T("CEGLSurface::BindTexture() failed, the surface attribute ")
         _T("EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n"));
     return EGL_BAD_MATCH;
   }
 
-  bool bGenMipmaps = (0 == m_mipLevel) && (m_mipLevels > 1);
+  bool bGenMipmaps = (0 == mipLevel_) && (mipLevels_ > 1);
 
-  err = EGLERROR_FROM_GLERROR(__glBindTexImage(m_glSurface, bGenMipmaps));
+  err = EGLERROR_FROM_GLERROR(__glBindTexImage(glSurface_, bGenMipmaps));
   if (__eglFailed(err)) {
     __eglLogError(_T("__glBindTexImage() failed, err = %d.\r\n"), err);
     return err;
   }
 
-  m_bBoundTexture = true;
+  bBoundTexture_ = true;
 
   return EGL_SUCCESS;
 }
 
 EGLint CEGLSurface::ReleaseTexBound() {
   // Check if we have a texture bindable surface
-  if ((EGL_PBUFFER_BIT != m_surfaceType) || (EGL_TEXTURE_2D != m_texTarget)) {
+  if ((EGL_PBUFFER_BIT != surfaceType_) || (EGL_TEXTURE_2D != texTarget_)) {
     __eglLogError(
         _T("CEGLSurface::ReleaseTexBound() failed, the surface is not an EGL ")
         _T("surface, or is not a bound pbuffer surface.\r\n"));
@@ -576,16 +580,16 @@ EGLint CEGLSurface::ReleaseTexBound() {
   }
 
   // Verify the texture format
-  if (EGL_NO_TEXTURE == m_texFormat) {
+  if (EGL_NO_TEXTURE == texFormat_) {
     __eglLogError(
         _T("CEGLSurface::ReleaseTexBound() failed, the surface attribute ")
         _T("EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n"));
     return EGL_BAD_MATCH;
   }
 
-  if (m_bBoundTexture) {
-    __glReleaseTexImage(m_glSurface);
-    m_bBoundTexture = false;
+  if (bBoundTexture_) {
+    __glReleaseTexImage(glSurface_);
+    bBoundTexture_ = false;
   }
 
   return EGL_SUCCESS;
@@ -596,31 +600,31 @@ EGLint CEGLSurface::GetAttribute(EGLint *pValue, EGLint attribute) const {
 
   switch (attribute) {
   case EGL_CONFIG_ID:
-    value = m_pConfig->GetAttribute(EGL_CONFIG_ID);
+    value = pConfig_->GetAttribute(EGL_CONFIG_ID);
     break;
 
   case EGL_HEIGHT:
-    value = m_height;
+    value = height_;
     break;
 
   case EGL_WIDTH:
-    value = m_width;
+    value = width_;
     break;
 
   case EGL_LARGEST_PBUFFER:
-    value = m_largestPBuffer;
+    value = largestPBuffer_;
     break;
 
   case EGL_TEXTURE_FORMAT:
-    value = m_texFormat;
+    value = texFormat_;
     break;
 
   case EGL_MIPMAP_TEXTURE:
-    value = m_mipTexture;
+    value = mipTexture_;
     break;
 
   case EGL_MIPMAP_LEVEL:
-    value = m_mipLevel;
+    value = mipLevel_;
     break;
 
   default:
@@ -642,15 +646,15 @@ EGLint CEGLSurface::SetAttribute(EGLint attribute, EGLint value) {
 
   switch (attribute) {
   case EGL_MIPMAP_LEVEL: {
-    m_mipLevel = value;
+    mipLevel_ = value;
 
-    if (m_ppBuffers) {
+    if (ppBuffers_) {
       GLSurfaceDesc surfDesc;
       this->GetPBufferDesc(&surfDesc);
 
       // Update the GL surface
       err = EGLERROR_FROM_GLERROR(
-          __glUpdateSurface(m_glSurface, &surfDesc, nullptr));
+          __glUpdateSurface(glSurface_, &surfDesc, nullptr));
       if (__eglFailed(err)) {
         __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
         return err;
@@ -675,19 +679,19 @@ EGLint CEGLSurface::CopyBuffer(EGLNativePixmapType hPixmap) {
 
   GLSurfaceDesc srcDesc;
 
-  if (m_ppBuffers) {
-    auto mipLevel = Math::TClamp<uint32_t>(m_mipLevel, 0, m_mipLevels - 1);
-    uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
-    srcDesc.pBits = m_ppBuffers[mipLevel];
+  if (ppBuffers_) {
+    auto mipLevel = Math::TClamp<uint32_t>(mipLevel_, 0, mipLevels_ - 1);
+    uint32_t nBPP = pConfig_->GetAttribute(EGL_BUFFER_SIZE);
+    srcDesc.pBits = ppBuffers_[mipLevel];
     srcDesc.Format = CEGLSurface::GetColorFormat(nBPP);
-    srcDesc.Pitch = m_width * (nBPP / 8);
-    srcDesc.Width = m_width;
-    srcDesc.Height = m_height;
+    srcDesc.Pitch = width_ * (nBPP / 8);
+    srcDesc.Width = width_;
+    srcDesc.Height = height_;
   } else {
 #if defined(_WIN32)
     // Retrieve the bitmap properties
     BITMAP bitmap;
-    if ((0 == ::GetObject(m_hBitmap, sizeof(BITMAP), &bitmap)) ||
+    if ((0 == ::GetObject(hBitmap_, sizeof(BITMAP), &bitmap)) ||
         (nullptr == bitmap.bmBits)) {
       __eglLogError(_T("::GetObject() failed, invalid pixmap.\r\n"));
       return EGL_BAD_ALLOC;
@@ -700,11 +704,11 @@ EGLint CEGLSurface::CopyBuffer(EGLNativePixmapType hPixmap) {
     srcDesc.Width = bitmap.bmWidth;
     srcDesc.Height = bitmap.bmHeight;
 #elif defined(__linux__)
-    srcDesc.Format = CEGLSurface::GetColorFormat(m_pImage->bits_per_pixel);
-    srcDesc.pBits = reinterpret_cast<uint8_t *>(m_pImage->data);
-    srcDesc.Width = m_pImage->width;
-    srcDesc.Height = m_pImage->height;
-    srcDesc.Pitch = m_pImage->bytes_per_line;
+    srcDesc.Format = CEGLSurface::GetColorFormat(pImage_->bits_per_pixel);
+    srcDesc.pBits = reinterpret_cast<uint8_t *>(pImage_->data);
+    srcDesc.Width = pImage_->width;
+    srcDesc.Height = pImage_->height;
+    srcDesc.Pitch = pImage_->bytes_per_line;
 #endif
   }
 
@@ -730,13 +734,13 @@ EGLint CEGLSurface::CopyBuffer(EGLNativePixmapType hPixmap) {
   int32_t x, y;
   uint32_t width, height;
   uint32_t border, depth;
-  auto status = XGetGeometry(m_pDisplay->GetNativeHandle(), hPixmap, &root, &x,
+  auto status = XGetGeometry(pDisplay_->GetNativeHandle(), hPixmap, &root, &x,
                              &y, &width, &height, &border, &depth);
   if (0 == status) {
     __eglLogError(_T("::XGetGeometry() failed, status=%d.\r\n"), status);
     return EGL_BAD_ALLOC;
   }
-  auto image = XGetImage(m_pDisplay->GetNativeHandle(), hPixmap, 0, 0, width,
+  auto image = XGetImage(pDisplay_->GetNativeHandle(), hPixmap, 0, 0, width,
                          height, AllPlanes, ZPixmap);
   if (nullptr == image) {
     __eglLogError(_T("::XGetImage() failed.\r\n"));
@@ -762,15 +766,16 @@ EGLint CEGLSurface::CopyBuffer(EGLNativePixmapType hPixmap) {
 
 void CEGLSurface::Present() {
 #if defined(_WIN32)
-  ::BitBlt(m_pDisplay->GetDGetNativeHandleC(), 0, 0, m_width, m_height, m_hDC,
-           0, 0, SRCCOPY);
+  ::BitBlt(pDisplay_->GetDGetNativeHandleC(), 0, 0, width_, height_, hDC_, 0, 0,
+           SRCCOPY);
 #elif defined(__linux__)
-  XPutImage(m_pDisplay->GetNativeHandle(), m_drawable, m_gc, m_pImage, 0, 0, 0, 0, m_width, m_height);
+  XPutImage(pDisplay_->GetNativeHandle(), drawable_, gc_, pImage_, 0, 0, 0, 0,
+            width_, height_);
 #endif
 }
 
 GLenum CEGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
-  return __glSaveBitmap(m_glSurface, lpszFilename);
+  return __glSaveBitmap(glSurface_, lpszFilename);
 }
 
 uint8_t CEGLSurface::GetColorFormat(uint32_t cBitsPerPixel) {
@@ -789,13 +794,13 @@ EGLint CEGLSurface::InitDepthStencil(uint32_t width, uint32_t height,
                                      GLSurfaceDesc *pSurfaceDesc) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  ASSERT(pSurfaceDesc);
+  assert(pSurfaceDesc);
 
   pSurfaceDesc->Width = width;
   pSurfaceDesc->Height = height;
 
-  uint32_t stride = (m_pConfig->GetAttribute(EGL_DEPTH_SIZE) +
-                     m_pConfig->GetAttribute(EGL_STENCIL_SIZE)) >>
+  uint32_t stride = (pConfig_->GetAttribute(EGL_DEPTH_SIZE) +
+                     pConfig_->GetAttribute(EGL_STENCIL_SIZE)) >>
                     3;
   switch (stride) {
   case 3:
@@ -811,15 +816,15 @@ EGLint CEGLSurface::InitDepthStencil(uint32_t width, uint32_t height,
   }
 
   if (pSurfaceDesc->Format != FORMAT_UNKNOWN) {
-    m_pDepthStencilBits =
+    pDepthStencilBits_ =
         new uint8_t[stride * pSurfaceDesc->Width * pSurfaceDesc->Height];
-    if (nullptr == m_pDepthStencilBits) {
+    if (nullptr == pDepthStencilBits_) {
       __eglLogError(
           _T("Depth stencil buffer allocation failed, out of memory.\r\n"));
       return EGL_BAD_ALLOC;
     }
 
-    pSurfaceDesc->pBits = m_pDepthStencilBits;
+    pSurfaceDesc->pBits = pDepthStencilBits_;
   } else {
     pSurfaceDesc->pBits = nullptr;
   }
@@ -830,11 +835,11 @@ EGLint CEGLSurface::InitDepthStencil(uint32_t width, uint32_t height,
 }
 
 void CEGLSurface::GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc) {
-  ASSERT(pSurfaceDesc);
+  assert(pSurfaceDesc);
 
-  auto mipLevel = Math::TClamp<uint32_t>(m_mipLevel, 0, m_mipLevels - 1);
-  uint32_t width = m_width;
-  uint32_t height = m_height;
+  auto mipLevel = Math::TClamp<uint32_t>(mipLevel_, 0, mipLevels_ - 1);
+  uint32_t width = width_;
+  uint32_t height = height_;
 
   for (uint32_t i = 0; i < mipLevel; ++i) {
     if (width > 1) {
@@ -846,10 +851,10 @@ void CEGLSurface::GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc) {
     }
   }
 
-  uint32_t nBPP = m_pConfig->GetAttribute(EGL_BUFFER_SIZE);
+  uint32_t nBPP = pConfig_->GetAttribute(EGL_BUFFER_SIZE);
 
   pSurfaceDesc->Format = CEGLSurface::GetColorFormat(nBPP);
-  pSurfaceDesc->pBits = m_ppBuffers[mipLevel];
+  pSurfaceDesc->pBits = ppBuffers_[mipLevel];
   pSurfaceDesc->Width = width;
   pSurfaceDesc->Height = height;
   pSurfaceDesc->Pitch = width * (nBPP / 8);

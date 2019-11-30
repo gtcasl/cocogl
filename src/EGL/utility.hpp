@@ -20,18 +20,17 @@ inline bool __eglSucceeded(EGLint err) { return err == EGL_SUCCESS; }
 #ifndef COCOGL_API_PROFILE
 #define __profileAPI(func, ...)
 #else
-#define __profileAPI(func, ...)                                                \
-  CProfiler profiler(g_logger, func, __VA_ARGS__);
+#define __profileAPI(func, ...) CProfiler profiler(g_logger, func, __VA_ARGS__);
 #endif
 
 #ifndef NDEBUG
 #define __eglLog(...) g_logger.Write(__VA_ARGS__);
 
 #define __eglLogError(...)                                                     \
-  g_logger.Write(_T("*** Error in file %s at line %d.\r\n"), _T(__FILE__),    \
-                  __LINE__);                                                   \
-  g_logger.Write(__VA_ARGS__);                                                \
-  ASSERT(false);
+  g_logger.Write(_T("*** Error in file %s at line %d.\r\n"), _T(__FILE__),     \
+                 __LINE__);                                                    \
+  g_logger.Write(__VA_ARGS__);                                                 \
+  assert(false);
 #else
 #define __eglLog(...)
 #define __eglLogError(...)

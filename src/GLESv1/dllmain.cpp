@@ -1857,7 +1857,7 @@ GL_API void GL_APIENTRY glAlphaFuncx(GLenum func, GLclampx ref) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->AlphaFunc(func, Math::TCast<floatf>(fixed16::Make(ref)));
+    pContext->AlphaFunc(func, Math::TCast<floatf>(fixed16::make(ref)));
   }
 }
 
@@ -1933,10 +1933,10 @@ GL_API void GL_APIENTRY glClearColorx(GLclampx red, GLclampx green,
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->ClearColor(Math::TCast<floatf>(fixed16::Make(red)),
-                         Math::TCast<floatf>(fixed16::Make(green)),
-                         Math::TCast<floatf>(fixed16::Make(blue)),
-                         Math::TCast<floatf>(fixed16::Make(alpha)));
+    pContext->ClearColor(Math::TCast<floatf>(fixed16::make(red)),
+                         Math::TCast<floatf>(fixed16::make(green)),
+                         Math::TCast<floatf>(fixed16::make(blue)),
+                         Math::TCast<floatf>(fixed16::make(alpha)));
   }
 }
 
@@ -1945,7 +1945,7 @@ GL_API void GL_APIENTRY glClearDepthx(GLclampx depth) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->ClearDepth(Math::TCast<floatf>(fixed16::Make(depth)));
+    pContext->ClearDepth(Math::TCast<floatf>(fixed16::make(depth)));
   }
 }
 
@@ -1981,10 +1981,10 @@ GL_API void GL_APIENTRY glClipPlanex(GLenum plane, const GLfixed *pEquation) {
     pContext->ClipPlane(plane, *reinterpret_cast<const VECTOR4 *>(pEquation));
 #else
     pContext->ClipPlane(
-        plane, VECTOR4(Math::TCast<floatf>(fixed16::Make(pEquation[0])),
-                       Math::TCast<floatf>(fixed16::Make(pEquation[1])),
-                       Math::TCast<floatf>(fixed16::Make(pEquation[2])),
-                       Math::TCast<floatf>(fixed16::Make(pEquation[3]))));
+        plane, VECTOR4(Math::TCast<floatf>(fixed16::make(pEquation[0])),
+                       Math::TCast<floatf>(fixed16::make(pEquation[1])),
+                       Math::TCast<floatf>(fixed16::make(pEquation[2])),
+                       Math::TCast<floatf>(fixed16::make(pEquation[3]))));
 #endif
   }
 }
@@ -2009,10 +2009,10 @@ GL_API void GL_APIENTRY glColor4x(GLfixed red, GLfixed green, GLfixed blue,
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->Color(Math::TCast<floatf>(fixed16::Make(red)),
-                    Math::TCast<floatf>(fixed16::Make(green)),
-                    Math::TCast<floatf>(fixed16::Make(blue)),
-                    Math::TCast<floatf>(fixed16::Make(alpha)));
+    pContext->Color(Math::TCast<floatf>(fixed16::make(red)),
+                    Math::TCast<floatf>(fixed16::make(green)),
+                    Math::TCast<floatf>(fixed16::make(blue)),
+                    Math::TCast<floatf>(fixed16::make(alpha)));
   }
 }
 
@@ -2170,8 +2170,8 @@ GL_API void GL_APIENTRY glDepthRangex(GLclampx zNear, GLclampx zFar) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->DepthRange(Math::TCast<floatf>(fixed16::Make(zNear)),
-                         Math::TCast<floatf>(fixed16::Make(zFar)));
+    pContext->DepthRange(Math::TCast<floatf>(fixed16::make(zNear)),
+                         Math::TCast<floatf>(fixed16::make(zFar)));
   }
 }
 
@@ -2294,12 +2294,12 @@ GL_API void GL_APIENTRY glFrustumx(GLfixed left, GLfixed right, GLfixed bottom,
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->Frustum(Math::TCast<floatf>(fixed16::Make(left)),
-                      Math::TCast<floatf>(fixed16::Make(right)),
-                      Math::TCast<floatf>(fixed16::Make(bottom)),
-                      Math::TCast<floatf>(fixed16::Make(top)),
-                      Math::TCast<floatf>(fixed16::Make(zNear)),
-                      Math::TCast<floatf>(fixed16::Make(zFar)));
+    pContext->Frustum(Math::TCast<floatf>(fixed16::make(left)),
+                      Math::TCast<floatf>(fixed16::make(right)),
+                      Math::TCast<floatf>(fixed16::make(bottom)),
+                      Math::TCast<floatf>(fixed16::make(top)),
+                      Math::TCast<floatf>(fixed16::make(zNear)),
+                      Math::TCast<floatf>(fixed16::make(zFar)));
   }
 }
 
@@ -2589,7 +2589,7 @@ GL_API void GL_APIENTRY glLightModelx(GLenum pname, GLfixed param) {
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
     pContext->TLightModel<fixed16>(pname,
-                                   reinterpret_cast<const fixed16*>(&param));
+                                   reinterpret_cast<const fixed16 *>(&param));
   }
 }
 
@@ -2641,7 +2641,7 @@ GL_API void GL_APIENTRY glLineWidthx(GLfixed width) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->LineWidth(Math::TCast<floatf>(fixed16::Make(width)));
+    pContext->LineWidth(Math::TCast<floatf>(fixed16::make(width)));
   }
 }
 
@@ -2669,22 +2669,22 @@ GL_API void GL_APIENTRY glLoadMatrixx(const GLfixed *pM) {
 #ifdef COCOGL_PIXEDPOINT
     pContext->LoadMatrix(*reinterpret_cast<const MATRIX44 *>(pM));
 #else
-    pContext->LoadMatrix(MATRIX44(Math::TCast<floatf>(fixed16::Make(pM[0])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[1])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[2])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[3])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[4])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[5])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[6])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[7])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[8])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[9])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[10])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[11])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[12])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[13])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[14])),
-                                  Math::TCast<floatf>(fixed16::Make(pM[15]))));
+    pContext->LoadMatrix(MATRIX44(Math::TCast<floatf>(fixed16::make(pM[0])),
+                                  Math::TCast<floatf>(fixed16::make(pM[1])),
+                                  Math::TCast<floatf>(fixed16::make(pM[2])),
+                                  Math::TCast<floatf>(fixed16::make(pM[3])),
+                                  Math::TCast<floatf>(fixed16::make(pM[4])),
+                                  Math::TCast<floatf>(fixed16::make(pM[5])),
+                                  Math::TCast<floatf>(fixed16::make(pM[6])),
+                                  Math::TCast<floatf>(fixed16::make(pM[7])),
+                                  Math::TCast<floatf>(fixed16::make(pM[8])),
+                                  Math::TCast<floatf>(fixed16::make(pM[9])),
+                                  Math::TCast<floatf>(fixed16::make(pM[10])),
+                                  Math::TCast<floatf>(fixed16::make(pM[11])),
+                                  Math::TCast<floatf>(fixed16::make(pM[12])),
+                                  Math::TCast<floatf>(fixed16::make(pM[13])),
+                                  Math::TCast<floatf>(fixed16::make(pM[14])),
+                                  Math::TCast<floatf>(fixed16::make(pM[15]))));
 #endif
   }
 }
@@ -2755,22 +2755,22 @@ GL_API void GL_APIENTRY glMultMatrixx(const GLfixed *pM) {
 #ifdef COCOGL_PIXEDPOINT
     pContext->Multiply(*reinterpret_cast<const MATRIX44 *>(pM));
 #else
-    pContext->Multiply(MATRIX44(Math::TCast<floatf>(fixed16::Make(pM[0])),
-                                Math::TCast<floatf>(fixed16::Make(pM[1])),
-                                Math::TCast<floatf>(fixed16::Make(pM[2])),
-                                Math::TCast<floatf>(fixed16::Make(pM[3])),
-                                Math::TCast<floatf>(fixed16::Make(pM[4])),
-                                Math::TCast<floatf>(fixed16::Make(pM[5])),
-                                Math::TCast<floatf>(fixed16::Make(pM[6])),
-                                Math::TCast<floatf>(fixed16::Make(pM[7])),
-                                Math::TCast<floatf>(fixed16::Make(pM[8])),
-                                Math::TCast<floatf>(fixed16::Make(pM[9])),
-                                Math::TCast<floatf>(fixed16::Make(pM[10])),
-                                Math::TCast<floatf>(fixed16::Make(pM[11])),
-                                Math::TCast<floatf>(fixed16::Make(pM[12])),
-                                Math::TCast<floatf>(fixed16::Make(pM[13])),
-                                Math::TCast<floatf>(fixed16::Make(pM[14])),
-                                Math::TCast<floatf>(fixed16::Make(pM[15]))));
+    pContext->Multiply(MATRIX44(Math::TCast<floatf>(fixed16::make(pM[0])),
+                                Math::TCast<floatf>(fixed16::make(pM[1])),
+                                Math::TCast<floatf>(fixed16::make(pM[2])),
+                                Math::TCast<floatf>(fixed16::make(pM[3])),
+                                Math::TCast<floatf>(fixed16::make(pM[4])),
+                                Math::TCast<floatf>(fixed16::make(pM[5])),
+                                Math::TCast<floatf>(fixed16::make(pM[6])),
+                                Math::TCast<floatf>(fixed16::make(pM[7])),
+                                Math::TCast<floatf>(fixed16::make(pM[8])),
+                                Math::TCast<floatf>(fixed16::make(pM[9])),
+                                Math::TCast<floatf>(fixed16::make(pM[10])),
+                                Math::TCast<floatf>(fixed16::make(pM[11])),
+                                Math::TCast<floatf>(fixed16::make(pM[12])),
+                                Math::TCast<floatf>(fixed16::make(pM[13])),
+                                Math::TCast<floatf>(fixed16::make(pM[14])),
+                                Math::TCast<floatf>(fixed16::make(pM[15]))));
 #endif
   }
 }
@@ -2782,10 +2782,10 @@ GL_API void GL_APIENTRY glMultiTexCoord4x(GLenum target, GLfixed s, GLfixed t,
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->MultiTexCoord(target, Math::TCast<floatf>(fixed16::Make(s)),
-                            Math::TCast<floatf>(fixed16::Make(t)),
-                            Math::TCast<floatf>(fixed16::Make(r)),
-                            Math::TCast<floatf>(fixed16::Make(q)));
+    pContext->MultiTexCoord(target, Math::TCast<floatf>(fixed16::make(s)),
+                            Math::TCast<floatf>(fixed16::make(t)),
+                            Math::TCast<floatf>(fixed16::make(r)),
+                            Math::TCast<floatf>(fixed16::make(q)));
   }
 }
 
@@ -2795,9 +2795,9 @@ GL_API void GL_APIENTRY glNormal3x(GLfixed nx, GLfixed ny, GLfixed nz) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->Normal(Math::TCast<floatf>(fixed16::Make(nx)),
-                     Math::TCast<floatf>(fixed16::Make(ny)),
-                     Math::TCast<floatf>(fixed16::Make(nz)));
+    pContext->Normal(Math::TCast<floatf>(fixed16::make(nx)),
+                     Math::TCast<floatf>(fixed16::make(ny)),
+                     Math::TCast<floatf>(fixed16::make(nz)));
   }
 }
 
@@ -2820,12 +2820,12 @@ GL_API void GL_APIENTRY glOrthox(GLfixed left, GLfixed right, GLfixed bottom,
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->Ortho(Math::TCast<floatf>(fixed16::Make(left)),
-                    Math::TCast<floatf>(fixed16::Make(right)),
-                    Math::TCast<floatf>(fixed16::Make(bottom)),
-                    Math::TCast<floatf>(fixed16::Make(top)),
-                    Math::TCast<floatf>(fixed16::Make(zNear)),
-                    Math::TCast<floatf>(fixed16::Make(zFar)));
+    pContext->Ortho(Math::TCast<floatf>(fixed16::make(left)),
+                    Math::TCast<floatf>(fixed16::make(right)),
+                    Math::TCast<floatf>(fixed16::make(bottom)),
+                    Math::TCast<floatf>(fixed16::make(top)),
+                    Math::TCast<floatf>(fixed16::make(zNear)),
+                    Math::TCast<floatf>(fixed16::make(zFar)));
   }
 }
 
@@ -2870,7 +2870,7 @@ GL_API void GL_APIENTRY glPointSizex(GLfixed size) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->PointSize(Math::TCast<floatf>(fixed16::Make(size)));
+    pContext->PointSize(Math::TCast<floatf>(fixed16::make(size)));
   }
 }
 
@@ -2880,8 +2880,8 @@ GL_API void GL_APIENTRY glPolygonOffsetx(GLfixed factor, GLfixed units) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->PolygonOffset(Math::TCast<floatf>(fixed16::Make(factor)),
-                            Math::TCast<floatf>(fixed16::Make(units)));
+    pContext->PolygonOffset(Math::TCast<floatf>(fixed16::make(factor)),
+                            Math::TCast<floatf>(fixed16::make(units)));
   }
 }
 
@@ -2927,10 +2927,10 @@ GL_API void GL_APIENTRY glRotatex(GLfixed angle, GLfixed x, GLfixed y,
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->Rotate(Math::TCast<floatf>(fixed16::Make(angle)),
-                     Math::TCast<floatf>(fixed16::Make(x)),
-                     Math::TCast<floatf>(fixed16::Make(y)),
-                     Math::TCast<floatf>(fixed16::Make(z)));
+    pContext->Rotate(Math::TCast<floatf>(fixed16::make(angle)),
+                     Math::TCast<floatf>(fixed16::make(x)),
+                     Math::TCast<floatf>(fixed16::make(y)),
+                     Math::TCast<floatf>(fixed16::make(z)));
   }
 }
 
@@ -2950,7 +2950,7 @@ GL_API void GL_APIENTRY glSampleCoveragex(GLclampx value, GLboolean invert) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->SampleCoverage(Math::TCast<floatf>(fixed16::Make(value)), invert);
+    pContext->SampleCoverage(Math::TCast<floatf>(fixed16::make(value)), invert);
   }
 }
 
@@ -2959,9 +2959,9 @@ GL_API void GL_APIENTRY glScalex(GLfixed x, GLfixed y, GLfixed z) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->Scale(Math::TCast<floatf>(fixed16::Make(x)),
-                    Math::TCast<floatf>(fixed16::Make(y)),
-                    Math::TCast<floatf>(fixed16::Make(z)));
+    pContext->Scale(Math::TCast<floatf>(fixed16::make(x)),
+                    Math::TCast<floatf>(fixed16::make(y)),
+                    Math::TCast<floatf>(fixed16::make(z)));
   }
 }
 
@@ -3179,9 +3179,9 @@ GL_API void GL_APIENTRY glTranslatex(GLfixed x, GLfixed y, GLfixed z) {
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
-    pContext->Translate(Math::TCast<floatf>(fixed16::Make(x)),
-                        Math::TCast<floatf>(fixed16::Make(y)),
-                        Math::TCast<floatf>(fixed16::Make(z)));
+    pContext->Translate(Math::TCast<floatf>(fixed16::make(x)),
+                        Math::TCast<floatf>(fixed16::make(y)),
+                        Math::TCast<floatf>(fixed16::make(z)));
   }
 }
 

@@ -16,13 +16,13 @@
 class CTextureTest : public CTestBase {
 private:
   // Texture handles
-  GLuint m_texture1;
-  GLuint m_texture2;
-  float m_offset;
-  int m_rotation;
+  GLuint texture1_;
+  GLuint texture2_;
+  float offset_;
+  int rotation_;
 
 public:
-  CTextureTest() : m_offset(0), m_rotation(0) {}
+  CTextureTest() : offset_(0), rotation_(0) {}
 
   ~CTextureTest() {}
 
@@ -57,8 +57,8 @@ public:
     Perspective(45.0f, ratio, 1.0f, 40.0f);
     glMatrixMode(GL_MODELVIEW);
 
-    bool result = LoadTGA(_T("media/door128.tga"), &m_texture1);
-    result &= LoadTGA(_T("media/fire128.tga"), &m_texture2);
+    bool result = LoadTGA(_T("media/door128.tga"), &texture1_);
+    result &= LoadTGA(_T("media/fire128.tga"), &texture2_);
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
@@ -108,7 +108,7 @@ public:
     glTranslatef(0, 0, -20);
     glScalef(0.7f, 0.7f, 0.7f);
     glRotatef(45, 1, 0, 0);
-    glRotatef(m_rotation, 0, 1, 0);
+    glRotatef(rotation_, 0, 1, 0);
 
     // Enable the vertices array
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -118,14 +118,14 @@ public:
     glActiveTexture(GL_TEXTURE0);
     glClientActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, m_texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1_);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 
     glActiveTexture(GL_TEXTURE1);
     glClientActiveTexture(GL_TEXTURE1);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, m_texture2);
+    glBindTexture(GL_TEXTURE_2D, texture2_);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 
@@ -133,7 +133,7 @@ public:
 
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
-    glTranslatef(m_offset, 0, 0);
+    glTranslatef(offset_, 0, 0);
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -156,12 +156,12 @@ public:
     glDisable(GL_TEXTURE_2D);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    m_offset += 0.01f;
-    ++m_rotation;
+    offset_ += 0.01f;
+    ++rotation_;
   }
 
   void OnDestroy() {
-    glDeleteTextures(1, &m_texture1);
-    glDeleteTextures(1, &m_texture2);
+    glDeleteTextures(1, &texture1_);
+    glDeleteTextures(1, &texture2_);
   }
 };

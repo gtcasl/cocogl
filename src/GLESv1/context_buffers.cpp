@@ -18,7 +18,7 @@
 void CGLContext::GenBuffers(GLsizei n, GLuint *phBuffers) {
   GLenum err;
 
-  ASSERT(phBuffers);
+  assert(phBuffers);
 
   if (n < 0) {
     __glError(
@@ -27,7 +27,8 @@ void CGLContext::GenBuffers(GLsizei n, GLuint *phBuffers) {
     return;
   }
 
-  for (GLuint *phBuf = phBuffers, *const phEnd = phBuf + n; phBuf != phEnd; ++phBuf) {
+  for (GLuint *phBuf = phBuffers, *const phEnd = phBuf + n; phBuf != phEnd;
+       ++phBuf) {
     CBuffer *pBuffer;
     err = CBuffer::Create(&pBuffer);
     if (__glFailed(err)) {
@@ -37,7 +38,7 @@ void CGLContext::GenBuffers(GLsizei n, GLuint *phBuffers) {
 
     uint32_t dwHandle;
     err = GLERROR_FROM_HRESULT(
-        m_pHandles->Insert(&dwHandle, pBuffer, HANDLE_BUFFER, this));
+        handles_->Insert(&dwHandle, pBuffer, HANDLE_BUFFER, this));
     if (__glFailed(err)) {
       __safeRelease(pBuffer);
       __glError(err, _T("CHandleTable::Insert() failed, err = %d.\r\n"), err);
@@ -52,8 +53,9 @@ void CGLContext::GenBuffers(GLsizei n, GLuint *phBuffers) {
 
 void CGLContext::BindBuffer(GLenum target, GLuint buffer) {
   if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER)) {
-    __glError(GL_INVALID_ENUM, _T("CGLContext::BindBuffer() failed, invalid ")
-                               _T("target parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::BindBuffer() failed, invalid ")
+              _T("target parameter: %d.\r\n"),
               target);
     return;
   }
@@ -61,23 +63,24 @@ void CGLContext::BindBuffer(GLenum target, GLuint buffer) {
   CBuffer *pBuffer = nullptr;
   if (buffer) {
     // First, lookup buffers from the current context
-    pBuffer = reinterpret_cast<CBuffer *>(m_pHandles->GetObject(buffer, this));
+    pBuffer = reinterpret_cast<CBuffer *>(handles_->GetObject(buffer, this));
     if (nullptr == pBuffer) {
-      if (m_pCtxShared) {
+      if (pCtxShared_) {
         // Else, lookup buffers from the shared context
         pBuffer = reinterpret_cast<CBuffer *>(
-            m_pHandles->GetObject(buffer, m_pCtxShared));
+            handles_->GetObject(buffer, pCtxShared_));
       }
 
       if (nullptr == pBuffer) {
-        __glError(GL_INVALID_VALUE, _T("CGLContext::BindBuffer() failed, ")
-                                    _T("Invalid buffer parameter: %d\r\n"),
+        __glError(GL_INVALID_VALUE,
+                  _T("CGLContext::BindBuffer() failed, ")
+                  _T("Invalid buffer parameter: %d\r\n"),
                   buffer);
         return;
       }
     }
   } else {
-    pBuffer = m_pBufDefault;
+    pBuffer = pBufDefault_;
   }
 
   this->SetBufferObject(target, pBuffer);
@@ -88,8 +91,9 @@ void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
   GLenum err;
 
   if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER)) {
-    __glError(GL_INVALID_ENUM, _T("CGLContext::BufferData() failed, invalid ")
-                               _T("target parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::BufferData() failed, invalid ")
+              _T("target parameter: %d.\r\n"),
               target);
     return;
   }
@@ -111,7 +115,7 @@ void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
   }
 
   auto pBuffer = this->GetBufferObject(target);
-  ASSERT(pBuffer);
+  assert(pBuffer);
 
   err = pBuffer->Initialize(size, usage, pData);
   if (__glFailed(err)) {
@@ -122,29 +126,32 @@ void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
 
 void CGLContext::BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
                                const GLvoid *pData) {
-  ASSERT(pData);
+  assert(pData);
 
   if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER)) {
-    __glError(GL_INVALID_ENUM, _T("CGLContext::BufferSubData() failed, ")
-                               _T("invalid target parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::BufferSubData() failed, ")
+              _T("invalid target parameter: %d.\r\n"),
               target);
     return;
   }
 
   if ((offset < 0) || (size < 0)) {
-    __glError(GL_INVALID_VALUE, _T("CGLContext::BufferSubData() failed, ")
-                                _T("invalid size(%d) or offset(%d) ")
-                                _T("parameters.\r\n"),
+    __glError(GL_INVALID_VALUE,
+              _T("CGLContext::BufferSubData() failed, ")
+              _T("invalid size(%d) or offset(%d) ")
+              _T("parameters.\r\n"),
               size, offset);
     return;
   }
 
   auto pBuffer = this->GetBufferObject(target);
-  ASSERT(pBuffer);
+  assert(pBuffer);
 
   if (uint32_t(offset + size) > pBuffer->GetSize()) {
-    __glError(GL_INVALID_VALUE, _T("CGLContext::BufferSubData() failed, size ")
-                                _T("+ offset parameters out of range: %d.\r\n"),
+    __glError(GL_INVALID_VALUE,
+              _T("CGLContext::BufferSubData() failed, size ")
+              _T("+ offset parameters out of range: %d.\r\n"),
               size + offset);
     return;
   }
@@ -156,17 +163,18 @@ void CGLContext::GetBufferParameter(GLenum target, GLenum pname,
                                     GLint *pParams) {
   GLenum err;
 
-  ASSERT(pParams);
+  assert(pParams);
 
   if (target != GL_ARRAY_BUFFER) {
-    __glError(GL_INVALID_ENUM, _T("CGLContext::GetBufferParameter() failed, ")
-                               _T("invalid target parameter: %d.\r\n"),
+    __glError(GL_INVALID_ENUM,
+              _T("CGLContext::GetBufferParameter() failed, ")
+              _T("invalid target parameter: %d.\r\n"),
               target);
     return;
   }
 
   auto pBuffer = this->GetBufferObject(target);
-  ASSERT(pBuffer);
+  assert(pBuffer);
 
   err = pBuffer->GetParameter(pname, pParams);
   if (__glFailed(err)) {
@@ -176,7 +184,7 @@ void CGLContext::GetBufferParameter(GLenum target, GLenum pname,
 }
 
 void CGLContext::DeleteBuffers(GLsizei n, const GLuint *phBuffers) {
-  ASSERT(phBuffers);
+  assert(phBuffers);
 
   if (n < 0) {
     __glError(
@@ -186,17 +194,19 @@ void CGLContext::DeleteBuffers(GLsizei n, const GLuint *phBuffers) {
     return;
   }
 
-  for (const GLuint *phBuf = phBuffers, * const phEnd = phBuf + n; phBuf != phEnd; ++phBuf) {
+  for (const GLuint *phBuf = phBuffers, *const phEnd = phBuf + n;
+       phBuf != phEnd; ++phBuf) {
     GLuint handle = *phBuf;
     if (handle) {
-      auto pBuffer = reinterpret_cast<CBuffer*>(m_pHandles->Delete(handle, this));
+      auto pBuffer =
+          reinterpret_cast<CBuffer *>(handles_->Delete(handle, this));
       if (pBuffer) {
         // Unbind the buffer if bound.
         if (pBuffer == this->GetBufferObject(GL_ARRAY_BUFFER)) {
-          this->SetBufferObject(GL_ARRAY_BUFFER, m_pBufDefault);
+          this->SetBufferObject(GL_ARRAY_BUFFER, pBufDefault_);
         }
         if (pBuffer == this->GetBufferObject(GL_ELEMENT_ARRAY_BUFFER)) {
-          this->SetBufferObject(GL_ELEMENT_ARRAY_BUFFER, m_pBufDefault);
+          this->SetBufferObject(GL_ELEMENT_ARRAY_BUFFER, pBufDefault_);
         }
         pBuffer->Release();
       }

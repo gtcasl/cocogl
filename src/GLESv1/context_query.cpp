@@ -15,24 +15,24 @@
 #include "stdafx.h"
 #include "context.hpp"
 
-void CGLContext::SetError(GLenum error) { m_error = error; }
+void CGLContext::SetError(GLenum error) { error_ = error; }
 
 GLenum CGLContext::GetError() const {
-  GLenum error = m_error;
-  m_error = GL_NO_ERROR;
+  GLenum error = error_;
+  error_ = GL_NO_ERROR;
   return error;
 }
 
 const GLubyte *CGLContext::GetString(GLenum name) {
   switch (name) {
   case GL_VENDOR:
-    return reinterpret_cast<const GLubyte*>(EGL_CONFIG_VENDOR);
+    return reinterpret_cast<const GLubyte *>(EGL_CONFIG_VENDOR);
   case GL_VERSION:
-    return reinterpret_cast<const GLubyte*>(EGL_CONFIG_VERSION);
+    return reinterpret_cast<const GLubyte *>(EGL_CONFIG_VERSION);
   case GL_RENDERER:
-    return reinterpret_cast<const GLubyte*>(EGL_CONFIG_RENDERER);
+    return reinterpret_cast<const GLubyte *>(EGL_CONFIG_RENDERER);
   case GL_EXTENSIONS:
-    return reinterpret_cast<const GLubyte*>(EGL_CONFIG_EXTENSIONS);
+    return reinterpret_cast<const GLubyte *>(EGL_CONFIG_EXTENSIONS);
   default:
     __glError(
         GL_INVALID_ENUM,
@@ -43,28 +43,28 @@ const GLubyte *CGLContext::GetString(GLenum name) {
 }
 
 void CGLContext::GetPointer(void **ppParams, GLenum pname) {
-  ASSERT(ppParams);
+  assert(ppParams);
 
   switch (pname) {
   case GL_VERTEX_ARRAY_POINTER:
-    ppParams[0] = const_cast<void *>(m_positionArray.pPointer);
+    ppParams[0] = const_cast<void *>(positionArray_.pPointer);
     break;
 
   case GL_NORMAL_ARRAY_POINTER:
-    ppParams[0] = const_cast<void *>(m_normalArray.pPointer);
+    ppParams[0] = const_cast<void *>(normalArray_.pPointer);
     break;
 
   case GL_COLOR_ARRAY_POINTER:
-    ppParams[0] = const_cast<void *>(m_colorArray.pPointer);
+    ppParams[0] = const_cast<void *>(colorArray_.pPointer);
     break;
 
   case GL_TEXTURE_COORD_ARRAY_POINTER:
     ppParams[0] =
-        const_cast<void *>(m_texCoordArrays[m_clientActiveTexture].pPointer);
+        const_cast<void *>(texCoordArrays_[clientActiveTexture_].pPointer);
     break;
 
   case GL_POINT_SIZE_ARRAY_OES:
-    ppParams[0] = const_cast<void *>(m_pointSizeArray.pPointer);
+    ppParams[0] = const_cast<void *>(pointSizeArray_.pPointer);
     break;
 
   default:
@@ -79,64 +79,64 @@ void CGLContext::GetPointer(void **ppParams, GLenum pname) {
 bool CGLContext::IsEnabled(GLenum cap) {
   switch (cap) {
   case GL_VERTEX_ARRAY:
-    return m_vertexStates.Position;
+    return vertexStates_.Position;
 
   case GL_NORMAL_ARRAY:
-    return m_vertexStates.Normal;
+    return vertexStates_.Normal;
 
   case GL_COLOR_ARRAY:
-    return m_vertexStates.Color;
+    return vertexStates_.Color;
 
   case GL_TEXTURE_COORD_ARRAY:
-    return (m_vertexStates.TexCoords >> m_clientActiveTexture) & 0x1;
+    return (vertexStates_.TexCoords >> clientActiveTexture_) & 0x1;
 
   case GL_FOG:
-    return m_caps.Fog;
+    return caps_.Fog;
 
   case GL_LIGHTING:
-    return m_caps.Lighting;
+    return caps_.Lighting;
 
   case GL_TEXTURE_2D:
-    return (m_caps.Texture2D >> m_activeTexture) & 0x1;
+    return (caps_.Texture2D >> activeTexture_) & 0x1;
 
   case GL_CULL_FACE:
-    return m_caps.CullFace;
+    return caps_.CullFace;
 
   case GL_ALPHA_TEST:
-    return m_caps.AlphaTest;
+    return caps_.AlphaTest;
 
   case GL_BLEND:
-    return m_caps.Blend;
+    return caps_.Blend;
 
   case GL_COLOR_LOGIC_OP:
-    return m_caps.LogicOp;
+    return caps_.LogicOp;
 
   case GL_DITHER:
-    return m_caps.Dither;
+    return caps_.Dither;
 
   case GL_STENCIL_TEST:
-    return m_caps.StencilTest;
+    return caps_.StencilTest;
 
   case GL_DEPTH_TEST:
-    return m_caps.DepthTest;
+    return caps_.DepthTest;
 
   case GL_POINT_SMOOTH:
-    return m_caps.PointSmooth;
+    return caps_.PointSmooth;
 
   case GL_POINT_SPRITE_OES:
-    return m_caps.PointSprite;
+    return caps_.PointSprite;
 
   case GL_LINE_SMOOTH:
-    return m_caps.LineSmooth;
+    return caps_.LineSmooth;
 
   case GL_SCISSOR_TEST:
-    return m_caps.ScissorTest;
+    return caps_.ScissorTest;
 
   case GL_COLOR_MATERIAL:
-    return m_caps.ColorMaterial;
+    return caps_.ColorMaterial;
 
   case GL_NORMALIZE:
-    return m_caps.Normalize;
+    return caps_.Normalize;
 
   case GL_CLIP_PLANE0:
   case GL_CLIP_PLANE1:
@@ -144,7 +144,7 @@ bool CGLContext::IsEnabled(GLenum cap) {
   case GL_CLIP_PLANE3:
   case GL_CLIP_PLANE4:
   case GL_CLIP_PLANE5:
-    return (m_caps.ClipPlanes >> (cap - GL_CLIP_PLANE0)) & 0x1;
+    return (caps_.ClipPlanes >> (cap - GL_CLIP_PLANE0)) & 0x1;
 
   case GL_LIGHT0:
   case GL_LIGHT1:
@@ -154,25 +154,25 @@ bool CGLContext::IsEnabled(GLenum cap) {
   case GL_LIGHT5:
   case GL_LIGHT6:
   case GL_LIGHT7:
-    return (m_caps.Lights >> (cap - GL_LIGHT0)) & 0x1;
+    return (caps_.Lights >> (cap - GL_LIGHT0)) & 0x1;
 
   case GL_RESCALE_NORMAL:
-    return m_caps.RescaleNormal;
+    return caps_.RescaleNormal;
 
   case GL_POLYGON_OFFSET_FILL:
-    return m_caps.PolygonOffsetFill;
+    return caps_.PolygonOffsetFill;
 
   case GL_MULTISAMPLE:
-    return m_caps.MultiSample;
+    return caps_.MultiSample;
 
   case GL_SAMPLE_ALPHA_TO_COVERAGE:
-    return m_caps.SampleAlphaToCoverage;
+    return caps_.SampleAlphaToCoverage;
 
   case GL_SAMPLE_ALPHA_TO_ONE:
-    return m_caps.SampleAlphaToOne;
+    return caps_.SampleAlphaToOne;
 
   case GL_SAMPLE_COVERAGE:
-    return m_caps.SampleCoverage;
+    return caps_.SampleCoverage;
 
   default:
     __glError(
@@ -184,9 +184,9 @@ bool CGLContext::IsEnabled(GLenum cap) {
 }
 
 bool CGLContext::IsBuffer(GLuint buffer) {
-  return (HANDLE_BUFFER == m_pHandles->GetType(buffer));
+  return (HANDLE_BUFFER == handles_->GetType(buffer));
 }
 
 bool CGLContext::IsTexture(GLuint texture) {
-  return (HANDLE_TEXTURE == m_pHandles->GetType(texture));
+  return (HANDLE_TEXTURE == handles_->GetType(texture));
 }

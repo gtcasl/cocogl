@@ -34,9 +34,10 @@ public:
   uint32_t GetIndent() const;
 
   void IncrIndent();
+
   void DecrIndent();
 
 private:
-  FILE *m_pFile;
-  uint32_t m_indent;
+  FILE *file_;
+  uint32_t indent_;
 };

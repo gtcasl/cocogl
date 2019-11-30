@@ -23,29 +23,26 @@ public:
 
 protected:
   IObject() {}
-
   virtual ~IObject() {}
 };
 
 class CObject : public IObject {
 public:
-  virtual long AddRef() const { return ++m_lRefCount; }
+  virtual long AddRef() const { return ++refcount_; }
 
   virtual long Release() const {
-    ASSERT(m_lRefCount > 0);
-    long lRefCount = --m_lRefCount;
-    if (0 == lRefCount) {
+    assert(refcount_ > 0);
+    auto refcount = --refcount_;
+    if (0 == refcount) {
       delete this;
     }
-
-    return lRefCount;
+    return refcount;
   }
 
 protected:
-  CObject() : m_lRefCount(0) {}
-
+  CObject() : refcount_(0) {}
   virtual ~CObject() {}
 
 private:
-  mutable std::atomic<long> m_lRefCount;
+  mutable std::atomic<long> refcount_;
 };

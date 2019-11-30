@@ -14,16 +14,16 @@
 //
 #pragma once
 
-struct uint24 {
+struct uint24_t {
   uint8_t m[3];
 
-  explicit uint24(uint32_t value) {
+  explicit uint24_t(uint32_t value) {
     m[0] = (value >> 0) & 0xff;
     m[1] = (value >> 8) & 0xff;
     m[2] = (value >> 16) & 0xff;
   }
 
-  explicit uint24(uint8_t x, uint8_t y, uint8_t z) {
+  explicit uint24_t(uint8_t x, uint8_t y, uint8_t z) {
     m[0] = x;
     m[1] = y;
     m[2] = z;

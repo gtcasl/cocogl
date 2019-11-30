@@ -18,22 +18,22 @@
 CBuffer::CBuffer() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  m_dwHandle = 0;
-  m_pBits = nullptr;
-  m_size = 0;
-  m_usage = GL_STATIC_DRAW;
+  dwHandle_ = 0;
+  pBits_ = nullptr;
+  size_ = 0;
+  usage_ = GL_STATIC_DRAW;
 }
 
 CBuffer::~CBuffer() {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  __safeDeleteArray(m_pBits);
+  __safeDeleteArray(pBits_);
 }
 
 GLenum CBuffer::Create(CBuffer **ppBuffer) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  ASSERT(ppBuffer);
+  assert(ppBuffer);
 
   // Create a new surface object
   auto pBuffer = new CBuffer();
@@ -57,11 +57,11 @@ GLenum CBuffer::Initialize(uint32_t size, GLenum usage, const GLvoid *pData) {
     return GL_OUT_OF_MEMORY;
   }
 
-  __safeDeleteArray(m_pBits);
+  __safeDeleteArray(pBits_);
 
-  m_pBits = pBits;
-  m_size = size;
-  m_usage = usage;
+  pBits_ = pBits;
+  size_ = size;
+  usage_ = usage;
 
   if (pData) {
     this->CopyData(0, size, pData);
@@ -75,11 +75,11 @@ GLenum CBuffer::GetParameter(GLenum pname, GLint *pParams) {
 
   switch (pname) {
   case GL_BUFFER_SIZE:
-    params = m_size;
+    params = size_;
     break;
 
   case GL_BUFFER_USAGE:
-    params = m_usage;
+    params = usage_;
     break;
 
   default:

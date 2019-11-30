@@ -29,47 +29,47 @@ public:
                        const GLSurfaceDesc *pDepthStencilDesc);
 
   void GetColorDesc(GLSurfaceDesc *pSurfDesc) const {
-    ASSERT(pSurfDesc);
-    *pSurfDesc = m_pColorDesc;
+    assert(pSurfDesc);
+    *pSurfDesc = pColorDesc_;
   }
 
   void GetDepthStencilDesc(GLSurfaceDesc *pSurfDesc) const {
-    ASSERT(pSurfDesc);
-    *pSurfDesc = m_pDepthStencilDesc;
+    assert(pSurfDesc);
+    *pSurfDesc = pDepthStencilDesc_;
   }
 
   void GetRect(Rect *pRect) const {
-    ASSERT(pRect);
+    assert(pRect);
     pRect->left = 0;
     pRect->top = 0;
-    pRect->right = m_pColorDesc.Width;
-    pRect->bottom = m_pColorDesc.Height;
+    pRect->right = pColorDesc_.Width;
+    pRect->bottom = pColorDesc_.Height;
   }
 
-  uint32_t GetColorFormat() const { return m_pColorDesc.Format; }
+  uint32_t GetColorFormat() const { return pColorDesc_.Format; }
 
-  uint32_t GetDepthStencilFormat() const { return m_pDepthStencilDesc.Format; }
+  uint32_t GetDepthStencilFormat() const { return pDepthStencilDesc_.Format; }
 
   uint32_t GetAlignment() const { return 1; }
 
   GLint GetAttribute(GLint name) const {
-    ASSERT(name >= ATTRIBUTES_FIRST && name <= ATTRIBUTES_LAST);
-    return m_attributes[name - ATTRIBUTES_FIRST];
+    assert(name >= ATTRIBUTES_FIRST && name <= ATTRIBUTES_LAST);
+    return attributes_[name - ATTRIBUTES_FIRST];
   }
 
   void SetAttribute(GLint name, GLint value) {
-    ASSERT(name >= ATTRIBUTES_FIRST && name <= ATTRIBUTES_LAST);
-    m_attributes[name - ATTRIBUTES_FIRST] = value;
+    assert(name >= ATTRIBUTES_FIRST && name <= ATTRIBUTES_LAST);
+    attributes_[name - ATTRIBUTES_FIRST] = value;
   }
 
-  uint32_t GetWidth() const { return m_pColorDesc.Width; }
+  uint32_t GetWidth() const { return pColorDesc_.Width; }
 
-  uint32_t GetHeight() const { return m_pColorDesc.Height; }
+  uint32_t GetHeight() const { return pColorDesc_.Height; }
 
-  const GLSurfaceDesc &GetColorDesc() const { return m_pColorDesc; }
+  const GLSurfaceDesc &GetColorDesc() const { return pColorDesc_; }
 
   const GLSurfaceDesc &GetDepthStencilDesc() const {
-    return m_pDepthStencilDesc;
+    return pDepthStencilDesc_;
   }
 
   GLenum Update(const GLSurfaceDesc *pColorDesc,
@@ -78,22 +78,22 @@ public:
   }
 
   void ConvertColor(void *pOut, const Color4 &color) const {
-    (m_pfnColorConv)(pOut, color);
+    (pfnColorConv_)(pOut, color);
   }
 
   void ClearColor(uint32_t colorValue, uint32_t colorMask, const Rect &rect) {
-    (m_pfnColorFill)(m_pColorDesc, colorValue, colorMask, rect);
+    (pfnColorFill_)(pColorDesc_, colorValue, colorMask, rect);
   }
 
   void ClearDepth(uint32_t depthValue, uint32_t depthMask, const Rect &rect) {
-    (m_pfnDepthStencilFill)(m_pDepthStencilDesc, depthValue, depthMask, rect);
+    (pfnDepthStencilFill_)(pDepthStencilDesc_, depthValue, depthMask, rect);
   }
 
   void ClearStencil(uint32_t clearStencil, uint32_t stencilMask,
                     const Rect &rect) {
     uint32_t value = clearStencil << 16;
     uint32_t mask = stencilMask << 16;
-    (m_pfnDepthStencilFill)(m_pDepthStencilDesc, value, mask, rect);
+    (pfnDepthStencilFill_)(pDepthStencilDesc_, value, mask, rect);
   }
 
   void ClearDepthStencil(uint32_t depthValue, uint32_t depthMask,
@@ -101,7 +101,7 @@ public:
                          const Rect &rect) {
     uint32_t value = 0xff000000 | (stencilValue << 16) | depthValue;
     uint32_t mask = 0xff000000 | (stencilMask << 16) | depthMask;
-    (m_pfnDepthStencilFill)(m_pDepthStencilDesc, value, mask, rect);
+    (pfnDepthStencilFill_)(pDepthStencilDesc_, value, mask, rect);
   }
 
   GLenum SaveBitmap(LPCTSTR lpszFilename);
@@ -134,13 +134,13 @@ private:
     __unreferenced(color);
   }
 
-  GLint m_attributes[ATTRIBUTES_SIZE];
+  GLint attributes_[ATTRIBUTES_SIZE];
 
-  Format::PFN_CONVERTTO m_pfnColorConv;
+  Format::pfn_convert_to pfnColorConv_;
 
-  PFN_ColorFill m_pfnColorFill;
-  PFN_ColorFill m_pfnDepthStencilFill;
+  PFN_ColorFill pfnColorFill_;
+  PFN_ColorFill pfnDepthStencilFill_;
 
-  GLSurfaceDesc m_pColorDesc;
-  GLSurfaceDesc m_pDepthStencilDesc;
+  GLSurfaceDesc pColorDesc_;
+  GLSurfaceDesc pDepthStencilDesc_;
 };

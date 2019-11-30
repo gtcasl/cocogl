@@ -26,19 +26,19 @@ public:
   void SetBindings(std::thread::id dwThreadID, CEGLSurface *pSurfDraw,
                    CEGLSurface *pSurfRead);
 
-  CDisplay *GetDisplay() const { return m_pDisplay; }
+  CDisplay *GetDisplay() const { return pDisplay_; }
 
-  CConfig *GetConfig() const { return m_pConfig; }
+  CConfig *GetConfig() const { return pConfig_; }
 
-  auto GetThreadID() const { return m_dwThreadID; }
+  auto GetThreadID() const { return dwThreadID_; }
 
-  CEGLSurface *GetDrawSurface() const { return m_pSurfDraw; }
+  CEGLSurface *GetDrawSurface() const { return pSurfDraw_; }
 
-  CEGLSurface *GetReadSurface() const { return m_pSurfRead; }
+  CEGLSurface *GetReadSurface() const { return pSurfRead_; }
 
-  __GLContext GetNativeData() const { return m_glContext; }
+  __GLContext GetNativeData() const { return glContext_; }
 
-  bool HasBindings() const { return (m_pSurfDraw || m_pSurfRead); }
+  bool HasBindings() const { return (pSurfDraw_ || pSurfRead_); }
 
 private:
   CEGLContext(CDisplay *pDisplay, CConfig *pConfig);
@@ -46,10 +46,10 @@ private:
 
   EGLint Initialize(CEGLContext *pCtxShared);
 
-  CDisplay *m_pDisplay;
-  CConfig *m_pConfig;
-  CEGLSurface *m_pSurfDraw;
-  CEGLSurface *m_pSurfRead;
-  std::thread::id m_dwThreadID;
-  __GLContext m_glContext;
+  CDisplay *pDisplay_;
+  CConfig *pConfig_;
+  CEGLSurface *pSurfDraw_;
+  CEGLSurface *pSurfRead_;
+  std::thread::id dwThreadID_;
+  __GLContext glContext_;
 };

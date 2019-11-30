@@ -25,7 +25,7 @@ include<wingdi.h>
 #define BI_BITFIELDS 3 // with RGB masks
 
 // file header
- struct __attribute__((__packed__)) BITMAPFILEHEADER {
+struct __attribute__((__packed__)) BITMAPFILEHEADER {
   uint16_t bfType; // magic number
   uint32_t bfSize;
   uint16_t bfReserved1;
@@ -36,14 +36,14 @@ include<wingdi.h>
 // file info
 struct __attribute__((__packed__)) BITMAPINFOHEADER {
   uint32_t biSize;
-  int32_t  biWidth;
-  int32_t  biHeight;
-  uint16_t biPlanes;     // number of color planes
-  uint16_t biBitCount;   // number of bits per pixel
+  int32_t biWidth;
+  int32_t biHeight;
+  uint16_t biPlanes;       // number of color planes
+  uint16_t biBitCount;     // number of bits per pixel
   uint32_t biCompression;  // type of compression to use
   uint32_t biSizeImage;    // size of image data
-  int32_t  biXPelsPerMeter;         // X pixels per meter
-  int32_t  biYPelsPerMeter;         // Y pixels per meter
+  int32_t biXPelsPerMeter; // X pixels per meter
+  int32_t biYPelsPerMeter; // Y pixels per meter
   uint32_t biClrUsed;      // number of colors used
   uint32_t biClrImportant; // number of important colors
 };
@@ -57,7 +57,7 @@ struct __attribute__((__packed__)) RGBQUAD {
 
 struct __attribute__((__packed__)) BITMAPINFO {
   BITMAPINFOHEADER bmiHeader;
-  RGBQUAD          bmiColors[1];
+  RGBQUAD bmiColors[1];
 };
 
 #endif

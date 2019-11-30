@@ -21,27 +21,27 @@ public:
   GLenum Initialize(uint32_t size, GLenum usage, const GLvoid *pData);
 
   void CopyData(uint32_t offset, uint32_t size, const GLvoid *pData) {
-    ::memcpy(m_pBits + offset, pData, size);
+    ::memcpy(pBits_ + offset, pData, size);
   }
 
   GLenum GetParameter(GLenum pname, GLint *pParams);
 
-  const uint8_t *GetBits() const { return m_pBits; }
+  const uint8_t *GetBits() const { return pBits_; }
 
-  uint32_t GetSize() const { return m_size; }
+  uint32_t GetSize() const { return size_; }
 
-  GLenum GetUsage() const { return m_usage; }
+  GLenum GetUsage() const { return usage_; }
 
-  uint32_t GetHandle() const { return m_dwHandle; }
+  uint32_t GetHandle() const { return dwHandle_; }
 
-  void SetHandle(uint32_t dwHandle) { m_dwHandle = dwHandle; }
+  void SetHandle(uint32_t dwHandle) { dwHandle_ = dwHandle; }
 
 private:
   CBuffer();
   ~CBuffer();
 
-  uint32_t m_dwHandle;
-  uint8_t *m_pBits;
-  uint32_t m_size;
-  GLenum m_usage;
+  uint32_t dwHandle_;
+  uint8_t *pBits_;
+  uint32_t size_;
+  GLenum usage_;
 };

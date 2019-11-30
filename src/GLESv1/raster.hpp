@@ -42,11 +42,9 @@ protected:
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       auto half = static_cast<int64_t>(1) << (FRAC - 1);
-      int64_t uv0 =
-          static_cast<int64_t>(delta0.GetRaw()) * this->fdY1.GetRaw();
-      int64_t uv1 =
-          static_cast<int64_t>(delta1.GetRaw()) * this->fdY0.GetRaw();
-      return T::Make(((uv0 - uv1) * this->fRatio.GetRaw() + half) >> FRAC);
+      int64_t uv0 = static_cast<int64_t>(delta0.data()) * this->fdY1.data();
+      int64_t uv1 = static_cast<int64_t>(delta1.data()) * this->fdY0.data();
+      return T::make(((uv0 - uv1) * this->fRatio.data() + half) >> FRAC);
 #else
       return static_cast<T>((delta0 * this->fdY1 - delta1 * this->fdY0) *
                             this->fRatio);
@@ -57,11 +55,9 @@ protected:
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       auto half = static_cast<int64_t>(1) << (FRAC - 1);
-      int64_t uv0 =
-          static_cast<int64_t>(delta1.GetRaw()) * this->fdX0.GetRaw();
-      int64_t uv1 =
-          static_cast<int64_t>(delta0.GetRaw()) * this->fdX1.GetRaw();
-      return T::Make(((uv0 - uv1) * this->fRatio.GetRaw() + half) >> FRAC);
+      int64_t uv0 = static_cast<int64_t>(delta1.data()) * this->fdX0.data();
+      int64_t uv1 = static_cast<int64_t>(delta0.data()) * this->fdX1.data();
+      return T::make(((uv0 - uv1) * this->fRatio.data() + half) >> FRAC);
 #else
       return static_cast<T>((delta1 * this->fdX0 - delta0 * this->fdX1) *
                             this->fRatio);
@@ -73,9 +69,9 @@ protected:
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
-      return T::Make((diff.GetRaw() * this->fRatio.GetRaw() + half) >> FRAC);
+      return T::make((diff.data() * this->fRatio.data() + half) >> FRAC);
 #else
-      return static_cast<T>(fixed12::Make(diff.GetRaw()) * this->fRatio);
+      return static_cast<T>(fixed12::make(diff.data()) * this->fRatio);
 #endif
     }
 
@@ -84,9 +80,9 @@ protected:
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
-      return T::Make((diff.GetRaw() * this->fRatio.GetRaw() + half) >> FRAC);
+      return T::make((diff.data() * this->fRatio.data() + half) >> FRAC);
 #else
-      return static_cast<T>(fixed12::Make(diff.GetRaw()) * this->fRatio);
+      return static_cast<T>(fixed12::make(diff.data()) * this->fRatio);
 #endif
     }
   };
@@ -98,7 +94,7 @@ protected:
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
-      return T::Make((delta.GetRaw() * this->fRatio.GetRaw() + half) >> FRAC);
+      return T::make((delta.data() * this->fRatio.data() + half) >> FRAC);
 #else
       return static_cast<T>(delta * this->fRatio);
 #endif
@@ -108,11 +104,11 @@ protected:
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
-      return T::Make((delta * this->fRatio.GetRaw() + half) >> FRAC);
+      return T::make((delta * this->fRatio.data() + half) >> FRAC);
 #else
-      return T::Make(
+      return T::make(
           static_cast<TFixed<T::FRAC - fixed8::FRAC>>(delta * this->fRatio)
-              .GetRaw());
+              .data());
 #endif
     }
   };
@@ -187,51 +183,51 @@ protected:
                         uint32_t i0, uint32_t i1, uint32_t i2);
 
   void EnsureClearColor() {
-    Color4 tmp(Math::TToUNORM8(Math::TSat(m_vClearColor.w)),
-               Math::TToUNORM8(Math::TSat(m_vClearColor.x)),
-               Math::TToUNORM8(Math::TSat(m_vClearColor.y)),
-               Math::TToUNORM8(Math::TSat(m_vClearColor.z)));
-    m_pSurfDraw->ConvertColor(&m_clearColor, tmp);
-    m_dirtyFlags.ClearColor = 0;
+    Color4 tmp(Math::TToUNORM8(Math::TSat(vClearColor_.w)),
+               Math::TToUNORM8(Math::TSat(vClearColor_.x)),
+               Math::TToUNORM8(Math::TSat(vClearColor_.y)),
+               Math::TToUNORM8(Math::TSat(vClearColor_.z)));
+    pSurfDraw_->ConvertColor(&clearColor_, tmp);
+    dirtyFlags_.ClearColor = 0;
   }
 
   void EnsureClearDepth() {
-    m_clearDepth = Math::TToUNORM16(Math::TSat(m_fClearDepth));
-    m_dirtyFlags.ClearDepth = 0;
+    clearDepth_ = Math::TToUNORM16(Math::TSat(fClearDepth_));
+    dirtyFlags_.ClearDepth = 0;
   }
 
   void EnsureColorWriteMask() {
-    Color4 tmp(m_cColorWriteMask);
-    m_pSurfDraw->ConvertColor(&m_rasterData.ColorWriteMask, tmp);
-    m_dirtyFlags.ColorWriteMask = 0;
+    Color4 tmp(cColorWriteMask_);
+    pSurfDraw_->ConvertColor(&rasterData_.ColorWriteMask, tmp);
+    dirtyFlags_.ColorWriteMask = 0;
   }
 
   void EnsureFogColor() {
-    m_rasterData.cFogColor.a =
-        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(m_vFogColor.w)));
-    m_rasterData.cFogColor.r =
-        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(m_vFogColor.x)));
-    m_rasterData.cFogColor.g =
-        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(m_vFogColor.y)));
-    m_rasterData.cFogColor.b =
-        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(m_vFogColor.z)));
-    m_dirtyFlags.FogColor = 0;
+    rasterData_.cFogColor.a =
+        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(vFogColor_.w)));
+    rasterData_.cFogColor.r =
+        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(vFogColor_.x)));
+    rasterData_.cFogColor.g =
+        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(vFogColor_.y)));
+    rasterData_.cFogColor.b =
+        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(vFogColor_.z)));
+    dirtyFlags_.FogColor = 0;
   }
 
-  PolygonOffset m_polygonOffset;
-  floatf m_fLineWidth;
-  Rect m_scissorRect;
+  PolygonOffset polygonOffset_;
+  floatf fLineWidth_;
+  Rect scissorRect_;
 
-  RasterData m_rasterData;
+  RasterData rasterData_;
 
-  ColorARGB m_cColorWriteMask;
-  uint32_t m_depthWriteMask;
-  uint32_t m_stencilWriteMask;
-  uint32_t m_clearColor;
-  uint32_t m_clearDepth;
+  ColorARGB cColorWriteMask_;
+  uint32_t depthWriteMask_;
+  uint32_t stencilWriteMask_;
+  uint32_t clearColor_;
+  uint32_t clearDepth_;
 
-  int m_clearStencil;
-  floatf m_fClearDepth;
-  VECTOR4 m_vClearColor;
-  VECTOR4 m_vFogColor;
+  int clearStencil_;
+  floatf fClearDepth_;
+  VECTOR4 vClearColor_;
+  VECTOR4 vFogColor_;
 };

@@ -27,23 +27,23 @@ void CGLContext::Hint(GLenum target, GLenum mode) {
 
   switch (target) {
   case GL_PERSPECTIVE_CORRECTION_HINT:
-    m_hints.Perspective = value;
+    hints_.Perspective = value;
     break;
 
   case GL_POINT_SMOOTH_HINT:
-    m_hints.PointSmooth = value;
+    hints_.PointSmooth = value;
     break;
 
   case GL_LINE_SMOOTH_HINT:
-    m_hints.LineSmooth = value;
+    hints_.LineSmooth = value;
     break;
 
   case GL_FOG_HINT:
-    m_hints.Fog = value;
+    hints_.Fog = value;
     break;
 
   case GL_GENERATE_MIPMAP_HINT:
-    m_hints.GenerateMipmap = value;
+    hints_.GenerateMipmap = value;
     break;
 
   default:
@@ -58,73 +58,73 @@ void CGLContext::Hint(GLenum target, GLenum mode) {
 void CGLContext::Activate(GLenum cap, bool bValue) {
   switch (cap) {
   case GL_FOG:
-    m_caps.Fog = bValue;
+    caps_.Fog = bValue;
     break;
 
   case GL_LIGHTING:
-    m_caps.Lighting = bValue;
+    caps_.Lighting = bValue;
     break;
 
   case GL_TEXTURE_2D:
     if (bValue) {
-      m_caps.Texture2D |= (1 << m_activeTexture);
+      caps_.Texture2D |= (1 << activeTexture_);
     } else {
-      m_caps.Texture2D &= ~(1 << m_activeTexture);
+      caps_.Texture2D &= ~(1 << activeTexture_);
     }
 
     break;
 
   case GL_CULL_FACE:
-    m_caps.CullFace = bValue;
+    caps_.CullFace = bValue;
     break;
 
   case GL_ALPHA_TEST:
-    m_caps.AlphaTest = bValue;
+    caps_.AlphaTest = bValue;
     break;
 
   case GL_BLEND:
-    m_caps.Blend = bValue;
+    caps_.Blend = bValue;
     break;
 
   case GL_COLOR_LOGIC_OP:
-    m_caps.LogicOp = bValue;
+    caps_.LogicOp = bValue;
     break;
 
   case GL_DITHER:
-    m_caps.Dither = bValue;
+    caps_.Dither = bValue;
     break;
 
   case GL_STENCIL_TEST:
-    m_caps.StencilTest = bValue;
+    caps_.StencilTest = bValue;
     break;
 
   case GL_DEPTH_TEST:
-    m_caps.DepthTest = bValue;
+    caps_.DepthTest = bValue;
     break;
 
   case GL_POINT_SMOOTH:
-    m_caps.PointSmooth = bValue;
+    caps_.PointSmooth = bValue;
     break;
 
   case GL_POINT_SPRITE_OES:
-    m_caps.PointSprite = bValue;
+    caps_.PointSprite = bValue;
     break;
 
   case GL_LINE_SMOOTH:
-    m_caps.LineSmooth = bValue;
+    caps_.LineSmooth = bValue;
     break;
 
   case GL_SCISSOR_TEST:
-    m_caps.ScissorTest = bValue;
-    m_dirtyFlags.ScissorRECT = 1;
+    caps_.ScissorTest = bValue;
+    dirtyFlags_.ScissorRECT = 1;
     break;
 
   case GL_COLOR_MATERIAL:
-    m_caps.ColorMaterial = bValue;
+    caps_.ColorMaterial = bValue;
     break;
 
   case GL_NORMALIZE:
-    m_caps.Normalize = bValue;
+    caps_.Normalize = bValue;
     break;
 
   case GL_CLIP_PLANE0:
@@ -135,9 +135,9 @@ void CGLContext::Activate(GLenum cap, bool bValue) {
   case GL_CLIP_PLANE5: {
     uint32_t mask = 1 << (cap - GL_CLIP_PLANE0);
     if (bValue) {
-      m_caps.ClipPlanes |= mask;
+      caps_.ClipPlanes |= mask;
     } else {
-      m_caps.ClipPlanes &= ~mask;
+      caps_.ClipPlanes &= ~mask;
     }
   }
 
@@ -153,42 +153,42 @@ void CGLContext::Activate(GLenum cap, bool bValue) {
   case GL_LIGHT7: {
     uint32_t mask = 1 << (cap - GL_LIGHT0);
     if (bValue) {
-      m_caps.Lights |= mask;
-      m_dirtyLights.Ambient |= mask;
-      m_dirtyLights.Diffuse |= mask;
-      m_dirtyLights.Specular |= mask;
+      caps_.Lights |= mask;
+      dirtyLights_.Ambient |= mask;
+      dirtyLights_.Diffuse |= mask;
+      dirtyLights_.Specular |= mask;
     } else {
-      m_caps.Lights &= ~mask;
+      caps_.Lights &= ~mask;
     }
 
-    m_dirtyFlags.Lights = 1;
+    dirtyFlags_.Lights = 1;
   }
 
   break;
 
   case GL_RESCALE_NORMAL:
-    m_caps.RescaleNormal = bValue;
-    m_dirtyFlags.ModelViewInvT33 = 1;
+    caps_.RescaleNormal = bValue;
+    dirtyFlags_.ModelViewInvT33 = 1;
     break;
 
   case GL_POLYGON_OFFSET_FILL:
-    m_caps.PolygonOffsetFill = bValue;
+    caps_.PolygonOffsetFill = bValue;
     break;
 
   case GL_MULTISAMPLE:
-    m_caps.MultiSample = bValue;
+    caps_.MultiSample = bValue;
     break;
 
   case GL_SAMPLE_ALPHA_TO_COVERAGE:
-    m_caps.SampleAlphaToCoverage = bValue;
+    caps_.SampleAlphaToCoverage = bValue;
     break;
 
   case GL_SAMPLE_ALPHA_TO_ONE:
-    m_caps.SampleAlphaToOne = bValue;
+    caps_.SampleAlphaToOne = bValue;
     break;
 
   case GL_SAMPLE_COVERAGE:
-    m_caps.SampleCoverage = bValue;
+    caps_.SampleCoverage = bValue;
     break;
 
   // GL Extensions

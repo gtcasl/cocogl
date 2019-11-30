@@ -17,8 +17,7 @@
 #include "raster.inl"
 
 void CRasterizer::DrawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
-  auto pwFlags =
-      reinterpret_cast<uint16_t*>(m_pbVertexData[VERTEXDATA_FLAGS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   uint32_t flags0 = pwFlags[i0];
   uint32_t flags1 = pwFlags[i1];
   uint32_t flags2 = pwFlags[i2];
@@ -47,7 +46,7 @@ void CRasterizer::DrawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 bool CRasterizer::CullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
                                           uint32_t i2) {
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   const RDVECTOR &v0 = pvScreenPos[i0];
   const RDVECTOR &v1 = pvScreenPos[i1];
   const RDVECTOR &v2 = pvScreenPos[i2];
@@ -59,10 +58,10 @@ bool CRasterizer::CullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
 
   uint32_t culled;
 
-  CullStates cullStates = m_cullStates;
+  CullStates cullStates = cullStates_;
   if (CULL_FRONT_AND_BACK != cullStates.CullFace) {
     auto fSign = Math::TFastMul<fixed8>(fdx10, fdy20) -
-                         Math::TFastMul<fixed8>(fdx20, fdy10);
+                 Math::TFastMul<fixed8>(fdx20, fdy10);
 
     if (CULL_BACK == cullStates.CullFace) {
       culled = static_cast<uint32_t>(fSign < TConst<fixed8>::Zero()) ^
@@ -82,7 +81,7 @@ bool CRasterizer::CullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
   }
 
   uint32_t colorIndex = cullStates.bTwoSidedLighting && culled;
-  m_pbVertexColor = m_pbVertexData[VERTEXDATA_COLOR0 + colorIndex];
+  pbVertexColor_ = pbVertexData_[VERTEXDATA_COLOR0 + colorIndex];
 
   return true;
 }
@@ -95,11 +94,11 @@ void CRasterizer::RasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
     return;
   }
 
-  PFN_Scanline pfnScanline = m_rasterData.pRasterOp->GetScanline();
+  PFN_Scanline pfnScanline = rasterData_.pRasterOp->GetScanline();
 
   // Lookup screenspace positions
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   const RDVECTOR &v0 = pvScreenPos[i0];
   const RDVECTOR &v1 = pvScreenPos[i1];
   const RDVECTOR &v2 = pvScreenPos[i2];
@@ -139,27 +138,26 @@ void CRasterizer::RasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 
   // Calculate the edge direction
   auto i8Area = Math::TFastMul<fixed8>(i4dx12, i4dy13) -
-                        Math::TFastMul<fixed8>(i4dx13, i4dy12);
+                Math::TFastMul<fixed8>(i4dx13, i4dy12);
   bool bMiddleIsRight = (i8Area >= TConst<fixed8>::Zero());
-  fixedDDA fRndCeil =
-      fixedDDA::Make(fixedDDA::MASK) - TConst<fixedDDA>::Half();
+  fixedDDA fRndCeil = fixedDDA::make(fixedDDA::MASK) - TConst<fixedDDA>::Half();
 
   int y = Math::TMax<int>(Math::TCeili<int>(i4y0 - TConst<fixed4>::Half()),
-                          m_scissorRect.top);
+                          scissorRect_.top);
 
   auto i4Y0Diff = fixed4(y) - (i4y0 - TConst<fixed4>::Half());
 
 #ifdef COCOGL_RASTER_PROFILE
   auto start_time = std::chrono::high_resolution_clock::now();
-  m_rasterData.pRasterOp->StartProfile(Math::TCast<int>(Math::TAbs(i8Area)));
+  rasterData_.pRasterOp->StartProfile(Math::TCast<int>(Math::TAbs(i8Area)));
 #endif
 
   fixedDDA fx0, fx1;
   fixedDDA fdx0, fdx1;
 
-  if (i4dy12.GetRaw()) {
-    int y1 = Math::TMin<int>(
-        Math::TCeili<int>(i4y1 - TConst<fixed4>::Half()), m_scissorRect.bottom);
+  if (i4dy12.data()) {
+    int y1 = Math::TMin<int>(Math::TCeili<int>(i4y1 - TConst<fixed4>::Half()),
+                             scissorRect_.bottom);
 
     fdx0 = fixedDDA(i4dx12) / i4dy12;
     fdx1 = fixedDDA(i4dx13) / i4dy13;
@@ -172,12 +170,11 @@ void CRasterizer::RasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
     fx1 = fixedDDA(i4x0) + fdx1 * i4Y0Diff + fRndCeil;
 
     for (; y < y1; ++y, fx0 += fdx0, fx1 += fdx1) {
-      int x0 = Math::TMax<int>(Math::TCast<int>(fx0), m_scissorRect.left);
-      int x1 =
-          Math::TMin<int>(Math::TCast<int>(fx1), m_scissorRect.right);
+      int x0 = Math::TMax<int>(Math::TCast<int>(fx0), scissorRect_.left);
+      int x1 = Math::TMin<int>(Math::TCast<int>(fx1), scissorRect_.right);
 
       if (x0 < x1) {
-        (pfnScanline)(m_rasterData, y, x0, x1);
+        (pfnScanline)(rasterData_, y, x0, x1);
       }
     }
   } else {
@@ -194,9 +191,9 @@ void CRasterizer::RasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
     }
   }
 
-  if (i4dy23.GetRaw()) {
-    int y2 = Math::TMin<int>(
-        Math::TCeili<int>(i4y2 - TConst<fixed4>::Half()), m_scissorRect.bottom);
+  if (i4dy23.data()) {
+    int y2 = Math::TMin<int>(Math::TCeili<int>(i4y2 - TConst<fixed4>::Half()),
+                             scissorRect_.bottom);
 
     auto i4Y1Diff = fixed4(y) - (i4y1 - TConst<fixed4>::Half());
 
@@ -212,12 +209,11 @@ void CRasterizer::RasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
     }
 
     for (; y < y2; ++y, fx0 += fdx0, fx1 += fdx1) {
-      int x0 = Math::TMax<int>(Math::TCast<int>(fx0), m_scissorRect.left);
-      int x1 =
-          Math::TMin<int>(Math::TCast<int>(fx1), m_scissorRect.right);
+      int x0 = Math::TMax<int>(Math::TCast<int>(fx0), scissorRect_.left);
+      int x1 = Math::TMin<int>(Math::TCast<int>(fx1), scissorRect_.right);
 
       if (x0 < x1) {
-        (pfnScanline)(m_rasterData, y, x0, x1);
+        (pfnScanline)(rasterData_, y, x0, x1);
       }
     }
   }
@@ -226,7 +222,7 @@ void CRasterizer::RasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   auto end_time = std::chrono::high_resolution_clock::now();
   auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(
       end_time - start_time);
-  m_rasterData.pRasterOp->EndProfile(elapsed_time.count());
+  rasterData_.pRasterOp->EndProfile(elapsed_time.count());
 #endif
 }
 
@@ -234,7 +230,7 @@ bool CRasterizer::SetupTriangleAttributes(uint32_t i0, uint32_t i1,
                                           uint32_t i2) {
   // Lookup vertex screen positions
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   const RDVECTOR &v0 = pvScreenPos[i0];
   const RDVECTOR &v1 = pvScreenPos[i1];
   const RDVECTOR &v2 = pvScreenPos[i2];
@@ -245,11 +241,11 @@ bool CRasterizer::SetupTriangleAttributes(uint32_t i0, uint32_t i1,
   auto i4dy13 = v2.y - v0.y;
 
   auto i8Area = Math::TFastMul<fixed8>(i4dx12, i4dy13) -
-                        Math::TFastMul<fixed8>(i4dx13, i4dy12);
+                Math::TFastMul<fixed8>(i4dx13, i4dy12);
 
   // Reject small areas (1/4 x 1/4 = 1/16)
   auto u8Area = Math::TAbs(i8Area);
-  if (u8Area.GetRaw() < 16) {
+  if (u8Area.data() < 16) {
     return false;
   }
 
@@ -257,10 +253,10 @@ bool CRasterizer::SetupTriangleAttributes(uint32_t i0, uint32_t i1,
   TriangleGradient gradient(i4dx12, i4dy12, i4dx13, i4dy13, fRatio);
 
   // Backup the rasterID
-  RASTERID rasterID = m_rasterID;
+  RASTERID rasterID = rasterID_;
 
   RASTERFLAGS rasterFlags = rasterID.Flags;
-  Register *pRegister = m_rasterData.Registers;
+  Register *pRegister = rasterData_.Registers;
 
   if (rasterFlags.DepthTest) {
     pRegister = this->DepthGradient(pRegister, gradient, v0, v1, v2);
@@ -286,18 +282,18 @@ bool CRasterizer::SetupTriangleAttributes(uint32_t i0, uint32_t i1,
   }
 
   // Set the reference offset
-  m_rasterData.fRefX = v0.x - TConst<fixed4>::Half();
-  m_rasterData.fRefY = v0.y - TConst<fixed4>::Half();
+  rasterData_.fRefX = v0.x - TConst<fixed4>::Half();
+  rasterData_.fRefY = v0.y - TConst<fixed4>::Half();
 
   // Generate the rasterization routine
   if (!this->GenerateRasterOp()) {
-    m_error = GL_INVALID_OPERATION;
+    error_ = GL_INVALID_OPERATION;
     __glLogError(_T("CRasterizer::GenerateRasterOp() failed.\r\n"));
     return false;
   }
 
   // Restore the rasterID
-  m_rasterID = rasterID;
+  rasterID_ = rasterID;
 
   return true;
 }
@@ -306,7 +302,7 @@ Register *CRasterizer::DepthGradient(Register *pRegister,
                                      const TriangleGradient &gradient,
                                      const RDVECTOR &v0, const RDVECTOR &v1,
                                      const RDVECTOR &v2) {
-  ASSERT(pRegister);
+  assert(pRegister);
 
   float20 delta[2] = {v1.z - v0.z, v2.z - v0.z};
 
@@ -314,7 +310,7 @@ Register *CRasterizer::DepthGradient(Register *pRegister,
       (fixed16(Math::TAbs(delta[1])) > TConst<fixed16>::Epsilon())) {
     pRegister->m[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
     pRegister->m[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
-    m_rasterID.Flags.InterpolateDepth = 1;
+    rasterID_.Flags.InterpolateDepth = 1;
   } else {
     pRegister->m[0] = TConst<fixedRX>::Zero();
     pRegister->m[1] = TConst<fixedRX>::Zero();
@@ -322,7 +318,7 @@ Register *CRasterizer::DepthGradient(Register *pRegister,
 
   pRegister->m[2] = static_cast<fixedRX>(v0.z);
 
-  if (m_caps.PolygonOffsetFill) {
+  if (caps_.PolygonOffsetFill) {
     this->ApplyPolygonOffset(pRegister);
   }
 
@@ -330,13 +326,13 @@ Register *CRasterizer::DepthGradient(Register *pRegister,
 }
 
 void CRasterizer::ApplyPolygonOffset(Register *pRegister) {
-  ASSERT(pRegister);
+  assert(pRegister);
 
   auto fSlope = Math::TCast<float20>(
       Math::TMax(Math::TAbs(pRegister->m[0]), Math::TAbs(pRegister->m[1])));
 
-  auto fOffset = static_cast<floatf>(
-      (m_polygonOffset.fFactor * fSlope) + m_polygonOffset.fUnits * fEPS);
+  auto fOffset = static_cast<floatf>((polygonOffset_.fFactor * fSlope) +
+                                     polygonOffset_.fUnits * fEPS);
 
   pRegister->m[2] = static_cast<fixedRX>(
       Math::TSat(Math::TCast<floatf>(pRegister->m[2]) + fOffset));
@@ -345,12 +341,12 @@ void CRasterizer::ApplyPolygonOffset(Register *pRegister) {
 Register *CRasterizer::ColorGradient(Register *pRegister,
                                      const TriangleGradient &gradient,
                                      uint32_t i0, uint32_t i1, uint32_t i2) {
-  ASSERT(pRegister);
+  assert(pRegister);
 
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
 
   // Lookup vertex colors
-  auto pcColors = reinterpret_cast<ColorARGB*>(m_pbVertexColor);
+  auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_);
   ColorARGB c0 = pcColors[i0];
   ColorARGB c1 = pcColors[i1];
   ColorARGB c2 = pcColors[i2];
@@ -364,8 +360,8 @@ Register *CRasterizer::ColorGradient(Register *pRegister,
       pRegister[i].m[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
       pRegister[i].m[2] = static_cast<fixedRX>(c0.m[i]) >> fixed8::FRAC;
     }
-    m_rasterID.Flags.InterpolateColor = (interpolateMask & 0x7) ? 1 : 0;
-    m_rasterID.Flags.InterpolateAlpha = interpolateMask >> 3;
+    rasterID_.Flags.InterpolateColor = (interpolateMask & 0x7) ? 1 : 0;
+    rasterID_.Flags.InterpolateAlpha = interpolateMask >> 3;
   } else {
     for (uint32_t i = 0; i < 4; ++i) {
       pRegister[i].m[0] = TConst<fixedRX>::Zero();
@@ -381,16 +377,16 @@ Register *CRasterizer::AffineTextureGradient(Register *pRegister,
                                              const TriangleGradient &gradient,
                                              uint32_t i0, uint32_t i1,
                                              uint32_t i2) {
-  ASSERT(pRegister);
+  assert(pRegister);
 
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
   uint32_t numTextures = rasterFlags.NumTextures;
 
   for (uint32_t j = 0; j < numTextures; ++j) {
-    ASSERT(j < MAX_TEXTURES);
+    assert(j < MAX_TEXTURES);
 
     auto vTexCoords =
-        reinterpret_cast<TEXCOORD2*>(m_pbVertexData[VERTEXDATA_TEXCOORD0 + j]);
+        reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEXDATA_TEXCOORD0 + j]);
     const TEXCOORD2 &uv0 = vTexCoords[i0];
     const TEXCOORD2 &uv1 = vTexCoords[i1];
     const TEXCOORD2 &uv2 = vTexCoords[i2];
@@ -410,7 +406,7 @@ Register *CRasterizer::AffineTextureGradient(Register *pRegister,
     pRegister = this->AffineTextureMipmapGradient(pRegister);
   }
 
-  m_rasterID.Flags.Perspective = 0;
+  rasterID_.Flags.Perspective = 0;
 
   return pRegister;
 }
@@ -419,14 +415,14 @@ Register *
 CRasterizer::PerspectiveTextureGradient(Register *pRegister,
                                         const TriangleGradient &gradient,
                                         uint32_t i0, uint32_t i1, uint32_t i2) {
-  ASSERT(pRegister);
+  assert(pRegister);
 
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
   uint32_t numTextures = rasterFlags.NumTextures;
 
   // Lookup vertex screen positions
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR*>(m_pbVertexData[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   const RDVECTOR &v0 = pvScreenPos[i0];
   const RDVECTOR &v1 = pvScreenPos[i1];
   const RDVECTOR &v2 = pvScreenPos[i2];
@@ -451,7 +447,7 @@ CRasterizer::PerspectiveTextureGradient(Register *pRegister,
 
   for (uint32_t j = 0; j < numTextures; ++j) {
     auto vTexCoords =
-        reinterpret_cast<TEXCOORD2*>(m_pbVertexData[VERTEXDATA_TEXCOORD0 + j]);
+        reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEXDATA_TEXCOORD0 + j]);
     const TEXCOORD2 &uv0 = vTexCoords[i0];
     const TEXCOORD2 &uv1 = vTexCoords[i1];
     const TEXCOORD2 &uv2 = vTexCoords[i2];
@@ -476,19 +472,19 @@ CRasterizer::PerspectiveTextureGradient(Register *pRegister,
                                                        v1, v2, rhws);
   }
 
-  m_rasterID.Flags.Perspective = 1;
+  rasterID_.Flags.Perspective = 1;
 
   return pRegister;
 }
 
 Register *CRasterizer::AffineTextureMipmapGradient(Register *pRegister) {
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
   uint32_t numTextures = rasterFlags.NumTextures;
   uint32_t textureMips = rasterFlags.TextureMips;
   const Register *pCur = pRegister - (2 * numTextures);
 
   for (uint32_t j = 0; j < numTextures; ++j, pCur += 2) {
-    ASSERT(j < MAX_TEXTURES);
+    assert(j < MAX_TEXTURES);
 
     if ((textureMips >> j) & 0x1) {
       float20 fMaxDm[2];
@@ -498,7 +494,7 @@ Register *CRasterizer::AffineTextureMipmapGradient(Register *pRegister) {
             Math::TMax(Math::TAbs(pCur[i].m[0]), Math::TAbs(pCur[i].m[1])));
       }
 
-      Sampler &sampler = m_rasterData.Samplers[j];
+      Sampler &sampler = rasterData_.Samplers[j];
 
       uint32_t logWidth = sampler.pMipLevels[0].GetLogWidth();
       uint32_t logHeight = sampler.pMipLevels[0].GetLogHeight();
@@ -507,31 +503,31 @@ Register *CRasterizer::AffineTextureMipmapGradient(Register *pRegister) {
       floatf fM = Math::TMax(fMU, fMV);
 
       if (fM > fONE) {
-        if (FILTER_NONE == m_rasterID.Textures[j].MipFilter) {
+        if (FILTER_NONE == rasterID_.Textures[j].MipFilter) {
           // Turn off trilinear filtering
-          m_rasterID.Textures[j].MipFilter = FILTER_NONE;
-          m_rasterID.Textures[j].MagFilter = m_rasterID.Textures[j].MinFilter;
-          m_rasterID.Flags.TextureMips &= ~(1 << j);
+          rasterID_.Textures[j].MipFilter = FILTER_NONE;
+          rasterID_.Textures[j].MagFilter = rasterID_.Textures[j].MinFilter;
+          rasterID_.Flags.TextureMips &= ~(1 << j);
         } else {
           auto fJ = static_cast<fixed16>(fM);
-          uint32_t mipLevel = Math::iLog2(fJ.GetRaw()) - fixed16::FRAC;
+          uint32_t mipLevel = Math::iLog2(fJ.data()) - fixed16::FRAC;
           if (mipLevel >= sampler.MaxMipLevel) {
             // Use nearest mipmap filtering
-            m_rasterID.Textures[j].MipFilter = FILTER_NEAREST;
-            m_rasterID.Textures[j].MagFilter = m_rasterID.Textures[j].MinFilter;
+            rasterID_.Textures[j].MipFilter = FILTER_NEAREST;
+            rasterID_.Textures[j].MagFilter = rasterID_.Textures[j].MinFilter;
             fM = static_cast<floatf>(1 << sampler.MaxMipLevel);
           }
 
-          pRegister->m[2] = fixedRX::Make(static_cast<fixed16>(fM).GetRaw());
+          pRegister->m[2] = fixedRX::make(static_cast<fixed16>(fM).data());
           pRegister->m[0] = TConst<fixedRX>::Zero();
           pRegister->m[1] = TConst<fixedRX>::Zero();
           ++pRegister;
         }
       } else {
         // Turn off trilinear filtering
-        m_rasterID.Textures[j].MipFilter = FILTER_NONE;
-        m_rasterID.Textures[j].MinFilter = m_rasterID.Textures[j].MagFilter;
-        m_rasterID.Flags.TextureMips &= ~(1 << j);
+        rasterID_.Textures[j].MipFilter = FILTER_NONE;
+        rasterID_.Textures[j].MinFilter = rasterID_.Textures[j].MagFilter;
+        rasterID_.Flags.TextureMips &= ~(1 << j);
       }
     }
   }
@@ -542,9 +538,9 @@ Register *CRasterizer::AffineTextureMipmapGradient(Register *pRegister) {
 Register *CRasterizer::PerspectiveTextureMipmapGradient(
     Register *pRegister, const TriangleGradient &gradient, const RDVECTOR &v0,
     const RDVECTOR &v1, const RDVECTOR &v2, floatRW rhws[3]) {
-  ASSERT(pRegister);
+  assert(pRegister);
 
-  RASTERFLAGS rasterFlags = m_rasterID.Flags;
+  RASTERFLAGS rasterFlags = rasterID_.Flags;
   uint32_t textureMips = rasterFlags.TextureMips;
   uint32_t numTextures = rasterFlags.NumTextures;
 
@@ -585,7 +581,7 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
         }
       }
 
-      const Sampler &sampler = m_rasterData.Samplers[j];
+      const Sampler &sampler = rasterData_.Samplers[j];
       uint32_t logWidth = sampler.pMipLevels[0].GetLogWidth();
       uint32_t logHeight = sampler.pMipLevels[0].GetLogHeight();
 
@@ -609,61 +605,59 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
 
           if ((fixed16(Math::TAbs(delta[0])) > TConst<fixed16>::Epsilon()) ||
               (fixed16(Math::TAbs(delta[1])) > TConst<fixed16>::Epsilon())) {
-            m_rasterID.Flags.InterpolateMips |= (1 << j);
+            rasterID_.Flags.InterpolateMips |= (1 << j);
             pRegister->m[2] =
-                fixedRX::Make(static_cast<fixed16>(fMs[0]).GetRaw());
-            pRegister->m[0] = fixedRX::Make(
-                gradient.TCalcDeltaX<fixed16>(delta[0], delta[1]).GetRaw());
-            pRegister->m[1] = fixedRX::Make(
-                gradient.TCalcDeltaY<fixed16>(delta[0], delta[1]).GetRaw());
+                fixedRX::make(static_cast<fixed16>(fMs[0]).data());
+            pRegister->m[0] = fixedRX::make(
+                gradient.TCalcDeltaX<fixed16>(delta[0], delta[1]).data());
+            pRegister->m[1] = fixedRX::make(
+                gradient.TCalcDeltaY<fixed16>(delta[0], delta[1]).data());
             ++pRegister;
           } else {
             if (fMs[0] > fRhw2s[0]) {
-              if (FILTER_NONE == m_rasterID.Textures[j].MipFilter) {
+              if (FILTER_NONE == rasterID_.Textures[j].MipFilter) {
                 // Turn off trilinear filtering
-                m_rasterID.Textures[j].MipFilter = FILTER_NONE;
-                m_rasterID.Textures[j].MagFilter =
-                    m_rasterID.Textures[j].MinFilter;
-                m_rasterID.Flags.TextureMips &= ~(1 << j);
+                rasterID_.Textures[j].MipFilter = FILTER_NONE;
+                rasterID_.Textures[j].MagFilter =
+                    rasterID_.Textures[j].MinFilter;
+                rasterID_.Flags.TextureMips &= ~(1 << j);
               } else {
                 floatf fM = fMs[0] / fRhw2s[0];
                 auto fJ = static_cast<fixed16>(fM);
-                uint32_t mipLevel =
-                    Math::iLog2(fJ.GetRaw()) - fixed16::FRAC;
+                uint32_t mipLevel = Math::iLog2(fJ.data()) - fixed16::FRAC;
 
                 if (mipLevel >= sampler.MaxMipLevel) {
                   // Use nearest mipmap filtering
-                  m_rasterID.Textures[j].MipFilter = FILTER_NEAREST;
-                  m_rasterID.Textures[j].MagFilter =
-                      m_rasterID.Textures[j].MinFilter;
+                  rasterID_.Textures[j].MipFilter = FILTER_NEAREST;
+                  rasterID_.Textures[j].MagFilter =
+                      rasterID_.Textures[j].MinFilter;
                   fM = static_cast<floatf>(1 << sampler.MaxMipLevel);
                 }
 
                 pRegister->m[2] =
-                    fixedRX::Make(static_cast<fixed16>(fM).GetRaw());
+                    fixedRX::make(static_cast<fixed16>(fM).data());
                 pRegister->m[0] = TConst<fixedRX>::Zero();
                 pRegister->m[1] = TConst<fixedRX>::Zero();
                 ++pRegister;
               }
             } else {
               // Turn off trilinear filtering
-              m_rasterID.Textures[j].MipFilter = FILTER_NONE;
-              m_rasterID.Textures[j].MinFilter =
-                  m_rasterID.Textures[j].MagFilter;
-              m_rasterID.Flags.TextureMips &= ~(1 << j);
+              rasterID_.Textures[j].MipFilter = FILTER_NONE;
+              rasterID_.Textures[j].MinFilter = rasterID_.Textures[j].MagFilter;
+              rasterID_.Flags.TextureMips &= ~(1 << j);
             }
           }
         } else {
-          if (FILTER_NONE == m_rasterID.Textures[j].MipFilter) {
+          if (FILTER_NONE == rasterID_.Textures[j].MipFilter) {
             // Turn off trilinear filtering
-            m_rasterID.Textures[j].MagFilter = m_rasterID.Textures[j].MinFilter;
-            m_rasterID.Flags.TextureMips &= ~(1 << j);
+            rasterID_.Textures[j].MagFilter = rasterID_.Textures[j].MinFilter;
+            rasterID_.Flags.TextureMips &= ~(1 << j);
           } else {
             // Use nearest mipmap filtering
-            m_rasterID.Textures[j].MipFilter = FILTER_NEAREST;
-            m_rasterID.Textures[j].MagFilter = m_rasterID.Textures[j].MinFilter;
+            rasterID_.Textures[j].MipFilter = FILTER_NEAREST;
+            rasterID_.Textures[j].MagFilter = rasterID_.Textures[j].MinFilter;
             pRegister->m[2] =
-                fixedRX::Make(fixed16(1 << sampler.MaxMipLevel).GetRaw());
+                fixedRX::make(fixed16(1 << sampler.MaxMipLevel).data());
             pRegister->m[0] = TConst<fixedRX>::Zero();
             pRegister->m[1] = TConst<fixedRX>::Zero();
             ++pRegister;
@@ -671,9 +665,9 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
         }
       } else {
         // Turn off trilinear filtering
-        m_rasterID.Textures[j].MipFilter = FILTER_NONE;
-        m_rasterID.Textures[j].MinFilter = m_rasterID.Textures[j].MagFilter;
-        m_rasterID.Flags.TextureMips &= ~(1 << j);
+        rasterID_.Textures[j].MipFilter = FILTER_NONE;
+        rasterID_.Textures[j].MinFilter = rasterID_.Textures[j].MagFilter;
+        rasterID_.Flags.TextureMips &= ~(1 << j);
       }
     }
   }
@@ -684,9 +678,9 @@ Register *CRasterizer::PerspectiveTextureMipmapGradient(
 Register *CRasterizer::FogGradient(Register *pRegister,
                                    const TriangleGradient &gradient,
                                    uint32_t i0, uint32_t i1, uint32_t i2) {
-  ASSERT(pRegister);
+  assert(pRegister);
 
-  auto pfFogs = reinterpret_cast<float20*>(m_pbVertexData[VERTEXDATA_FOG]);
+  auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);
   auto fFog0 = pfFogs[i0];
   auto fFog1 = pfFogs[i1];
   auto fFog2 = pfFogs[i2];
@@ -697,7 +691,7 @@ Register *CRasterizer::FogGradient(Register *pRegister,
       (fixed8(Math::TAbs(delta[1])) > TConst<fixed8>::Epsilon())) {
     pRegister->m[0] = gradient.TCalcDeltaX<fixedRX>(delta[0], delta[1]);
     pRegister->m[1] = gradient.TCalcDeltaY<fixedRX>(delta[0], delta[1]);
-    m_rasterID.Flags.InterpolateFog = 1;
+    rasterID_.Flags.InterpolateFog = 1;
   } else {
     pRegister->m[0] = TConst<fixedRX>::Zero();
     pRegister->m[1] = TConst<fixedRX>::Zero();

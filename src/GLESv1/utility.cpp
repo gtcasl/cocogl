@@ -24,7 +24,7 @@ public:
   CBlitTable() {
     for (uint32_t s = 0; s < FORMAT_COLOR_SIZE_; ++s) {
       for (uint32_t d = 0; d < FORMAT_COLOR_SIZE_; ++d) {
-        m_copyFuncs[s][d] = TCopyNC;
+        copyFuncs_[s][d] = TCopyNC;
       }
     }
 
@@ -32,146 +32,146 @@ public:
       switch (s) {
       case FORMAT_A8:
       case FORMAT_L8:
-        m_copyFuncs[s][s] = TCopyFast<uint8_t>;
+        copyFuncs_[s][s] = TCopyFast<uint8_t>;
         break;
 
       case FORMAT_A8L8:
-        m_copyFuncs[FORMAT_A8L8][FORMAT_A8] = TCopy<FORMAT_A8L8, FORMAT_A8>;
-        m_copyFuncs[FORMAT_A8L8][FORMAT_A8L8] = TCopyFast<uint16_t>;
+        copyFuncs_[FORMAT_A8L8][FORMAT_A8] = TCopy<FORMAT_A8L8, FORMAT_A8>;
+        copyFuncs_[FORMAT_A8L8][FORMAT_A8L8] = TCopyFast<uint16_t>;
         break;
 
       case FORMAT_R5G6B5:
-        m_copyFuncs[FORMAT_R5G6B5][FORMAT_L8] = TCopy<FORMAT_R5G6B5, FORMAT_L8>;
-        m_copyFuncs[FORMAT_R5G6B5][FORMAT_R5G6B5] = TCopyFast<uint16_t>;
-        m_copyFuncs[FORMAT_R5G6B5][FORMAT_R8G8B8] =
+        copyFuncs_[FORMAT_R5G6B5][FORMAT_L8] = TCopy<FORMAT_R5G6B5, FORMAT_L8>;
+        copyFuncs_[FORMAT_R5G6B5][FORMAT_R5G6B5] = TCopyFast<uint16_t>;
+        copyFuncs_[FORMAT_R5G6B5][FORMAT_R8G8B8] =
             TCopy<FORMAT_R5G6B5, FORMAT_R8G8B8>;
-        m_copyFuncs[FORMAT_R5G6B5][FORMAT_B8G8R8] =
+        copyFuncs_[FORMAT_R5G6B5][FORMAT_B8G8R8] =
             TCopy<FORMAT_R5G6B5, FORMAT_B8G8R8>;
-        m_copyFuncs[FORMAT_R5G6B5][FORMAT_A8B8G8R8] =
+        copyFuncs_[FORMAT_R5G6B5][FORMAT_A8B8G8R8] =
             TCopy<FORMAT_R5G6B5, FORMAT_A8B8G8R8>;
-        m_copyFuncs[FORMAT_R5G6B5][FORMAT_A8R8G8B8] =
+        copyFuncs_[FORMAT_R5G6B5][FORMAT_A8R8G8B8] =
             TCopy<FORMAT_R5G6B5, FORMAT_A8R8G8B8>;
         break;
 
       case FORMAT_A1R5G5B5:
-        m_copyFuncs[FORMAT_A1R5G5B5][FORMAT_A8] =
+        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_A8] =
             TCopy<FORMAT_A1R5G5B5, FORMAT_A8>;
-        m_copyFuncs[FORMAT_A1R5G5B5][FORMAT_L8] =
+        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_L8] =
             TCopy<FORMAT_A1R5G5B5, FORMAT_L8>;
-        m_copyFuncs[FORMAT_A1R5G5B5][FORMAT_A8L8] =
+        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_A8L8] =
             TCopy<FORMAT_A1R5G5B5, FORMAT_A8L8>;
-        m_copyFuncs[FORMAT_A1R5G5B5][FORMAT_R8G8B8] =
+        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_R8G8B8] =
             TCopy<FORMAT_A1R5G5B5, FORMAT_R8G8B8>;
-        m_copyFuncs[FORMAT_A1R5G5B5][FORMAT_A8R8G8B8] =
+        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_A8R8G8B8] =
             TCopy<FORMAT_A1R5G5B5, FORMAT_A8R8G8B8>;
-        m_copyFuncs[FORMAT_A1R5G5B5][FORMAT_R5G5B5A1] =
+        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_R5G5B5A1] =
             TCopy<FORMAT_A1R5G5B5, FORMAT_R5G5B5A1>;
-        m_copyFuncs[FORMAT_A1R5G5B5][FORMAT_R4G4B4A4] =
+        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_R4G4B4A4] =
             TCopy<FORMAT_A1R5G5B5, FORMAT_R4G4B4A4>;
-        m_copyFuncs[FORMAT_A1R5G5B5][FORMAT_B8G8R8] =
+        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_B8G8R8] =
             TCopy<FORMAT_A1R5G5B5, FORMAT_B8G8R8>;
-        m_copyFuncs[FORMAT_A1R5G5B5][FORMAT_A8B8G8R8] =
+        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_A8B8G8R8] =
             TCopy<FORMAT_A1R5G5B5, FORMAT_A8B8G8R8>;
         break;
 
       case FORMAT_A4R4G4B4:
-        m_copyFuncs[FORMAT_A4R4G4B4][FORMAT_A8] =
+        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_A8] =
             TCopy<FORMAT_A4R4G4B4, FORMAT_A8>;
-        m_copyFuncs[FORMAT_A4R4G4B4][FORMAT_L8] =
+        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_L8] =
             TCopy<FORMAT_A4R4G4B4, FORMAT_L8>;
-        m_copyFuncs[FORMAT_A4R4G4B4][FORMAT_A8L8] =
+        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_A8L8] =
             TCopy<FORMAT_A4R4G4B4, FORMAT_A8L8>;
-        m_copyFuncs[FORMAT_A4R4G4B4][FORMAT_R8G8B8] =
+        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_R8G8B8] =
             TCopy<FORMAT_A4R4G4B4, FORMAT_R8G8B8>;
-        m_copyFuncs[FORMAT_A4R4G4B4][FORMAT_A8R8G8B8] =
+        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_A8R8G8B8] =
             TCopy<FORMAT_A4R4G4B4, FORMAT_A8R8G8B8>;
-        m_copyFuncs[FORMAT_A4R4G4B4][FORMAT_R5G5B5A1] =
+        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_R5G5B5A1] =
             TCopy<FORMAT_A4R4G4B4, FORMAT_R5G5B5A1>;
-        m_copyFuncs[FORMAT_A4R4G4B4][FORMAT_R4G4B4A4] =
+        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_R4G4B4A4] =
             TCopy<FORMAT_A4R4G4B4, FORMAT_R4G4B4A4>;
-        m_copyFuncs[FORMAT_A4R4G4B4][FORMAT_B8G8R8] =
+        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_B8G8R8] =
             TCopy<FORMAT_A4R4G4B4, FORMAT_B8G8R8>;
-        m_copyFuncs[FORMAT_A4R4G4B4][FORMAT_A8B8G8R8] =
+        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_A8B8G8R8] =
             TCopy<FORMAT_A4R4G4B4, FORMAT_A8B8G8R8>;
         break;
 
       case FORMAT_R8G8B8:
-        m_copyFuncs[FORMAT_R8G8B8][FORMAT_L8] = TCopy<FORMAT_R8G8B8, FORMAT_L8>;
-        m_copyFuncs[FORMAT_R8G8B8][FORMAT_R5G6B5] =
+        copyFuncs_[FORMAT_R8G8B8][FORMAT_L8] = TCopy<FORMAT_R8G8B8, FORMAT_L8>;
+        copyFuncs_[FORMAT_R8G8B8][FORMAT_R5G6B5] =
             TCopy<FORMAT_R8G8B8, FORMAT_R5G6B5>;
-        m_copyFuncs[FORMAT_R8G8B8][FORMAT_R8G8B8] = TCopyFast<uint24>;
-        m_copyFuncs[FORMAT_R8G8B8][FORMAT_B8G8R8] =
+        copyFuncs_[FORMAT_R8G8B8][FORMAT_R8G8B8] = TCopyFast<uint24_t>;
+        copyFuncs_[FORMAT_R8G8B8][FORMAT_B8G8R8] =
             TCopy<FORMAT_R8G8B8, FORMAT_B8G8R8>;
-        m_copyFuncs[FORMAT_R8G8B8][FORMAT_A8B8G8R8] =
+        copyFuncs_[FORMAT_R8G8B8][FORMAT_A8B8G8R8] =
             TCopy<FORMAT_R8G8B8, FORMAT_A8B8G8R8>;
-        m_copyFuncs[FORMAT_R8G8B8][FORMAT_A8R8G8B8] =
+        copyFuncs_[FORMAT_R8G8B8][FORMAT_A8R8G8B8] =
             TCopy<FORMAT_R8G8B8, FORMAT_A8R8G8B8>;
         break;
 
       case FORMAT_A8R8G8B8:
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_A8] =
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_A8] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_A8>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_L8] =
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_L8] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_L8>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_A8L8] =
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_A8L8] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_A8L8>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_R5G6B5] =
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_R5G6B5] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_R5G6B5>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_R8G8B8] =
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_R8G8B8] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_R8G8B8>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_A8R8G8B8] = TCopyFast<uint32_t>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_R5G5B5A1] =
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_A8R8G8B8] = TCopyFast<uint32_t>;
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_R5G5B5A1] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_R5G5B5A1>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_R4G4B4A4] =
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_R4G4B4A4] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_R4G4B4A4>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_B8G8R8] =
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_B8G8R8] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_B8G8R8>;
-        m_copyFuncs[FORMAT_A8R8G8B8][FORMAT_A8B8G8R8] =
+        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_A8B8G8R8] =
             TCopy<FORMAT_A8R8G8B8, FORMAT_A8B8G8R8>;
         break;
 
       case FORMAT_R5G5B5A1:
-        m_copyFuncs[FORMAT_R5G5B5A1][FORMAT_A8] =
+        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_A8] =
             TCopy<FORMAT_R5G5B5A1, FORMAT_A8>;
-        m_copyFuncs[FORMAT_R5G5B5A1][FORMAT_L8] =
+        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_L8] =
             TCopy<FORMAT_R5G5B5A1, FORMAT_L8>;
-        m_copyFuncs[FORMAT_R5G5B5A1][FORMAT_A8L8] =
+        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_A8L8] =
             TCopy<FORMAT_R5G5B5A1, FORMAT_A8L8>;
-        m_copyFuncs[FORMAT_R5G5B5A1][FORMAT_RGB] =
+        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_RGB] =
             TCopy<FORMAT_R5G5B5A1, FORMAT_RGB>;
-        m_copyFuncs[FORMAT_R5G5B5A1][FORMAT_ARGB] =
+        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_ARGB] =
             TCopy<FORMAT_R5G5B5A1, FORMAT_ARGB>;
         break;
 
       case FORMAT_R4G4B4A4:
-        m_copyFuncs[FORMAT_R4G4B4A4][FORMAT_A8] =
+        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_A8] =
             TCopy<FORMAT_R4G4B4A4, FORMAT_A8>;
-        m_copyFuncs[FORMAT_R4G4B4A4][FORMAT_L8] =
+        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_L8] =
             TCopy<FORMAT_R4G4B4A4, FORMAT_L8>;
-        m_copyFuncs[FORMAT_R4G4B4A4][FORMAT_A8L8] =
+        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_A8L8] =
             TCopy<FORMAT_R4G4B4A4, FORMAT_A8L8>;
-        m_copyFuncs[FORMAT_R4G4B4A4][FORMAT_RGB] =
+        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_RGB] =
             TCopy<FORMAT_R4G4B4A4, FORMAT_RGB>;
-        m_copyFuncs[FORMAT_R4G4B4A4][FORMAT_ARGB] =
+        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_ARGB] =
             TCopy<FORMAT_R4G4B4A4, FORMAT_ARGB>;
         break;
 
       case FORMAT_B8G8R8:
-        m_copyFuncs[FORMAT_B8G8R8][FORMAT_L8] = TCopy<FORMAT_B8G8R8, FORMAT_L8>;
-        m_copyFuncs[FORMAT_B8G8R8][FORMAT_RGB] =
+        copyFuncs_[FORMAT_B8G8R8][FORMAT_L8] = TCopy<FORMAT_B8G8R8, FORMAT_L8>;
+        copyFuncs_[FORMAT_B8G8R8][FORMAT_RGB] =
             TCopy<FORMAT_B8G8R8, FORMAT_RGB>;
         break;
 
       case FORMAT_A8B8G8R8:
-        m_copyFuncs[FORMAT_A8B8G8R8][FORMAT_A8] =
+        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_A8] =
             TCopy<FORMAT_A8B8G8R8, FORMAT_A8>;
-        m_copyFuncs[FORMAT_A8B8G8R8][FORMAT_L8] =
+        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_L8] =
             TCopy<FORMAT_A8B8G8R8, FORMAT_L8>;
-        m_copyFuncs[FORMAT_A8B8G8R8][FORMAT_A8L8] =
+        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_A8L8] =
             TCopy<FORMAT_A8B8G8R8, FORMAT_A8L8>;
-        m_copyFuncs[FORMAT_A8B8G8R8][FORMAT_RGB] =
+        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_RGB] =
             TCopy<FORMAT_A8B8G8R8, FORMAT_RGB>;
-        m_copyFuncs[FORMAT_A8B8G8R8][FORMAT_ARGB] =
+        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_ARGB] =
             TCopy<FORMAT_A8B8G8R8, FORMAT_ARGB>;
         break;
       }
@@ -179,9 +179,9 @@ public:
   }
 
   PFN_COPY Get(uint32_t srcFormat, uint32_t dstFormat) const {
-    ASSERT(srcFormat < FORMAT_COLOR_SIZE_);
-    ASSERT(dstFormat < FORMAT_COLOR_SIZE_);
-    return m_copyFuncs[srcFormat][dstFormat];
+    assert(srcFormat < FORMAT_COLOR_SIZE_);
+    assert(dstFormat < FORMAT_COLOR_SIZE_);
+    return copyFuncs_[srcFormat][dstFormat];
   }
 
 private:
@@ -203,8 +203,12 @@ private:
     Color4 tmp;
 
     while (copyHeight--) {
-      auto pSrc = reinterpret_cast<const typename TFormatInfo<SrcFormat>::TYPE *>(pbSrc);
-      for (auto * pDst = reinterpret_cast<typename TFormatInfo<DstFormat>::TYPE *>(pbDst),
+      auto pSrc =
+          reinterpret_cast<const typename TFormatInfo<SrcFormat>::TYPE *>(
+              pbSrc);
+      for (auto *
+               pDst = reinterpret_cast<typename TFormatInfo<DstFormat>::TYPE *>(
+                  pbDst),
               *const pEnd = pDst + copyWidth;
            pDst != pEnd; ++pDst, ++pSrc) {
         Format::TConvertFrom<SrcFormat, true>(&tmp, pSrc);
@@ -234,8 +238,8 @@ private:
 
     while (copyHeight--) {
       auto pSrc = reinterpret_cast<const Type *>(pbSrc);
-      for (auto *pDst = reinterpret_cast<Type *>(pbDst),
-                *const pEnd = pDst + copyWidth;
+      for (auto *pDst = reinterpret_cast<Type *>(pbDst), *const pEnd =
+                                                             pDst + copyWidth;
            pDst != pEnd; ++pDst, ++pSrc) {
         *pDst = *pSrc;
       }
@@ -252,13 +256,13 @@ private:
                         uint32_t /*copyWidth*/, uint32_t /*copyHeight*/,
                         const GLSurfaceDesc & /*srcDesc*/,
                         uint32_t /*srcOffsetX*/, uint32_t /*srcOffsetY*/
-                        ) {
+  ) {
     __glLogError(_T("CSurface2D::Copy() failed, the source and destination ")
                  _T("formats are not compatible."));
     return GL_INVALID_OPERATION;
   }
 
-  PFN_COPY m_copyFuncs[FORMAT_COLOR_SIZE_][FORMAT_COLOR_SIZE_];
+  PFN_COPY copyFuncs_[FORMAT_COLOR_SIZE_][FORMAT_COLOR_SIZE_];
 };
 
 GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
@@ -453,7 +457,7 @@ GLenum GLERROR_FROM_HRESULT(HRESULT hr) {
 
 GLenum ToPixelFormat(ePixelFormat *pOut, uint32_t *pBPP, GLenum format,
                      GLenum type) {
-  ASSERT(pOut && pBPP);
+  assert(pOut && pBPP);
 
   switch (type) {
   case GL_UNSIGNED_BYTE:
@@ -518,7 +522,7 @@ GLenum ToPixelFormat(ePixelFormat *pOut, uint32_t *pBPP, GLenum format,
 }
 
 GLenum ToPixelFormat(ePixelFormat *pOut, GLint format) {
-  ASSERT(pOut);
+  assert(pOut);
 
   switch (format) {
   case GL_ALPHA:

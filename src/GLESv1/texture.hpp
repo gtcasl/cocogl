@@ -20,28 +20,28 @@ class CSurface2D;
 
 class SurfaceDesc {
 public:
-  const uint8_t *GetBits() const { return m_pbBits; }
+  const uint8_t *GetBits() const { return pbBits_; }
 
-  uint8_t *GetBits() { return m_pbBits; }
+  uint8_t *GetBits() { return pbBits_; }
 
-  uint8_t GetLogWidth() const { return m_logWidth; }
+  uint8_t GetLogWidth() const { return logWidth_; }
 
-  uint8_t GetLogHeight() const { return m_logHeight; }
+  uint8_t GetLogHeight() const { return logHeight_; }
 
-  uint16_t GetWidth() const { return 1 << m_logWidth; }
+  uint16_t GetWidth() const { return 1 << logWidth_; }
 
-  uint16_t GetHeight() const { return 1 << m_logHeight; }
+  uint16_t GetHeight() const { return 1 << logHeight_; }
 
 protected:
-  uint8_t *m_pbBits;
+  uint8_t *pbBits_;
 
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
-    uint16_t m_logWidth_logHeight;
+    uint16_t logWidth__logHeight;
     struct {
-      uint8_t m_logWidth;
-      uint8_t m_logHeight;
+      uint8_t logWidth_;
+      uint8_t logHeight_;
     };
   };
   DISABLE_WARNING_POP
@@ -80,17 +80,17 @@ public:
   GLenum Initialize(uint32_t width, uint32_t height, ePixelFormat format,
                     const GLvoid *pPixels);
 
-  uint32_t GetPitch() const { return m_pitch; }
+  uint32_t GetPitch() const { return pitch_; }
 
-  ePixelFormat GetFormat() const { return static_cast<ePixelFormat>(m_format); }
+  ePixelFormat GetFormat() const { return static_cast<ePixelFormat>(format_); }
 
   void GetDesc(GLSurfaceDesc *pSurfaceDesc) const {
-    ASSERT(pSurfaceDesc);
-    pSurfaceDesc->pBits = m_pbBits;
+    assert(pSurfaceDesc);
+    pSurfaceDesc->pBits = pbBits_;
     pSurfaceDesc->Width = this->GetWidth();
     pSurfaceDesc->Height = this->GetHeight();
-    pSurfaceDesc->Pitch = m_pitch;
-    pSurfaceDesc->Format = m_format;
+    pSurfaceDesc->Pitch = pitch_;
+    pSurfaceDesc->Format = format_;
   }
 
   void Destroy();
@@ -98,9 +98,9 @@ public:
 private:
   void Clear();
 
-  int32_t m_pitch;
-  uint8_t m_format;
-  bool m_bOwnedBuffer;
+  int32_t pitch_;
+  uint8_t format_;
+  bool bOwnedBuffer_;
 };
 
 class CTexture : public CObject {
@@ -111,25 +111,25 @@ public:
   static GLenum Create(CTexture **ppTexture);
 
   const CSurface2D &GetSurface(uint32_t level) const {
-    ASSERT(level < MAX_TEXTURE_LEVELS);
-    return m_surfaces[level];
+    assert(level < MAX_TEXTURE_LEVELS);
+    return surfaces_[level];
   }
 
-  const CSurface2D *GetSurfaces() const { return m_surfaces; }
+  const CSurface2D *GetSurfaces() const { return surfaces_; }
 
-  ePixelFormat GetFormat() const { return m_surfaces[0].GetFormat(); }
+  ePixelFormat GetFormat() const { return surfaces_[0].GetFormat(); }
 
-  uint32_t GetHandle() const { return m_dwHandle; }
+  uint32_t GetHandle() const { return dwHandle_; }
 
-  void SetHandle(uint32_t dwHandle) { m_dwHandle = dwHandle; }
+  void SetHandle(uint32_t dwHandle) { dwHandle_ = dwHandle; }
 
   GLenum InitializeSurface(uint32_t level, uint32_t width, uint32_t height,
                            ePixelFormat format) {
-    if (m_pBoundSurface) {
-      this->ReleaseSurface(m_pBoundSurface);
+    if (pBoundSurface_) {
+      this->ReleaseSurface(pBoundSurface_);
     }
 
-    return m_surfaces[level].Initialize(width, height, format);
+    return surfaces_[level].Initialize(width, height, format);
   }
 
   GLenum BindSurface(CGLSurface *pSurface, bool bGenMipMaps);
@@ -140,15 +140,15 @@ public:
 
   bool Validate();
 
-  bool IsDirty() const { return m_bIsDirty; }
+  bool IsDirty() const { return bIsDirty_; }
 
-  void Invalidate() { m_bIsDirty = true; }
+  void Invalidate() { bIsDirty_ = true; }
 
-  uint8_t GetLogWidth() const { return m_surfaces[0].GetLogWidth(); }
+  uint8_t GetLogWidth() const { return surfaces_[0].GetLogWidth(); }
 
-  uint8_t GetLogHeight() const { return m_surfaces[0].GetLogHeight(); }
+  uint8_t GetLogHeight() const { return surfaces_[0].GetLogHeight(); }
 
-  uint8_t GetMaxMipLevel() const { return m_maxMipLevel; }
+  uint8_t GetMaxMipLevel() const { return maxMipLevel_; }
 
   void FreeSurfaces();
 
@@ -156,12 +156,12 @@ private:
   CTexture();
   ~CTexture();
 
-  CSurface2D m_surfaces[MAX_TEXTURE_LEVELS];
-  uint8_t *m_pbMipBuffer;
-  CGLSurface *m_pBoundSurface;
-  uint32_t m_dwHandle;
-  uint8_t m_maxMipLevel;
-  bool m_bIsDirty;
+  CSurface2D surfaces_[MAX_TEXTURE_LEVELS];
+  uint8_t *pbMipBuffer_;
+  CGLSurface *pBoundSurface_;
+  uint32_t dwHandle_;
+  uint8_t maxMipLevel_;
+  bool bIsDirty_;
 };
 
 struct TexUnit {
@@ -170,36 +170,36 @@ public:
   uint8_t EnvMode;
   bool bCoordReplace;
 
-  TexUnit() : m_pTexture(nullptr) {}
+  TexUnit() : pTexture_(nullptr) {}
 
-  ~TexUnit() { __safeRelease(m_pTexture); }
+  ~TexUnit() { __safeRelease(pTexture_); }
 
-  CTexture *GetTexture() const { return m_pTexture; }
+  CTexture *GetTexture() const { return pTexture_; }
 
   void SetTexture(CTexture *pTexture) {
     if (pTexture) {
       pTexture->AddRef();
     }
 
-    if (m_pTexture) {
-      m_pTexture->Release();
+    if (pTexture_) {
+      pTexture_->Release();
     }
 
-    m_pTexture = pTexture;
+    pTexture_ = pTexture;
   }
 
   ePixelFormat GetFormat() const {
-    ASSERT(m_pTexture);
-    return m_pTexture->GetFormat();
+    assert(pTexture_);
+    return pTexture_->GetFormat();
   }
 
   const TexParams &GetParams() const {
-    ASSERT(m_pTexture);
-    return m_pTexture->Params;
+    assert(pTexture_);
+    return pTexture_->Params;
   }
 
   bool Prepare(Sampler *pSampler, TEXTURESTATES *pStates);
 
 private:
-  CTexture *m_pTexture;
+  CTexture *pTexture_;
 };

@@ -18,37 +18,37 @@
 
 void CGLContext::ClearColor(floatf red, floatf green, floatf blue,
                             floatf alpha) {
-  m_vClearColor.x = blue;
-  m_vClearColor.y = green;
-  m_vClearColor.z = red;
-  m_vClearColor.w = alpha;
+  vClearColor_.x = blue;
+  vClearColor_.y = green;
+  vClearColor_.z = red;
+  vClearColor_.w = alpha;
 
-  m_dirtyFlags.ClearColor = 1;
+  dirtyFlags_.ClearColor = 1;
 }
 
 void CGLContext::ClearDepth(floatf depth) {
-  m_fClearDepth = depth;
+  fClearDepth_ = depth;
 
-  m_dirtyFlags.ClearDepth = 1;
+  dirtyFlags_.ClearDepth = 1;
 }
 
-void CGLContext::ClearStencil(GLint stencil) { m_clearStencil = stencil; }
+void CGLContext::ClearStencil(GLint stencil) { clearStencil_ = stencil; }
 
 void CGLContext::ColorMask(GLboolean red, GLboolean green, GLboolean blue,
                            GLboolean alpha) {
-  m_cColorWriteMask.r = red ? 0xff : 0x0;
-  m_cColorWriteMask.g = green ? 0xff : 0x0;
-  m_cColorWriteMask.b = blue ? 0xff : 0x0;
-  m_cColorWriteMask.a = alpha ? 0xff : 0x0;
+  cColorWriteMask_.r = red ? 0xff : 0x0;
+  cColorWriteMask_.g = green ? 0xff : 0x0;
+  cColorWriteMask_.b = blue ? 0xff : 0x0;
+  cColorWriteMask_.a = alpha ? 0xff : 0x0;
 
-  m_dirtyFlags.ColorWriteMask = 1;
+  dirtyFlags_.ColorWriteMask = 1;
 }
 
 void CGLContext::DepthMask(GLboolean flag) {
-  m_depthWriteMask = flag ? 0xffff : 0;
+  depthWriteMask_ = flag ? 0xffff : 0;
 }
 
-void CGLContext::StencilMask(GLuint mask) { m_stencilWriteMask = mask; }
+void CGLContext::StencilMask(GLuint mask) { stencilWriteMask_ = mask; }
 
 void CGLContext::Clear(GLbitfield mask) {
   if (mask &
@@ -59,42 +59,40 @@ void CGLContext::Clear(GLbitfield mask) {
     return;
   }
 
-  if (m_dirtyFlags.ScissorRECT) {
+  if (dirtyFlags_.ScissorRECT) {
     this->UpdateScissorRect();
   }
 
   if (mask & GL_COLOR_BUFFER_BIT) {
     mask &= ~GL_COLOR_BUFFER_BIT;
 
-    if (m_dirtyFlags.ClearColor) {
+    if (dirtyFlags_.ClearColor) {
       this->EnsureClearColor();
     }
 
-    if (m_dirtyFlags.ColorWriteMask) {
+    if (dirtyFlags_.ColorWriteMask) {
       this->EnsureColorWriteMask();
     }
 
-    m_pSurfDraw->ClearColor(m_clearColor, m_rasterData.ColorWriteMask,
-                            m_scissorRect);
+    pSurfDraw_->ClearColor(clearColor_, rasterData_.ColorWriteMask,
+                           scissorRect_);
   }
 
   if (GL_DEPTH_BUFFER_BIT == mask) {
-    if (m_dirtyFlags.ClearDepth) {
+    if (dirtyFlags_.ClearDepth) {
       this->EnsureClearDepth();
     }
 
-    m_pSurfDraw->ClearDepth(m_clearDepth, m_depthWriteMask, m_scissorRect);
+    pSurfDraw_->ClearDepth(clearDepth_, depthWriteMask_, scissorRect_);
   } else if ((GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) == mask) {
-    if (m_dirtyFlags.ClearDepth) {
+    if (dirtyFlags_.ClearDepth) {
       this->EnsureClearDepth();
     }
 
-    m_pSurfDraw->ClearDepthStencil(m_clearDepth, m_depthWriteMask,
-                                   m_clearStencil, m_stencilWriteMask,
-                                   m_scissorRect);
+    pSurfDraw_->ClearDepthStencil(clearDepth_, depthWriteMask_, clearStencil_,
+                                  stencilWriteMask_, scissorRect_);
   } else if (GL_STENCIL_BUFFER_BIT == mask) {
-    m_pSurfDraw->ClearStencil(m_clearStencil, m_stencilWriteMask,
-                              m_scissorRect);
+    pSurfDraw_->ClearStencil(clearStencil_, stencilWriteMask_, scissorRect_);
   }
 }
 
@@ -147,8 +145,9 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
     GLenum err;
 
     if (count < 0) {
-      __glError(GL_INVALID_VALUE, _T("CGLContext::DrawElements() failed, ")
-                                  _T("invalid count parameter: %d.\r\n"),
+      __glError(GL_INVALID_VALUE,
+                _T("CGLContext::DrawElements() failed, ")
+                _T("invalid count parameter: %d.\r\n"),
                 count);
       goto L_EXIT;
     }
@@ -190,8 +189,9 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
           mode, reinterpret_cast<const uint16_t *>(pIndices), count, vmin);
       if (__glFailed(err)) {
         __glError(
-            err, _T("CRasterizer::TRenderIndexedPrimitive<uint16_t>() failed, ")
-                 _T("err = %d.\r\n"),
+            err,
+            _T("CRasterizer::TRenderIndexedPrimitive<uint16_t>() failed, ")
+            _T("err = %d.\r\n"),
             err);
       }
       break;

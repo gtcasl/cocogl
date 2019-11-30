@@ -19,7 +19,7 @@ inline uint32_t CRasterizer::TClipTriangle(uint32_t nNumVertices,
                                            uint32_t *pSrc, uint32_t *pDst,
                                            uint32_t *pTmp) {
   auto pvClipPos =
-      reinterpret_cast<VECTOR4*>(m_pbVertexData[VERTEXDATA_CLIPPOS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
 
   int coord = ClipPlane >> 1;
   static constexpr bool Signed = (ClipPlane & 1) != 0;
@@ -30,41 +30,15 @@ inline uint32_t CRasterizer::TClipTriangle(uint32_t nNumVertices,
 
   uint32_t nClipVertices = 0;
 
-  if
-    constexpr(Signed) {
-      for (floatf fDistA, fDistB = pvClipPos[iVB].w - pvClipPos[iVB].m[coord];
-           nNumVertices--; iVB = iVA, fDistB = fDistA) {
-        iVA = *pSrc++;
-        fDistA = pvClipPos[iVA].w - pvClipPos[iVA].m[coord];
-
-        if (fDistB >= fZERO) {
-          // Add vertex to the current list
-          ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
-          pDst[nClipVertices++] = iVB;
-          if (fDistA >= fZERO) {
-            continue;
-          }
-        } else if (fDistA < fZERO) {
-          continue;
-        }
-
-        // Compute the intersecting vertex
-        this->InterpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
-
-        // Add the new vertex to the current list
-        ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
-        pDst[nClipVertices++] = iTmp++;
-      }
-    }
-  else {
-    for (floatf fDistA, fDistB = pvClipPos[iVB].w + pvClipPos[iVB].m[coord];
+  if constexpr (Signed) {
+    for (floatf fDistA, fDistB = pvClipPos[iVB].w - pvClipPos[iVB].m[coord];
          nNumVertices--; iVB = iVA, fDistB = fDistA) {
       iVA = *pSrc++;
-      fDistA = pvClipPos[iVA].w + pvClipPos[iVA].m[coord];
+      fDistA = pvClipPos[iVA].w - pvClipPos[iVA].m[coord];
 
       if (fDistB >= fZERO) {
         // Add vertex to the current list
-        ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
+        assert(nClipVertices < CLIP_BUFFER_SIZE);
         pDst[nClipVertices++] = iVB;
         if (fDistA >= fZERO) {
           continue;
@@ -77,7 +51,31 @@ inline uint32_t CRasterizer::TClipTriangle(uint32_t nNumVertices,
       this->InterpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
 
       // Add the new vertex to the current list
-      ASSERT(nClipVertices < CLIP_BUFFER_SIZE);
+      assert(nClipVertices < CLIP_BUFFER_SIZE);
+      pDst[nClipVertices++] = iTmp++;
+    }
+  } else {
+    for (floatf fDistA, fDistB = pvClipPos[iVB].w + pvClipPos[iVB].m[coord];
+         nNumVertices--; iVB = iVA, fDistB = fDistA) {
+      iVA = *pSrc++;
+      fDistA = pvClipPos[iVA].w + pvClipPos[iVA].m[coord];
+
+      if (fDistB >= fZERO) {
+        // Add vertex to the current list
+        assert(nClipVertices < CLIP_BUFFER_SIZE);
+        pDst[nClipVertices++] = iVB;
+        if (fDistA >= fZERO) {
+          continue;
+        }
+      } else if (fDistA < fZERO) {
+        continue;
+      }
+
+      // Compute the intersecting vertex
+      this->InterpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
+
+      // Add the new vertex to the current list
+      assert(nClipVertices < CLIP_BUFFER_SIZE);
       pDst[nClipVertices++] = iTmp++;
     }
   }
@@ -91,7 +89,7 @@ template <class T>
 inline GLenum
 CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
                                      uint32_t count, uint32_t startVertex) {
-  ASSERT(pIndices);
+  assert(pIndices);
 
   switch (mode) {
   case GL_TRIANGLES:

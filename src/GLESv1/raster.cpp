@@ -22,24 +22,25 @@
 #ifdef COCOGL_RASTER_PROFILE
 
 void IRasterOp::StartProfile(uint32_t numPixels) {
-  m_profile.Invocations += 1;
-  m_profile.DrawnPixels += numPixels;
+  profile_.Invocations += 1;
+  profile_.DrawnPixels += numPixels;
 }
 
 void IRasterOp::EndProfile(float elapsedTime) {
-  m_profile.RenderTime += elapsedTime;
+  profile_.RenderTime += elapsedTime;
 }
 
 void IRasterOp::LogProfile(const RASTERID &rasterID) {
 
-  float fRenderTime = m_profile.RenderTime;
-  float fMPs = m_profile.DrawnPixels / fRenderTime;
+  float fRenderTime = profile_.RenderTime;
+  float fMPs = profile_.DrawnPixels / fRenderTime;
 
-  DbgPrintf(1, _T("Profile_PS(%d,%d,%d,%d): Calls=%ld, Pixels=%ld, Time=%.6f ")
-               _T("ms, MPs=%.6f - "),
+  DbgPrintf(1,
+            _T("Profile_PS(%d,%d,%d,%d): Calls=%ld, Pixels=%ld, Time=%.6f ")
+            _T("ms, MPs=%.6f - "),
             rasterID.Flags.Value, rasterID.States.Value,
             rasterID.Textures[0].Value, rasterID.Textures[1].Value,
-            m_profile.Invocations, m_profile.DrawnPixels, fRenderTime, fMPs);
+            profile_.Invocations, profile_.DrawnPixels, fRenderTime, fMPs);
   rasterID.Flags.DebugPrint();
   DbgPrintf(1, _T("\r\n"));
 }
@@ -49,37 +50,37 @@ void IRasterOp::LogProfile(const RASTERID &rasterID) {
 //////////////////////////////////////////////////////////////////////////////
 
 GLenum CRasterizer::SetupRasterStates(GLenum mode) {
-  if (nullptr == m_rasterData.pColorBits) {
+  if (nullptr == rasterData_.pColorBits) {
     __glLogError(_T("CRasterizer::SetupRasterStates() failed, missing color ")
                  _T("buffer.\r\n"));
     return GL_INVALID_OPERATION;
   }
 
-  if (m_dirtyFlags.ScissorRECT) {
+  if (dirtyFlags_.ScissorRECT) {
     this->UpdateScissorRect();
   }
 
-  m_cullStates.bCullFaceEnabled = m_caps.CullFace ? true : false;
+  cullStates_.bCullFaceEnabled = caps_.CullFace ? true : false;
 
   RASTERID rasterID;
 
-  rasterID.Flags.ColorFormat = m_rasterData.ColorFormat;
+  rasterID.Flags.ColorFormat = rasterData_.ColorFormat;
 
-  if (m_cColorWriteMask.value != 0xffffffff) {
+  if (cColorWriteMask_.value != 0xffffffff) {
     rasterID.Flags.ColorWriteMask = 1;
 
-    if (m_dirtyFlags.ColorWriteMask) {
+    if (dirtyFlags_.ColorWriteMask) {
       this->EnsureColorWriteMask();
     }
   }
 
-  if (m_caps.Texture2D) {
+  if (caps_.Texture2D) {
     uint32_t n = 0;
 
-    for (uint32_t i = 0, mask = m_caps.Texture2D; mask; mask >>= 1, ++i) {
+    for (uint32_t i = 0, mask = caps_.Texture2D; mask; mask >>= 1, ++i) {
       if (mask & 0x1) {
-        if (m_texUnits[i].Prepare(&m_rasterData.Samplers[n],
-                                  &rasterID.Textures[n])) {
+        if (texUnits_[i].Prepare(&rasterData_.Samplers[n],
+                                 &rasterID.Textures[n])) {
           switch (mode) {
           default:
             __no_default;
@@ -117,113 +118,113 @@ GLenum CRasterizer::SetupRasterStates(GLenum mode) {
       rasterID.Flags.NumTextures = n;
 
       // Turn off MODULATE envMode if not needed
-      if ((ENVMODE_MODULATE == m_texUnits[0].EnvMode) &&
-          m_dirtyFlags.DefaultColor && (0 == m_caps.Lighting) &&
-          (0 == m_vertexStates.Color)) {
+      if ((ENVMODE_MODULATE == texUnits_[0].EnvMode) &&
+          dirtyFlags_.DefaultColor && (0 == caps_.Lighting) &&
+          (0 == vertexStates_.Color)) {
         rasterID.Textures[0].EnvMode = ENVMODE_REPLACE;
       }
     }
   }
 
-  if (!(m_caps.Texture2D & TEXTURE_UNIT0) // tex0 is enabled
+  if (!(caps_.Texture2D & TEXTURE_UNIT0) // tex0 is enabled
       ||
       !((ENVMODE_REPLACE == rasterID.Textures[0].EnvMode) // tex0 replaces color
         &&
         (Format::GetInfo(rasterID.Textures[0].Format).Alpha // Tex0 has alpha
          ||
          !(Format::GetInfo(rasterID.Flags.ColorFormat).Alpha // Alpha not used
-           || m_caps.AlphaTest || m_caps.Blend)))) {
+           || caps_.AlphaTest || caps_.Blend)))) {
     rasterID.Flags.Color = 1;
-    rasterID.Flags.InterpolateColor = (m_caps.ShadeModel) ? 1 : 0;
+    rasterID.Flags.InterpolateColor = (caps_.ShadeModel) ? 1 : 0;
     rasterID.Flags.InterpolateAlpha = rasterID.Flags.InterpolateColor;
   }
 
-  if (m_caps.DepthTest &&
-      Format::GetInfo(m_rasterData.DepthStencilFormat).Depth) {
+  if (caps_.DepthTest &&
+      Format::GetInfo(rasterData_.DepthStencilFormat).Depth) {
     rasterID.Flags.DepthTest = 1;
-    rasterID.Flags.DepthWrite = m_depthWriteMask;
-    rasterID.Flags.DepthStencilFormat = m_rasterData.DepthStencilFormat;
-    rasterID.States.DepthFunc = m_rasterStates.DepthFunc;
+    rasterID.Flags.DepthWrite = depthWriteMask_;
+    rasterID.Flags.DepthStencilFormat = rasterData_.DepthStencilFormat;
+    rasterID.States.DepthFunc = rasterStates_.DepthFunc;
   }
 
-  if (m_caps.StencilTest &&
-      Format::GetInfo(m_rasterData.DepthStencilFormat).Stencil) {
+  if (caps_.StencilTest &&
+      Format::GetInfo(rasterData_.DepthStencilFormat).Stencil) {
     rasterID.Flags.StencilTest = 1;
-    rasterID.Flags.StencilWrite = m_stencilWriteMask ? 1 : 0;
-    rasterID.Flags.DepthStencilFormat = m_rasterData.DepthStencilFormat;
+    rasterID.Flags.StencilWrite = stencilWriteMask_ ? 1 : 0;
+    rasterID.Flags.DepthStencilFormat = rasterData_.DepthStencilFormat;
 
-    rasterID.States.StencilFunc = m_rasterStates.StencilFunc;
-    rasterID.States.StencilFail = m_rasterStates.StencilFail;
-    rasterID.States.StencilZFail = m_rasterStates.StencilZFail;
-    rasterID.States.StencilZPass = m_rasterStates.StencilZPass;
+    rasterID.States.StencilFunc = rasterStates_.StencilFunc;
+    rasterID.States.StencilFail = rasterStates_.StencilFail;
+    rasterID.States.StencilZFail = rasterStates_.StencilZFail;
+    rasterID.States.StencilZPass = rasterStates_.StencilZPass;
 
-    m_rasterData.StencilWriteMask = static_cast<uint8_t>(m_stencilWriteMask);
+    rasterData_.StencilWriteMask = static_cast<uint8_t>(stencilWriteMask_);
   }
 
-  if (m_caps.AlphaTest) {
+  if (caps_.AlphaTest) {
     rasterID.Flags.AlphaTest = 1;
-    rasterID.States.AlphaFunc = m_rasterStates.AlphaFunc;
+    rasterID.States.AlphaFunc = rasterStates_.AlphaFunc;
   }
 
-  if (m_caps.Fog) {
-    rasterID.Flags.Fog = m_caps.Fog;
+  if (caps_.Fog) {
+    rasterID.Flags.Fog = caps_.Fog;
 
-    if (m_dirtyFlags.FogColor) {
+    if (dirtyFlags_.FogColor) {
       this->EnsureFogColor();
     }
   }
 
-  if (m_caps.Blend) {
+  if (caps_.Blend) {
     rasterID.Flags.Blend = 1;
-    rasterID.States.BlendSrc = m_rasterStates.BlendSrc;
-    rasterID.States.BlendDst = m_rasterStates.BlendDst;
+    rasterID.States.BlendSrc = rasterStates_.BlendSrc;
+    rasterID.States.BlendDst = rasterStates_.BlendDst;
   }
 
-  if (m_caps.LogicOp && LOGICOP_COPY != m_rasterStates.LogicFunc) {
+  if (caps_.LogicOp && LOGICOP_COPY != rasterStates_.LogicFunc) {
     rasterID.Flags.LogicOp = 1;
-    rasterID.States.LogicFunc = m_rasterStates.LogicFunc;
+    rasterID.States.LogicFunc = rasterStates_.LogicFunc;
   }
 
-  m_rasterID = rasterID;
+  rasterID_ = rasterID;
 
-  ASSERT(0 == memcmp(&m_rasterID, &rasterID, sizeof(RASTERID)));
+  assert(0 == memcmp(&rasterID_, &rasterID, sizeof(RASTERID)));
 
   return GL_NO_ERROR;
 }
 
 void CRasterizer::UpdateScissorRect() {
-  if (m_caps.ScissorTest) {
+  if (caps_.ScissorTest) {
     Rect rect;
-    m_pSurfDraw->GetRect(&rect);
-    ::IntersectRect(&m_scissorRect, &m_scissor, &rect);
+    pSurfDraw_->GetRect(&rect);
+    ::IntersectRect(&scissorRect_, &scissor_, &rect);
   } else {
-    m_pSurfDraw->GetRect(&m_scissorRect);
+    pSurfDraw_->GetRect(&scissorRect_);
   }
 
-  m_dirtyFlags.ScissorRECT = 0;
+  dirtyFlags_.ScissorRECT = 0;
 }
 
 bool CRasterizer::GenerateRasterOp() {
   GLenum err;
 
   IRasterOp *pRasterOp = nullptr;
-  if (!m_pRasterCache->Lookup(&pRasterOp, m_rasterID)) {
+  if (!pRasterCache_->Lookup(rasterID_, &pRasterOp)) {
 #ifndef NDEBUG
-    DbgPrintf(3, _T("RASTERID: %d,%d,%d,%d\r\n"), m_rasterID.Flags.Value,
-              m_rasterID.States.Value, m_rasterID.Textures[0].Value,
-              m_rasterID.Textures[1].Value);
+    DbgPrintf(3, _T("RASTERID: %d,%d,%d,%d\r\n"), rasterID_.Flags.Value,
+              rasterID_.States.Value, rasterID_.Textures[0].Value,
+              rasterID_.Textures[1].Value);
 #endif
-    err = COptimizedRasterOp::Create(&pRasterOp, m_rasterID);
+    err = COptimizedRasterOp::Create(&pRasterOp, rasterID_);
     if (__glFailed(err)) {
       if (__GL_NO_DATA == err) {
 #ifdef GL_COCOJIT
-        err = CJITRasterOp::Create(&pRasterOp, m_pCGAssembler, m_rasterID);
+        err = CJITRasterOp::Create(&pRasterOp, pCGAssembler_, rasterID_);
         if (__glFailed(err)) {
           __glLogError(_T("CJITRasterOp::Create() failed, err = %d.\r\n"), err);
           return false;
         }
 #else
-        err = CGenericRasterOp::Create(&pRasterOp, m_rasterID);
+        err = CGenericRasterOp::Create(&pRasterOp, rasterID_);
         if (__glFailed(err)) {
           __glLogError(_T("CGenericRasterOp::Create() failed, err = %d.\r\n"),
                        err);
@@ -232,7 +233,7 @@ bool CRasterizer::GenerateRasterOp() {
 #endif
 #ifndef NDEBUG
         // Add the unoptimized scanline to the tracking list
-        m_pRasterCache->TrackSlowRasterID(m_rasterID);
+        pRasterCache_->TrackSlowRasterID(rasterID_);
 #endif
       } else {
         __glLogError(_T("COptimizedRasterOp::Create() failed, err = %d.\r\n"),
@@ -241,25 +242,20 @@ bool CRasterizer::GenerateRasterOp() {
       }
     }
 
-    err = GLERROR_FROM_HRESULT(m_pRasterCache->Insert(m_rasterID, pRasterOp));
-    if (__glFailed(err)) {
-      __safeRelease(pRasterOp);
-      __glLogError(_T("CRasterCache::Insert() failed err = %d.\r\n"), err);
-      return false;
-    }
+    pRasterCache_->Insert(rasterID_, pRasterOp);
   }
 
   // Set the new rasterop
   pRasterOp->AddRef();
-  __safeRelease(m_rasterData.pRasterOp);
-  m_rasterData.pRasterOp = pRasterOp;
+  __safeRelease(rasterData_.pRasterOp);
+  rasterData_.pRasterOp = pRasterOp;
 
   return true;
 }
 
 void CRasterizer::PostRender() {
   // Free the rasterop
-  __safeRelease(m_rasterData.pRasterOp);
+  __safeRelease(rasterData_.pRasterOp);
 }
 
 GLenum CRasterizer::RenderPrimitive(GLenum mode, uint32_t count) {

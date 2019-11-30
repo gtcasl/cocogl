@@ -59,7 +59,7 @@ EGLint CConfig::Create(CConfig **ppConfig, EGLint red, EGLint green,
                        EGLint stencil) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
 
-  ASSERT(ppConfig);
+  assert(ppConfig);
 
   auto pConfig = new CConfig(red, green, blue, alpha, depth, stencil);
   if (nullptr == pConfig) {
@@ -75,7 +75,7 @@ EGLint CConfig::Create(CConfig **ppConfig, EGLint red, EGLint green,
 }
 
 EGLint CConfig::GetAtttribute(EGLint name, EGLint *pValue) const {
-  ASSERT(pValue);
+  assert(pValue);
 
   if ((name < ATTRIBUTES_FIRST) || (name > ATTRIBUTES_LAST) ||
       (EGL_NONE == name)) {
@@ -83,7 +83,7 @@ EGLint CConfig::GetAtttribute(EGLint name, EGLint *pValue) const {
     return EGL_BAD_ATTRIBUTE;
   }
 
-  *pValue = m_attributes[name - ATTRIBUTES_FIRST];
+  *pValue = attributes_[name - ATTRIBUTES_FIRST];
 
   return EGL_SUCCESS;
 }
@@ -91,7 +91,7 @@ EGLint CConfig::GetAtttribute(EGLint name, EGLint *pValue) const {
 EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
   EGLint err;
 
-  ASSERT(pbResult);
+  assert(pbResult);
 
   *pbResult = false;
 
@@ -253,7 +253,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
 }
 
 int CConfig::Compare(const CConfig *pConfigA, const CConfig *pConfigB) {
-  ASSERT(pConfigA && pConfigB);
+  assert(pConfigA && pConfigB);
 
   static const EGLint sortedList[] = {
       EGL_CONFIG_CAVEAT,      EGL_RED_SIZE,
