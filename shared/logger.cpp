@@ -15,12 +15,12 @@
 #include "stdafx.h"
 #include <stdarg.h>
 
-CLogger::CLogger(LPCTSTR lpszFileName, LPCTSTR lpszMode)
+CLogger::CLogger(const char *fileName, const char *mode)
     : file_(nullptr), indent_(0) {
-  if (lpszFileName) {
-    auto hr = this->Open(lpszFileName, lpszMode);
+  if (fileName) {
+    auto hr = this->Open(fileName, mode);
     if (FAILED(hr)) {
-      _tprintf(_T("error: couldn't open log file: %s"), lpszFileName);
+      fprintf(stderr, "error: couldn't open log file: %s", fileName);
     }
   }
 }
@@ -31,63 +31,63 @@ CLogger::~CLogger() {
   }
 }
 
-HRESULT CLogger::Open(LPCTSTR lpszFileName, LPCTSTR lpszMode) {
-  if ((nullptr == lpszFileName) || (nullptr == lpszMode))
+HRESULT CLogger::Open(const char *fileName, const char *mode) {
+  if ((nullptr == fileName) || (nullptr == mode))
     return E_INVALIDARG;
 
-  file_ = _tfopen(lpszFileName, lpszMode);
+  file_ = fopen(fileName, mode);
   if (nullptr == file_)
     return E_FAIL;
 
   return S_OK;
 }
 
-HRESULT CLogger::Write(const TCHAR *pszFormat, ...) {
+HRESULT CLogger::Write(const char *format, ...) {
   if (nullptr == file_)
     return E_FAIL;
 
-  if ((nullptr == pszFormat) || (0 == *pszFormat))
+  if ((nullptr == format) || (0 == *format))
     return S_OK;
 
   uint32_t indent = indent_;
   while (indent--) {
-    _ftprintf(file_, _T("  "));
+    fprintf(file_, "  ");
   }
 
   va_list arglist;
-  va_start(arglist, pszFormat);
+  va_start(arglist, format);
 
-  _vftprintf(file_, pszFormat, arglist);
+  vfprintf(file_, format, arglist);
 
   va_end(arglist);
 
   return S_OK;
 }
 
-HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
+HRESULT CLogger::Write(const char *format, va_list arglist) {
   if (nullptr == file_)
     return E_FAIL;
 
-  if ((nullptr == pszFormat) || (0 == *pszFormat))
+  if ((nullptr == format) || (0 == *format))
     return S_OK;
 
   uint32_t indent = indent_;
   while (indent--) {
-    _ftprintf(file_, _T("  "));
+    fprintf(file_, "  ");
   }
 
-  _vftprintf(file_, pszFormat, arglist);
+  vfprintf(file_, format, arglist);
 
   return S_OK;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CAutoLog::CAutoLog(CLogger &logger, const TCHAR *pszFunc, ...)
+CAutoLog::CAutoLog(CLogger &logger, const char *func, ...)
     : logger_(logger) {
   va_list arglist;
-  va_start(arglist, pszFunc);
-  logger.Write(pszFunc, arglist);
+  va_start(arglist, func);
+  logger.Write(func, arglist);
   logger.IncrIndent();
   va_end(arglist);
 }

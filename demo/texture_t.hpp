@@ -57,8 +57,8 @@ public:
     Perspective(45.0f, ratio, 1.0f, 40.0f);
     glMatrixMode(GL_MODELVIEW);
 
-    bool result = LoadTGA(_T("media/door128.tga"), &texture1_);
-    result &= LoadTGA(_T("media/fire128.tga"), &texture2_);
+    bool result = LoadTGA("media/door128.tga", &texture1_);
+    result &= LoadTGA("media/fire128.tga", &texture2_);
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 

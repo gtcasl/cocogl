@@ -18,7 +18,7 @@
 void CGLContext::Hint(GLenum target, GLenum mode) {
   if ((mode != GL_DONT_CARE) && (mode != GL_FASTEST) && (mode != GL_NICEST)) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::Hint() failed, invalid mode parameter: %d.\r\n"),
+              "CGLContext::Hint() failed, invalid mode parameter: %d.\r\n",
               mode);
     return;
   }
@@ -49,7 +49,7 @@ void CGLContext::Hint(GLenum target, GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::Hint() failed, invalid target parameter: %d.\r\n"),
+        "CGLContext::Hint() failed, invalid target parameter: %d.\r\n",
         target);
     return;
   }
@@ -198,7 +198,7 @@ void CGLContext::Activate(GLenum cap, bool bValue) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::Activate() failed, invalid cap parameter: %d.\r\n"),
+        "CGLContext::Activate() failed, invalid cap parameter: %d.\r\n",
         cap);
     return;
   }

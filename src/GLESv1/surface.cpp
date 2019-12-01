@@ -17,7 +17,7 @@
 #include "surface.inl"
 
 CGLSurface::CGLSurface() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   memset(&pColorDesc_, 0, sizeof(pColorDesc_));
   memset(&pDepthStencilDesc_, 0, sizeof(pDepthStencilDesc_));
@@ -31,12 +31,12 @@ CGLSurface::CGLSurface() {
   }
 }
 
-CGLSurface::~CGLSurface() { __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__)); }
+CGLSurface::~CGLSurface() { __profileAPI(" - %s()\n", __FUNCTION__); }
 
 GLenum CGLSurface::Create(CGLSurface **ppSurface,
                           const GLSurfaceDesc *pColorDesc,
                           const GLSurfaceDesc *pDepthStencilDesc) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
@@ -45,7 +45,7 @@ GLenum CGLSurface::Create(CGLSurface **ppSurface,
   // Create a new surface object
   auto pSurface = new CGLSurface();
   if (nullptr == pSurface) {
-    __glLogError(_T("CGLSurface allocation failed, out of memory.\r\n"));
+    __glLogError("CGLSurface allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -55,7 +55,7 @@ GLenum CGLSurface::Create(CGLSurface **ppSurface,
   err = pSurface->Initialize(pColorDesc, pDepthStencilDesc);
   if (__glFailed(err)) {
     __safeRelease(pSurface);
-    __glLogError(_T("CGLSurface::Initialize() failed, err = %d.\r\n"), err);
+    __glLogError("CGLSurface::Initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -66,7 +66,7 @@ GLenum CGLSurface::Create(CGLSurface **ppSurface,
 
 GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
                               const GLSurfaceDesc *pDepthStencilDesc) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (pColorDesc && pColorDesc->pBits) {
     pColorDesc_ = *pColorDesc;
@@ -101,7 +101,7 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
       break;
     default:
       __glLogError(
-          _T("CGLSurface::Initialize() failed, invalid color format: %d.\r\n"),
+          "CGLSurface::Initialize() failed, invalid color format: %d.\r\n",
           pColorDesc->Format);
       return GL_INVALID_VALUE;
     }
@@ -110,8 +110,8 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
         || !__isAligned32(
                pColorDesc->pBits)) // The buffer address is uint32_t aligned
     {
-      __glLogError(_T("CGLSurface::Initialize() failed, invalid color buffer ")
-                   _T("alignment.\r\n"));
+      __glLogError("CGLSurface::Initialize() failed, invalid color buffer "
+                   "alignment.\r\n");
       return GL_INVALID_VALUE;
     }
   }
@@ -133,8 +133,8 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
       break;
 
     default:
-      __glLogError(_T("CGLSurface::Initialize() failed, invalid depth stencil ")
-                   _T("format: %d.\r\n"),
+      __glLogError("CGLSurface::Initialize() failed, invalid depth stencil "
+                   "format: %d.\r\n",
                    pDepthStencilDesc->Format);
       return GL_INVALID_VALUE;
     }
@@ -144,8 +144,8 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
         !__isAligned32(
             pDepthStencilDesc->pBits)) // The buffer address is uint32_t aligned
     {
-      __glLogError(_T("CGLSurface::Initialize() failed, invalid depth stencil ")
-                   _T("buffer alignment.\r\n"));
+      __glLogError("CGLSurface::Initialize() failed, invalid depth stencil "
+                   "buffer alignment.\r\n");
       return GL_INVALID_VALUE;
     }
   }
@@ -155,7 +155,7 @@ GLenum CGLSurface::Initialize(const GLSurfaceDesc *pColorDesc,
   return GL_NO_ERROR;
 }
 
-GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
+GLenum CGLSurface::SaveBitmap(const char *filename) {
   BITMAPFILEHEADER header;
   header.bfSize = 0;
   header.bfType = BF_TYPE;
@@ -210,7 +210,7 @@ GLenum CGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
     pBits += offset;
   }
 
-  auto pFile = _tfopen(lpszFilename, "w");
+  auto pFile = fopen(filename, "w");
   if (nullptr == pFile) {
     return GL_INVALID_OPERATION;
   }

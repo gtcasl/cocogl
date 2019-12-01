@@ -54,7 +54,7 @@ void CGLContext::Clear(GLbitfield mask) {
   if (mask &
       ~(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::Clear() failed, invalid mask parameter: %d.\r\n"),
+              "CGLContext::Clear() failed, invalid mask parameter: %d.\r\n",
               mask);
     return;
   }
@@ -102,7 +102,7 @@ void CGLContext::DrawArrays(GLenum mode, GLint first, GLsizei count) {
   if (count < 0) {
     __glError(
         GL_INVALID_VALUE,
-        _T("CGLContext::DrawArrays() failed, invalid count parameter: %d.\r\n"),
+        "CGLContext::DrawArrays() failed, invalid count parameter: %d.\r\n",
         count);
     goto L_EXIT;
   }
@@ -110,7 +110,7 @@ void CGLContext::DrawArrays(GLenum mode, GLint first, GLsizei count) {
   // Setup the raster states
   err = this->SetupRasterStates(mode);
   if (__glFailed(err)) {
-    __glLogError(_T("CRasterizer::SetupRasterStates() failed, err = %d.\r\n"),
+    __glLogError("CRasterizer::SetupRasterStates() failed, err = %d.\r\n",
                  err);
     goto L_EXIT;
   }
@@ -118,7 +118,7 @@ void CGLContext::DrawArrays(GLenum mode, GLint first, GLsizei count) {
   // Setup TNL states
   err = this->SetupTNLStates(mode, first, count);
   if (__glFailed(err)) {
-    __glLogError(_T("CTNL::SetupTNLStates() failed, err = %d.\r\n"), err);
+    __glLogError("CTNL::SetupTNLStates() failed, err = %d.\r\n", err);
     goto L_EXIT;
   }
 
@@ -128,7 +128,7 @@ void CGLContext::DrawArrays(GLenum mode, GLint first, GLsizei count) {
   // Render primitives
   err = this->RenderPrimitive(mode, count);
   if (__glFailed(err)) {
-    __glError(err, _T("CRasterizer::RenderPrimitive() failed, err = %d.\r\n"),
+    __glError(err, "CRasterizer::RenderPrimitive() failed, err = %d.\r\n",
               err);
     goto L_EXIT;
   }
@@ -146,8 +146,8 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
 
     if (count < 0) {
       __glError(GL_INVALID_VALUE,
-                _T("CGLContext::DrawElements() failed, ")
-                _T("invalid count parameter: %d.\r\n"),
+                "CGLContext::DrawElements() failed, "
+                "invalid count parameter: %d.\r\n",
                 count);
       goto L_EXIT;
     }
@@ -155,7 +155,7 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
     // Setup the raster states
     err = this->SetupRasterStates(mode);
     if (__glFailed(err)) {
-      __glLogError(_T("CRasterizer::SetupRasterStates() failed, err = %d.\r\n"),
+      __glLogError("CRasterizer::SetupRasterStates() failed, err = %d.\r\n",
                    err);
       goto L_EXIT;
     }
@@ -165,7 +165,7 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
     // Prepare index buffer
     err = this->PrepareIndices(type, &pIndices, count, &vmin, &vmax);
     if (__glFailed(err)) {
-      __glError(err, _T("CGLContext::PrepareIndices() failed, err = %d.\r\n"),
+      __glError(err, "CGLContext::PrepareIndices() failed, err = %d.\r\n",
                 err);
       goto L_EXIT;
     }
@@ -175,7 +175,7 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
     // Setup TNL states
     err = this->SetupTNLStates(mode, vmin, vertexCount);
     if (__glFailed(err)) {
-      __glLogError(_T("CTNL::SetupTNLStates() failed, err = %d.\r\n"), err);
+      __glLogError("CTNL::SetupTNLStates() failed, err = %d.\r\n", err);
       goto L_EXIT;
     }
 
@@ -190,8 +190,8 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
       if (__glFailed(err)) {
         __glError(
             err,
-            _T("CRasterizer::TRenderIndexedPrimitive<uint16_t>() failed, ")
-            _T("err = %d.\r\n"),
+            "CRasterizer::TRenderIndexedPrimitive<uint16_t>() failed, "
+            "err = %d.\r\n",
             err);
       }
       break;
@@ -202,16 +202,16 @@ void CGLContext::DrawElements(GLenum mode, GLsizei count, GLenum type,
           mode, reinterpret_cast<const uint8_t *>(pIndices), count, vmin);
       if (__glFailed(err)) {
         __glError(err,
-                  _T("CRasterizer::TRenderIndexedPrimitive<uint8_t>() failed, ")
-                  _T("err = %d.\r\n"),
+                  "CRasterizer::TRenderIndexedPrimitive<uint8_t>() failed, "
+                  "err = %d.\r\n",
                   err);
       }
       break;
 
     default:
       __glError(GL_INVALID_ENUM,
-                _T("CGLContext::DrawElements() failed, invalid ")
-                _T("type parameter: %d.\r\n"),
+                "CGLContext::DrawElements() failed, invalid "
+                "type parameter: %d.\r\n",
                 type);
     }
   }

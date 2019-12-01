@@ -19,7 +19,7 @@ public:
   CMesh();
   ~CMesh();
 
-  bool OnInitialize(LPCTSTR lpszFileName); 
+  bool OnInitialize(const char *fileName); 
 
   void OnRender();
 private:

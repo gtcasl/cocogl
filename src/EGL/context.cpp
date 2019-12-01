@@ -18,7 +18,7 @@
 #include "surface.hpp"
 
 CEGLContext::CEGLContext(CDisplay *pDisplay, CConfig *pConfig) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(pDisplay);
   pDisplay->AddRef();
@@ -35,7 +35,7 @@ CEGLContext::CEGLContext(CDisplay *pDisplay, CConfig *pConfig) {
 }
 
 CEGLContext::~CEGLContext() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (glContext_) {
     __glDestroyContext(glContext_);
@@ -49,7 +49,7 @@ CEGLContext::~CEGLContext() {
 
 EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
                            CConfig *pConfig, CEGLContext *pCtxShared) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
 
@@ -58,7 +58,7 @@ EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
   // Create a new context object
   auto pContext = new CEGLContext(pDisplay, pConfig);
   if (nullptr == pContext) {
-    __eglLogError(_T("CEGLContext allocation failed, out of memory.\r\n"));
+    __eglLogError("CEGLContext allocation failed, out of memory.\r\n");
     return EGL_BAD_ALLOC;
   }
 
@@ -68,7 +68,7 @@ EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
   err = pContext->Initialize(pCtxShared);
   if (__eglFailed(err)) {
     __safeRelease(pContext);
-    __eglLogError(_T("CEGLContext::Initialize() failed, err = %d.\r\n"), err);
+    __eglLogError("CEGLContext::Initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -78,7 +78,7 @@ EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
 }
 
 EGLint CEGLContext::Initialize(CEGLContext *pCtxShared) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
 
@@ -91,7 +91,7 @@ EGLint CEGLContext::Initialize(CEGLContext *pCtxShared) {
   }
 
   if (__eglFailed(err)) {
-    __eglLogError(_T("__glCreateContext() failed, err = %d.\r\n"), err);
+    __eglLogError("__glCreateContext() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -107,7 +107,7 @@ EGLint CEGLContext::GetAttribute(EGLint name, EGLint *pValue) {
     break;
 
   default:
-    __eglLogError(_T("Invalid attribute name : %d.\r\n"), name);
+    __eglLogError("Invalid attribute name : %d.\r\n", name);
     return EGL_BAD_ATTRIBUTE;
   }
 

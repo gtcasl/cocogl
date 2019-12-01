@@ -261,7 +261,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
 
   // Generate the rasterization routine
   if (!this->GenerateRasterOp()) {
-    __glLogError(_T("CRasterizer::GenerateRasterOp() failed.\r\n"));
+    __glLogError("CRasterizer::GenerateRasterOp() failed.\r\n");
     return false;
   }
 

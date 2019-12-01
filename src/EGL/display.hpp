@@ -26,7 +26,7 @@ public:
 
   EGLint Initialize(EGLint *pMajor, EGLint *pMinor);
 
-  EGLint QueryString(LPCSTR *plpValue, EGLint name);
+  EGLint QueryString(const char **plpValue, EGLint name);
 
   EGLint ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
                       EGLint config_size, EGLint *pNum_config);

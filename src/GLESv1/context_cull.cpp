@@ -25,7 +25,7 @@ void CGLContext::FrontFace(GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::FrontFace() failed, invalid mode parameter: %d.\r\n"),
+        "CGLContext::FrontFace() failed, invalid mode parameter: %d.\r\n",
         mode);
     return;
   }
@@ -42,7 +42,7 @@ void CGLContext::CullFace(GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::CullFace() failed, invalid mode parameter: %d.\r\n"),
+        "CGLContext::CullFace() failed, invalid mode parameter: %d.\r\n",
         mode);
     return;
   }

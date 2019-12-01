@@ -771,7 +771,7 @@ struct RASTERFLAGS {
   }
 
   void DebugPrint() const {
-    DbgPrintf(3, _T("Z%d C%d A%d P%d T%d M%d B%d A%d F%d"),
+    DbgPrintf(3, "Z%d C%d A%d P%d T%d M%d B%d A%d F%d",
               this->DepthTest + this->InterpolateDepth,
               this->Color + this->InterpolateColor,
               this->Color + this->InterpolateAlpha, this->Perspective,

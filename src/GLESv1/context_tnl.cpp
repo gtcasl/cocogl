@@ -19,7 +19,7 @@ void CGLContext::ClipPlane(GLenum plane, const VECTOR4 &equation) {
   if ((plane - GL_CLIP_PLANE0) >= MAX_CLIPPLANES) {
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::ClipPlane() failed, invalid plane parameter: %d.\r\n"),
+        "CGLContext::ClipPlane() failed, invalid plane parameter: %d.\r\n",
         plane);
     return;
   }
@@ -44,8 +44,8 @@ void CGLContext::DepthRange(floatf zNear, floatf zFar) {
 void CGLContext::Viewport(GLint x, GLint y, GLsizei width, GLsizei height) {
   if ((width < 0) || (height < 0)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::Viewport() failed, invalid ")
-              _T("width=%d or height=%d parameters.\r\n"),
+              "CGLContext::Viewport() failed, invalid "
+              "width=%d or height=%d parameters.\r\n",
               width, height);
     return;
   }

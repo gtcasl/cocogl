@@ -34,17 +34,17 @@ l_optimizedScanlines[] = {
 };
 
 COptimizedRasterOp::COptimizedRasterOp(PfnScanline pfnScanline) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
   pfnScanline_ = pfnScanline;
 }
 
 COptimizedRasterOp::~COptimizedRasterOp() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 }
 
 GLenum COptimizedRasterOp::Create(IRasterOp **ppRasterOp,
                                   const RASTERID &rasterID) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(ppRasterOp);
 
@@ -56,7 +56,7 @@ GLenum COptimizedRasterOp::Create(IRasterOp **ppRasterOp,
           new COptimizedRasterOp(l_optimizedScanlines[i].pfnScanline);
       if (nullptr == pRasterOp) {
         __glLogError(
-            _T("COptimizedRasterOp allocation failed, out of memory.\r\n"));
+            "COptimizedRasterOp allocation failed, out of memory.\r\n");
         return GL_OUT_OF_MEMORY;
       }
 

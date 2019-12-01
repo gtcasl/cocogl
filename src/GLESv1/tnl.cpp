@@ -136,11 +136,11 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, uint32_t count) {
   if (vertexStates_.Position) {
     err = positionArray_.Prepare(&positionDecode_, first, count);
     if (__glFailed(err)) {
-      __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
+      __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
-    __glLogError(_T("The vertex array input is disabled.\r\n"));
+    __glLogError("The vertex array input is disabled.\r\n");
     return GL_INVALID_OPERATION;
   }
 
@@ -183,7 +183,7 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, uint32_t count) {
   if (GL_POINTS == mode) {
     err = this->UpdatePoints(&pbVertexData, first, count);
     if (__glFailed(err)) {
-      __glLogError(_T("CTNL::UpdatePoints() failed, err = %d.\r\n"), err);
+      __glLogError("CTNL::UpdatePoints() failed, err = %d.\r\n", err);
       return err;
     }
   }
@@ -191,7 +191,7 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, uint32_t count) {
   if (rasterFlags.Color) {
     err = this->UpdateColor(&pbVertexData, first, count);
     if (__glFailed(err)) {
-      __glLogError(_T("CTNL::UpdateColor() failed, err = %d.\r\n"), err);
+      __glLogError("CTNL::UpdateColor() failed, err = %d.\r\n", err);
       return err;
     }
   }
@@ -199,7 +199,7 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, uint32_t count) {
   if (rasterFlags.NumTextures) {
     err = this->UpdateTexcoords(&pbVertexData, first, count);
     if (__glFailed(err)) {
-      __glLogError(_T("CTNL::UpdateTexcoords() failed, err = %d.\r\n"), err);
+      __glLogError("CTNL::UpdateTexcoords() failed, err = %d.\r\n", err);
       return err;
     }
   }
@@ -845,7 +845,7 @@ GLenum CTNL::UpdatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
   if (vertexStates_.PointSize) {
     err = pointSizeArray_.Prepare(&pointSizeDecode_, first, count);
     if (__glFailed(err)) {
-      __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
+      __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
@@ -886,7 +886,7 @@ GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
   if (vertexStates_.Color) {
     err = colorArray_.Prepare(&colorDecode_, first, count);
     if (__glFailed(err)) {
-      __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
+      __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
@@ -902,7 +902,7 @@ GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
   if (caps_.Lighting) {
     err = this->UpdateLighting(ppbVertexData, first, count);
     if (__glFailed(err)) {
-      __glLogError(_T("CTNL::UpdateLighting() failed, err = %d.\r\n"), err);
+      __glLogError("CTNL::UpdateLighting() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
@@ -931,7 +931,7 @@ GLenum CTNL::UpdateLighting(uint8_t **ppbVertexData, int first,
   if (vertexStates_.Normal) {
     err = normalArray_.Prepare(&normalDecode_, first, count);
     if (__glFailed(err)) {
-      __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
+      __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
@@ -1002,7 +1002,7 @@ GLenum CTNL::UpdateTexcoords(uint8_t **ppbVertexData, int first,
       if ((vertexStates_.TexCoords >> i) & 0x1) {
         err = texCoordArrays_[i].Prepare(&texCoordDecodes_[i], first, count);
         if (__glFailed(err)) {
-          __glLogError(_T("VertexArray::Prepare() failed, err = %d.\r\n"), err);
+          __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
           return err;
         }
       } else {

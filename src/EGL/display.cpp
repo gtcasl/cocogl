@@ -16,7 +16,7 @@
 #include "config.hpp"
 
 CDisplay::CDisplay(EGLNativeDisplayType hNative, CHandleTable *pHandles) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(pHandles);
   pHandles->AddRef();
@@ -27,7 +27,7 @@ CDisplay::CDisplay(EGLNativeDisplayType hNative, CHandleTable *pHandles) {
 }
 
 CDisplay::~CDisplay() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (hNative_) {
 #if defined(_WIN32)
@@ -47,14 +47,14 @@ CDisplay::~CDisplay() {
 
 EGLint CDisplay::Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC,
                         CHandleTable *pHandles) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(pHandles && ppDisplay);
 
   // Create a new display object
   auto pDisplay = new CDisplay(hDC, pHandles);
   if (nullptr == pDisplay) {
-    __eglLogError(_T("CDisplay allocation failed, out of memory"));
+    __eglLogError("CDisplay allocation failed, out of memory");
     return EGL_BAD_ALLOC;
   }
 
@@ -66,7 +66,7 @@ EGLint CDisplay::Create(CDisplay **ppDisplay, EGLNativeDisplayType hDC,
 }
 
 EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
 
@@ -74,37 +74,37 @@ EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
 #if defined(COCOGL_RASTER_R5G6B5)
     err = this->CreateConfig(5, 6, 5, 0, 0, 0);
     if (__eglFailed(err)) {
-      __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
+      __eglLogError("TList::Add() failed, err = %d.\r\n", err);
       return err;
     }
 
     err = this->CreateConfig(5, 6, 5, 0, 16, 0);
     if (__eglFailed(err)) {
-      __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
+      __eglLogError("TList::Add() failed, err = %d.\r\n", err);
       return err;
     }
 
     err = this->CreateConfig(5, 6, 5, 0, 16, 8);
     if (__eglFailed(err)) {
-      __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
+      __eglLogError("TList::Add() failed, err = %d.\r\n", err);
       return err;
     }
 #elif defined(COCOGL_RASTER_A8R8G8B8)
     err = this->CreateConfig(8, 8, 8, 8, 0, 0);
     if (__eglFailed(err)) {
-      __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
+      __eglLogError("TList::Add() failed, err = %d.\r\n", err);
       return err;
     }
 
     err = this->CreateConfig(8, 8, 8, 8, 16, 0);
     if (__eglFailed(err)) {
-      __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
+      __eglLogError("TList::Add() failed, err = %d.\r\n", err);
       return err;
     }
 
     err = this->CreateConfig(8, 8, 8, 8, 16, 8);
     if (__eglFailed(err)) {
-      __eglLogError(_T("TList::Add() failed, err = %d.\r\n"), err);
+      __eglLogError("TList::Add() failed, err = %d.\r\n", err);
       return err;
     }
 #endif
@@ -125,7 +125,7 @@ EGLint CDisplay::Initialize(EGLint *pMajor, EGLint *pMinor) {
 
 EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
                               EGLint alpha, EGLint depth, EGLint stencil) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
   CConfig *pConfig;
@@ -133,7 +133,7 @@ EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
   // Create a new config object
   err = CConfig::Create(&pConfig, red, green, blue, alpha, depth, stencil);
   if (__eglFailed(err)) {
-    __eglLogError(_T("CConfig::Create() failed, err = %d.\r\n"), err);
+    __eglLogError("CConfig::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -156,7 +156,7 @@ EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
       handles_->Insert(&dwHandle, pConfig, HANDLE_CONFIG, this));
   if (__eglFailed(err)) {
     __safeRelease(pConfig);
-    __eglLogError(_T("CHandleTable::Insert() failed, err = %d.\r\n"), err);
+    __eglLogError("CHandleTable::Insert() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -166,12 +166,12 @@ EGLint CDisplay::CreateConfig(EGLint red, EGLint green, EGLint blue,
   return EGL_SUCCESS;
 }
 
-EGLint CDisplay::QueryString(LPCSTR *plpValue, EGLint name) {
+EGLint CDisplay::QueryString(const char **plpValue, EGLint name) {
   assert(plpValue);
 
   // Verify that the display was initialized
   if (!bInitialized_) {
-    __eglLogError(_T("The display was not initialized.\r\n"));
+    __eglLogError("The display was not initialized.\r\n");
     return EGL_NOT_INITIALIZED;
   }
 
@@ -189,7 +189,7 @@ EGLint CDisplay::QueryString(LPCSTR *plpValue, EGLint name) {
     break;
 
   default:
-    __eglLogError(_T("Invalid querystring name: %d.\r\n"), name);
+    __eglLogError("Invalid querystring name: %d.\r\n", name);
     return EGL_BAD_PARAMETER;
   }
 
@@ -202,7 +202,7 @@ EGLint CDisplay::ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
 
   // Verify that the display was initialized
   if (!bInitialized_) {
-    __eglLogError(_T("The display was not initialized.\r\n"));
+    __eglLogError("The display was not initialized.\r\n");
     return EGL_NOT_INITIALIZED;
   }
 
@@ -219,7 +219,7 @@ EGLint CDisplay::ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
     bool bResult;
     err = pConfig->Matches(pAttrib_list, &bResult);
     if (__eglFailed(err)) {
-      __eglLogError(_T("CConfig::Matches() failed, err = %d.\r\n"), err);
+      __eglLogError("CConfig::Matches() failed, err = %d.\r\n", err);
       return err;
     }
 

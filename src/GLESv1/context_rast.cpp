@@ -25,7 +25,7 @@ void CGLContext::ShadeModel(GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::ShadeMode() failed, invalid mode parameter: %d.\r\n"),
+        "CGLContext::ShadeMode() failed, invalid mode parameter: %d.\r\n",
         mode);
     return;
   }
@@ -34,8 +34,8 @@ void CGLContext::ShadeModel(GLenum mode) {
 void CGLContext::Scissor(GLint x, GLint y, GLsizei width, GLsizei height) {
   if ((width < 0) || (height < 0)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::Scissor() failed, invalid ")
-              _T("width=%d or height=%d parameters.\r\n"),
+              "CGLContext::Scissor() failed, invalid "
+              "width=%d or height=%d parameters.\r\n",
               width, height);
     return;
   }
@@ -62,7 +62,7 @@ void CGLContext::PointSize(floatf size) {
   if (size <= fZERO) {
     __glError(
         GL_INVALID_VALUE,
-        _T("CGLContext::PointSize() failed, invalid size parameter: %d.\r\n"),
+        "CGLContext::PointSize() failed, invalid size parameter: %d.\r\n",
         size);
     return;
   }
@@ -74,7 +74,7 @@ void CGLContext::LineWidth(floatf width) {
   if (width <= fZERO) {
     __glError(
         GL_INVALID_VALUE,
-        _T("CGLContext::LineWidth() failed, invalid width parameter: %d.\r\n"),
+        "CGLContext::LineWidth() failed, invalid width parameter: %d.\r\n",
         width);
     return;
   }
@@ -100,7 +100,7 @@ void CGLContext::AlphaFunc(GLenum func, floatf ref) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::AlphaFunc() failed, invalid func parameter: %d.\r\n"),
+        "CGLContext::AlphaFunc() failed, invalid func parameter: %d.\r\n",
         func);
     return;
   }
@@ -124,7 +124,7 @@ void CGLContext::StencilFunc(GLenum func, GLint ref, GLuint mask) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::StencilFunc() failed, invalid func parameter: %d.\r\n"),
+        "CGLContext::StencilFunc() failed, invalid func parameter: %d.\r\n",
         func);
     return;
   }
@@ -132,7 +132,7 @@ void CGLContext::StencilFunc(GLenum func, GLint ref, GLuint mask) {
 
 void CGLContext::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
 #ifndef NDEBUG
-  static const LPCTSTR szOperations[3] = {_T("fail"), _T("zfail"), _T("zpass")};
+  static const char *op_names[3] = {"fail", "zfail", "zpass"};
 #endif
   uint32_t results[3];
   const GLenum operations[3] = {fail, zfail, zpass};
@@ -152,8 +152,8 @@ void CGLContext::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
     default:
       __glError(
           GL_INVALID_VALUE,
-          _T("CGLContext::StencilOp() failed, invalid %s parameter: %d.\r\n"),
-          szOperations[i], op);
+          "CGLContext::StencilOp() failed, invalid %s parameter: %d.\r\n",
+          op_names[i], op);
       return;
     }
   }
@@ -179,7 +179,7 @@ void CGLContext::DepthFunc(GLenum func) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::DepthFunc() failed, invalid func parameter: %d.\r\n"),
+        "CGLContext::DepthFunc() failed, invalid func parameter: %d.\r\n",
         func);
     return;
   }
@@ -201,8 +201,8 @@ void CGLContext::BlendFunc(GLenum sfactor, GLenum dfactor) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::BlendFunc() failed, invalid ")
-              _T("sfactor parameter: %d.\r\n"),
+              "CGLContext::BlendFunc() failed, invalid "
+              "sfactor parameter: %d.\r\n",
               sfactor);
     return;
   }
@@ -221,8 +221,8 @@ void CGLContext::BlendFunc(GLenum sfactor, GLenum dfactor) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::BlendFunc() failed, invalid ")
-              _T("dfactor parameter: %d.\r\n"),
+              "CGLContext::BlendFunc() failed, invalid "
+              "dfactor parameter: %d.\r\n",
               dfactor);
     return;
   }
@@ -252,7 +252,7 @@ void CGLContext::LogicOp(GLenum opcode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::LogicOp() failed, invalid opcode parameter: %d.\r\n"),
+        "CGLContext::LogicOp() failed, invalid opcode parameter: %d.\r\n",
         opcode);
     return;
   }

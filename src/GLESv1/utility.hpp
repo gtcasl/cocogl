@@ -42,7 +42,7 @@ inline bool __glSucceeded(uint32_t err) { return (err == GL_NO_ERROR); }
 #define __glLog(...) g_logger.Write(__VA_ARGS__);
 
 #define __glLogError(...)                                                      \
-  g_logger.Write(_T("*** Error in file %s at line %d.\r\n"), _T(__FILE__),     \
+  g_logger.Write("*** Error in file %s at line %d.\r\n", __FILE__,     \
                  __LINE__);                                                    \
   g_logger.Write(__VA_ARGS__);                                                 \
   assert(false);

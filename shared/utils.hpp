@@ -14,7 +14,7 @@
 //
 #pragma once
 
-void DbgPrintf(int level, LPCTSTR format, ...);
+void DbgPrintf(int level, const char *format, ...);
 
 ///////////////////////////////////////////////////////////////////////////////
 

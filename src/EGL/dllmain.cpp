@@ -22,77 +22,77 @@ static CEGLDriver g_driver;
 
 #ifndef NDEBUG
 
-const TCHAR *SurfaceAttributeToString(EGLint attribute) {
+const char *SurfaceAttributeToString(EGLint attribute) {
   switch (attribute) {
   case EGL_CONFIG_ID:
-    return _T("EGL_CONFIG_ID");
+    return "EGL_CONFIG_ID";
   case EGL_HEIGHT:
-    return _T("EGL_HEIGHT");
+    return "EGL_HEIGHT";
   case EGL_WIDTH:
-    return _T("EGL_WIDTH");
+    return "EGL_WIDTH";
   case EGL_LARGEST_PBUFFER:
-    return _T("EGL_LARGEST_PBUFFER");
+    return "EGL_LARGEST_PBUFFER";
   case EGL_TEXTURE_FORMAT:
-    return _T("EGL_TEXTURE_FORMAT");
+    return "EGL_TEXTURE_FORMAT";
   case EGL_MIPMAP_TEXTURE:
-    return _T("EGL_MIPMAP_TEXTURE");
+    return "EGL_MIPMAP_TEXTURE";
   case EGL_MIPMAP_LEVEL:
-    return _T("EGL_MIPMAP_LEVEL");
+    return "EGL_MIPMAP_LEVEL";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *BufferToString(EGLint buffer) {
+const char *BufferToString(EGLint buffer) {
   switch (buffer) {
   case EGL_BACK_BUFFER:
-    return _T("EGL_BACK_BUFFER");
+    return "EGL_BACK_BUFFER";
   case EGL_SINGLE_BUFFER:
-    return _T("EGL_SINGLE_BUFFER");
+    return "EGL_SINGLE_BUFFER";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *SurfaceTypeToString(EGLint readdraw) {
+const char *SurfaceTypeToString(EGLint readdraw) {
   switch (readdraw) {
   case EGL_DRAW:
-    return _T("EGL_DRAW");
+    return "EGL_DRAW";
   case EGL_READ:
-    return _T("EGL_READ");
+    return "EGL_READ";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *EngineToString(EGLint engine) {
+const char *EngineToString(EGLint engine) {
   switch (engine) {
   case EGL_CORE_NATIVE_ENGINE:
-    return _T("EGL_CORE_NATIVE_ENGINE");
+    return "EGL_CORE_NATIVE_ENGINE";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
 #endif
 
 EGLAPI EGLint EGLAPIENTRY eglGetError() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err = g_driver.GetError();
 
-  __eglLog(_T(" - eglGetError()=%d\r\n"), err);
+  __eglLog(" - eglGetError()=%d\r\n", err);
 
   return err;
 }
 
-EGLAPI void (*EGLAPIENTRY eglGetProcAddress(LPCSTR lpszProcName))() {
-  __profileAPI(_T(" - %s( lpszProcName=%s )\n"), _T(__FUNCTION__), lpszProcName);
+EGLAPI void (*EGLAPIENTRY eglGetProcAddress(const char *procName))() {
+  __profileAPI(" - %s( procName=%s )\n", __FUNCTION__, procName);
 
   typedef void (*PfnProcAddress)();
   
   struct t_procedure {
-    LPCSTR lpszName;
+    const char *name;
     PfnProcAddress pfn;
   };
 
@@ -101,9 +101,9 @@ EGLAPI void (*EGLAPIENTRY eglGetProcAddress(LPCSTR lpszProcName))() {
       {"glPointSizePointerOES", reinterpret_cast<PfnProcAddress>(glPointSizePointerOES)},
   };
 
-  if (lpszProcName) {
+  if (procName) {
     for (size_t i = 0; i < __countof(procedures); ++i) {
-      if (!strcmp(procedures[i].lpszName, lpszProcName)) {
+      if (!strcmp(procedures[i].name, procName)) {
         return procedures[i].pfn;
       }
     }
@@ -113,14 +113,14 @@ EGLAPI void (*EGLAPIENTRY eglGetProcAddress(LPCSTR lpszProcName))() {
 }
 
 EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(EGLNativeDisplayType display_id) {
-  __profileAPI(_T(" - %s( display_id=%d )\n"), _T(__FUNCTION__), display_id);
+  __profileAPI(" - %s( display_id=%d )\n", __FUNCTION__, display_id);
 
   EGLint err;
 
   uint32_t dwHandle;
   err = g_driver.GetDisplay(&dwHandle, display_id);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLDriver::GetDisplay() failed, err = %d.\r\n"), err);
+    __eglError(err, "CEGLDriver::GetDisplay() failed, err = %d.\r\n", err);
     return EGL_NO_DISPLAY;
   }
 
@@ -129,20 +129,20 @@ EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(EGLNativeDisplayType display_id) {
 
 EGLAPI EGLBoolean EGLAPIENTRY eglInitialize(EGLDisplay display, EGLint *pMajor,
                                             EGLint *pMinor) {
-  __profileAPI(_T(" - %s( display=%d, pMajor=0x%p, pMinor=0x%p )\n"),
-               _T(__FUNCTION__), display, pMajor, pMinor);
+  __profileAPI(" - %s( display=%d, pMajor=0x%p, pMinor=0x%p )\n",
+               __FUNCTION__, display, pMajor, pMinor);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Initialize the display
   EGLint err = pDisplay->Initialize(pMajor, pMinor);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CDisplay::Initialize() failed, err = %d.\r\n"), err);
+    __eglError(err, "CDisplay::Initialize() failed, err = %d.\r\n", err);
     return EGL_FALSE;
   }
 
@@ -150,12 +150,12 @@ EGLAPI EGLBoolean EGLAPIENTRY eglInitialize(EGLDisplay display, EGLint *pMajor,
 }
 
 EGLAPI EGLBoolean EGLAPIENTRY eglTerminate(EGLDisplay display) {
-  __profileAPI(_T(" - %s( display=%d )\n"), _T(__FUNCTION__), display);
+  __profileAPI(" - %s( display=%d )\n", __FUNCTION__, display);
 
   // Remove the display object from the handle table
   auto pDisplay = g_driver.UnregisterObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
@@ -166,7 +166,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglTerminate(EGLDisplay display) {
 }
 
 EGLAPI const char *EGLAPIENTRY eglQueryString(EGLDisplay display, EGLint name) {
-  __profileAPI(_T(" - %s( display=%d, name=%d )\n"), _T(__FUNCTION__), display,
+  __profileAPI(" - %s( display=%d, name=%d )\n", __FUNCTION__, display,
                name);
 
   EGLint err;
@@ -174,29 +174,29 @@ EGLAPI const char *EGLAPIENTRY eglQueryString(EGLDisplay display, EGLint name) {
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return nullptr;
   }
 
-  LPCSTR lpszValue;
+  const char *value;
 
   // Query the display string
-  err = pDisplay->QueryString(&lpszValue, name);
+  err = pDisplay->QueryString(&value, name);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CDisplay::QueryString() failed, err = %d.\r\n"), err);
+    __eglError(err, "CDisplay::QueryString() failed, err = %d.\r\n", err);
     return nullptr;
   }
 
-  return lpszValue;
+  return value;
 }
 
 EGLAPI EGLBoolean EGLAPIENTRY eglGetConfigs(EGLDisplay display,
                                             EGLConfig *pConfigs,
                                             EGLint config_size,
                                             EGLint *pNum_config) {
-  __profileAPI(_T(" - %s( display=%d, pConfigs=0x%p, config_size=%d, ")
-               _T("pNum_config=0x%p )\n"),
-               _T(__FUNCTION__), display, pConfigs, config_size, pNum_config);
+  __profileAPI(" - %s( display=%d, pConfigs=0x%p, config_size=%d, "
+               "pNum_config=0x%p )\n",
+               __FUNCTION__, display, pConfigs, config_size, pNum_config);
 
   return eglChooseConfig(display, nullptr, pConfigs, config_size, pNum_config);
 }
@@ -206,23 +206,23 @@ EGLAPI EGLBoolean EGLAPIENTRY eglChooseConfig(EGLDisplay display,
                                               EGLConfig *pConfigs,
                                               EGLint config_size,
                                               EGLint *pNum_config) {
-  __profileAPI(_T(" - %s( display=%d, pAttrib_list=0x%p, pConfigs=0x%p, ")
-               _T("config_size=%d, pNum_config=0x%p )\n"),
-               _T(__FUNCTION__), display, pAttrib_list, pConfigs, config_size,
+  __profileAPI(" - %s( display=%d, pAttrib_list=0x%p, pConfigs=0x%p, "
+               "config_size=%d, pNum_config=0x%p )\n",
+               __FUNCTION__, display, pAttrib_list, pConfigs, config_size,
                pNum_config);
 
   EGLint err;
 
   // Validate num_config pointer
   if (nullptr == pNum_config) {
-    __eglError(EGL_BAD_PARAMETER, _T("num_config is nullptr.\r\n"));
+    __eglError(EGL_BAD_PARAMETER, "num_config is nullptr.\r\n");
     return EGL_FALSE;
   }
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
@@ -230,7 +230,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglChooseConfig(EGLDisplay display,
   err =
       pDisplay->ChooseConfig(pAttrib_list, pConfigs, config_size, pNum_config);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CDisplay::ChooseConfig() failed, err = %d.\r\n"), err);
+    __eglError(err, "CDisplay::ChooseConfig() failed, err = %d.\r\n", err);
     return EGL_FALSE;
   }
 
@@ -242,41 +242,41 @@ EGLAPI EGLBoolean EGLAPIENTRY eglGetConfigAttrib(EGLDisplay display,
                                                  EGLint attribute,
                                                  EGLint *pValue) {
   __profileAPI(
-      _T(" - %s( display=%d, config=%d, attribute=%d, pValue=0x%p )\n"),
-      _T(__FUNCTION__), display, config, attribute, pValue);
+      " - %s( display=%d, config=%d, attribute=%d, pValue=0x%p )\n",
+      __FUNCTION__, display, config, attribute, pValue);
 
   EGLint err;
 
   // Verify value parameter
   if (nullptr == pValue) {
-    __eglError(EGL_BAD_PARAMETER, _T("value is nullptr.\r\n"));
+    __eglError(EGL_BAD_PARAMETER, "value is nullptr.\r\n");
     return EGL_FALSE;
   }
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
   // Find the config object from the handle table
   auto pConfig = g_driver.TGetObject<CConfig *>(config, pDisplay);
   if (nullptr == pConfig) {
-    __eglError(EGL_BAD_CONFIG, _T("Invalid config handle.\r\n"));
+    __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_FALSE;
   }
 
   // Retrieve the attriubute value
   err = pConfig->GetAtttribute(attribute, pValue);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CConfig::GetAttribute() failed, err = %d.\r\n"), err);
+    __eglError(err, "CConfig::GetAttribute() failed, err = %d.\r\n", err);
     return EGL_FALSE;
   }
 
@@ -287,42 +287,42 @@ EGLAPI EGLSurface EGLAPIENTRY
 eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
                        EGLNativeWindowType hWnd, const EGLint *pAttrib_list) {
   __profileAPI(
-      _T(" - %s( display=%d, config=%d, hWnd=0x%p, pAttrib_list=0x%p )\n"),
-      _T(__FUNCTION__), display, config, hWnd, pAttrib_list);
+      " - %s( display=%d, config=%d, hWnd=0x%p, pAttrib_list=0x%p )\n",
+      __FUNCTION__, display, config, hWnd, pAttrib_list);
 
   EGLint err;
 
   // Verify that the attribute list is nullptr or empty
   if (pAttrib_list && (*pAttrib_list != EGL_NONE)) {
     __eglError(EGL_BAD_ATTRIBUTE,
-               _T("pAttrib_list should be nullptr or empty.\r\n"));
+               "pAttrib_list should be nullptr or empty.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Find the config object from the handle table
   auto pConfig = g_driver.TGetObject<CConfig *>(config, pDisplay);
   if (nullptr == pConfig) {
-    __eglError(EGL_BAD_CONFIG, _T("Invalid config handle.\r\n"));
+    __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Check if the config support this surface type
   if (0 == (pConfig->GetAttribute(EGL_SURFACE_TYPE) & EGL_WINDOW_BIT)) {
     __eglError(EGL_BAD_MATCH,
-               _T("The config doesn't support this surface type.\r\n"));
+               "The config doesn't support this surface type.\r\n");
     return EGL_NO_SURFACE;
   }
 
@@ -331,7 +331,7 @@ eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
   err = CEGLSurface::CreateWND(&pSurface, pDisplay, EGL_WINDOW_BIT, pConfig,
                                hWnd);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLSurface::Create() failed, err = %d.\r\n"), err);
+    __eglError(err, "CEGLSurface::Create() failed, err = %d.\r\n", err);
     return EGL_NO_SURFACE;
   }
 
@@ -340,7 +340,7 @@ eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
   err = g_driver.RegisterObject(&dwHandle, pSurface, HANDLE_SURFACE, pDisplay);
   if (__eglFailed(err)) {
     __safeRelease(pSurface);
-    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"),
+    __eglError(err, "CEGLDriver::RegisterObject() failed, err = %d.\r\n",
                err);
     return EGL_NO_SURFACE;
   }
@@ -352,42 +352,42 @@ EGLAPI EGLSurface EGLAPIENTRY
 eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
                        EGLNativePixmapType pixmap, const EGLint *pAttrib_list) {
   __profileAPI(
-      _T(" - %s( display=%d, config=%d, pixmap=0x%x, pAttrib_list=0x%p )\n"),
-      _T(__FUNCTION__), display, config, pixmap, pAttrib_list);
+      " - %s( display=%d, config=%d, pixmap=0x%x, pAttrib_list=0x%p )\n",
+      __FUNCTION__, display, config, pixmap, pAttrib_list);
 
   EGLint err;
 
   // Verify that the attribute list is nullptr or empty
   if (pAttrib_list && (*pAttrib_list != EGL_NONE)) {
     __eglError(EGL_BAD_ATTRIBUTE,
-               _T("pAttrib_list should be nullptr or empty.\r\n"));
+               "pAttrib_list should be nullptr or empty.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Find the config object from the handle table
   auto pConfig = g_driver.TGetObject<CConfig *>(config, pDisplay);
   if (nullptr == pConfig) {
-    __eglError(EGL_BAD_CONFIG, _T("Invalid config handle.\r\n"));
+    __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Check if the config support this surface type
   if (0 == (pConfig->GetAttribute(EGL_SURFACE_TYPE) & EGL_PIXMAP_BIT)) {
     __eglError(EGL_BAD_MATCH,
-               _T("The config doesn't support this surface type.\r\n"));
+               "The config doesn't support this surface type.\r\n");
     return EGL_NO_SURFACE;
   }
 
@@ -396,7 +396,7 @@ eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
   err = CEGLSurface::CreatePXM(&pSurface, pDisplay, EGL_PIXMAP_BIT, pConfig,
                                pixmap);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLSurface::Create() failed, err = %d.\r\n"), err);
+    __eglError(err, "CEGLSurface::Create() failed, err = %d.\r\n", err);
     return EGL_NO_SURFACE;
   }
 
@@ -405,7 +405,7 @@ eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
   err = g_driver.RegisterObject(&dwHandle, pSurface, HANDLE_SURFACE, pDisplay);
   if (__eglFailed(err)) {
     __safeRelease(pSurface);
-    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"),
+    __eglError(err, "CEGLDriver::RegisterObject() failed, err = %d.\r\n",
                err);
     return EGL_NO_SURFACE;
   }
@@ -415,35 +415,35 @@ eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
 
 EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
     EGLDisplay display, EGLConfig config, const EGLint *pAttrib_list) {
-  __profileAPI(_T(" - %s( display=%d, config=%d, pAttrib_list=0x%p )\n"),
-               _T(__FUNCTION__), display, config, pAttrib_list);
+  __profileAPI(" - %s( display=%d, config=%d, pAttrib_list=0x%p )\n",
+               __FUNCTION__, display, config, pAttrib_list);
 
   EGLint err;
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Find the config object from the handle table
   auto pConfig = g_driver.TGetObject<CConfig *>(config, pDisplay);
   if (nullptr == pConfig) {
-    __eglError(EGL_BAD_CONFIG, _T("Invalid config handle.\r\n"));
+    __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_NO_SURFACE;
   }
 
   // Check if the config support this surface type
   if (0 == (pConfig->GetAttribute(EGL_SURFACE_TYPE) & EGL_PBUFFER_BIT)) {
     __eglError(EGL_BAD_MATCH,
-               _T("The config doesn't support this surface type.\r\n"));
+               "The config doesn't support this surface type.\r\n");
     return EGL_NO_SURFACE;
   }
 
@@ -486,7 +486,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
 
       default:
         __eglError(EGL_BAD_ATTRIBUTE,
-                   _T("Invalid pixel buffer attribute: %d\r\n"), name);
+                   "Invalid pixel buffer attribute: %d\r\n", name);
         return EGL_NO_SURFACE;
       }
     }
@@ -498,7 +498,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
                                width, height, largestPBuffer, texTarget,
                                texFormat, bGenMipMaps);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLSurface::Create() failed, err = %d.\r\n"), err);
+    __eglError(err, "CEGLSurface::Create() failed, err = %d.\r\n", err);
     return EGL_NO_SURFACE;
   }
 
@@ -507,7 +507,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
   err = g_driver.RegisterObject(&dwHandle, pSurface, HANDLE_SURFACE, pDisplay);
   if (__eglFailed(err)) {
     __safeRelease(pSurface);
-    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"),
+    __eglError(err, "CEGLDriver::RegisterObject() failed, err = %d.\r\n",
                err);
     return EGL_NO_SURFACE;
   }
@@ -517,26 +517,26 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
 
 EGLAPI EGLBoolean EGLAPIENTRY eglDestroySurface(EGLDisplay display,
                                                 EGLSurface surface) {
-  __profileAPI(_T(" - %s( display=%d, surface=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( display=%d, surface=%d )\n", __FUNCTION__,
                display, surface);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
   // Remove the surface object from the handle table
   auto pSurface = g_driver.UnregisterObject<CEGLSurface *>(surface, pDisplay);
   if (nullptr == pSurface) {
-    __eglError(EGL_BAD_SURFACE, _T("Invalid surface handle.\r\n"));
+    __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
   }
 
@@ -551,8 +551,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQuerySurface(EGLDisplay display,
                                               EGLint attribute,
                                               EGLint *pValue) {
   __profileAPI(
-      _T(" - %s( display=%d, surface=%d, attribute=%s, pValue=0x%p )\n"),
-      _T(__FUNCTION__), display, surface, SurfaceAttributeToString(attribute),
+      " - %s( display=%d, surface=%d, attribute=%s, pValue=0x%p )\n",
+      __FUNCTION__, display, surface, SurfaceAttributeToString(attribute),
       pValue);
 
   EGLint err;
@@ -560,27 +560,27 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQuerySurface(EGLDisplay display,
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
   // Find the surface object from the handle table
   auto pSurface = g_driver.TGetObject<CEGLSurface *>(surface, pDisplay);
   if (nullptr == pSurface) {
-    __eglError(EGL_BAD_SURFACE, _T("Invalid surface handle.\r\n"));
+    __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
   }
 
   // Query the surface attributes
   err = pSurface->GetAttribute(pValue, attribute);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLSurface::GetAttribute() failed, err = %d.\r\n"),
+    __eglError(err, "CEGLSurface::GetAttribute() failed, err = %d.\r\n",
                err);
     return EGL_FALSE;
   }
@@ -591,8 +591,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQuerySurface(EGLDisplay display,
 EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay display,
                                                EGLSurface surface,
                                                EGLint attribute, EGLint value) {
-  __profileAPI(_T(" - %s( display=%d, surface=%d, attribute=%d, value=%d )\n"),
-               _T(__FUNCTION__), display, surface,
+  __profileAPI(" - %s( display=%d, surface=%d, attribute=%d, value=%d )\n",
+               __FUNCTION__, display, surface,
                SurfaceAttributeToString(attribute), value);
 
   EGLint err;
@@ -601,7 +601,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay display,
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
     __eglError(EGL_BAD_DISPLAY,
-               _T("eglSurfaceAttrib() failed, invalid display handle.\r\n"));
+               "eglSurfaceAttrib() failed, invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
@@ -609,7 +609,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay display,
   if (!pDisplay->IsInitialized()) {
     __eglError(
         EGL_NOT_INITIALIZED,
-        _T("eglSurfaceAttrib() failed, the display was not initialized.\r\n"));
+        "eglSurfaceAttrib() failed, the display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
@@ -617,13 +617,13 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay display,
   auto pSurface = g_driver.TGetObject<CEGLSurface *>(surface, pDisplay);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE,
-               _T("eglSurfaceAttrib() failed, invalid surface handle.\r\n"));
+               "eglSurfaceAttrib() failed, invalid surface handle.\r\n");
     return EGL_FALSE;
   }
 
   err = pSurface->SetAttribute(attribute, value);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLSurface::SetAttribute() failed, err = %d.\r\n"),
+    __eglError(err, "CEGLSurface::SetAttribute() failed, err = %d.\r\n",
                err);
     return EGL_FALSE;
   }
@@ -634,8 +634,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay display,
 EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
                                               EGLSurface surface,
                                               EGLint buffer) {
-  __profileAPI(_T(" - %s( display=%d, surface=%d, buffer=%s )\n"),
-               _T(__FUNCTION__), display, surface, BufferToString(buffer));
+  __profileAPI(" - %s( display=%d, surface=%d, buffer=%s )\n",
+               __FUNCTION__, display, surface, BufferToString(buffer));
 
   EGLint err;
 
@@ -643,7 +643,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
   if (EGL_BACK_BUFFER != buffer) {
     __eglError(
         EGL_BAD_PARAMETER,
-        _T("eglBindTexImage() failed, invalid buffer parameter: %d.\r\n"),
+        "eglBindTexImage() failed, invalid buffer parameter: %d.\r\n",
         buffer);
     return EGL_FALSE;
   }
@@ -652,7 +652,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
     __eglError(EGL_BAD_DISPLAY,
-               _T("eglBindTexImage() failed, invalid display handle.\r\n"));
+               "eglBindTexImage() failed, invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
@@ -660,7 +660,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
   if (!pDisplay->IsInitialized()) {
     __eglError(
         EGL_NOT_INITIALIZED,
-        _T("eglBindTexImage() failed, the display was not initialized.\r\n"));
+        "eglBindTexImage() failed, the display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
@@ -668,7 +668,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
   auto pSurface = g_driver.TGetObject<CEGLSurface *>(surface, pDisplay);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE,
-               _T("eglBindTexImage() failed, invalid surface handle.\r\n"));
+               "eglBindTexImage() failed, invalid surface handle.\r\n");
     return EGL_FALSE;
   }
 
@@ -680,7 +680,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
   // Bind the surface to the current texture
   err = pSurface->BindTexture();
   if (__eglFailed(err)) {
-    __eglLogError(_T("CEGLSurface::BindTexture() failed, err = %d.\r\n"), err);
+    __eglLogError("CEGLSurface::BindTexture() failed, err = %d.\r\n", err);
     return EGL_FALSE;
   }
 
@@ -690,8 +690,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
 EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay display,
                                                  EGLSurface surface,
                                                  EGLint buffer) {
-  __profileAPI(_T(" - %s( display=%d, surface=%d, buffer=%s )\n"),
-               _T(__FUNCTION__), display, surface, BufferToString(buffer));
+  __profileAPI(" - %s( display=%d, surface=%d, buffer=%s )\n",
+               __FUNCTION__, display, surface, BufferToString(buffer));
 
   EGLint err;
 
@@ -699,7 +699,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay display,
   if (EGL_BACK_BUFFER != buffer) {
     __eglError(
         EGL_BAD_PARAMETER,
-        _T("eglBindTexImage() failed, invalid buffer parameter: %d.\r\n"),
+        "eglBindTexImage() failed, invalid buffer parameter: %d.\r\n",
         buffer);
     return EGL_FALSE;
   }
@@ -707,27 +707,27 @@ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay display,
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
   // Find the surface object from the handle table
   auto pSurface = g_driver.TGetObject<CEGLSurface *>(surface, pDisplay);
   if (nullptr == pSurface) {
-    __eglError(EGL_BAD_SURFACE, _T("Invalid surface handle.\r\n"));
+    __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
   }
 
   // Release the bound texture
   err = pSurface->ReleaseTexBound();
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLSurface::ReleaseTexBound() failed, err = %d.\r\n"),
+    __eglError(err, "CEGLSurface::ReleaseTexBound() failed, err = %d.\r\n",
                err);
     return EGL_FALSE;
   }
@@ -737,7 +737,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay display,
 
 EGLAPI EGLBoolean EGLAPIENTRY eglSwapInterval(EGLDisplay display,
                                               EGLint interval) {
-  __profileAPI(_T(" - %s( display=%d, interval=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( display=%d, interval=%d )\n", __FUNCTION__,
                display, interval);
   __unreferenced(interval);
 
@@ -745,7 +745,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapInterval(EGLDisplay display,
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
     __eglError(EGL_BAD_DISPLAY,
-               _T("eglSwapInterval() failed, invalid display handle.\r\n"));
+               "eglSwapInterval() failed, invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
@@ -753,7 +753,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapInterval(EGLDisplay display,
   if (!pDisplay->IsInitialized()) {
     __eglError(
         EGL_NOT_INITIALIZED,
-        _T("eglSwapInterval() failed, the display was not initialized.\r\n"));
+        "eglSwapInterval() failed, the display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
@@ -766,14 +766,14 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapInterval(EGLDisplay display,
       return EGL_TRUE;
     } else {
       __eglError(EGL_BAD_SURFACE,
-                 _T("eglSwapInterval() failed, there is no surface bound to ")
-                 _T("the current context.\r\n"));
+                 "eglSwapInterval() failed, there is no surface bound to "
+                 "the current context.\r\n");
       return EGL_FALSE;
     }
   } else {
     __eglError(EGL_BAD_CONTEXT,
-               _T("eglSwapInterval() failed, there is no current context on ")
-               _T("the calling thread.\r\n"));
+               "eglSwapInterval() failed, there is no current context on "
+               "the calling thread.\r\n");
     return EGL_FALSE;
   }
 }
@@ -782,36 +782,36 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
                                                EGLConfig config,
                                                EGLContext share_context,
                                                const EGLint *pAttrib_list) {
-  __profileAPI(_T(" - %s( display=%d, config=%d, share_context=%d, ")
-               _T("pAttrib_list=0x%p )\n"),
-               _T(__FUNCTION__), display, config, share_context, pAttrib_list);
+  __profileAPI(" - %s( display=%d, config=%d, share_context=%d, "
+               "pAttrib_list=0x%p )\n",
+               __FUNCTION__, display, config, share_context, pAttrib_list);
 
   EGLint err;
 
   // Verify that the attribute list is nullptr or empty
   if (pAttrib_list && (*pAttrib_list != EGL_NONE)) {
     __eglError(EGL_BAD_ATTRIBUTE,
-               _T("pAttrib_list should be nullptr or empty.\r\n"));
+               "pAttrib_list should be nullptr or empty.\r\n");
     return EGL_NO_CONTEXT;
   }
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_NO_CONTEXT;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_NO_CONTEXT;
   }
 
   // Find the config object from the handle table
   auto pConfig = g_driver.TGetObject<CConfig *>(config, pDisplay);
   if (nullptr == pConfig) {
-    __eglError(EGL_BAD_CONFIG, _T("Invalid config handle.\r\n"));
+    __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_NO_CONTEXT;
   }
 
@@ -820,7 +820,7 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
   if (EGL_NO_CONTEXT != share_context) {
     pCtxShared = g_driver.TGetObject<CEGLContext *>(share_context, pDisplay);
     if (nullptr == pCtxShared) {
-      __eglError(EGL_BAD_CONTEXT, _T("Invalid shared context handle.\r\n"));
+      __eglError(EGL_BAD_CONTEXT, "Invalid shared context handle.\r\n");
       return EGL_NO_CONTEXT;
     }
   }
@@ -828,7 +828,7 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
   CEGLContext *pContext;
   err = CEGLContext::Create(&pContext, pDisplay, pConfig, pCtxShared);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLContext::Create() failed, err = %d.\r\n"), err);
+    __eglError(err, "CEGLContext::Create() failed, err = %d.\r\n", err);
     return EGL_NO_CONTEXT;
   }
 
@@ -836,7 +836,7 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
   err = g_driver.RegisterObject(&dwHandle, pContext, HANDLE_CONTEXT, pDisplay);
   if (__eglFailed(err)) {
     __safeRelease(pContext);
-    __eglError(err, _T("CEGLDriver::RegisterObject() failed, err = %d.\r\n"),
+    __eglError(err, "CEGLDriver::RegisterObject() failed, err = %d.\r\n",
                err);
     return EGL_NO_CONTEXT;
   }
@@ -846,26 +846,26 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
 
 EGLAPI EGLBoolean EGLAPIENTRY eglDestroyContext(EGLDisplay display,
                                                 EGLContext context) {
-  __profileAPI(_T(" - %s( display=%d, context=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( display=%d, context=%d )\n", __FUNCTION__,
                display, context);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
   // Remove the context object from the handle table
   auto pContext = g_driver.UnregisterObject<CEGLContext *>(context, pDisplay);
   if (nullptr == pContext) {
-    __eglError(EGL_BAD_CONTEXT, _T("Invalid context handle.\r\n"));
+    __eglError(EGL_BAD_CONTEXT, "Invalid context handle.\r\n");
     return EGL_FALSE;
   }
 
@@ -880,19 +880,19 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
                                              EGLContext context) {
   EGLint err;
 
-  __profileAPI(_T(" - %s( display=%d, draw=%d, read=%d, context=%d )\n"),
-               _T(__FUNCTION__), display, draw, read, context);
+  __profileAPI(" - %s( display=%d, draw=%d, read=%d, context=%d )\n",
+               __FUNCTION__, display, draw, read, context);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
@@ -901,7 +901,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
     // Find the draw surface object from the handle table
     pSurfDraw = g_driver.TGetObject<CEGLSurface *>(draw, pDisplay);
     if (nullptr == pSurfDraw) {
-      __eglError(EGL_BAD_SURFACE, _T("Invalid draw surface handle.\r\n"));
+      __eglError(EGL_BAD_SURFACE, "Invalid draw surface handle.\r\n");
       return EGL_FALSE;
     }
   }
@@ -911,7 +911,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
     // Find the read surface object from the handle table
     pSurfRead = g_driver.TGetObject<CEGLSurface *>(read, pDisplay);
     if (nullptr == pSurfRead) {
-      __eglError(EGL_BAD_SURFACE, _T("Invalid read surface handle.\r\n"));
+      __eglError(EGL_BAD_SURFACE, "Invalid read surface handle.\r\n");
       return EGL_FALSE;
     }
   }
@@ -921,7 +921,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
     // Find the context object from the handle table
     pContext = g_driver.TGetObject<CEGLContext *>(context, pDisplay);
     if (nullptr == pContext) {
-      __eglError(EGL_BAD_SURFACE, _T("Invalid context handle.\r\n"));
+      __eglError(EGL_BAD_SURFACE, "Invalid context handle.\r\n");
       return EGL_FALSE;
     }
   }
@@ -932,27 +932,27 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
   if (pContext) {
     if (pContext->HasBindings() && pContext->GetThreadID() != dwCurThreadID) {
       __eglError(EGL_BAD_ACCESS,
-                 _T("The context is current to some other thread.\r\n"));
+                 "The context is current to some other thread.\r\n");
       return EGL_FALSE;
     }
 
     if ((nullptr == pSurfDraw) || (nullptr == pSurfRead)) {
       __eglError(EGL_BAD_MATCH,
-                 _T("The context and surface handles are not compatible.\r\n"));
+                 "The context and surface handles are not compatible.\r\n");
       return EGL_FALSE;
     }
 
     if (pSurfDraw->GetConfig() != pContext->GetConfig()) {
       __eglError(
           EGL_BAD_MATCH,
-          _T("The context and draw surface configurations do not match.\r\n"));
+          "The context and draw surface configurations do not match.\r\n");
       return EGL_FALSE;
     }
 
     if (pSurfRead->GetConfig() != pContext->GetConfig()) {
       __eglError(
           EGL_BAD_MATCH,
-          _T("The context and read surface configurations do not match.\r\n"));
+          "The context and read surface configurations do not match.\r\n");
       return EGL_FALSE;
     }
 
@@ -961,13 +961,13 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
                                                 pSurfDraw->GetNativeData(),
                                                 pSurfRead->GetNativeData()));
     if (__eglFailed(err)) {
-      __eglError(err, _T("__glMakeCurrent() failed, err = %d.\r\n"), err);
+      __eglError(err, "__glMakeCurrent() failed, err = %d.\r\n", err);
       return EGL_FALSE;
     }
   } else {
     if (pSurfDraw || pSurfRead) {
       __eglError(EGL_BAD_MATCH,
-                 _T("The context and surface handles are not compatible.\r\n"));
+                 "The context and surface handles are not compatible.\r\n");
       return EGL_FALSE;
     }
 
@@ -982,7 +982,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
 }
 
 EGLAPI EGLContext EGLAPIENTRY eglGetCurrentContext() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -994,7 +994,7 @@ EGLAPI EGLContext EGLAPIENTRY eglGetCurrentContext() {
 }
 
 EGLAPI EGLSurface EGLAPIENTRY eglGetCurrentSurface(EGLint readdraw) {
-  __profileAPI(_T(" - %s( readdraw=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( readdraw=%s )\n", __FUNCTION__,
                SurfaceTypeToString(readdraw));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1014,7 +1014,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglGetCurrentSurface(EGLint readdraw) {
 }
 
 EGLAPI EGLDisplay EGLAPIENTRY eglGetCurrentDisplay() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1030,35 +1030,35 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQueryContext(EGLDisplay display,
                                               EGLint attribute,
                                               EGLint *pValue) {
   __profileAPI(
-      _T(" - %s( display=%d, context=%d, attribute=%d, pValue=0x%p )\n"),
-      _T(__FUNCTION__), context, attribute, pValue);
+      " - %s( display=%d, context=%d, attribute=%d, pValue=0x%p )\n",
+      __FUNCTION__, context, attribute, pValue);
 
   EGLint err;
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
   // Find the context object from the handle table
   auto pContext = g_driver.TGetObject<CEGLContext *>(context, pDisplay);
   if (nullptr == pContext) {
-    __eglError(EGL_BAD_CONTEXT, _T("Invalid context handle.\r\n"));
+    __eglError(EGL_BAD_CONTEXT, "Invalid context handle.\r\n");
     return EGL_FALSE;
   }
 
   // Query the context attributes
   err = pContext->GetAttribute(attribute, pValue);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLContext::GetAttribute() failed, err = %d.\r\n"),
+    __eglError(err, "CEGLContext::GetAttribute() failed, err = %d.\r\n",
                err);
     return EGL_FALSE;
   }
@@ -1067,7 +1067,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQueryContext(EGLDisplay display,
 }
 
 EGLAPI EGLBoolean EGLAPIENTRY eglWaitGL() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   glFinish();
 
@@ -1075,12 +1075,12 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitGL() {
 }
 
 EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative(EGLint engine) {
-  __profileAPI(_T(" - %s( engine=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( engine=%s )\n", __FUNCTION__,
                EngineToString(engine));
 
   if (EGL_CORE_NATIVE_ENGINE != engine) {
     __eglError(EGL_BAD_PARAMETER,
-               _T("eglWaitNative() failed, invalid engine parameter: %d.\r\n"),
+               "eglWaitNative() failed, invalid engine parameter: %d.\r\n",
                engine);
     return EGL_FALSE;
   }
@@ -1091,7 +1091,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative(EGLint engine) {
     auto pSurface = pContext->GetDrawSurface();
     if (!pSurface) {
       __eglError(EGL_BAD_CURRENT_SURFACE,
-                 _T("eglWaitNative() failed, render surface not valid.\r\n"));
+                 "eglWaitNative() failed, render surface not valid.\r\n");
       return EGL_FALSE;
     }
   }
@@ -1101,32 +1101,32 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative(EGLint engine) {
 
 EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
                                              EGLSurface surface) {
-  __profileAPI(_T(" - %s( display=%d, surface=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( display=%d, surface=%d )\n", __FUNCTION__,
                display, surface);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
   // Find the surface object from the handle table
   auto pSurface = g_driver.TGetObject<CEGLSurface *>(surface, pDisplay);
   if (nullptr == pSurface) {
-    __eglError(EGL_BAD_SURFACE, _T("Invalid surface handle.\r\n"));
+    __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
   }
 
   // Only operate on window surfaces
   if (EGL_WINDOW_BIT != pSurface->GetType()) {
-    __eglError(EGL_BAD_SURFACE, _T("Not a window rendering surface.\r\n"));
+    __eglError(EGL_BAD_SURFACE, "Not a window rendering surface.\r\n");
     return EGL_FALSE;
   }
 
@@ -1138,10 +1138,10 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
 
 #ifdef COCOGL_SNAPSHOTS
   static int s_fileno = 0;
-  TCHAR szFilePath[360];
+  char filePath[360];
   if (s_fileno++ < COCOGL_SNAPSHOTS) {
-    _sntprintf(szFilePath, 360, _T("snapshot%d.bmp"), s_fileno);
-    pSurface->SaveBitmap(szFilePath);
+    _sntprintf(filePath, 360, "snapshot%d.bmp", s_fileno);
+    pSurface->SaveBitmap(filePath);
   }
 #endif
 
@@ -1151,35 +1151,35 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
 EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers(EGLDisplay display,
                                              EGLSurface surface,
                                              EGLNativePixmapType target) {
-  __profileAPI(_T(" - %s( display=%d, surface=%d, target=0x%x )\n"),
-               _T(__FUNCTION__), display, surface, target);
+  __profileAPI(" - %s( display=%d, surface=%d, target=0x%x )\n",
+               __FUNCTION__, display, surface, target);
 
   EGLint err;
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.TGetObject<CDisplay *>(display);
   if (nullptr == pDisplay) {
-    __eglError(EGL_BAD_DISPLAY, _T("Invalid display handle.\r\n"));
+    __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
   // Verify that the display was initialized
   if (!pDisplay->IsInitialized()) {
-    __eglError(EGL_NOT_INITIALIZED, _T("The display was not initialized.\r\n"));
+    __eglError(EGL_NOT_INITIALIZED, "The display was not initialized.\r\n");
     return EGL_FALSE;
   }
 
   // Find the surface object from the handle table
   auto pSurface = g_driver.TGetObject<CEGLSurface *>(surface, pDisplay);
   if (nullptr == pSurface) {
-    __eglError(EGL_BAD_SURFACE, _T("Invalid surface handle.\r\n"));
+    __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
   }
 
   // Copy the surface bits
   err = pSurface->CopyBuffer(target);
   if (__eglFailed(err)) {
-    __eglError(err, _T("CEGLContext::GetAttribute() failed, err = %d.\r\n"),
+    __eglError(err, "CEGLContext::GetAttribute() failed, err = %d.\r\n",
                err);
     return EGL_FALSE;
   }

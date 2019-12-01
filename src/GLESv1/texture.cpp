@@ -18,18 +18,18 @@
 
 GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
                               ePixelFormat format) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
     __glLogError(
-        _T("CSurface2D::Initialize() failed, invalid width parameter: %d.\r\n"),
+        "CSurface2D::Initialize() failed, invalid width parameter: %d.\r\n",
         width);
     return GL_INVALID_VALUE;
   }
 
   if (height > MAX_TEXTURE_SIZE) {
-    __glLogError(_T("CSurface2D::Initialize() failed, invalid height ")
-                 _T("parameter: %d.\r\n"),
+    __glLogError("CSurface2D::Initialize() failed, invalid height "
+                 "parameter: %d.\r\n",
                  height);
     return GL_INVALID_VALUE;
   }
@@ -37,7 +37,7 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
   uint8_t nBPP = Format::GetInfo(format).BytePerPixel;
   auto pbBits = new uint8_t[nBPP * width * height];
   if (nullptr == pbBits) {
-    __glLogError(_T("CSurface2D::Initialize() failed, out of memory.\r\n"));
+    __glLogError("CSurface2D::Initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -57,18 +57,18 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
 
 GLenum CSurface2D::Initialize(uint32_t width, uint32_t height, int32_t pitch,
                               ePixelFormat format, GLvoid *pPixels) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
     __glLogError(
-        _T("CSurface2D::Initialize() failed, invalid width parameter: %d.\r\n"),
+        "CSurface2D::Initialize() failed, invalid width parameter: %d.\r\n",
         width);
     return GL_INVALID_VALUE;
   }
 
   if (height > MAX_TEXTURE_SIZE) {
-    __glLogError(_T("CSurface2D::Initialize() failed, invalid height ")
-                 _T("parameter: %d.\r\n"),
+    __glLogError("CSurface2D::Initialize() failed, invalid height "
+                 "parameter: %d.\r\n",
                  height);
     return GL_INVALID_VALUE;
   }
@@ -89,18 +89,18 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height, int32_t pitch,
 
 GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
                               ePixelFormat format, const GLvoid *pPixels) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
     __glLogError(
-        _T("CSurface2D::Initialize() failed, invalid width parameter: %d.\r\n"),
+        "CSurface2D::Initialize() failed, invalid width parameter: %d.\r\n",
         width);
     return GL_INVALID_VALUE;
   }
 
   if (height > MAX_TEXTURE_SIZE) {
-    __glLogError(_T("CSurface2D::Initialize() failed, invalid height ")
-                 _T("parameter: %d.\r\n"),
+    __glLogError("CSurface2D::Initialize() failed, invalid height "
+                 "parameter: %d.\r\n",
                  height);
     return GL_INVALID_VALUE;
   }
@@ -114,7 +114,7 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
 
   auto pColorTable = new Color4[paletteSize];
   if (nullptr == pColorTable) {
-    __glLogError(_T("CSurface2D::Initialize() failed, out of memory.\r\n"));
+    __glLogError("CSurface2D::Initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -129,7 +129,7 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
   auto pbBits = new uint8_t[nBPP * surfaceSize];
   if (nullptr == pbBits) {
     delete[] pColorTable;
-    __glLogError(_T("CSurface2D::Initialize() failed, out of memory.\r\n"));
+    __glLogError("CSurface2D::Initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -151,8 +151,8 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
   } else {
     delete[] pbBits;
     delete[] pColorTable;
-    __glLogError(_T("CSurface2D::Initialize() failed, invalid texture palette ")
-                 _T("size: %d.\r\n"),
+    __glLogError("CSurface2D::Initialize() failed, invalid texture palette "
+                 "size: %d.\r\n",
                  paletteSize);
     return GL_INVALID_VALUE;
   }
@@ -174,7 +174,7 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
 }
 
 void CSurface2D::Destroy() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (bOwnedBuffer_) {
     __safeDeleteArray(pbBits_);
@@ -195,7 +195,7 @@ void CSurface2D::Clear() {
 //////////////////////////////////////////////////////////////////////////////
 
 CTexture::CTexture() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   pbMipBuffer_ = nullptr;
   bIsDirty_ = true;
@@ -211,19 +211,19 @@ CTexture::CTexture() {
 }
 
 CTexture::~CTexture() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
   this->FreeSurfaces();
 }
 
 GLenum CTexture::Create(CTexture **ppTexture) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(ppTexture);
 
   // Create a new texture object
   auto pTexture = new CTexture();
   if (nullptr == pTexture) {
-    __glLogError(_T("CTexture allocation failed, out of memory.\r\n"));
+    __glLogError("CTexture allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -248,7 +248,7 @@ GLenum CTexture::BindSurface(CGLSurface *pSurface, bool bGenMipMaps) {
       colorDesc.Width, colorDesc.Height, colorDesc.Pitch,
       static_cast<ePixelFormat>(colorDesc.Format), colorDesc.pBits);
   if (__glFailed(err)) {
-    __glLogError(_T("CSurface2D::Initialize() failed, err = %d.\r\n"), err);
+    __glLogError("CSurface2D::Initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -258,7 +258,7 @@ GLenum CTexture::BindSurface(CGLSurface *pSurface, bool bGenMipMaps) {
   if (bGenMipMaps && this->bGenMipMaps) {
     err = this->GenerateMipmaps();
     if (__glFailed(err)) {
-      __glLogError(_T("CTexture::GenerateMipmaps() failed, err = %d.\r\n"),
+      __glLogError("CTexture::GenerateMipmaps() failed, err = %d.\r\n",
                    err);
       return err;
     }
@@ -321,7 +321,7 @@ GLenum CTexture::GenerateMipmaps() {
 
   pbMipBuffer_ = new uint8_t[cbSize];
   if (nullptr == pbMipBuffer_) {
-    __glLogError(_T("Mipmap buffer allocation failed, out of memory.\r\n"));
+    __glLogError("Mipmap buffer allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -347,7 +347,7 @@ GLenum CTexture::GenerateMipmaps() {
     err =
         surfaceDst.Initialize(width, height, width * bpp, format, pbMipBuffer);
     if (__glFailed(err)) {
-      __glLogError(_T("CSurface2D::Initialize() failed, err = %d.\r\n"), err);
+      __glLogError("CSurface2D::Initialize() failed, err = %d.\r\n", err);
       return err;
     }
 

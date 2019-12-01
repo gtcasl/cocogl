@@ -14,10 +14,10 @@
 #include "stdafx.h"
 #include <stdarg.h>
 
-void DbgPrintf(int level, LPCTSTR format, ...) {
+void DbgPrintf(int level, const char *format, ...) {
   __unreferenced(level);
   va_list args;
   va_start(args, format);
-  vftprintf(stderr, format, args);
+  vfprintf(stderr, format, args);
   va_end(args);
 }

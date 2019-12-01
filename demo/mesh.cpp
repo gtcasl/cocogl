@@ -35,7 +35,7 @@ CMesh::~CMesh() {
   delete[] pTexCoords_;
 }
 
-bool CMesh::OnInitialize(LPCTSTR lpszFileName) {
+bool CMesh::OnInitialize(const char *fileName) {
   FILE* file = nullptr;
   uint32_t num_indices = 0;
   uint32_t num_vertices = 0;
@@ -46,7 +46,7 @@ bool CMesh::OnInitialize(LPCTSTR lpszFileName) {
   for (;;) {
     GSDHeader header;
 
-    auto file = _tfopen(lpszFileName, _T("rb"));
+    auto file = fopen(fileName, "rb");
     if (nullptr == file)
       break;
 

@@ -32,7 +32,7 @@ public:
     */
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    if (!LoadTGA(_T("media/lady.tga"), &texture_))
+    if (!LoadTGA("media/lady.tga", &texture_))
       return false;
 
     glActiveTexture(GL_TEXTURE0);

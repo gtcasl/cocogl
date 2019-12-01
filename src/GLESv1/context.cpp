@@ -19,7 +19,7 @@
 
 CGLContext::CGLContext(CHandleTable *pHandles, CRasterCache *pRasterCache,
                        CGLContext *pCtxShared) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(pHandles);
   pHandles->AddRef();
@@ -53,7 +53,7 @@ CGLContext::CGLContext(CHandleTable *pHandles, CRasterCache *pRasterCache,
 }
 
 CGLContext::~CGLContext() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   __safeRelease(pRasterCache_);
   __safeRelease(pTexDefault_);
@@ -88,7 +88,7 @@ CGLContext::~CGLContext() {
 
 GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
                           CRasterCache *pRasterCache, CGLContext *pCtxShared) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
@@ -97,7 +97,7 @@ GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
   // Create a new context object
   auto pContext = new CGLContext(pHandles, pRasterCache, pCtxShared);
   if (nullptr == pContext) {
-    __glLogError(_T("CGLContext allocation failed, out of memory.\r\n"));
+    __glLogError("CGLContext allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -107,7 +107,7 @@ GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
   err = pContext->Initialize();
   if (__glFailed(err)) {
     __safeRelease(pContext);
-    __glLogError(_T("CGLContext::Initialize() failed, err = %d.\r\n"), err);
+    __glLogError("CGLContext::Initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -117,40 +117,40 @@ GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
 }
 
 GLenum CGLContext::Initialize() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
   // Initialize the matrix stacks
   err = CMatrixStack::Create(&pMsModelView_, MODELVIEW_STACK_SIZE);
   if (__glFailed(err)) {
-    __glLogError(_T("CMatrixStack::Init() failed, err = %d.\r\n"), err);
+    __glLogError("CMatrixStack::Init() failed, err = %d.\r\n", err);
     return err;
   }
 
   err = CMatrixStack::Create(&pMsProjection_, PROJECTION_STACK_SIZE);
   if (__glFailed(err)) {
-    __glLogError(_T("CMatrixStack::Init() failed, err = %d.\r\n"), err);
+    __glLogError("CMatrixStack::Init() failed, err = %d.\r\n", err);
     return err;
   }
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     err = CMatrixStack::Create(&pMsTexCoords_[i], TEXTURE_STACK_SIZE);
     if (__glFailed(err)) {
-      __glLogError(_T("CMatrixStack::Init() failed, err = %d.\r\n"), err);
+      __glLogError("CMatrixStack::Init() failed, err = %d.\r\n", err);
       return err;
     }
   }
 
   err = CTexture::Create(&pTexDefault_);
   if (__glFailed(err)) {
-    __glLogError(_T("CTexture::Create() failed, err = %d.\r\n"), err);
+    __glLogError("CTexture::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
   err = CBuffer::Create(&pBufDefault_);
   if (__glFailed(err)) {
-    __glLogError(_T("CBuffer::Create() failed, err = %d.\r\n"), err);
+    __glLogError("CBuffer::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -164,7 +164,7 @@ GLenum CGLContext::Initialize() {
   // Create the CG assembler
   err = GLERROR_FROM_HRESULT(CG::CAssembler::Create(&pCGAssembler_));
   if (__glFailed(err)) {
-    __glLogError(_T("CG::CAssembler::Create() failed, err = %d.\r\n"), err);
+    __glLogError("CG::CAssembler::Create() failed, err = %d.\r\n", err);
     return err;
   }
 #endif

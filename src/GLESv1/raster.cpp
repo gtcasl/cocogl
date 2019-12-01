@@ -35,13 +35,13 @@ void IRasterOp::LogProfile(const RASTERID &rasterID) {
   float fMPs = profile_.DrawnPixels / fRenderTime;
 
   DbgPrintf(1,
-            _T("Profile_PS(%d,%d,%d,%d): Calls=%ld, Pixels=%ld, Time=%.6f ")
-            _T("ms, MPs=%.6f - "),
+            "Profile_PS(%d,%d,%d,%d): Calls=%ld, Pixels=%ld, Time=%.6f "
+            "ms, MPs=%.6f - ",
             rasterID.Flags.Value, rasterID.States.Value,
             rasterID.Textures[0].Value, rasterID.Textures[1].Value,
             profile_.Invocations, profile_.DrawnPixels, fRenderTime, fMPs);
   rasterID.Flags.DebugPrint();
-  DbgPrintf(1, _T("\r\n"));
+  DbgPrintf(1, "\r\n");
 }
 
 #endif
@@ -50,8 +50,8 @@ void IRasterOp::LogProfile(const RASTERID &rasterID) {
 
 GLenum CRasterizer::SetupRasterStates(GLenum mode) {
   if (nullptr == rasterData_.pColorBits) {
-    __glLogError(_T("CRasterizer::SetupRasterStates() failed, missing color ")
-                 _T("buffer.\r\n"));
+    __glLogError("CRasterizer::SetupRasterStates() failed, missing color "
+                 "buffer.\r\n");
     return GL_INVALID_OPERATION;
   }
 
@@ -209,7 +209,7 @@ bool CRasterizer::GenerateRasterOp() {
   IRasterOp *pRasterOp = nullptr;
   if (!pRasterCache_->Lookup(rasterID_, &pRasterOp)) {
 #ifndef NDEBUG
-    DbgPrintf(3, _T("RASTERID: %d,%d,%d,%d\r\n"), rasterID_.Flags.Value,
+    DbgPrintf(3, "RASTERID: %d,%d,%d,%d\r\n", rasterID_.Flags.Value,
               rasterID_.States.Value, rasterID_.Textures[0].Value,
               rasterID_.Textures[1].Value);
 #endif
@@ -219,13 +219,13 @@ bool CRasterizer::GenerateRasterOp() {
 #ifdef GL_COCOJIT
         err = CJITRasterOp::Create(&pRasterOp, pCGAssembler_, rasterID_);
         if (__glFailed(err)) {
-          __glLogError(_T("CJITRasterOp::Create() failed, err = %d.\r\n"), err);
+          __glLogError("CJITRasterOp::Create() failed, err = %d.\r\n", err);
           return false;
         }
 #else
         err = CGenericRasterOp::Create(&pRasterOp, rasterID_);
         if (__glFailed(err)) {
-          __glLogError(_T("CGenericRasterOp::Create() failed, err = %d.\r\n"),
+          __glLogError("CGenericRasterOp::Create() failed, err = %d.\r\n",
                        err);
           return false;
         }
@@ -235,7 +235,7 @@ bool CRasterizer::GenerateRasterOp() {
         pRasterCache_->TrackSlowRasterID(rasterID_);
 #endif
       } else {
-        __glLogError(_T("COptimizedRasterOp::Create() failed, err = %d.\r\n"),
+        __glLogError("COptimizedRasterOp::Create() failed, err = %d.\r\n",
                      err);
         return false;
       }
@@ -306,8 +306,8 @@ GLenum CRasterizer::RenderPrimitive(GLenum mode, uint32_t count) {
     break;
 
   default:
-    __glLogError(_T("CGLContext::RenderPrimitive() failed, invalid mode ")
-                 _T("parameter: %d.\r\n"),
+    __glLogError("CGLContext::RenderPrimitive() failed, invalid mode "
+                 "parameter: %d.\r\n",
                  mode);
     return GL_INVALID_ENUM;
   }

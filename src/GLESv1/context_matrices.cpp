@@ -35,7 +35,7 @@ void CGLContext::MatrixMode(GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::MatrixMode() failed, invalid mode parameter: %d.\r\n"),
+        "CGLContext::MatrixMode() failed, invalid mode parameter: %d.\r\n",
         mode);
     return;
   }
@@ -45,17 +45,17 @@ void CGLContext::MatrixMode(GLenum mode) {
 
 void CGLContext::PushMatrix() {
   if (!pMatrixStack_->Push()) {
-    __glError(GL_STACK_OVERFLOW, _T("CGLContext::PushMatrix() failed, the ")
-                                 _T("current matrix stack is full.\r\n"));
+    __glError(GL_STACK_OVERFLOW, "CGLContext::PushMatrix() failed, the "
+                                 "current matrix stack is full.\r\n");
     return;
   }
 }
 
 void CGLContext::PopMatrix() {
   if (!pMatrixStack_->Pop()) {
-    __glError(GL_STACK_UNDERFLOW, _T("CGLContext::PopMatrix() failed, the ")
-                                  _T("current matrix stack contains only a ")
-                                  _T("single matrix.\r\n"));
+    __glError(GL_STACK_UNDERFLOW, "CGLContext::PopMatrix() failed, the "
+                                  "current matrix stack contains only a "
+                                  "single matrix.\r\n");
     return;
   }
 
@@ -79,27 +79,27 @@ void CGLContext::Frustum(floatf left, floatf right, floatf bottom, floatf top,
   if (zNear < fZERO) {
     __glError(
         GL_INVALID_VALUE,
-        _T("CGLContext::Frustum() failed, zNear should not be negative.\r\n"));
+        "CGLContext::Frustum() failed, zNear should not be negative.\r\n");
     return;
   }
 
   if (zFar < fZERO) {
     __glError(
         GL_INVALID_VALUE,
-        _T("CGLContext::Frustum() failed, zFar should not be negative.\r\n"));
+        "CGLContext::Frustum() failed, zFar should not be negative.\r\n");
     return;
   }
 
   if (left == right) {
-    __glError(GL_INVALID_VALUE, _T("CGLContext::Frustum() failed, left and ")
-                                _T("right parameters should not be ")
-                                _T("equal.\r\n"));
+    __glError(GL_INVALID_VALUE, "CGLContext::Frustum() failed, left and "
+                                "right parameters should not be "
+                                "equal.\r\n");
     return;
   }
 
   if (bottom == top) {
-    __glError(GL_INVALID_VALUE, _T("CGLContext::Frustum() failed, bottom and ")
-                                _T("top parameters should not be equal.\r\n"));
+    __glError(GL_INVALID_VALUE, "CGLContext::Frustum() failed, bottom and "
+                                "top parameters should not be equal.\r\n");
     return;
   }
 

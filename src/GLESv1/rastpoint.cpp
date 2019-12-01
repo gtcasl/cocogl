@@ -47,7 +47,7 @@ void CRasterizer::RasterPoint(uint32_t index) {
   }
 
   if (!this->GenerateRasterOp()) {
-    __glLogError(_T("CRasterizer::GenerateRasterOp() failed.\r\n"));
+    __glLogError("CRasterizer::GenerateRasterOp() failed.\r\n");
     return;
   }
 

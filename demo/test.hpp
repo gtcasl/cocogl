@@ -28,7 +28,7 @@ void LookAtf(
         GLfloat upy,
         GLfloat upz);
 
-bool LoadTGA(LPCTSTR lpszFileName, GLuint* id);
+bool LoadTGA(const char *fileName, GLuint* id);
 
 ///////////////////////////////////////////////////////////////////////////////
 

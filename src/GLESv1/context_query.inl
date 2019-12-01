@@ -24,8 +24,8 @@ template <class T>
 inline void CGLContext::TGetClipPlane(GLenum plane, T eqn[4]) {
   if ((plane - GL_CLIP_PLANE0) >= MAX_CLIPPLANES) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::TGetClipPlane() failed, ")
-              _T("invalid plane parameter: %d.\r\n"),
+              "CGLContext::TGetClipPlane() failed, "
+              "invalid plane parameter: %d.\r\n",
               plane);
     return;
   }
@@ -45,7 +45,7 @@ inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
   if ((light - GL_LIGHT0) >= MAX_LIGHTS) {
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::TGetLight() failed, invalid light parameter: %d.\r\n"),
+        "CGLContext::TGetLight() failed, invalid light parameter: %d.\r\n",
         light);
     return;
   }
@@ -93,7 +93,7 @@ inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::TGetLight() failed, invalid pname parameter: %d.\r\n"),
+        "CGLContext::TGetLight() failed, invalid pname parameter: %d.\r\n",
         pname);
     return;
   }
@@ -105,8 +105,8 @@ inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
 
   if (face != GL_FRONT && face != GL_BACK) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::TGetMaterial() failed, invalid ")
-              _T("face parameter: %d.\r\n"),
+              "CGLContext::TGetMaterial() failed, invalid "
+              "face parameter: %d.\r\n",
               face);
     return;
   }
@@ -134,8 +134,8 @@ inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::TGetMaterial() failed, invalid ")
-              _T("pname parameter: %d.\r\n"),
+              "CGLContext::TGetMaterial() failed, invalid "
+              "pname parameter: %d.\r\n",
               pname);
     return;
   }
@@ -163,8 +163,8 @@ inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
 
     default:
       __glError(GL_INVALID_ENUM,
-                _T("CGLContext::TGetTexEnv() failed, invalid ")
-                _T("pname parameter: %d.\r\n"),
+                "CGLContext::TGetTexEnv() failed, invalid "
+                "pname parameter: %d.\r\n",
                 pname);
       return;
     }
@@ -174,7 +174,7 @@ inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::TGetTexEnv() failed, invalid env parameter: %d.\r\n"),
+        "CGLContext::TGetTexEnv() failed, invalid env parameter: %d.\r\n",
         env);
     return;
   }
@@ -187,8 +187,8 @@ inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
 
   if (target != GL_TEXTURE_2D) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::TGetTexParameter() failed, ")
-              _T("invalid target parameter: %d.\r\n"),
+              "CGLContext::TGetTexParameter() failed, "
+              "invalid target parameter: %d.\r\n",
               target);
     return;
   }
@@ -219,8 +219,8 @@ inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
 
   default:
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::TGetTexParameter() failed, ")
-              _T("invalid pname parameter: %d.\r\n"),
+              "CGLContext::TGetTexParameter() failed, "
+              "invalid pname parameter: %d.\r\n",
               pname);
     return;
   }
@@ -256,7 +256,7 @@ inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::TGet() failed, invalid pname parameter: %d.\r\n"),
+              "CGLContext::TGet() failed, invalid pname parameter: %d.\r\n",
               pname);
     return;
   }
@@ -567,7 +567,7 @@ inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::TGet() failed, invalid pname parameter: %d.\r\n"),
+              "CGLContext::TGet() failed, invalid pname parameter: %d.\r\n",
               pname);
     return;
   }
@@ -695,11 +695,7 @@ inline void CGLContext::TGet(GLenum pname, T *pParams) {
     break;
 
   default:
-    __glError(
-        GL_INVALID_ENUM,
-        _T
-                    ("CGLContext::TGet() failed, invalid pname parameter: %d.\r\n"),
-        pname);
+    __glError(GL_INVALID_ENUM, "CGLContext::TGet() failed, invalid pname parameter: %d.\r\n", pname);
     return;
   }
 }

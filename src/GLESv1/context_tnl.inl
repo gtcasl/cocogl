@@ -21,7 +21,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
   if ((light - GL_LIGHT0) >= MAX_LIGHTS) {
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::Light() failed, invalid light parameter: %d.\r\n"),
+        "CGLContext::Light() failed, invalid light parameter: %d.\r\n",
         light);
     return;
   }
@@ -73,7 +73,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
     if ((vParam.x < fZERO) || (vParam.x > f128)) {
       __glError(
           GL_INVALID_VALUE,
-          _T("CGLContext::TLight() failed, invalid param parameter: %d.\r\n"),
+          "CGLContext::TLight() failed, invalid param parameter: %d.\r\n",
           vParam.x);
       return;
     }
@@ -88,7 +88,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
     if (((vParam.x < fZERO) || (vParam.x > f90)) && (vParam.x != f180)) {
       __glError(
           GL_INVALID_VALUE,
-          _T("CGLContext::TLight() failed, invalid param parameter: %d.\r\n"),
+          "CGLContext::TLight() failed, invalid param parameter: %d.\r\n",
           vParam.x);
       return;
     }
@@ -106,7 +106,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
     if (vParam.x < fZERO) {
       __glError(
           GL_INVALID_VALUE,
-          _T("CGLContext::TLight() failed, invalid param parameter: %d.\r\n"),
+          "CGLContext::TLight() failed, invalid param parameter: %d.\r\n",
           vParam.x);
       return;
     }
@@ -119,7 +119,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::TLight() failed, invalid pname parameter: %d.\r\n"),
+        "CGLContext::TLight() failed, invalid pname parameter: %d.\r\n",
         pname);
     return;
   }
@@ -144,8 +144,8 @@ inline void CGLContext::TLightModel(GLenum pname, const T *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::TLightModel() failed, invalid ")
-              _T("pname parameter: %d.\r\n"),
+              "CGLContext::TLightModel() failed, invalid "
+              "pname parameter: %d.\r\n",
               pname);
     return;
   }
@@ -158,7 +158,7 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
   if (face != GL_FRONT_AND_BACK) {
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::TMaterial() failed, invalid face parameter: %d.\r\n"),
+        "CGLContext::TMaterial() failed, invalid face parameter: %d.\r\n",
         face);
     return;
   }
@@ -198,8 +198,8 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
     vParam.x = Math::TCast<floatf>(pParams[0]);
     if ((vParam.x < fZERO) || (vParam.x > f128)) {
       __glError(GL_INVALID_VALUE,
-                _T("CGLContext::TMaterial() failed, invalid ")
-                _T("param parameter: %d.\r\n"),
+                "CGLContext::TMaterial() failed, invalid "
+                "param parameter: %d.\r\n",
                 vParam.x);
       return;
     }
@@ -212,7 +212,7 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::TMaterial() failed, invalid pname parameter: %d.\r\n"),
+        "CGLContext::TMaterial() failed, invalid pname parameter: %d.\r\n",
         pname);
     return;
   }
@@ -235,7 +235,7 @@ inline void CGLContext::TFog(GLenum pname, const T *pParams) {
     default:
       __glError(
           GL_INVALID_ENUM,
-          _T("CGLContext::TFog() failed, invalid param parameter: %d.\r\n"),
+          "CGLContext::TFog() failed, invalid param parameter: %d.\r\n",
           param);
       return;
     }
@@ -261,7 +261,7 @@ inline void CGLContext::TFog(GLenum pname, const T *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::TFog() failed, invalid pname parameter: %d.\r\n"),
+              "CGLContext::TFog() failed, invalid pname parameter: %d.\r\n",
               pname);
     return;
   }

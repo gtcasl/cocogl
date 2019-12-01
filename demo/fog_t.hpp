@@ -69,7 +69,7 @@ public:
 
     static const float matAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-    if (!LoadTGA(_T("media/block.tga"), &texture_))
+    if (!LoadTGA("media/block.tga", &texture_))
       return false;
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

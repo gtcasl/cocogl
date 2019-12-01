@@ -23,7 +23,7 @@ void CGLContext::GenBuffers(GLsizei n, GLuint *phBuffers) {
   if (n < 0) {
     __glError(
         GL_INVALID_VALUE,
-        _T("CGLContext::GenBuffers() failed, invalid n parameter: %d.\r\n"), n);
+        "CGLContext::GenBuffers() failed, invalid n parameter: %d.\r\n", n);
     return;
   }
 
@@ -32,7 +32,7 @@ void CGLContext::GenBuffers(GLsizei n, GLuint *phBuffers) {
     CBuffer *pBuffer;
     err = CBuffer::Create(&pBuffer);
     if (__glFailed(err)) {
-      __glError(err, _T("CBuffer::Create() failed, err = %d.\r\n"), err);
+      __glError(err, "CBuffer::Create() failed, err = %d.\r\n", err);
       return;
     }
 
@@ -41,7 +41,7 @@ void CGLContext::GenBuffers(GLsizei n, GLuint *phBuffers) {
         handles_->Insert(&dwHandle, pBuffer, HANDLE_BUFFER, this));
     if (__glFailed(err)) {
       __safeRelease(pBuffer);
-      __glError(err, _T("CHandleTable::Insert() failed, err = %d.\r\n"), err);
+      __glError(err, "CHandleTable::Insert() failed, err = %d.\r\n", err);
       return;
     }
 
@@ -54,8 +54,8 @@ void CGLContext::GenBuffers(GLsizei n, GLuint *phBuffers) {
 void CGLContext::BindBuffer(GLenum target, GLuint buffer) {
   if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER)) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::BindBuffer() failed, invalid ")
-              _T("target parameter: %d.\r\n"),
+              "CGLContext::BindBuffer() failed, invalid "
+              "target parameter: %d.\r\n",
               target);
     return;
   }
@@ -73,8 +73,8 @@ void CGLContext::BindBuffer(GLenum target, GLuint buffer) {
 
       if (nullptr == pBuffer) {
         __glError(GL_INVALID_VALUE,
-                  _T("CGLContext::BindBuffer() failed, ")
-                  _T("Invalid buffer parameter: %d\r\n"),
+                  "CGLContext::BindBuffer() failed, "
+                  "Invalid buffer parameter: %d\r\n",
                   buffer);
         return;
       }
@@ -92,8 +92,8 @@ void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
 
   if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER)) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::BufferData() failed, invalid ")
-              _T("target parameter: %d.\r\n"),
+              "CGLContext::BufferData() failed, invalid "
+              "target parameter: %d.\r\n",
               target);
     return;
   }
@@ -101,7 +101,7 @@ void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
   if ((usage != GL_STATIC_DRAW) && (usage != GL_DYNAMIC_DRAW)) {
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::BufferData() failed, invalid usage parameter: %d.\r\n"),
+        "CGLContext::BufferData() failed, invalid usage parameter: %d.\r\n",
         usage);
     return;
   }
@@ -109,7 +109,7 @@ void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
   if (size < 0) {
     __glError(
         GL_INVALID_VALUE,
-        _T("CGLContext::BufferData() failed, invalid size parameter: %d.\r\n"),
+        "CGLContext::BufferData() failed, invalid size parameter: %d.\r\n",
         size);
     return;
   }
@@ -119,7 +119,7 @@ void CGLContext::BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
 
   err = pBuffer->Initialize(size, usage, pData);
   if (__glFailed(err)) {
-    __glError(err, _T("CBuffer::SetData() failed, err = %d.\r\n"), err);
+    __glError(err, "CBuffer::SetData() failed, err = %d.\r\n", err);
     return;
   }
 }
@@ -130,17 +130,17 @@ void CGLContext::BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
 
   if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER)) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::BufferSubData() failed, ")
-              _T("invalid target parameter: %d.\r\n"),
+              "CGLContext::BufferSubData() failed, "
+              "invalid target parameter: %d.\r\n",
               target);
     return;
   }
 
   if ((offset < 0) || (size < 0)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::BufferSubData() failed, ")
-              _T("invalid size(%d) or offset(%d) ")
-              _T("parameters.\r\n"),
+              "CGLContext::BufferSubData() failed, "
+              "invalid size(%d) or offset(%d) "
+              "parameters.\r\n",
               size, offset);
     return;
   }
@@ -150,8 +150,8 @@ void CGLContext::BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
 
   if (uint32_t(offset + size) > pBuffer->GetSize()) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::BufferSubData() failed, size ")
-              _T("+ offset parameters out of range: %d.\r\n"),
+              "CGLContext::BufferSubData() failed, size "
+              "+ offset parameters out of range: %d.\r\n",
               size + offset);
     return;
   }
@@ -167,8 +167,8 @@ void CGLContext::GetBufferParameter(GLenum target, GLenum pname,
 
   if (target != GL_ARRAY_BUFFER) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::GetBufferParameter() failed, ")
-              _T("invalid target parameter: %d.\r\n"),
+              "CGLContext::GetBufferParameter() failed, "
+              "invalid target parameter: %d.\r\n",
               target);
     return;
   }
@@ -178,7 +178,7 @@ void CGLContext::GetBufferParameter(GLenum target, GLenum pname,
 
   err = pBuffer->GetParameter(pname, pParams);
   if (__glFailed(err)) {
-    __glError(err, _T("CBuffer::GetParameter() failed, err = %d.\r\n"), err);
+    __glError(err, "CBuffer::GetParameter() failed, err = %d.\r\n", err);
     return;
   }
 }
@@ -189,7 +189,7 @@ void CGLContext::DeleteBuffers(GLsizei n, const GLuint *phBuffers) {
   if (n < 0) {
     __glError(
         GL_INVALID_VALUE,
-        _T("CGLContext::DeleteBuffers() failed, invalid n parameter: %d.\r\n"),
+        "CGLContext::DeleteBuffers() failed, invalid n parameter: %d.\r\n",
         n);
     return;
   }

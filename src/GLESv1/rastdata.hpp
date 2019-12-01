@@ -44,12 +44,12 @@ public:
   ~CRasterCache() {
 #ifndef NDEBUG
     if (slowRasterIDs_.size() != 0) {
-      __glLog(_T("BEGIN MAKE_SCANLINE().\r\n"));
+      __glLog("BEGIN MAKE_SCANLINE().\r\n");
       for (auto &rid : slowRasterIDs_) {
-        __glLog(_T("MAKE_SCANLINE(%d,%d,%d,%d),\r\n"), rid.Flags.Value,
+        __glLog("MAKE_SCANLINE(%d,%d,%d,%d),\r\n", rid.Flags.Value,
                 rid.States.Value, rid.Textures[0].Value, rid.Textures[1].Value);
       }
-      __glLog(_T("END MAKE_SCANLINE().\r\n"));
+      __glLog("END MAKE_SCANLINE().\r\n");
     }
 #endif
 #ifdef COCOGL_RASTER_PROFILE
@@ -106,14 +106,14 @@ public:
   }
 
   static GLenum Create(CRasterCache **ppRasterCache) {
-    __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+    __profileAPI(" - %s()\n", __FUNCTION__);
 
     assert(ppRasterCache);
 
     // Create a new raster cache
     CRasterCache *pRasterCache = new CRasterCache();
     if (nullptr == pRasterCache) {
-      __glLogError(_T("CRasterCache allocation failed, out of memory.\r\n"));
+      __glLogError("CRasterCache allocation failed, out of memory.\r\n");
       return GL_OUT_OF_MEMORY;
     }
 

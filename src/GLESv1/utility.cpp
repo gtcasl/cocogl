@@ -257,8 +257,8 @@ private:
                         const GLSurfaceDesc & /*srcDesc*/,
                         uint32_t /*srcOffsetX*/, uint32_t /*srcOffsetY*/
   ) {
-    __glLogError(_T("CSurface2D::Copy() failed, the source and destination ")
-                 _T("formats are not compatible."));
+    __glLogError("CSurface2D::Copy() failed, the source and destination "
+                 "formats are not compatible.");
     return GL_INVALID_OPERATION;
   }
 
@@ -513,7 +513,7 @@ GLenum ToPixelFormat(ePixelFormat *pOut, uint32_t *pBPP, GLenum format,
     break;
 
   default:
-    __glLogError(_T("ToPixelFormat() failed, invalid type parameter: %d.\r\n"),
+    __glLogError("ToPixelFormat() failed, invalid type parameter: %d.\r\n",
                  type);
     return GL_INVALID_ENUM;
   }
@@ -547,7 +547,7 @@ GLenum ToPixelFormat(ePixelFormat *pOut, GLint format) {
 
   default:
     __glLogError(
-        _T("ToPixelFormat() failed, invalid format parameter: %d.\r\n"),
+        "ToPixelFormat() failed, invalid format parameter: %d.\r\n",
         format);
     return GL_INVALID_VALUE;
   }

@@ -184,8 +184,8 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
     break;
 
   default:
-    __glLogError(_T("CGLContext::RenderPrimitive() failed, invalid mode ")
-                 _T("parameter: %d.\r\n"),
+    __glLogError("CGLContext::RenderPrimitive() failed, invalid mode "
+                 "parameter: %d.\r\n",
                  mode);
     return GL_INVALID_ENUM;
   }

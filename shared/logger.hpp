@@ -20,14 +20,14 @@ public:
     MAX_INDENT = 64,
   };
 
-  CLogger(LPCTSTR lpszFileName = nullptr, LPCTSTR lpszMode = _T("w"));
+  CLogger(const char *fileName = nullptr, const char *mode = "w");
   virtual ~CLogger();
 
-  HRESULT Open(LPCTSTR lpszFileName, LPCTSTR lpszMode = _T("w"));
+  HRESULT Open(const char *fileName, const char *mode = "w");
 
-  HRESULT Write(const TCHAR *pszFormat, ...);
+  HRESULT Write(const char *format, ...);
 
-  HRESULT Write(const TCHAR *pszFormat, va_list arglist);
+  HRESULT Write(const char *format, va_list arglist);
 
   void SetIndent(uint32_t indent) {
     indent_ = indent;
@@ -56,7 +56,7 @@ private:
 
 class CAutoLog {
 public:
-  CAutoLog(CLogger &logger, const TCHAR *pszFunc, ...);
+  CAutoLog(CLogger &logger, const char *func, ...);
 
   ~CAutoLog();
 

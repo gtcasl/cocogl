@@ -48,7 +48,7 @@ public:
 
   EGLint ReleaseTexBound();
 
-  HRESULT SaveBitmap(LPCTSTR lpszFilename);
+  HRESULT SaveBitmap(const char *filename);
 
   void Present();
 

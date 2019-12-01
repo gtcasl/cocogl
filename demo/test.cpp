@@ -90,9 +90,9 @@ void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
   glTranslatef(-eyex, -eyey, -eyez);
 }
 
-bool LoadTGA(LPCTSTR lpszFileName, GLuint *id) {
+bool LoadTGA(const char *fileName, GLuint *id) {
 
-  auto f = _tfopen(lpszFileName, _T("rb"));
+  auto f = fopen(fileName, "rb");
   if (nullptr == f) {
     return false;
   }

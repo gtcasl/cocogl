@@ -439,7 +439,7 @@ static const PfnWriteColor s_pfnWriteColorTable[] = {
 //////////////////////////////////////////////////////////////////////////////
 
 CGenericRasterOp::CGenericRasterOp(const RASTERID &rasterID) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   rasterID_ = rasterID;
   colorStride_ = 0;
@@ -453,12 +453,12 @@ CGenericRasterOp::CGenericRasterOp(const RASTERID &rasterID) {
 }
 
 CGenericRasterOp::~CGenericRasterOp() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 }
 
 GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
                                 const RASTERID &rasterID) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
@@ -467,7 +467,7 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
   // Create a new rasterOp object
   auto pRasterOp = new CGenericRasterOp(rasterID);
   if (nullptr == pRasterOp) {
-    __glLogError(_T("CGenericRasterOp allocation failed, out of memory.\r\n"));
+    __glLogError("CGenericRasterOp allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -477,7 +477,7 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
   err = pRasterOp->Initialize();
   if (__glFailed(err)) {
     pRasterOp->Release();
-    __glLogError(_T("CGenericRasterOp::Initialize() failed, err = %d.\r\n"),
+    __glLogError("CGenericRasterOp::Initialize() failed, err = %d.\r\n",
                  err);
     return err;
   }
@@ -488,7 +488,7 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
 }
 
 GLenum CGenericRasterOp::Initialize() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   RASTERFLAGS rasterFlags = rasterID_.Flags;
 

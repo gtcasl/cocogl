@@ -104,7 +104,7 @@ public:
     (pfnDepthStencilFill_)(pDepthStencilDesc_, value, mask, rect);
   }
 
-  GLenum SaveBitmap(LPCTSTR lpszFilename);
+  GLenum SaveBitmap(const char *filename);
 
 private:
   enum {

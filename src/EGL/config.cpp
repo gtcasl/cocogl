@@ -16,7 +16,7 @@
 
 CConfig::CConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
                  EGLint depth, EGLint stencil) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   this->SetAttribute(EGL_BUFFER_SIZE, red + green + blue + alpha);
   this->SetAttribute(EGL_RED_SIZE, red);
@@ -52,18 +52,18 @@ CConfig::CConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
   this->SetAttribute(EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT);
 }
 
-CConfig::~CConfig() { __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__)); }
+CConfig::~CConfig() { __profileAPI(" - %s()\n", __FUNCTION__); }
 
 EGLint CConfig::Create(CConfig **ppConfig, EGLint red, EGLint green,
                        EGLint blue, EGLint alpha, EGLint depth,
                        EGLint stencil) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(ppConfig);
 
   auto pConfig = new CConfig(red, green, blue, alpha, depth, stencil);
   if (nullptr == pConfig) {
-    __eglLogError(_T("CConfig allocation failed, out of memory.\r\n"));
+    __eglLogError("CConfig allocation failed, out of memory.\r\n");
     return EGL_BAD_ALLOC;
   }
 
@@ -79,7 +79,7 @@ EGLint CConfig::GetAtttribute(EGLint name, EGLint *pValue) const {
 
   if ((name < ATTRIBUTES_FIRST) || (name > ATTRIBUTES_LAST) ||
       (EGL_NONE == name)) {
-    __eglLogError(_T("Invalid attribute name : %d.\r\n"), name);
+    __eglLogError("Invalid attribute name : %d.\r\n", name);
     return EGL_BAD_ATTRIBUTE;
   }
 
@@ -103,7 +103,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
       EGLint curValue;
       err = this->GetAtttribute(name, &curValue);
       if (__eglFailed(err)) {
-        __eglLogError(_T("CConfig::GetAtttribute() failed, err = %d.\r\n"),
+        __eglLogError("CConfig::GetAtttribute() failed, err = %d.\r\n",
                       err);
         return err;
       }
@@ -114,7 +114,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
       case EGL_SAMPLE_BUFFERS:
         if (refValue != EGL_DONT_CARE) {
           if (refValue < 0) {
-            __eglLogError(_T("Invalid attribute value : %d.\r\n"), refValue);
+            __eglLogError("Invalid attribute value : %d.\r\n", refValue);
             return EGL_BAD_ATTRIBUTE;
           }
 
@@ -132,7 +132,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
       case EGL_STENCIL_SIZE:
         if (refValue != EGL_DONT_CARE) {
           if (refValue < 0) {
-            __eglLogError(_T("Invalid attribute value : %d.\r\n"), refValue);
+            __eglLogError("Invalid attribute value : %d.\r\n", refValue);
             return EGL_BAD_ATTRIBUTE;
           }
 
@@ -146,7 +146,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
         if (refValue != EGL_DONT_CARE) {
           if ((refValue != EGL_NONE) && (refValue != EGL_SLOW_CONFIG) &&
               (refValue != EGL_NON_CONFORMANT_CONFIG)) {
-            __eglLogError(_T("Invalid attribute value : %d.\r\n"), refValue);
+            __eglLogError("Invalid attribute value : %d.\r\n", refValue);
             return EGL_BAD_ATTRIBUTE;
           }
 
@@ -177,7 +177,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
       case EGL_BIND_TO_TEXTURE_RGBA:
         if (refValue != EGL_DONT_CARE) {
           if ((refValue != EGL_TRUE) && (refValue != EGL_FALSE)) {
-            __eglLogError(_T("Invalid attribute value : %d.\r\n"), refValue);
+            __eglLogError("Invalid attribute value : %d.\r\n", refValue);
             return EGL_BAD_ATTRIBUTE;
           }
 
@@ -189,7 +189,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
 
       case EGL_SURFACE_TYPE:
         if (refValue & ~(EGL_WINDOW_BIT | EGL_PBUFFER_BIT | EGL_PIXMAP_BIT)) {
-          __eglLogError(_T("Invalid attribute value : %d.\r\n"), refValue);
+          __eglLogError("Invalid attribute value : %d.\r\n", refValue);
           return EGL_BAD_ATTRIBUTE;
         }
 
@@ -200,7 +200,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
 
       case EGL_TRANSPARENT_TYPE:
         if ((refValue != EGL_NONE) && (refValue != EGL_TRANSPARENT_RGB)) {
-          __eglLogError(_T("Invalid attribute value : %d.\r\n"), refValue);
+          __eglLogError("Invalid attribute value : %d.\r\n", refValue);
           return EGL_BAD_ATTRIBUTE;
         }
 
@@ -214,7 +214,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
       case EGL_TRANSPARENT_RED_VALUE:
         if (refValue != EGL_DONT_CARE) {
           if (refValue < 0) {
-            __eglLogError(_T("Invalid attribute value : %d.\r\n"), refValue);
+            __eglLogError("Invalid attribute value : %d.\r\n", refValue);
             return EGL_BAD_ATTRIBUTE;
           }
 
@@ -241,7 +241,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
         break;
 
       default:
-        __eglLogError(_T("Invalid attribute name : %d.\r\n"), name);
+        __eglLogError("Invalid attribute name : %d.\r\n", name);
         return EGL_BAD_ATTRIBUTE;
       }
     }

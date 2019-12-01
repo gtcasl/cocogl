@@ -16,7 +16,7 @@
 #include "buffer.hpp"
 
 CBuffer::CBuffer() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   dwHandle_ = 0;
   pBits_ = nullptr;
@@ -25,20 +25,20 @@ CBuffer::CBuffer() {
 }
 
 CBuffer::~CBuffer() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   __safeDeleteArray(pBits_);
 }
 
 GLenum CBuffer::Create(CBuffer **ppBuffer) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(ppBuffer);
 
   // Create a new surface object
   auto pBuffer = new CBuffer();
   if (nullptr == pBuffer) {
-    __glLogError(_T("CBuffer allocation failed, out of memory.\r\n"));
+    __glLogError("CBuffer allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -49,11 +49,11 @@ GLenum CBuffer::Create(CBuffer **ppBuffer) {
 }
 
 GLenum CBuffer::Initialize(uint32_t size, GLenum usage, const GLvoid *pData) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pBits = new uint8_t[size];
   if (nullptr == pBits) {
-    __glLogError(_T("CBuffer storage allocation failed, out of memory.\r\n"));
+    __glLogError("CBuffer storage allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -84,7 +84,7 @@ GLenum CBuffer::GetParameter(GLenum pname, GLint *pParams) {
 
   default:
     __glLogError(
-        _T("CBuffer::GetParameter() failed, invalid pname parameter: %d.\r\n"),
+        "CBuffer::GetParameter() failed, invalid pname parameter: %d.\r\n",
         pname);
     return GL_INVALID_ENUM;
   }

@@ -18,27 +18,27 @@
 thread_local CGLContext *tls_glctx = nullptr;
 
 CGLDriver::CGLDriver() : handles_(nullptr), pRasterCache_(nullptr) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
   // Create the handle table
   err = GLERROR_FROM_HRESULT(CHandleTable::Create(&handles_));
   if (__glFailed(err)) {
-    __glLogError(_T("CHandleTable::Create() failed, err = %x.\r\n"), err);
+    __glLogError("CHandleTable::Create() failed, err = %x.\r\n", err);
     return;
   }
 
   // Create the raster cache
   err = CRasterCache::Create(&pRasterCache_);
   if (__glFailed(err)) {
-    __glLogError(_T("CRasterCache::Create() failed, err = %x.\r\n"), err);
+    __glLogError("CRasterCache::Create() failed, err = %x.\r\n", err);
     return;
   }
 }
 
 CGLDriver::~CGLDriver() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   __safeRelease(tls_glctx);
   __safeRelease(pRasterCache_);

@@ -21,17 +21,17 @@ thread_local CEGLContext *tls_eglctx = nullptr;
 thread_local EGLint tls_eglerror = EGL_SUCCESS;
 
 CEGLDriver::CEGLDriver() : handles_(nullptr) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   // Create the handle table
   auto err = EGLERROR_FROM_HRESULT(CHandleTable::Create(&handles_));
   if (__eglFailed(err)) {
-    __eglLogError(_T("CHandleTable::Create() failed, err = %x.\r\n"), err);
+    __eglLogError("CHandleTable::Create() failed, err = %x.\r\n", err);
   }
 }
 
 CEGLDriver::~CEGLDriver() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   __safeRelease(tls_eglctx);
 
@@ -83,7 +83,7 @@ EGLint CEGLDriver::GetError() const {
 
 EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
                               EGLNativeDisplayType display_id) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
 
@@ -117,7 +117,7 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
   // Create a new display object
   err = CDisplay::Create(&pDisplay, display_id, handles_);
   if (nullptr == pDisplay) {
-    __eglLogError(_T("CDisplay::Create() failed, err = %d.\r\n"), err);
+    __eglLogError("CDisplay::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -126,7 +126,7 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
       handles_->Insert(pdwHandle, pDisplay, HANDLE_DISPLAY, this));
   if (__eglFailed(err)) {
     __safeRelease(pDisplay);
-    __eglLogError(_T("CHandleTable::InsertObject() failed, err = %x.\r\n"),
+    __eglLogError("CHandleTable::InsertObject() failed, err = %x.\r\n",
                   err);
     return EGL_BAD_ALLOC;
   }

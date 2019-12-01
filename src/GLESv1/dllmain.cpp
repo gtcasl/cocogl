@@ -19,1109 +19,1109 @@
 #include "context_tnl.inl"
 #include "driver.hpp"
 
-CLogger g_logger(_T("CocoGL.log"));
+CLogger g_logger("CocoGL.log");
 static CGLDriver g_driver;
 
 #ifndef NDEBUG
 
-const TCHAR *FuncToString(GLenum func) {
+const char *FuncToString(GLenum func) {
   switch (func) {
   case GL_NEVER:
-    return _T("GL_NEVER");
+    return "GL_NEVER";
   case GL_LESS:
-    return _T("GL_LESS");
+    return "GL_LESS";
   case GL_EQUAL:
-    return _T("GL_EQUAL");
+    return "GL_EQUAL";
   case GL_LEQUAL:
-    return _T("GL_LEQUAL");
+    return "GL_LEQUAL";
   case GL_GREATER:
-    return _T("GL_GREATER");
+    return "GL_GREATER";
   case GL_NOTEQUAL:
-    return _T("GL_NOTEQUAL");
+    return "GL_NOTEQUAL";
   case GL_GEQUAL:
-    return _T("GL_GEQUAL");
+    return "GL_GEQUAL";
   case GL_ALWAYS:
-    return _T("GL_ALWAYS");
+    return "GL_ALWAYS";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *PlaneToString(GLenum plane) {
+const char *PlaneToString(GLenum plane) {
   switch (plane) {
   case GL_CLIP_PLANE0:
-    return _T("GL_CLIP_PLANE0");
+    return "GL_CLIP_PLANE0";
   case GL_CLIP_PLANE1:
-    return _T("GL_CLIP_PLANE1");
+    return "GL_CLIP_PLANE1";
   case GL_CLIP_PLANE2:
-    return _T("GL_CLIP_PLANE2");
+    return "GL_CLIP_PLANE2";
   case GL_CLIP_PLANE3:
-    return _T("GL_CLIP_PLANE3");
+    return "GL_CLIP_PLANE3";
   case GL_CLIP_PLANE4:
-    return _T("GL_CLIP_PLANE4");
+    return "GL_CLIP_PLANE4";
   case GL_CLIP_PLANE5:
-    return _T("GL_CLIP_PLANE5");
+    return "GL_CLIP_PLANE5";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *FogParamToString(GLenum pname) {
+const char *FogParamToString(GLenum pname) {
   switch (pname) {
   case GL_FOG_DENSITY:
-    return _T("GL_FOG_DENSITY");
+    return "GL_FOG_DENSITY";
   case GL_FOG_START:
-    return _T("GL_FOG_START");
+    return "GL_FOG_START";
   case GL_FOG_END:
-    return _T("GL_FOG_END");
+    return "GL_FOG_END";
   case GL_FOG_MODE:
-    return _T("GL_FOG_MODE");
+    return "GL_FOG_MODE";
   case GL_FOG_COLOR:
-    return _T("GL_FOG_COLOR");
+    return "GL_FOG_COLOR";
   case GL_CLIP_PLANE5:
-    return _T("GL_CLIP_PLANE5");
+    return "GL_CLIP_PLANE5";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *LightToString(GLenum light) {
+const char *LightToString(GLenum light) {
   switch (light) {
   case GL_LIGHT0:
-    return _T("GL_LIGHT0");
+    return "GL_LIGHT0";
   case GL_LIGHT1:
-    return _T("GL_LIGHT1");
+    return "GL_LIGHT1";
   case GL_LIGHT2:
-    return _T("GL_LIGHT2");
+    return "GL_LIGHT2";
   case GL_LIGHT3:
-    return _T("GL_LIGHT3");
+    return "GL_LIGHT3";
   case GL_LIGHT4:
-    return _T("GL_LIGHT4");
+    return "GL_LIGHT4";
   case GL_LIGHT5:
-    return _T("GL_LIGHT5");
+    return "GL_LIGHT5";
   case GL_LIGHT6:
-    return _T("GL_LIGHT6");
+    return "GL_LIGHT6";
   case GL_LIGHT7:
-    return _T("GL_LIGHT7");
+    return "GL_LIGHT7";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *LightModelToString(GLenum pname) {
+const char *LightModelToString(GLenum pname) {
   switch (pname) {
   case GL_LIGHT_MODEL_AMBIENT:
-    return _T("GL_LIGHT_MODEL_AMBIENT");
+    return "GL_LIGHT_MODEL_AMBIENT";
   case GL_LIGHT_MODEL_TWO_SIDE:
-    return _T("GL_LIGHT_MODEL_TWO_SIDE");
+    return "GL_LIGHT_MODEL_TWO_SIDE";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *LightParamToString(GLenum pname) {
+const char *LightParamToString(GLenum pname) {
   switch (pname) {
   case GL_AMBIENT:
-    return _T("GL_AMBIENT");
+    return "GL_AMBIENT";
   case GL_DIFFUSE:
-    return _T("GL_DIFFUSE");
+    return "GL_DIFFUSE";
   case GL_SPECULAR:
-    return _T("GL_SPECULAR");
+    return "GL_SPECULAR";
   case GL_POSITION:
-    return _T("GL_POSITION");
+    return "GL_POSITION";
   case GL_SPOT_DIRECTION:
-    return _T("GL_SPOT_DIRECTION");
+    return "GL_SPOT_DIRECTION";
   case GL_SPOT_EXPONENT:
-    return _T("GL_SPOT_EXPONENT");
+    return "GL_SPOT_EXPONENT";
   case GL_SPOT_CUTOFF:
-    return _T("GL_SPOT_CUTOFF");
+    return "GL_SPOT_CUTOFF";
   case GL_CONSTANT_ATTENUATION:
-    return _T("GL_CONSTANT_ATTENUATION");
+    return "GL_CONSTANT_ATTENUATION";
   case GL_LINEAR_ATTENUATION:
-    return _T("GL_LINEAR_ATTENUATION");
+    return "GL_LINEAR_ATTENUATION";
   case GL_QUADRATIC_ATTENUATION:
-    return _T("GL_QUADRATIC_ATTENUATION");
+    return "GL_QUADRATIC_ATTENUATION";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *MaterialFaceToString(GLenum pname) {
+const char *MaterialFaceToString(GLenum pname) {
   switch (pname) {
   case GL_FRONT_AND_BACK:
-    return _T("GL_FRONT_AND_BACK");
+    return "GL_FRONT_AND_BACK";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *MaterialParamToString(GLenum pname) {
+const char *MaterialParamToString(GLenum pname) {
   switch (pname) {
   case GL_EMISSION:
-    return _T("GL_EMISSION");
+    return "GL_EMISSION";
   case GL_SHININESS:
-    return _T("GL_SHININESS");
+    return "GL_SHININESS";
   case GL_AMBIENT_AND_DIFFUSE:
-    return _T("GL_AMBIENT_AND_DIFFUSE");
+    return "GL_AMBIENT_AND_DIFFUSE";
   case GL_AMBIENT:
-    return _T("GL_AMBIENT");
+    return "GL_AMBIENT";
   case GL_DIFFUSE:
-    return _T("GL_DIFFUSE");
+    return "GL_DIFFUSE";
   case GL_SPECULAR:
-    return _T("GL_SPECULAR");
+    return "GL_SPECULAR";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *TextureToString(GLenum texture) {
+const char *TextureToString(GLenum texture) {
   switch (texture) {
   case GL_TEXTURE0:
-    return _T("GL_TEXTURE0");
+    return "GL_TEXTURE0";
   case GL_TEXTURE1:
-    return _T("GL_TEXTURE1");
+    return "GL_TEXTURE1";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *PNameToString(GLenum pname) {
+const char *PNameToString(GLenum pname) {
   switch (pname) {
   case GL_POINT_SIZE_MIN:
-    return _T("GL_POINT_SIZE_MIN");
+    return "GL_POINT_SIZE_MIN";
 
   case GL_POINT_SIZE_MAX:
-    return _T("GL_POINT_SIZE_MAX");
+    return "GL_POINT_SIZE_MAX";
 
   case GL_POINT_FADE_THRESHOLD_SIZE:
-    return _T("GL_POINT_FADE_THRESHOLD_SIZE");
+    return "GL_POINT_FADE_THRESHOLD_SIZE";
 
   case GL_POINT_DISTANCE_ATTENUATION:
-    return _T("GL_POINT_DISTANCE_ATTENUATION");
+    return "GL_POINT_DISTANCE_ATTENUATION";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *TexEnvToString(GLenum env) {
+const char *TexEnvToString(GLenum env) {
   switch (env) {
   case GL_TEXTURE_ENV:
-    return _T("GL_TEXTURE_ENV");
+    return "GL_TEXTURE_ENV";
   case GL_POINT_SPRITE_OES:
-    return _T("GL_POINT_SPRITE_OES");
+    return "GL_POINT_SPRITE_OES";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *TexEnvParamToString(GLenum pname) {
+const char *TexEnvParamToString(GLenum pname) {
   switch (pname) {
   case GL_TEXTURE_ENV_MODE:
-    return _T("GL_TEXTURE_ENV_MODE");
+    return "GL_TEXTURE_ENV_MODE";
   case GL_TEXTURE_ENV_COLOR:
-    return _T("GL_TEXTURE_ENV_COLOR");
+    return "GL_TEXTURE_ENV_COLOR";
   case GL_COORD_REPLACE_OES:
-    return _T("GL_COORD_REPLACE_OES");
+    return "GL_COORD_REPLACE_OES";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *TexParamToString(GLenum pname) {
+const char *TexParamToString(GLenum pname) {
   switch (pname) {
   case GL_TEXTURE_MIN_FILTER:
-    return _T("GL_TEXTURE_MIN_FILTER");
+    return "GL_TEXTURE_MIN_FILTER";
   case GL_TEXTURE_MAG_FILTER:
-    return _T("GL_TEXTURE_MAG_FILTER");
+    return "GL_TEXTURE_MAG_FILTER";
   case GL_TEXTURE_WRAP_S:
-    return _T("GL_TEXTURE_WRAP_S");
+    return "GL_TEXTURE_WRAP_S";
   case GL_TEXTURE_WRAP_T:
-    return _T("GL_TEXTURE_WRAP_T");
+    return "GL_TEXTURE_WRAP_T";
   case GL_GENERATE_MIPMAP:
-    return _T("GL_GENERATE_MIPMAP");
+    return "GL_GENERATE_MIPMAP";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *BufferToString(GLenum pname) {
+const char *BufferToString(GLenum pname) {
   switch (pname) {
   case GL_ARRAY_BUFFER:
-    return _T("GL_ARRAY_BUFFER");
+    return "GL_ARRAY_BUFFER";
   case GL_ELEMENT_ARRAY_BUFFER:
-    return _T("GL_ELEMENT_ARRAY_BUFFER");
+    return "GL_ELEMENT_ARRAY_BUFFER";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *BufferParamToString(GLenum pname) {
+const char *BufferParamToString(GLenum pname) {
   switch (pname) {
   case GL_BUFFER_SIZE:
-    return _T("GL_BUFFER_SIZE");
+    return "GL_BUFFER_SIZE";
   case GL_BUFFER_USAGE:
-    return _T("GL_BUFFER_USAGE");
+    return "GL_BUFFER_USAGE";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *BlendFuncToString(GLenum pname) {
+const char *BlendFuncToString(GLenum pname) {
   switch (pname) {
   case GL_ZERO:
-    return _T("GL_ZERO");
+    return "GL_ZERO";
   case GL_ONE:
-    return _T("GL_ONE");
+    return "GL_ONE";
   case GL_SRC_ALPHA:
-    return _T("GL_SRC_ALPHA");
+    return "GL_SRC_ALPHA";
   case GL_ONE_MINUS_SRC_ALPHA:
-    return _T("GL_ONE_MINUS_SRC_ALPHA");
+    return "GL_ONE_MINUS_SRC_ALPHA";
   case GL_DST_ALPHA:
-    return _T("GL_DST_ALPHA");
+    return "GL_DST_ALPHA";
   case GL_ONE_MINUS_DST_ALPHA:
-    return _T("GL_ONE_MINUS_DST_ALPHA");
+    return "GL_ONE_MINUS_DST_ALPHA";
   case GL_DST_COLOR:
-    return _T("GL_DST_COLOR");
+    return "GL_DST_COLOR";
   case GL_ONE_MINUS_DST_COLOR:
-    return _T("GL_ONE_MINUS_DST_COLOR");
+    return "GL_ONE_MINUS_DST_COLOR";
   case GL_SRC_ALPHA_SATURATE:
-    return _T("GL_SRC_ALPHA_SATURATE");
+    return "GL_SRC_ALPHA_SATURATE";
   case GL_SRC_COLOR:
-    return _T("GL_SRC_COLOR");
+    return "GL_SRC_COLOR";
   case GL_ONE_MINUS_SRC_COLOR:
-    return _T("GL_ONE_MINUS_SRC_COLOR");
+    return "GL_ONE_MINUS_SRC_COLOR";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *UsageToString(GLenum usage) {
+const char *UsageToString(GLenum usage) {
   switch (usage) {
   case GL_STATIC_DRAW:
-    return _T("GL_STATIC_DRAW");
+    return "GL_STATIC_DRAW";
   case GL_DYNAMIC_DRAW:
-    return _T("GL_DYNAMIC_DRAW");
+    return "GL_DYNAMIC_DRAW";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *TypeToString(GLenum type) {
+const char *TypeToString(GLenum type) {
   switch (type) {
   case GL_BYTE:
-    return _T("GL_BYTE");
+    return "GL_BYTE";
   case GL_UNSIGNED_BYTE:
-    return _T("GL_UNSIGNED_BYTE");
+    return "GL_UNSIGNED_BYTE";
   case GL_SHORT:
-    return _T("GL_SHORT");
+    return "GL_SHORT";
   case GL_UNSIGNED_SHORT:
-    return _T("GL_UNSIGNED_SHORT");
+    return "GL_UNSIGNED_SHORT";
   case GL_FLOAT:
-    return _T("GL_FLOAT");
+    return "GL_FLOAT";
   case GL_FIXED:
-    return _T("GL_FIXED");
+    return "GL_FIXED";
   case GL_UNSIGNED_SHORT_4_4_4_4:
-    return _T("GL_UNSIGNED_SHORT_4_4_4_4");
+    return "GL_UNSIGNED_SHORT_4_4_4_4";
   case GL_UNSIGNED_SHORT_5_5_5_1:
-    return _T("GL_UNSIGNED_SHORT_5_5_5_1");
+    return "GL_UNSIGNED_SHORT_5_5_5_1";
   case GL_UNSIGNED_SHORT_5_6_5:
-    return _T("GL_UNSIGNED_SHORT_5_6_5");
+    return "GL_UNSIGNED_SHORT_5_6_5";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *TextureTypeToString(GLenum texture) {
+const char *TextureTypeToString(GLenum texture) {
   switch (texture) {
   case GL_TEXTURE_2D:
-    return _T("GL_TEXTURE_2D");
+    return "GL_TEXTURE_2D";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *FormatToString(GLenum format) {
+const char *FormatToString(GLenum format) {
   switch (format) {
   case GL_ALPHA:
-    return _T("GL_ALPHA");
+    return "GL_ALPHA";
   case GL_RGB:
-    return _T("GL_RGB");
+    return "GL_RGB";
   case GL_RGBA:
-    return _T("GL_RGBA");
+    return "GL_RGBA";
   case GL_LUMINANCE:
-    return _T("GL_LUMINANCE");
+    return "GL_LUMINANCE";
   case GL_LUMINANCE_ALPHA:
-    return _T("GL_LUMINANCE_ALPHA");
+    return "GL_LUMINANCE_ALPHA";
   case GL_PALETTE4_RGB8_OES:
-    return _T("GL_PALETTE4_RGB8_OES");
+    return "GL_PALETTE4_RGB8_OES";
   case GL_PALETTE4_RGBA8_OES:
-    return _T("GL_PALETTE4_RGBA8_OES");
+    return "GL_PALETTE4_RGBA8_OES";
   case GL_PALETTE4_R5_G6_B5_OES:
-    return _T("GL_PALETTE4_R5_G6_B5_OES");
+    return "GL_PALETTE4_R5_G6_B5_OES";
   case GL_PALETTE4_RGBA4_OES:
-    return _T("GL_PALETTE4_RGBA4_OES");
+    return "GL_PALETTE4_RGBA4_OES";
   case GL_PALETTE4_RGB5_A1_OES:
-    return _T("GL_PALETTE4_RGB5_A1_OES");
+    return "GL_PALETTE4_RGB5_A1_OES";
   case GL_PALETTE8_RGB8_OES:
-    return _T("GL_PALETTE8_RGB8_OES");
+    return "GL_PALETTE8_RGB8_OES";
   case GL_PALETTE8_RGBA8_OES:
-    return _T("GL_PALETTE8_RGBA8_OES");
+    return "GL_PALETTE8_RGBA8_OES";
   case GL_PALETTE8_R5_G6_B5_OES:
-    return _T("GL_PALETTE8_R5_G6_B5_OES");
+    return "GL_PALETTE8_R5_G6_B5_OES";
   case GL_PALETTE8_RGBA4_OES:
-    return _T("GL_PALETTE8_RGBA4_OES");
+    return "GL_PALETTE8_RGBA4_OES";
   case GL_PALETTE8_RGB5_A1_OES:
-    return _T("GL_PALETTE8_RGB5_A1_OES");
+    return "GL_PALETTE8_RGB5_A1_OES";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *CullFaceToString(GLenum mode) {
+const char *CullFaceToString(GLenum mode) {
   switch (mode) {
   case GL_FRONT:
-    return _T("GL_FRONT");
+    return "GL_FRONT";
   case GL_BACK:
-    return _T("GL_BACK");
+    return "GL_BACK";
   case GL_FRONT_AND_BACK:
-    return _T("GL_FRONT_AND_BACK");
+    return "GL_FRONT_AND_BACK";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *FogToString(GLenum pname) {
+const char *FogToString(GLenum pname) {
   switch (pname) {
   case GL_FOG_MODE:
-    return _T("GL_FOG_MODE");
+    return "GL_FOG_MODE";
   case GL_FOG_START:
-    return _T("GL_FOG_START");
+    return "GL_FOG_START";
   case GL_FOG_END:
-    return _T("GL_FOG_END");
+    return "GL_FOG_END";
   case GL_FOG_DENSITY:
-    return _T("GL_FOG_DENSITY");
+    return "GL_FOG_DENSITY";
   case GL_FOG_COLOR:
-    return _T("GL_FOG_COLOR");
+    return "GL_FOG_COLOR";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *PrimitiveTypeToString(GLenum mode) {
+const char *PrimitiveTypeToString(GLenum mode) {
   switch (mode) {
   case GL_POINTS:
-    return _T("GL_POINTS");
+    return "GL_POINTS";
   case GL_LINES:
-    return _T("GL_LINES");
+    return "GL_LINES";
   case GL_LINE_STRIP:
-    return _T("GL_LINE_STRIP");
+    return "GL_LINE_STRIP";
   case GL_LINE_LOOP:
-    return _T("GL_LINE_LOOP");
+    return "GL_LINE_LOOP";
   case GL_TRIANGLES:
-    return _T("GL_TRIANGLES");
+    return "GL_TRIANGLES";
   case GL_TRIANGLE_STRIP:
-    return _T("GL_TRIANGLE_STRIP");
+    return "GL_TRIANGLE_STRIP";
   case GL_TRIANGLE_FAN:
-    return _T("GL_TRIANGLE_FAN");
+    return "GL_TRIANGLE_FAN";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *FrontFaceToString(GLenum mode) {
+const char *FrontFaceToString(GLenum mode) {
   switch (mode) {
   case GL_CW:
-    return _T("GL_CW");
+    return "GL_CW";
   case GL_CCW:
-    return _T("GL_CCW");
+    return "GL_CCW";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *ClientStateToString(GLenum array) {
+const char *ClientStateToString(GLenum array) {
   switch (array) {
   case GL_VERTEX_ARRAY:
-    return _T("GL_VERTEX_ARRAY");
+    return "GL_VERTEX_ARRAY";
   case GL_NORMAL_ARRAY:
-    return _T("GL_NORMAL_ARRAY");
+    return "GL_NORMAL_ARRAY";
   case GL_COLOR_ARRAY:
-    return _T("GL_COLOR_ARRAY");
+    return "GL_COLOR_ARRAY";
   case GL_TEXTURE_COORD_ARRAY:
-    return _T("GL_TEXTURE_COORD_ARRAY");
+    return "GL_TEXTURE_COORD_ARRAY";
   case GL_POINT_SIZE_ARRAY_OES:
-    return _T("GL_POINT_SIZE_ARRAY_OES");
+    return "GL_POINT_SIZE_ARRAY_OES";
   case GL_WEIGHT_ARRAY_OES:
-    return _T("GL_WEIGHT_ARRAY_OES");
+    return "GL_WEIGHT_ARRAY_OES";
   case GL_MATRIX_INDEX_ARRAY_OES:
-    return _T("GL_MATRIX_INDEX_ARRAY_OES");
+    return "GL_MATRIX_INDEX_ARRAY_OES";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *HintTargetToString(GLenum target) {
+const char *HintTargetToString(GLenum target) {
   switch (target) {
   case GL_PERSPECTIVE_CORRECTION_HINT:
-    return _T("GL_PERSPECTIVE_CORRECTION_HINT");
+    return "GL_PERSPECTIVE_CORRECTION_HINT";
 
   case GL_POINT_SMOOTH_HINT:
-    return _T("GL_POINT_SMOOTH_HINT");
+    return "GL_POINT_SMOOTH_HINT";
 
   case GL_LINE_SMOOTH_HINT:
-    return _T("GL_LINE_SMOOTH_HINT");
+    return "GL_LINE_SMOOTH_HINT";
 
   case GL_FOG_HINT:
-    return _T("GL_FOG_HINT");
+    return "GL_FOG_HINT";
 
   case GL_GENERATE_MIPMAP_HINT:
-    return _T("GL_GENERATE_MIPMAP_HINT");
+    return "GL_GENERATE_MIPMAP_HINT";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *HintModeToString(GLenum mode) {
+const char *HintModeToString(GLenum mode) {
   switch (mode) {
   case GL_DONT_CARE:
-    return _T("GL_DONT_CARE");
+    return "GL_DONT_CARE";
   case GL_FASTEST:
-    return _T("GL_FASTEST");
+    return "GL_FASTEST";
   case GL_NICEST:
-    return _T("GL_NICEST");
+    return "GL_NICEST";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *LogicOpToString(GLenum logicOp) {
+const char *LogicOpToString(GLenum logicOp) {
   switch (logicOp) {
   case GL_CLEAR:
-    return _T("GL_CLEAR");
+    return "GL_CLEAR";
   case GL_AND:
-    return _T("GL_AND");
+    return "GL_AND";
   case GL_AND_REVERSE:
-    return _T("GL_AND_REVERSE");
+    return "GL_AND_REVERSE";
   case GL_COPY:
-    return _T("GL_COPY");
+    return "GL_COPY";
   case GL_AND_INVERTED:
-    return _T("GL_AND_INVERTED");
+    return "GL_AND_INVERTED";
   case GL_NOOP:
-    return _T("GL_NOOP");
+    return "GL_NOOP";
   case GL_XOR:
-    return _T("GL_XOR");
+    return "GL_XOR";
   case GL_OR:
-    return _T("GL_OR");
+    return "GL_OR";
   case GL_NOR:
-    return _T("GL_NOR");
+    return "GL_NOR";
   case GL_EQUIV:
-    return _T("GL_EQUIV");
+    return "GL_EQUIV";
   case GL_INVERT:
-    return _T("GL_INVERT");
+    return "GL_INVERT";
   case GL_OR_REVERSE:
-    return _T("GL_OR_REVERSE");
+    return "GL_OR_REVERSE";
   case GL_COPY_INVERTED:
-    return _T("GL_COPY_INVERTED");
+    return "GL_COPY_INVERTED";
   case GL_OR_INVERTED:
-    return _T("GL_OR_INVERTED");
+    return "GL_OR_INVERTED";
   case GL_NAND:
-    return _T("GL_NAND");
+    return "GL_NAND";
   case GL_SET:
-    return _T("GL_SET");
+    return "GL_SET";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *MatrixModeToString(GLenum mode) {
+const char *MatrixModeToString(GLenum mode) {
   switch (mode) {
   case GL_MODELVIEW:
-    return _T("GL_MODELVIEW");
+    return "GL_MODELVIEW";
   case GL_PROJECTION:
-    return _T("GL_PROJECTION");
+    return "GL_PROJECTION";
   case GL_TEXTURE:
-    return _T("GL_TEXTURE");
+    return "GL_TEXTURE";
   case GL_MATRIX_PALETTE_OES:
-    return _T("GL_MATRIX_PALETTE_OES");
+    return "GL_MATRIX_PALETTE_OES";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *PixelStoreToString(GLenum pname) {
+const char *PixelStoreToString(GLenum pname) {
   switch (pname) {
   case GL_PACK_ALIGNMENT:
-    return _T("GL_PACK_ALIGNMENT");
+    return "GL_PACK_ALIGNMENT";
   case GL_UNPACK_ALIGNMENT:
-    return _T("GL_UNPACK_ALIGNMENT");
+    return "GL_UNPACK_ALIGNMENT";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *ShadeModelToString(GLenum mode) {
+const char *ShadeModelToString(GLenum mode) {
   switch (mode) {
   case GL_FLAT:
-    return _T("GL_FLAT");
+    return "GL_FLAT";
   case GL_SMOOTH:
-    return _T("GL_SMOOTH");
+    return "GL_SMOOTH";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *StencilOpToString(GLenum mode) {
+const char *StencilOpToString(GLenum mode) {
   switch (mode) {
   case GL_ZERO:
-    return _T("GL_ZERO");
+    return "GL_ZERO";
   case GL_INVERT:
-    return _T("GL_INVERT");
+    return "GL_INVERT";
   case GL_KEEP:
-    return _T("GL_KEEP");
+    return "GL_KEEP";
   case GL_REPLACE:
-    return _T("GL_REPLACE");
+    return "GL_REPLACE";
   case GL_INCR:
-    return _T("GL_INCR");
+    return "GL_INCR";
   case GL_DECR:
-    return _T("GL_DECR");
+    return "GL_DECR";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *PointParameterToString(GLenum mode) {
+const char *PointParameterToString(GLenum mode) {
   switch (mode) {
   case GL_POINT_SIZE_MIN:
-    return _T("GL_POINT_SIZE_MIN");
+    return "GL_POINT_SIZE_MIN";
 
   case GL_POINT_SIZE_MAX:
-    return _T("GL_POINT_SIZE_MAX");
+    return "GL_POINT_SIZE_MAX";
 
   case GL_POINT_FADE_THRESHOLD_SIZE:
-    return _T("GL_POINT_FADE_THRESHOLD_SIZE");
+    return "GL_POINT_FADE_THRESHOLD_SIZE";
 
   case GL_POINT_DISTANCE_ATTENUATION:
-    return _T("GL_POINT_DISTANCE_ATTENUATION");
+    return "GL_POINT_DISTANCE_ATTENUATION";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *TexParamValueToString(GLint param) {
+const char *TexParamValueToString(GLint param) {
   switch (param) {
   case GL_FALSE:
-    return _T("GL_FALSE");
+    return "GL_FALSE";
   case GL_TRUE:
-    return _T("GL_TRUE");
+    return "GL_TRUE";
   case GL_NEAREST:
-    return _T("GL_NEAREST");
+    return "GL_NEAREST";
   case GL_LINEAR:
-    return _T("GL_LINEAR");
+    return "GL_LINEAR";
   case GL_NEAREST_MIPMAP_NEAREST:
-    return _T("GL_NEAREST_MIPMAP_NEAREST");
+    return "GL_NEAREST_MIPMAP_NEAREST";
   case GL_LINEAR_MIPMAP_NEAREST:
-    return _T("GL_LINEAR_MIPMAP_NEAREST");
+    return "GL_LINEAR_MIPMAP_NEAREST";
   case GL_NEAREST_MIPMAP_LINEAR:
-    return _T("GL_NEAREST_MIPMAP_LINEAR");
+    return "GL_NEAREST_MIPMAP_LINEAR";
   case GL_LINEAR_MIPMAP_LINEAR:
-    return _T("GL_LINEAR_MIPMAP_LINEAR");
+    return "GL_LINEAR_MIPMAP_LINEAR";
   case GL_CLAMP_TO_EDGE:
-    return _T("GL_CLAMP_TO_EDGE");
+    return "GL_CLAMP_TO_EDGE";
   case GL_REPEAT:
-    return _T("GL_REPEAT");
+    return "GL_REPEAT";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *TexEnvValueToString(GLint param) {
+const char *TexEnvValueToString(GLint param) {
   switch (param) {
   case GL_ADD:
-    return _T("GL_ADD");
+    return "GL_ADD";
   case GL_BLEND:
-    return _T("GL_BLEND");
+    return "GL_BLEND";
   case GL_REPLACE:
-    return _T("GL_REPLACE");
+    return "GL_REPLACE";
   case GL_MODULATE:
-    return _T("GL_MODULATE");
+    return "GL_MODULATE";
   case GL_DECAL:
-    return _T("GL_DECAL");
+    return "GL_DECAL";
   case GL_COORD_REPLACE_OES:
-    return _T("GL_COORD_REPLACE_OES");
+    return "GL_COORD_REPLACE_OES";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *PointerToString(GLenum pname) {
+const char *PointerToString(GLenum pname) {
   switch (pname) {
   case GL_VERTEX_ARRAY_POINTER:
-    return _T("GL_VERTEX_ARRAY_POINTER");
+    return "GL_VERTEX_ARRAY_POINTER";
 
   case GL_NORMAL_ARRAY_POINTER:
-    return _T("GL_NORMAL_ARRAY_POINTER");
+    return "GL_NORMAL_ARRAY_POINTER";
 
   case GL_COLOR_ARRAY_POINTER:
-    return _T("GL_COLOR_ARRAY_POINTER");
+    return "GL_COLOR_ARRAY_POINTER";
 
   case GL_TEXTURE_COORD_ARRAY_POINTER:
-    return _T("GL_TEXTURE_COORD_ARRAY_POINTER");
+    return "GL_TEXTURE_COORD_ARRAY_POINTER";
 
   case GL_POINT_SIZE_ARRAY_OES:
-    return _T("GL_POINT_SIZE_ARRAY_OES");
+    return "GL_POINT_SIZE_ARRAY_OES";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *StringToString(GLenum pname) {
+const char *StringToString(GLenum pname) {
   switch (pname) {
   case GL_VENDOR:
-    return _T("GL_VENDOR");
+    return "GL_VENDOR";
   case GL_VERSION:
-    return _T("GL_VERSION");
+    return "GL_VERSION";
   case GL_RENDERER:
-    return _T("GL_RENDERER");
+    return "GL_RENDERER";
   case GL_EXTENSIONS:
-    return _T("GL_EXTENSIONS");
+    return "GL_EXTENSIONS";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *CapToString(GLenum cap) {
+const char *CapToString(GLenum cap) {
   switch (cap) {
   case GL_FOG:
-    return _T("GL_FOG");
+    return "GL_FOG";
 
   case GL_LIGHTING:
-    return _T("GL_LIGHTING");
+    return "GL_LIGHTING";
 
   case GL_TEXTURE_2D:
-    return _T("GL_TEXTURE_2D");
+    return "GL_TEXTURE_2D";
 
   case GL_CULL_FACE:
-    return _T("GL_CULL_FACE");
+    return "GL_CULL_FACE";
 
   case GL_ALPHA_TEST:
-    return _T("GL_ALPHA_TEST");
+    return "GL_ALPHA_TEST";
 
   case GL_BLEND:
-    return _T("GL_BLEND");
+    return "GL_BLEND";
 
   case GL_COLOR_LOGIC_OP:
-    return _T("GL_COLOR_LOGIC_OP");
+    return "GL_COLOR_LOGIC_OP";
 
   case GL_DITHER:
-    return _T("GL_DITHER");
+    return "GL_DITHER";
 
   case GL_STENCIL_TEST:
-    return _T("GL_STENCIL_TEST");
+    return "GL_STENCIL_TEST";
 
   case GL_DEPTH_TEST:
-    return _T("GL_DEPTH_TEST");
+    return "GL_DEPTH_TEST";
 
   case GL_POINT_SMOOTH:
-    return _T("GL_POINT_SMOOTH");
+    return "GL_POINT_SMOOTH";
 
   case GL_POINT_SPRITE_OES:
-    return _T("GL_POINT_SPRITE_OES");
+    return "GL_POINT_SPRITE_OES";
 
   case GL_LINE_SMOOTH:
-    return _T("GL_LINE_SMOOTH");
+    return "GL_LINE_SMOOTH";
 
   case GL_SCISSOR_TEST:
-    return _T("GL_SCISSOR_TEST");
+    return "GL_SCISSOR_TEST";
 
   case GL_COLOR_MATERIAL:
-    return _T("GL_COLOR_MATERIAL");
+    return "GL_COLOR_MATERIAL";
 
   case GL_NORMALIZE:
-    return _T("GL_NORMALIZE");
+    return "GL_NORMALIZE";
 
   case GL_CLIP_PLANE0:
-    return _T("GL_CLIP_PLANE0");
+    return "GL_CLIP_PLANE0";
 
   case GL_CLIP_PLANE1:
-    return _T("GL_CLIP_PLANE1");
+    return "GL_CLIP_PLANE1";
 
   case GL_CLIP_PLANE2:
-    return _T("GL_CLIP_PLANE2");
+    return "GL_CLIP_PLANE2";
 
   case GL_CLIP_PLANE3:
-    return _T("GL_CLIP_PLANE3");
+    return "GL_CLIP_PLANE3";
 
   case GL_CLIP_PLANE4:
-    return _T("GL_CLIP_PLANE4");
+    return "GL_CLIP_PLANE4";
 
   case GL_CLIP_PLANE5:
-    return _T("GL_CLIP_PLANE5");
+    return "GL_CLIP_PLANE5";
 
   case GL_LIGHT0:
-    return _T("GL_LIGHT0");
+    return "GL_LIGHT0";
 
   case GL_LIGHT1:
-    return _T("GL_LIGHT1");
+    return "GL_LIGHT1";
 
   case GL_LIGHT2:
-    return _T("GL_LIGHT2");
+    return "GL_LIGHT2";
 
   case GL_LIGHT3:
-    return _T("GL_LIGHT3");
+    return "GL_LIGHT3";
 
   case GL_LIGHT4:
-    return _T("GL_LIGHT4");
+    return "GL_LIGHT4";
 
   case GL_LIGHT5:
-    return _T("GL_LIGHT5");
+    return "GL_LIGHT5";
 
   case GL_LIGHT6:
-    return _T("GL_LIGHT6");
+    return "GL_LIGHT6";
 
   case GL_LIGHT7:
-    return _T("GL_LIGHT7");
+    return "GL_LIGHT7";
 
   case GL_RESCALE_NORMAL:
-    return _T("GL_RESCALE_NORMAL");
+    return "GL_RESCALE_NORMAL";
 
   case GL_POLYGON_OFFSET_FILL:
-    return _T("GL_POLYGON_OFFSET_FILL");
+    return "GL_POLYGON_OFFSET_FILL";
 
   case GL_MULTISAMPLE:
-    return _T("GL_MULTISAMPLE");
+    return "GL_MULTISAMPLE";
 
   case GL_SAMPLE_ALPHA_TO_COVERAGE:
-    return _T("GL_SAMPLE_ALPHA_TO_COVERAGE");
+    return "GL_SAMPLE_ALPHA_TO_COVERAGE";
 
   case GL_SAMPLE_ALPHA_TO_ONE:
-    return _T("GL_SAMPLE_ALPHA_TO_ONE");
+    return "GL_SAMPLE_ALPHA_TO_ONE";
 
   case GL_SAMPLE_COVERAGE:
-    return _T("GL_SAMPLE_COVERAGE");
+    return "GL_SAMPLE_COVERAGE";
 
   case GL_MATRIX_PALETTE_OES:
-    return _T("GL_MATRIX_PALETTE_OES");
+    return "GL_MATRIX_PALETTE_OES";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
-const TCHAR *AttributeToString(GLenum pname) {
+const char *AttributeToString(GLenum pname) {
   switch (pname) {
   case GL_LIGHT_MODEL_TWO_SIDE:
-    return _T("GL_LIGHT_MODEL_TWO_SIDE");
+    return "GL_LIGHT_MODEL_TWO_SIDE";
 
   case GL_COLOR_WRITEMASK:
-    return _T("GL_COLOR_WRITEMASK");
+    return "GL_COLOR_WRITEMASK";
 
   case GL_DEPTH_WRITEMASK:
-    return _T("GL_DEPTH_WRITEMASK");
+    return "GL_DEPTH_WRITEMASK";
 
   case GL_SAMPLE_COVERAGE_INVERT:
-    return _T("GL_SAMPLE_COVERAGE_INVERT");
+    return "GL_SAMPLE_COVERAGE_INVERT";
 
   case GL_COORD_REPLACE_OES:
-    return _T("GL_COORD_REPLACE_OES");
+    return "GL_COORD_REPLACE_OES";
 
   case GL_ALIASED_POINT_SIZE_RANGE:
-    return _T("GL_ALIASED_POINT_SIZE_RANGE");
+    return "GL_ALIASED_POINT_SIZE_RANGE";
 
   case GL_ALIASED_LINE_WIDTH_RANGE:
-    return _T("GL_ALIASED_LINE_WIDTH_RANGE");
+    return "GL_ALIASED_LINE_WIDTH_RANGE";
 
   case GL_SMOOTH_LINE_WIDTH_RANGE:
-    return _T("GL_SMOOTH_LINE_WIDTH_RANGE");
+    return "GL_SMOOTH_LINE_WIDTH_RANGE";
 
   case GL_SMOOTH_POINT_SIZE_RANGE:
-    return _T("GL_SMOOTH_POINT_SIZE_RANGE");
+    return "GL_SMOOTH_POINT_SIZE_RANGE";
 
   case GL_ALPHA_BITS:
-    return _T("GL_ALPHA_BITS");
+    return "GL_ALPHA_BITS";
 
   case GL_BLUE_BITS:
-    return _T("GL_BLUE_BITS");
+    return "GL_BLUE_BITS";
 
   case GL_DEPTH_BITS:
-    return _T("GL_DEPTH_BITS");
+    return "GL_DEPTH_BITS";
 
   case GL_GREEN_BITS:
-    return _T("GL_GREEN_BITS");
+    return "GL_GREEN_BITS";
 
   case GL_RED_BITS:
-    return _T("GL_RED_BITS");
+    return "GL_RED_BITS";
 
   case GL_STENCIL_BITS:
-    return _T("GL_STENCIL_BITS");
+    return "GL_STENCIL_BITS";
 
   case GL_SUBPIXEL_BITS:
-    return _T("GL_SUBPIXEL_BITS");
+    return "GL_SUBPIXEL_BITS";
 
   case GL_COMPRESSED_TEXTURE_FORMATS:
-    return _T("GL_COMPRESSED_TEXTURE_FORMATS");
+    return "GL_COMPRESSED_TEXTURE_FORMATS";
 
   case GL_NUM_COMPRESSED_TEXTURE_FORMATS:
-    return _T("GL_NUM_COMPRESSED_TEXTURE_FORMATS");
+    return "GL_NUM_COMPRESSED_TEXTURE_FORMATS";
 
   case GL_MAX_LIGHTS:
-    return _T("GL_MAX_LIGHTS");
+    return "GL_MAX_LIGHTS";
 
   case GL_MAX_CLIP_PLANES:
-    return _T("GL_MAX_CLIP_PLANES");
+    return "GL_MAX_CLIP_PLANES";
 
   case GL_MAX_MODELVIEW_STACK_DEPTH:
-    return _T("GL_MAX_MODELVIEW_STACK_DEPTH");
+    return "GL_MAX_MODELVIEW_STACK_DEPTH";
 
   case GL_MAX_PROJECTION_STACK_DEPTH:
-    return _T("GL_MAX_PROJECTION_STACK_DEPTH");
+    return "GL_MAX_PROJECTION_STACK_DEPTH";
 
   case GL_MAX_TEXTURE_STACK_DEPTH:
-    return _T("GL_MAX_TEXTURE_STACK_DEPTH");
+    return "GL_MAX_TEXTURE_STACK_DEPTH";
 
   case GL_MAX_TEXTURE_SIZE:
-    return _T("GL_MAX_TEXTURE_SIZE");
+    return "GL_MAX_TEXTURE_SIZE";
 
   case GL_MAX_TEXTURE_UNITS:
-    return _T("GL_MAX_TEXTURE_UNITS");
+    return "GL_MAX_TEXTURE_UNITS";
 
   case GL_IMPLEMENTATION_COLOR_READ_TYPE_OES:
-    return _T("GL_IMPLEMENTATION_COLOR_READ_TYPE_OES");
+    return "GL_IMPLEMENTATION_COLOR_READ_TYPE_OES";
 
   case GL_IMPLEMENTATION_COLOR_READ_FORMAT_OES:
-    return _T("GL_IMPLEMENTATION_COLOR_READ_FORMAT_OES");
+    return "GL_IMPLEMENTATION_COLOR_READ_FORMAT_OES";
 
   case GL_MAX_VIEWPORT_DIMS:
-    return _T("GL_MAX_VIEWPORT_DIMS");
+    return "GL_MAX_VIEWPORT_DIMS";
 
   case GL_VERTEX_ARRAY_SIZE:
-    return _T("GL_VERTEX_ARRAY_SIZE");
+    return "GL_VERTEX_ARRAY_SIZE";
 
   case GL_VERTEX_ARRAY_STRIDE:
-    return _T("GL_VERTEX_ARRAY_STRIDE");
+    return "GL_VERTEX_ARRAY_STRIDE";
 
   case GL_VERTEX_ARRAY_TYPE:
-    return _T("GL_VERTEX_ARRAY_TYPE");
+    return "GL_VERTEX_ARRAY_TYPE";
 
   case GL_NORMAL_ARRAY_STRIDE:
-    return _T("GL_NORMAL_ARRAY_STRIDE");
+    return "GL_NORMAL_ARRAY_STRIDE";
 
   case GL_NORMAL_ARRAY_TYPE:
-    return _T("GL_NORMAL_ARRAY_TYPE");
+    return "GL_NORMAL_ARRAY_TYPE";
 
   case GL_COLOR_ARRAY_SIZE:
-    return _T("GL_COLOR_ARRAY_SIZE");
+    return "GL_COLOR_ARRAY_SIZE";
 
   case GL_COLOR_ARRAY_STRIDE:
-    return _T("GL_COLOR_ARRAY_STRIDE");
+    return "GL_COLOR_ARRAY_STRIDE";
 
   case GL_COLOR_ARRAY_TYPE:
-    return _T("GL_COLOR_ARRAY_TYPE");
+    return "GL_COLOR_ARRAY_TYPE";
 
   case GL_TEXTURE_COORD_ARRAY_SIZE:
-    return _T("GL_TEXTURE_COORD_ARRAY_SIZE");
+    return "GL_TEXTURE_COORD_ARRAY_SIZE";
 
   case GL_TEXTURE_COORD_ARRAY_STRIDE:
-    return _T("GL_TEXTURE_COORD_ARRAY_STRIDE");
+    return "GL_TEXTURE_COORD_ARRAY_STRIDE";
 
   case GL_TEXTURE_COORD_ARRAY_TYPE:
-    return _T("GL_TEXTURE_COORD_ARRAY_TYPE");
+    return "GL_TEXTURE_COORD_ARRAY_TYPE";
 
   case GL_POINT_SIZE_ARRAY_TYPE_OES:
-    return _T("GL_POINT_SIZE_ARRAY_TYPE_OES");
+    return "GL_POINT_SIZE_ARRAY_TYPE_OES";
 
   case GL_POINT_SIZE_ARRAY_STRIDE_OES:
-    return _T("GL_POINT_SIZE_ARRAY_STRIDE_OES");
+    return "GL_POINT_SIZE_ARRAY_STRIDE_OES";
 
   case GL_VERTEX_ARRAY_BUFFER_BINDING:
-    return _T("GL_VERTEX_ARRAY_BUFFER_BINDING");
+    return "GL_VERTEX_ARRAY_BUFFER_BINDING";
 
   case GL_NORMAL_ARRAY_BUFFER_BINDING:
-    return _T("GL_NORMAL_ARRAY_BUFFER_BINDING");
+    return "GL_NORMAL_ARRAY_BUFFER_BINDING";
 
   case GL_COLOR_ARRAY_BUFFER_BINDING:
-    return _T("GL_COLOR_ARRAY_BUFFER_BINDING");
+    return "GL_COLOR_ARRAY_BUFFER_BINDING";
 
   case GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING:
-    return _T("GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING");
+    return "GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING";
 
   case GL_POINT_SIZE_ARRAY_BUFFER_BINDING_OES:
-    return _T("GL_POINT_SIZE_ARRAY_BUFFER_BINDING_OES");
+    return "GL_POINT_SIZE_ARRAY_BUFFER_BINDING_OES";
 
   case GL_ARRAY_BUFFER_BINDING:
-    return _T("GL_ARRAY_BUFFER_BINDING");
+    return "GL_ARRAY_BUFFER_BINDING";
 
   case GL_ELEMENT_ARRAY_BUFFER_BINDING:
-    return _T("GL_ELEMENT_ARRAY_BUFFER_BINDING");
+    return "GL_ELEMENT_ARRAY_BUFFER_BINDING";
 
   case GL_TEXTURE_BINDING_2D:
-    return _T("GL_TEXTURE_BINDING_2D");
+    return "GL_TEXTURE_BINDING_2D";
 
   case GL_UNPACK_ALIGNMENT:
-    return _T("GL_UNPACK_ALIGNMENT");
+    return "GL_UNPACK_ALIGNMENT";
 
   case GL_PACK_ALIGNMENT:
-    return _T("GL_PACK_ALIGNMENT");
+    return "GL_PACK_ALIGNMENT";
 
   case GL_STENCIL_CLEAR_VALUE:
-    return _T("GL_STENCIL_CLEAR_VALUE");
+    return "GL_STENCIL_CLEAR_VALUE";
 
   case GL_SCISSOR_BOX:
-    return _T("GL_SCISSOR_BOX");
+    return "GL_SCISSOR_BOX";
 
   case GL_VIEWPORT:
-    return _T("GL_VIEWPORT");
+    return "GL_VIEWPORT";
 
   case GL_STENCIL_WRITEMASK:
-    return _T("GL_STENCIL_WRITEMASK");
+    return "GL_STENCIL_WRITEMASK";
 
   case GL_STENCIL_VALUE_MASK:
-    return _T("GL_STENCIL_VALUE_MASK");
+    return "GL_STENCIL_VALUE_MASK";
 
   case GL_STENCIL_REF:
-    return _T("GL_STENCIL_REF");
+    return "GL_STENCIL_REF";
 
   case GL_ALPHA_TEST_FUNC:
-    return _T("GL_ALPHA_TEST_FUNC");
+    return "GL_ALPHA_TEST_FUNC";
 
   case GL_STENCIL_FUNC:
-    return _T("GL_STENCIL_FUNC");
+    return "GL_STENCIL_FUNC";
 
   case GL_STENCIL_FAIL:
-    return _T("GL_STENCIL_FAIL");
+    return "GL_STENCIL_FAIL";
 
   case GL_STENCIL_PASS_DEPTH_FAIL:
-    return _T("GL_STENCIL_PASS_DEPTH_FAIL");
+    return "GL_STENCIL_PASS_DEPTH_FAIL";
 
   case GL_STENCIL_PASS_DEPTH_PASS:
-    return _T("GL_STENCIL_PASS_DEPTH_PASS");
+    return "GL_STENCIL_PASS_DEPTH_PASS";
 
   case GL_DEPTH_FUNC:
-    return _T("GL_DEPTH_FUNC");
+    return "GL_DEPTH_FUNC";
 
   case GL_LOGIC_OP_MODE:
-    return _T("GL_LOGIC_OP_MODE");
+    return "GL_LOGIC_OP_MODE";
 
   case GL_BLEND_SRC:
-    return _T("GL_BLEND_SRC");
+    return "GL_BLEND_SRC";
 
   case GL_BLEND_DST:
-    return _T("GL_BLEND_DST");
+    return "GL_BLEND_DST";
 
   case GL_FOG_MODE:
-    return _T("GL_FOG_MODE");
+    return "GL_FOG_MODE";
 
   case GL_SHADE_MODEL:
-    return _T("GL_SHADE_MODEL");
+    return "GL_SHADE_MODEL";
 
   case GL_CULL_FACE_MODE:
-    return _T("GL_CULL_FACE_MODE");
+    return "GL_CULL_FACE_MODE";
 
   case GL_FRONT_FACE:
-    return _T("GL_FRONT_FACE");
+    return "GL_FRONT_FACE";
 
   case GL_MATRIX_MODE:
-    return _T("GL_MATRIX_MODE");
+    return "GL_MATRIX_MODE";
 
   case GL_ACTIVE_TEXTURE:
-    return _T("GL_ACTIVE_TEXTURE");
+    return "GL_ACTIVE_TEXTURE";
 
   case GL_CLIENT_ACTIVE_TEXTURE:
-    return _T("GL_CLIENT_ACTIVE_TEXTURE");
+    return "GL_CLIENT_ACTIVE_TEXTURE";
 
   case GL_PERSPECTIVE_CORRECTION_HINT:
-    return _T("GL_PERSPECTIVE_CORRECTION_HINT");
+    return "GL_PERSPECTIVE_CORRECTION_HINT";
 
   case GL_POINT_SMOOTH_HINT:
-    return _T("GL_POINT_SMOOTH_HINT");
+    return "GL_POINT_SMOOTH_HINT";
 
   case GL_LINE_SMOOTH_HINT:
-    return _T("GL_LINE_SMOOTH_HINT");
+    return "GL_LINE_SMOOTH_HINT";
 
   case GL_FOG_HINT:
-    return _T("GL_FOG_HINT");
+    return "GL_FOG_HINT";
 
   case GL_GENERATE_MIPMAP_HINT:
-    return _T("GL_GENERATE_MIPMAP_HINT");
+    return "GL_GENERATE_MIPMAP_HINT";
 
   case GL_MAX_VERTEX_UNITS_OES:
-    return _T("GL_MAX_VERTEX_UNITS_OES");
+    return "GL_MAX_VERTEX_UNITS_OES";
 
   case GL_MAX_PALETTE_MATRICES_OES:
-    return _T("GL_MAX_PALETTE_MATRICES_OES");
+    return "GL_MAX_PALETTE_MATRICES_OES";
 
   case GL_CURRENT_COLOR:
-    return _T("GL_CURRENT_COLOR");
+    return "GL_CURRENT_COLOR";
 
   case GL_DEPTH_CLEAR_VALUE:
-    return _T("GL_DEPTH_CLEAR_VALUE");
+    return "GL_DEPTH_CLEAR_VALUE";
 
   case GL_CURRENT_TEXTURE_COORDS:
-    return _T("GL_CURRENT_TEXTURE_COORDS");
+    return "GL_CURRENT_TEXTURE_COORDS";
 
   case GL_CURRENT_NORMAL:
-    return _T("GL_CURRENT_NORMAL");
+    return "GL_CURRENT_NORMAL";
 
   case GL_MODELVIEW_MATRIX:
-    return _T("GL_MODELVIEW_MATRIX");
+    return "GL_MODELVIEW_MATRIX";
 
   case GL_PROJECTION_MATRIX:
-    return _T("GL_PROJECTION_MATRIX");
+    return "GL_PROJECTION_MATRIX";
 
   case GL_TEXTURE_MATRIX:
-    return _T("GL_TEXTURE_MATRIX");
+    return "GL_TEXTURE_MATRIX";
 
   case GL_FOG_COLOR:
-    return _T("GL_FOG_COLOR");
+    return "GL_FOG_COLOR";
 
   case GL_FOG_DENSITY:
-    return _T("GL_FOG_DENSITY");
+    return "GL_FOG_DENSITY";
 
   case GL_FOG_START:
-    return _T("GL_FOG_START");
+    return "GL_FOG_START";
 
   case GL_FOG_END:
-    return _T("GL_FOG_END");
+    return "GL_FOG_END";
 
   case GL_ALPHA_TEST_REF:
-    return _T("GL_ALPHA_TEST_REF");
+    return "GL_ALPHA_TEST_REF";
 
   case GL_LIGHT_MODEL_AMBIENT:
-    return _T("GL_LIGHT_MODEL_AMBIENT");
+    return "GL_LIGHT_MODEL_AMBIENT";
 
   case GL_COLOR_CLEAR_VALUE:
-    return _T("GL_COLOR_CLEAR_VALUE");
+    return "GL_COLOR_CLEAR_VALUE";
 
   case GL_POLYGON_OFFSET_UNITS:
-    return _T("GL_POLYGON_OFFSET_UNITS");
+    return "GL_POLYGON_OFFSET_UNITS";
 
   case GL_POLYGON_OFFSET_FACTOR:
-    return _T("GL_POLYGON_OFFSET_FACTOR");
+    return "GL_POLYGON_OFFSET_FACTOR";
 
   case GL_SAMPLE_COVERAGE_VALUE:
-    return _T("GL_SAMPLE_COVERAGE_VALUE");
+    return "GL_SAMPLE_COVERAGE_VALUE";
 
   case GL_POINT_SIZE_MIN:
-    return _T("GL_POINT_SIZE_MIN");
+    return "GL_POINT_SIZE_MIN";
 
   case GL_POINT_SIZE_MAX:
-    return _T("GL_POINT_SIZE_MAX");
+    return "GL_POINT_SIZE_MAX";
 
   case GL_POINT_FADE_THRESHOLD_SIZE:
-    return _T("GL_POINT_FADE_THRESHOLD_SIZE");
+    return "GL_POINT_FADE_THRESHOLD_SIZE";
 
   case GL_POINT_DISTANCE_ATTENUATION:
-    return _T("GL_POINT_DISTANCE_ATTENUATION");
+    return "GL_POINT_DISTANCE_ATTENUATION";
 
   case GL_DEPTH_RANGE:
-    return _T("GL_DEPTH_RANGE");
+    return "GL_DEPTH_RANGE";
 
   case GL_POINT_SIZE:
-    return _T("GL_POINT_SIZE");
+    return "GL_POINT_SIZE";
 
   case GL_LINE_WIDTH:
-    return _T("GL_LINE_WIDTH");
+    return "GL_LINE_WIDTH";
   }
 
-  return _T("UNKNOWN");
+  return "UNKNOWN";
 }
 
 #endif
@@ -1131,19 +1131,19 @@ const TCHAR *AttributeToString(GLenum pname) {
 GL_API GLenum GL_APIENTRY __glCreateSurface(
     const GLSurfaceDesc *pColorDesc, const GLSurfaceDesc *pDepthStencilDesc,
     __GLSurface *pGLSurface) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
   if (nullptr == pGLSurface) {
-    __glLogError(_T("__glCreateSurface() failed, pGLSurface is nullptr.\r\n"));
+    __glLogError("__glCreateSurface() failed, pGLSurface is nullptr.\r\n");
     return GL_INVALID_VALUE;
   }
 
   CGLSurface *pSurface;
   err = CGLSurface::Create(&pSurface, pColorDesc, pDepthStencilDesc);
   if (__glFailed(err)) {
-    __glLogError(_T("CGLSurface::Create() failed, err = %d.\r\n"), err);
+    __glLogError("CGLSurface::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -1151,7 +1151,7 @@ GL_API GLenum GL_APIENTRY __glCreateSurface(
   err = g_driver.RegisterObject(pSurface, HANDLE_SURFACE, &g_driver, &dwHandle);
   if (__glFailed(err)) {
     __safeRelease(pSurface);
-    __glLogError(_T("CGLDriver::RegisterObject() failed, err = %d.\r\n"), err);
+    __glLogError("CGLDriver::RegisterObject() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -1163,19 +1163,19 @@ GL_API GLenum GL_APIENTRY __glCreateSurface(
 GL_API GLenum GL_APIENTRY
 __glUpdateSurface(__GLSurface surface, const GLSurfaceDesc *pColorDesc,
                   const GLSurfaceDesc *pDepthStencilDesc) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
   auto pSurface = g_driver.TGetObject<CGLSurface *>(surface);
   if (nullptr == pSurface) {
-    __glLogError(_T("__glUpdateSurface() failed, invalid surface handle.\r\n"));
+    __glLogError("__glUpdateSurface() failed, invalid surface handle.\r\n");
     return GL_INVALID_VALUE;
   }
 
   err = pSurface->Update(pColorDesc, pDepthStencilDesc);
   if (__glFailed(err)) {
-    __glLogError(_T("CGLSurface::Initialize() failed, err = %d.\r\n"), err);
+    __glLogError("CGLSurface::Initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -1183,12 +1183,12 @@ __glUpdateSurface(__GLSurface surface, const GLSurfaceDesc *pColorDesc,
 }
 
 GL_API GLenum GL_APIENTRY __glDestroySurface(__GLSurface surface) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   // Remove the surface object from the handle table
   auto pSurface = g_driver.UnregisterObject<CGLSurface *>(surface);
   if (nullptr == pSurface) {
-    __glLogError(_T("Invalid surface handle.\r\n"));
+    __glLogError("Invalid surface handle.\r\n");
     return GL_INVALID_VALUE;
   }
 
@@ -1200,12 +1200,12 @@ GL_API GLenum GL_APIENTRY __glDestroySurface(__GLSurface surface) {
 
 GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
                                             __GLContext *pGLContext) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
   if (nullptr == pGLContext) {
-    __glLogError(_T("__glCreateContext() failed, pGLContext is nullptr.\r\n"));
+    __glLogError("__glCreateContext() failed, pGLContext is nullptr.\r\n");
     return GL_INVALID_VALUE;
   }
 
@@ -1213,7 +1213,7 @@ GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
   if (shared_context) {
     pCtxShared = g_driver.TGetObject<CGLContext *>(shared_context);
     if (nullptr == pCtxShared) {
-      __glLogError(_T("Invalid context handle.\r\n"));
+      __glLogError("Invalid context handle.\r\n");
       return GL_INVALID_VALUE;
     }
   }
@@ -1222,7 +1222,7 @@ GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
   err = CGLContext::Create(&pContext, g_driver.GetHandles(),
                            g_driver.GetRasterCache(), pCtxShared);
   if (__glFailed(err)) {
-    __glLogError(_T("CGLContext::Create() failed, err = %d.\r\n"), err);
+    __glLogError("CGLContext::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -1230,7 +1230,7 @@ GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
   err = g_driver.RegisterObject(pContext, HANDLE_CONTEXT, &g_driver, &dwHandle);
   if (__glFailed(err)) {
     __safeRelease(pContext);
-    __glLogError(_T("CGLDriver::RegisterObject() failed, err = %d.\r\n"), err);
+    __glLogError("CGLDriver::RegisterObject() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -1240,12 +1240,12 @@ GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
 }
 
 GL_API GLenum GL_APIENTRY __glDestroyContext(__GLContext context) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   // Remove the context object from the handle table
   auto pContext = g_driver.UnregisterObject<CGLContext *>(context);
   if (nullptr == pContext) {
-    __glLogError(_T("Invalid context handle.\r\n"));
+    __glLogError("Invalid context handle.\r\n");
     return GL_INVALID_VALUE;
   }
 
@@ -1257,13 +1257,13 @@ GL_API GLenum GL_APIENTRY __glDestroyContext(__GLContext context) {
 
 GL_API GLenum GL_APIENTRY __glMakeCurrent(__GLContext context, __GLSurface draw,
                                           __GLSurface read) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   CGLContext *pContext = nullptr;
   if (context) {
     pContext = g_driver.TGetObject<CGLContext *>(context);
     if (nullptr == pContext) {
-      __glLogError(_T("Invalid context handle.\r\n"));
+      __glLogError("Invalid context handle.\r\n");
       return GL_INVALID_VALUE;
     }
   }
@@ -1272,7 +1272,7 @@ GL_API GLenum GL_APIENTRY __glMakeCurrent(__GLContext context, __GLSurface draw,
   if (draw) {
     pSurfDraw = g_driver.TGetObject<CGLSurface *>(draw);
     if (nullptr == pSurfDraw) {
-      __glLogError(_T("Invalid surface handle.\r\n"));
+      __glLogError("Invalid surface handle.\r\n");
       return GL_INVALID_VALUE;
     }
   }
@@ -1281,7 +1281,7 @@ GL_API GLenum GL_APIENTRY __glMakeCurrent(__GLContext context, __GLSurface draw,
   if (read) {
     pSurfRead = g_driver.TGetObject<CGLSurface *>(read);
     if (nullptr == pSurfRead) {
-      __glLogError(_T("Invalid surface handle.\r\n"));
+      __glLogError("Invalid surface handle.\r\n");
       return GL_INVALID_VALUE;
     }
   }
@@ -1293,7 +1293,7 @@ GL_API GLenum GL_APIENTRY __glMakeCurrent(__GLContext context, __GLSurface draw,
 
 GL_API GLenum GL_APIENTRY __glCopyBuffers(const GLSurfaceDesc *pDstDesc,
                                           const GLSurfaceDesc *pSrcDesc) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   return CopyBuffers(*pDstDesc, 0, 0, pSrcDesc->Width, pSrcDesc->Height,
                      *pSrcDesc, 0, 0);
@@ -1301,14 +1301,14 @@ GL_API GLenum GL_APIENTRY __glCopyBuffers(const GLSurfaceDesc *pDstDesc,
 
 GL_API GLenum GL_APIENTRY __glBindTexImage(__GLSurface surface,
                                            bool bGenMipMaps) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (surface) {
     auto pSurface = g_driver.TGetObject<CGLSurface *>(surface);
     if (pSurface) {
       auto pContext = g_driver.GetCurrentContext();
       if (nullptr == pContext) {
-        __glLogError(_T("__glBindTexImage() failed, no active context.\r\n"));
+        __glLogError("__glBindTexImage() failed, no active context.\r\n");
         return GL_INVALID_OPERATION;
       }
 
@@ -1316,19 +1316,19 @@ GL_API GLenum GL_APIENTRY __glBindTexImage(__GLSurface surface,
     }
   }
 
-  __glLogError(_T("__glBindTexImage() failed, invalid surface handle.\r\n"));
+  __glLogError("__glBindTexImage() failed, invalid surface handle.\r\n");
   return GL_INVALID_VALUE;
 }
 
 GL_API GLenum GL_APIENTRY __glReleaseTexImage(__GLSurface surface) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (surface) {
     auto pSurface = g_driver.TGetObject<CGLSurface *>(surface);
     if (pSurface) {
       auto pContext = g_driver.GetCurrentContext();
       if (nullptr == pContext) {
-        __glLogError(_T("__glBindTexImage() failed, no active context.\r\n"));
+        __glLogError("__glBindTexImage() failed, no active context.\r\n");
         return GL_INVALID_OPERATION;
       }
 
@@ -1336,21 +1336,21 @@ GL_API GLenum GL_APIENTRY __glReleaseTexImage(__GLSurface surface) {
     }
   }
 
-  __glLogError(_T("__glBindTexImage() failed, invalid surface handle.\r\n"));
+  __glLogError("__glBindTexImage() failed, invalid surface handle.\r\n");
   return GL_INVALID_VALUE;
 }
 
-GLenum __glSaveBitmap(__GLSurface surface, LPCTSTR lpszFilename) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+GLenum __glSaveBitmap(__GLSurface surface, const char *filename) {
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (surface) {
     auto pSurface = g_driver.TGetObject<CGLSurface *>(surface);
     if (pSurface) {
-      return pSurface->SaveBitmap(lpszFilename);
+      return pSurface->SaveBitmap(filename);
     }
   }
 
-  __glLogError(_T("Invalid surface handle.\r\n"));
+  __glLogError("Invalid surface handle.\r\n");
 
   return GL_INVALID_VALUE;
 }
@@ -1358,7 +1358,7 @@ GLenum __glSaveBitmap(__GLSurface surface, LPCTSTR lpszFilename) {
 //////////////////////////////////////////////////////////////////////////////
 
 GL_API void GL_APIENTRY glAlphaFunc(GLenum func, GLclampf ref) {
-  __profileAPI(_T(" - %s( func=%s, ref=%f )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( func=%s, ref=%f )\n", __FUNCTION__,
                FuncToString(func), ref);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1369,8 +1369,8 @@ GL_API void GL_APIENTRY glAlphaFunc(GLenum func, GLclampf ref) {
 
 GL_API void GL_APIENTRY glClearColor(GLclampf red, GLclampf green,
                                      GLclampf blue, GLclampf alpha) {
-  __profileAPI(_T(" - %s( red=%f, green=%f, blue=%f, alpha%f )\n"),
-               _T(__FUNCTION__), red, green, blue, alpha);
+  __profileAPI(" - %s( red=%f, green=%f, blue=%f, alpha%f )\n",
+               __FUNCTION__, red, green, blue, alpha);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1380,7 +1380,7 @@ GL_API void GL_APIENTRY glClearColor(GLclampf red, GLclampf green,
 }
 
 GL_API void GL_APIENTRY glClearDepthf(GLclampf depth) {
-  __profileAPI(_T(" - %s( depth=%f )\n"), _T(__FUNCTION__), depth);
+  __profileAPI(" - %s( depth=%f )\n", __FUNCTION__, depth);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1389,7 +1389,7 @@ GL_API void GL_APIENTRY glClearDepthf(GLclampf depth) {
 }
 
 GL_API void GL_APIENTRY glClipPlanef(GLenum plane, const GLfloat *pEquation) {
-  __profileAPI(_T(" - %s( plane=%s, pEquation=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( plane=%s, pEquation=0x%p )\n", __FUNCTION__,
                PlaneToString(plane), pEquation);
 
   if (nullptr == pEquation)
@@ -1409,8 +1409,8 @@ GL_API void GL_APIENTRY glClipPlanef(GLenum plane, const GLfloat *pEquation) {
 
 GL_API void GL_APIENTRY glColor4f(GLfloat red, GLfloat green, GLfloat blue,
                                   GLfloat alpha) {
-  __profileAPI(_T(" - %s( red=%f, green=%f, blue=%f, alpha=%f )\n"),
-               _T(__FUNCTION__), red, green, blue, alpha);
+  __profileAPI(" - %s( red=%f, green=%f, blue=%f, alpha=%f )\n",
+               __FUNCTION__, red, green, blue, alpha);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1419,7 +1419,7 @@ GL_API void GL_APIENTRY glColor4f(GLfloat red, GLfloat green, GLfloat blue,
 }
 
 GL_API void GL_APIENTRY glDepthRangef(GLclampf zNear, GLclampf zFar) {
-  __profileAPI(_T(" - %s( zNear=%f, zFar=%f )\n"), _T(__FUNCTION__), zNear,
+  __profileAPI(" - %s( zNear=%f, zFar=%f )\n", __FUNCTION__, zNear,
                zFar);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1429,7 +1429,7 @@ GL_API void GL_APIENTRY glDepthRangef(GLclampf zNear, GLclampf zFar) {
 }
 
 GL_API void GL_APIENTRY glFogf(GLenum pname, GLfloat param) {
-  __profileAPI(_T(" - %s( pname=%s, param=%f )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, param=%f )\n", __FUNCTION__,
                FogParamToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1439,7 +1439,7 @@ GL_API void GL_APIENTRY glFogf(GLenum pname, GLfloat param) {
 }
 
 GL_API void GL_APIENTRY glFogfv(GLenum pname, const GLfloat *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, pParams=0x%p )\n", __FUNCTION__,
                FogParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -1454,8 +1454,8 @@ GL_API void GL_APIENTRY glFogfv(GLenum pname, const GLfloat *pParams) {
 GL_API void GL_APIENTRY glFrustumf(GLfloat left, GLfloat right, GLfloat bottom,
                                    GLfloat top, GLfloat zNear, GLfloat zFar) {
   __profileAPI(
-      _T(" - %s( left=%f, right=%f, bottom=%f, top=%f, zNear=%f, zFar=%f )\n"),
-      _T(__FUNCTION__), left, right, bottom, top, zNear, zFar);
+      " - %s( left=%f, right=%f, bottom=%f, top=%f, zNear=%f, zFar=%f )\n",
+      __FUNCTION__, left, right, bottom, top, zNear, zFar);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1465,7 +1465,7 @@ GL_API void GL_APIENTRY glFrustumf(GLfloat left, GLfloat right, GLfloat bottom,
 }
 
 GL_API void GL_APIENTRY glGetClipPlanef(GLenum plane, GLfloat eqn[4]) {
-  __profileAPI(_T(" - %s( plane=%s, eqn[4]=0x%p)\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( plane=%s, eqn[4]=0x%p)\n", __FUNCTION__,
                PlaneToString(plane), eqn);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1475,7 +1475,7 @@ GL_API void GL_APIENTRY glGetClipPlanef(GLenum plane, GLfloat eqn[4]) {
 }
 
 GL_API void GL_APIENTRY glGetFloatv(GLenum pname, GLfloat *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, pParams=0x%p )\n", __FUNCTION__,
                AttributeToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -1489,8 +1489,8 @@ GL_API void GL_APIENTRY glGetFloatv(GLenum pname, GLfloat *pParams) {
 
 GL_API void GL_APIENTRY glGetLightfv(GLenum light, GLenum pname,
                                      GLfloat *pParams) {
-  __profileAPI(_T(" - %s( light=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), LightToString(light),
+  __profileAPI(" - %s( light=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, LightToString(light),
                LightParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -1504,8 +1504,8 @@ GL_API void GL_APIENTRY glGetLightfv(GLenum light, GLenum pname,
 
 GL_API void GL_APIENTRY glGetMaterialfv(GLenum face, GLenum pname,
                                         GLfloat *pParams) {
-  __profileAPI(_T(" - %s( face=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), MaterialFaceToString(face),
+  __profileAPI(" - %s( face=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, MaterialFaceToString(face),
                MaterialParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -1519,8 +1519,8 @@ GL_API void GL_APIENTRY glGetMaterialfv(GLenum face, GLenum pname,
 
 GL_API void GL_APIENTRY glGetTexEnvfv(GLenum env, GLenum pname,
                                       GLfloat *pParams) {
-  __profileAPI(_T(" - %s( env=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TexEnvToString(env),
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -1534,8 +1534,8 @@ GL_API void GL_APIENTRY glGetTexEnvfv(GLenum env, GLenum pname,
 
 GL_API void GL_APIENTRY glGetTexParameterfv(GLenum target, GLenum pname,
                                             GLfloat *pParams) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target),
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -1548,7 +1548,7 @@ GL_API void GL_APIENTRY glGetTexParameterfv(GLenum target, GLenum pname,
 }
 
 GL_API void GL_APIENTRY glLightModelf(GLenum pname, GLfloat param) {
-  __profileAPI(_T(" - %s( pname=%s, param=%f )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, param=%f )\n", __FUNCTION__,
                LightModelToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1558,8 +1558,8 @@ GL_API void GL_APIENTRY glLightModelf(GLenum pname, GLfloat param) {
 }
 
 GL_API void GL_APIENTRY glLightModelfv(GLenum pname, const GLfloat *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=(%f, %f, %f, %f) )\n"),
-               _T(__FUNCTION__), LightModelToString(pname), pParams[0],
+  __profileAPI(" - %s( pname=%s, pParams=(%f, %f, %f, %f) )\n",
+               __FUNCTION__, LightModelToString(pname), pParams[0],
                pParams[1], pParams[2], pParams[3]);
 
   if (nullptr == pParams)
@@ -1572,7 +1572,7 @@ GL_API void GL_APIENTRY glLightModelfv(GLenum pname, const GLfloat *pParams) {
 }
 
 GL_API void GL_APIENTRY glLightf(GLenum light, GLenum pname, GLfloat param) {
-  __profileAPI(_T(" - %s( light=%s, pname=%s, param=%f )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( light=%s, pname=%s, param=%f )\n", __FUNCTION__,
                LightToString(light), LightParamToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1583,8 +1583,8 @@ GL_API void GL_APIENTRY glLightf(GLenum light, GLenum pname, GLfloat param) {
 
 GL_API void GL_APIENTRY glLightfv(GLenum light, GLenum pname,
                                   const GLfloat *pParams) {
-  __profileAPI(_T(" - %s( light=%s, pname=%s, pParams=(%f, %f, %f, %f) )\n"),
-               _T(__FUNCTION__), LightToString(light),
+  __profileAPI(" - %s( light=%s, pname=%s, pParams=(%f, %f, %f, %f) )\n",
+               __FUNCTION__, LightToString(light),
                LightParamToString(pname), pParams[0], pParams[1], pParams[2],
                pParams[3]);
 
@@ -1598,7 +1598,7 @@ GL_API void GL_APIENTRY glLightfv(GLenum light, GLenum pname,
 }
 
 GL_API void GL_APIENTRY glLineWidth(GLfloat width) {
-  __profileAPI(_T(" - %s( width=%f )\n"), _T(__FUNCTION__), width);
+  __profileAPI(" - %s( width=%f )\n", __FUNCTION__, width);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1607,9 +1607,9 @@ GL_API void GL_APIENTRY glLineWidth(GLfloat width) {
 }
 
 GL_API void GL_APIENTRY glLoadMatrixf(const GLfloat *pM) {
-  __profileAPI(_T(" - %s( pM=(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, ")
-               _T("%f, %f, %f, %f) )\n"),
-               _T(__FUNCTION__), pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
+  __profileAPI(" - %s( pM=(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, "
+               "%f, %f, %f, %f) )\n",
+               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
                pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
                pM[14], pM[15]);
 
@@ -1631,7 +1631,7 @@ GL_API void GL_APIENTRY glLoadMatrixf(const GLfloat *pM) {
 }
 
 GL_API void GL_APIENTRY glMaterialf(GLenum face, GLenum pname, GLfloat param) {
-  __profileAPI(_T(" - %s( face=%s, pname=%s, param=%f )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( face=%s, pname=%s, param=%f )\n", __FUNCTION__,
                MaterialFaceToString(face), MaterialParamToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1642,8 +1642,8 @@ GL_API void GL_APIENTRY glMaterialf(GLenum face, GLenum pname, GLfloat param) {
 
 GL_API void GL_APIENTRY glMaterialfv(GLenum face, GLenum pname,
                                      const GLfloat *pParams) {
-  __profileAPI(_T(" - %s( face=%s, pname=%s, pParams=(%f, %f, %f, %f) )\n"),
-               _T(__FUNCTION__), MaterialFaceToString(face),
+  __profileAPI(" - %s( face=%s, pname=%s, pParams=(%f, %f, %f, %f) )\n",
+               __FUNCTION__, MaterialFaceToString(face),
                MaterialParamToString(pname), pParams[0], pParams[1], pParams[2],
                pParams[3]);
 
@@ -1657,9 +1657,9 @@ GL_API void GL_APIENTRY glMaterialfv(GLenum face, GLenum pname,
 }
 
 GL_API void GL_APIENTRY glMultMatrixf(const GLfloat *pM) {
-  __profileAPI(_T(" - %s( pM=(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, ")
-               _T("%f, %f, %f, %f) )\n"),
-               _T(__FUNCTION__), pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
+  __profileAPI(" - %s( pM=(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, "
+               "%f, %f, %f, %f) )\n",
+               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
                pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
                pM[14], pM[15]);
 
@@ -1682,8 +1682,8 @@ GL_API void GL_APIENTRY glMultMatrixf(const GLfloat *pM) {
 
 GL_API void GL_APIENTRY glMultiTexCoord4f(GLenum target, GLfloat s, GLfloat t,
                                           GLfloat r, GLfloat q) {
-  __profileAPI(_T(" - %s( target=%s, s=%f, t=%f, r=%f, q=%f )\n"),
-               _T(__FUNCTION__), TextureToString(target), s, t, r, q);
+  __profileAPI(" - %s( target=%s, s=%f, t=%f, r=%f, q=%f )\n",
+               __FUNCTION__, TextureToString(target), s, t, r, q);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1692,7 +1692,7 @@ GL_API void GL_APIENTRY glMultiTexCoord4f(GLenum target, GLfloat s, GLfloat t,
 }
 
 GL_API void GL_APIENTRY glNormal3f(GLfloat nx, GLfloat ny, GLfloat nz) {
-  __profileAPI(_T(" - %s( nx=%f, ny=%f, nz=%f )\n"), _T(__FUNCTION__), nx, ny,
+  __profileAPI(" - %s( nx=%f, ny=%f, nz=%f )\n", __FUNCTION__, nx, ny,
                nz);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1704,8 +1704,8 @@ GL_API void GL_APIENTRY glNormal3f(GLfloat nx, GLfloat ny, GLfloat nz) {
 GL_API void GL_APIENTRY glOrthof(GLfloat left, GLfloat right, GLfloat bottom,
                                  GLfloat top, GLfloat zNear, GLfloat zFar) {
   __profileAPI(
-      _T(" - %s( left=%f, right=%f, bottom=%f, top=%f, zNear=%f, zFar=%f )\n"),
-      _T(__FUNCTION__), left, right, bottom, top, zNear, zFar);
+      " - %s( left=%f, right=%f, bottom=%f, top=%f, zNear=%f, zFar=%f )\n",
+      __FUNCTION__, left, right, bottom, top, zNear, zFar);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1715,7 +1715,7 @@ GL_API void GL_APIENTRY glOrthof(GLfloat left, GLfloat right, GLfloat bottom,
 }
 
 GL_API void GL_APIENTRY glPointParameterf(GLenum pname, GLfloat param) {
-  __profileAPI(_T(" - %s( pname=%s, param=%f )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, param=%f )\n", __FUNCTION__,
                PNameToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1726,7 +1726,7 @@ GL_API void GL_APIENTRY glPointParameterf(GLenum pname, GLfloat param) {
 
 GL_API void GL_APIENTRY glPointParameterfv(GLenum pname,
                                            const GLfloat *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, pParams=0x%p )\n", __FUNCTION__,
                PNameToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -1739,7 +1739,7 @@ GL_API void GL_APIENTRY glPointParameterfv(GLenum pname,
 }
 
 GL_API void GL_APIENTRY glPointSize(GLfloat size) {
-  __profileAPI(_T(" - %s( size=%f )\n"), _T(__FUNCTION__), size);
+  __profileAPI(" - %s( size=%f )\n", __FUNCTION__, size);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1748,7 +1748,7 @@ GL_API void GL_APIENTRY glPointSize(GLfloat size) {
 }
 
 GL_API void GL_APIENTRY glPolygonOffset(GLfloat factor, GLfloat units) {
-  __profileAPI(_T(" - %s( factor=%f, units=%f )\n"), _T(__FUNCTION__), factor,
+  __profileAPI(" - %s( factor=%f, units=%f )\n", __FUNCTION__, factor,
                units);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1759,7 +1759,7 @@ GL_API void GL_APIENTRY glPolygonOffset(GLfloat factor, GLfloat units) {
 
 GL_API void GL_APIENTRY glRotatef(GLfloat angle, GLfloat x, GLfloat y,
                                   GLfloat z) {
-  __profileAPI(_T(" - %s( angle=%f, x=%f, y=%f, z=%f )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( angle=%f, x=%f, y=%f, z=%f )\n", __FUNCTION__,
                angle, x, y, z);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1769,7 +1769,7 @@ GL_API void GL_APIENTRY glRotatef(GLfloat angle, GLfloat x, GLfloat y,
 }
 
 GL_API void GL_APIENTRY glScalef(GLfloat x, GLfloat y, GLfloat z) {
-  __profileAPI(_T(" - %s( x=%f, y=%f, z=%f )\n"), _T(__FUNCTION__), x, y, z);
+  __profileAPI(" - %s( x=%f, y=%f, z=%f )\n", __FUNCTION__, x, y, z);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1778,7 +1778,7 @@ GL_API void GL_APIENTRY glScalef(GLfloat x, GLfloat y, GLfloat z) {
 }
 
 GL_API void GL_APIENTRY glTexEnvf(GLenum env, GLenum pname, GLfloat param) {
-  __profileAPI(_T(" - %s( env=%s, pname=%s, param=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( env=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TexEnvToString(env), TexEnvParamToString(pname),
                TexEnvValueToString((GLint)param));
 
@@ -1790,8 +1790,8 @@ GL_API void GL_APIENTRY glTexEnvf(GLenum env, GLenum pname, GLfloat param) {
 
 GL_API void GL_APIENTRY glTexEnvfv(GLenum env, GLenum pname,
                                    const GLfloat *pParams) {
-  __profileAPI(_T(" - %s( env=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TexEnvToString(env),
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -1805,7 +1805,7 @@ GL_API void GL_APIENTRY glTexEnvfv(GLenum env, GLenum pname,
 
 GL_API void GL_APIENTRY glTexParameterf(GLenum target, GLenum pname,
                                         GLfloat param) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, param=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( target=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TextureTypeToString(target), TexParamToString(pname),
                TexParamValueToString((GLint)param));
 
@@ -1817,8 +1817,8 @@ GL_API void GL_APIENTRY glTexParameterf(GLenum target, GLenum pname,
 
 GL_API void GL_APIENTRY glTexParameterfv(GLenum target, GLenum pname,
                                          const GLfloat *pParams) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target),
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -1831,7 +1831,7 @@ GL_API void GL_APIENTRY glTexParameterfv(GLenum target, GLenum pname,
 }
 
 GL_API void GL_APIENTRY glTranslatef(GLfloat x, GLfloat y, GLfloat z) {
-  __profileAPI(_T(" - %s( x=%f, y=%f, z=%f )\n"), _T(__FUNCTION__), x, y, z);
+  __profileAPI(" - %s( x=%f, y=%f, z=%f )\n", __FUNCTION__, x, y, z);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1842,7 +1842,7 @@ GL_API void GL_APIENTRY glTranslatef(GLfloat x, GLfloat y, GLfloat z) {
 /* Available in both Common and Common-Lite profiles */
 
 GL_API void GL_APIENTRY glActiveTexture(GLenum texture) {
-  __profileAPI(_T(" - %s( texture=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( texture=%s )\n", __FUNCTION__,
                TextureToString(texture));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1852,7 +1852,7 @@ GL_API void GL_APIENTRY glActiveTexture(GLenum texture) {
 }
 
 GL_API void GL_APIENTRY glAlphaFuncx(GLenum func, GLclampx ref) {
-  __profileAPI(_T(" - %s( func=%s, ref=%f )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( func=%s, ref=%f )\n", __FUNCTION__,
                FuncToString(func), ref);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1862,7 +1862,7 @@ GL_API void GL_APIENTRY glAlphaFuncx(GLenum func, GLclampx ref) {
 }
 
 GL_API void GL_APIENTRY glBindBuffer(GLenum target, GLuint buffer) {
-  __profileAPI(_T(" - %s( target=%s, buffer=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( target=%s, buffer=%d )\n", __FUNCTION__,
                BufferToString(target), buffer);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1872,7 +1872,7 @@ GL_API void GL_APIENTRY glBindBuffer(GLenum target, GLuint buffer) {
 }
 
 GL_API void GL_APIENTRY glBindTexture(GLenum target, GLuint texture) {
-  __profileAPI(_T(" - %s( target=%s, texture=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( target=%s, texture=%d )\n", __FUNCTION__,
                TextureTypeToString(target), texture);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1882,7 +1882,7 @@ GL_API void GL_APIENTRY glBindTexture(GLenum target, GLuint texture) {
 }
 
 GL_API void GL_APIENTRY glBlendFunc(GLenum sfactor, GLenum dfactor) {
-  __profileAPI(_T(" - %s( sfactor=%s, dfactor=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( sfactor=%s, dfactor=%s )\n", __FUNCTION__,
                BlendFuncToString(sfactor), BlendFuncToString(dfactor));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1893,8 +1893,8 @@ GL_API void GL_APIENTRY glBlendFunc(GLenum sfactor, GLenum dfactor) {
 
 GL_API void GL_APIENTRY glBufferData(GLenum target, GLsizeiptr size,
                                      const GLvoid *pData, GLenum usage) {
-  __profileAPI(_T(" - %s( target=%s, size=%d, pData=0x%p, usage=%s )\n"),
-               _T(__FUNCTION__), BufferToString(target), size, pData,
+  __profileAPI(" - %s( target=%s, size=%d, pData=0x%p, usage=%s )\n",
+               __FUNCTION__, BufferToString(target), size, pData,
                UsageToString(usage));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1905,8 +1905,8 @@ GL_API void GL_APIENTRY glBufferData(GLenum target, GLsizeiptr size,
 
 GL_API void GL_APIENTRY glBufferSubData(GLenum target, GLintptr offset,
                                         GLsizeiptr size, const GLvoid *pData) {
-  __profileAPI(_T(" - %s( target=%s, offset=%d, size=%d, pData=0x%p )\n"),
-               _T(__FUNCTION__), BufferToString(target), offset, size, pData);
+  __profileAPI(" - %s( target=%s, offset=%d, size=%d, pData=0x%p )\n",
+               __FUNCTION__, BufferToString(target), offset, size, pData);
 
   if (nullptr == pData)
     return;
@@ -1918,7 +1918,7 @@ GL_API void GL_APIENTRY glBufferSubData(GLenum target, GLintptr offset,
 }
 
 GL_API void GL_APIENTRY glClear(GLbitfield mask) {
-  __profileAPI(_T(" - %s( mask=0x%x )\n"), _T(__FUNCTION__), mask);
+  __profileAPI(" - %s( mask=0x%x )\n", __FUNCTION__, mask);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1928,8 +1928,8 @@ GL_API void GL_APIENTRY glClear(GLbitfield mask) {
 
 GL_API void GL_APIENTRY glClearColorx(GLclampx red, GLclampx green,
                                       GLclampx blue, GLclampx alpha) {
-  __profileAPI(_T(" - %s( red=%f, green=%f, blue=%f, alpha=%f )\n"),
-               _T(__FUNCTION__), red, green, blue, alpha);
+  __profileAPI(" - %s( red=%f, green=%f, blue=%f, alpha=%f )\n",
+               __FUNCTION__, red, green, blue, alpha);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1941,7 +1941,7 @@ GL_API void GL_APIENTRY glClearColorx(GLclampx red, GLclampx green,
 }
 
 GL_API void GL_APIENTRY glClearDepthx(GLclampx depth) {
-  __profileAPI(_T(" - %s( depth=%f )\n"), _T(__FUNCTION__), depth);
+  __profileAPI(" - %s( depth=%f )\n", __FUNCTION__, depth);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1950,7 +1950,7 @@ GL_API void GL_APIENTRY glClearDepthx(GLclampx depth) {
 }
 
 GL_API void GL_APIENTRY glClearStencil(GLint s) {
-  __profileAPI(_T(" - %s( s=%d )\n"), _T(__FUNCTION__), s);
+  __profileAPI(" - %s( s=%d )\n", __FUNCTION__, s);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -1959,7 +1959,7 @@ GL_API void GL_APIENTRY glClearStencil(GLint s) {
 }
 
 GL_API void GL_APIENTRY glClientActiveTexture(GLenum texture) {
-  __profileAPI(_T(" - %s( texture=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( texture=%s )\n", __FUNCTION__,
                TextureToString(texture));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -1969,7 +1969,7 @@ GL_API void GL_APIENTRY glClientActiveTexture(GLenum texture) {
 }
 
 GL_API void GL_APIENTRY glClipPlanex(GLenum plane, const GLfixed *pEquation) {
-  __profileAPI(_T(" - %s( plane=%d, pEquation=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( plane=%d, pEquation=0x%p )\n", __FUNCTION__,
                plane, pEquation);
 
   if (nullptr == pEquation)
@@ -1991,8 +1991,8 @@ GL_API void GL_APIENTRY glClipPlanex(GLenum plane, const GLfixed *pEquation) {
 
 GL_API void GL_APIENTRY glColor4ub(GLubyte red, GLubyte green, GLubyte blue,
                                    GLubyte alpha) {
-  __profileAPI(_T(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n"),
-               _T(__FUNCTION__), red, green, blue, alpha);
+  __profileAPI(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n",
+               __FUNCTION__, red, green, blue, alpha);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2004,8 +2004,8 @@ GL_API void GL_APIENTRY glColor4ub(GLubyte red, GLubyte green, GLubyte blue,
 
 GL_API void GL_APIENTRY glColor4x(GLfixed red, GLfixed green, GLfixed blue,
                                   GLfixed alpha) {
-  __profileAPI(_T(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n"),
-               _T(__FUNCTION__), red, green, blue, alpha);
+  __profileAPI(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n",
+               __FUNCTION__, red, green, blue, alpha);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2018,8 +2018,8 @@ GL_API void GL_APIENTRY glColor4x(GLfixed red, GLfixed green, GLfixed blue,
 
 GL_API void GL_APIENTRY glColorMask(GLboolean red, GLboolean green,
                                     GLboolean blue, GLboolean alpha) {
-  __profileAPI(_T(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n"),
-               _T(__FUNCTION__), red, green, blue, alpha);
+  __profileAPI(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n",
+               __FUNCTION__, red, green, blue, alpha);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2029,8 +2029,8 @@ GL_API void GL_APIENTRY glColorMask(GLboolean red, GLboolean green,
 
 GL_API void GL_APIENTRY glColorPointer(GLint size, GLenum type, GLsizei stride,
                                        const GLvoid *pPointer) {
-  __profileAPI(_T(" - %s( size=%d, type=%s, stride=%d, pPointer=0x%p )\n"),
-               _T(__FUNCTION__), size, TypeToString(type), stride, pPointer);
+  __profileAPI(" - %s( size=%d, type=%s, stride=%d, pPointer=0x%p )\n",
+               __FUNCTION__, size, TypeToString(type), stride, pPointer);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2043,9 +2043,9 @@ GL_API void GL_APIENTRY glCompressedTexImage2D(GLenum target, GLint level,
                                                GLsizei width, GLsizei height,
                                                GLint border, GLsizei imageSize,
                                                const GLvoid *pData) {
-  __profileAPI(_T(" - %s( target=%s, level=%d, internalformat=%s, width=%d, ")
-               _T("height=%d, border=%d, imageSize=%d, pDdata=0x%p )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target), level,
+  __profileAPI(" - %s( target=%s, level=%d, internalformat=%s, width=%d, "
+               "height=%d, border=%d, imageSize=%d, pDdata=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target), level,
                FormatToString(internalformat), width, height, border, imageSize,
                pData);
 
@@ -2063,9 +2063,9 @@ GL_API void GL_APIENTRY glCompressedTexSubImage2D(
     GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width,
     GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *pData) {
   __profileAPI(
-      _T(" - %s( target=%s, level=%d, xoffset=%d, yoffset=%d, width=%d, ")
-      _T("height=%d, format=%s, imageSize=%d, pData=0x%p )\n"),
-      _T(__FUNCTION__), TextureTypeToString(target), level, xoffset, yoffset,
+      " - %s( target=%s, level=%d, xoffset=%d, yoffset=%d, width=%d, "
+      "height=%d, format=%s, imageSize=%d, pData=0x%p )\n",
+      __FUNCTION__, TextureTypeToString(target), level, xoffset, yoffset,
       width, height, FormatToString(format), imageSize, pData);
 
   if (nullptr == pData)
@@ -2082,9 +2082,9 @@ GL_API void GL_APIENTRY glCopyTexImage2D(GLenum target, GLint level,
                                          GLenum internalformat, GLint x,
                                          GLint y, GLsizei width, GLsizei height,
                                          GLint border) {
-  __profileAPI(_T(" - %s( target=%s, level=%d, internalformat=%s, x=%d, y=%d, ")
-               _T("width=%d, height=%d, border=%d )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target), level,
+  __profileAPI(" - %s( target=%s, level=%d, internalformat=%s, x=%d, y=%d, "
+               "width=%d, height=%d, border=%d )\n",
+               __FUNCTION__, TextureTypeToString(target), level,
                FormatToString(internalformat), x, y, width, height, border);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2098,9 +2098,9 @@ GL_API void GL_APIENTRY glCopyTexSubImage2D(GLenum target, GLint level,
                                             GLint xoffset, GLint yoffset,
                                             GLint x, GLint y, GLsizei width,
                                             GLsizei height) {
-  __profileAPI(_T(" - %s( target=%s, level=%d, xoffset=%d, yoffset=%d, x=%d, ")
-               _T("y=%d, width=%d, height=%d )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target), level, xoffset,
+  __profileAPI(" - %s( target=%s, level=%d, xoffset=%d, yoffset=%d, x=%d, "
+               "y=%d, width=%d, height=%d )\n",
+               __FUNCTION__, TextureTypeToString(target), level, xoffset,
                yoffset, x, y, width, height);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2111,7 +2111,7 @@ GL_API void GL_APIENTRY glCopyTexSubImage2D(GLenum target, GLint level,
 }
 
 GL_API void GL_APIENTRY glCullFace(GLenum mode) {
-  __profileAPI(_T(" - %s( mode=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__,
                CullFaceToString(mode));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2121,7 +2121,7 @@ GL_API void GL_APIENTRY glCullFace(GLenum mode) {
 }
 
 GL_API void GL_APIENTRY glDeleteBuffers(GLsizei n, const GLuint *pBuffers) {
-  __profileAPI(_T(" - %s( n=%d, pBuffers=0x%p )\n"), _T(__FUNCTION__), n,
+  __profileAPI(" - %s( n=%d, pBuffers=0x%p )\n", __FUNCTION__, n,
                pBuffers);
 
   if (nullptr == pBuffers)
@@ -2134,7 +2134,7 @@ GL_API void GL_APIENTRY glDeleteBuffers(GLsizei n, const GLuint *pBuffers) {
 }
 
 GL_API void GL_APIENTRY glDeleteTextures(GLsizei n, const GLuint *pTextures) {
-  __profileAPI(_T(" - %s( n=%d, pTextures=0x%p )\n"), _T(__FUNCTION__), n,
+  __profileAPI(" - %s( n=%d, pTextures=0x%p )\n", __FUNCTION__, n,
                pTextures);
 
   if (nullptr == pTextures)
@@ -2147,7 +2147,7 @@ GL_API void GL_APIENTRY glDeleteTextures(GLsizei n, const GLuint *pTextures) {
 }
 
 GL_API void GL_APIENTRY glDepthFunc(GLenum func) {
-  __profileAPI(_T(" - %s( func=%s )\n"), _T(__FUNCTION__), FuncToString(func));
+  __profileAPI(" - %s( func=%s )\n", __FUNCTION__, FuncToString(func));
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2156,7 +2156,7 @@ GL_API void GL_APIENTRY glDepthFunc(GLenum func) {
 }
 
 GL_API void GL_APIENTRY glDepthMask(GLboolean flag) {
-  __profileAPI(_T(" - %s( flag=%d )\n"), _T(__FUNCTION__), flag);
+  __profileAPI(" - %s( flag=%d )\n", __FUNCTION__, flag);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2165,7 +2165,7 @@ GL_API void GL_APIENTRY glDepthMask(GLboolean flag) {
 }
 
 GL_API void GL_APIENTRY glDepthRangex(GLclampx zNear, GLclampx zFar) {
-  __profileAPI(_T(" - %s( zNear=%f, zfar=%f )\n"), _T(__FUNCTION__), zNear,
+  __profileAPI(" - %s( zNear=%f, zfar=%f )\n", __FUNCTION__, zNear,
                zFar);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2176,7 +2176,7 @@ GL_API void GL_APIENTRY glDepthRangex(GLclampx zNear, GLclampx zFar) {
 }
 
 GL_API void GL_APIENTRY glDisable(GLenum cap) {
-  __profileAPI(_T(" - %s( cap=%s )\n"), _T(__FUNCTION__), CapToString(cap));
+  __profileAPI(" - %s( cap=%s )\n", __FUNCTION__, CapToString(cap));
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2185,7 +2185,7 @@ GL_API void GL_APIENTRY glDisable(GLenum cap) {
 }
 
 GL_API void GL_APIENTRY glDisableClientState(GLenum array) {
-  __profileAPI(_T(" - %s( array=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( array=%s )\n", __FUNCTION__,
                ClientStateToString(array));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2195,7 +2195,7 @@ GL_API void GL_APIENTRY glDisableClientState(GLenum array) {
 }
 
 GL_API void GL_APIENTRY glDrawArrays(GLenum mode, GLint first, GLsizei count) {
-  __profileAPI(_T(" - %s( mode=%s, first=%d, count=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( mode=%s, first=%d, count=%d )\n", __FUNCTION__,
                PrimitiveTypeToString(mode), first, count);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2206,8 +2206,8 @@ GL_API void GL_APIENTRY glDrawArrays(GLenum mode, GLint first, GLsizei count) {
 
 GL_API void GL_APIENTRY glDrawElements(GLenum mode, GLsizei count, GLenum type,
                                        const GLvoid *pIndices) {
-  __profileAPI(_T(" - %s( mode=%s, count=%d, type=%s, pIndices=0x%p )\n"),
-               _T(__FUNCTION__), PrimitiveTypeToString(mode), count,
+  __profileAPI(" - %s( mode=%s, count=%d, type=%s, pIndices=0x%p )\n",
+               __FUNCTION__, PrimitiveTypeToString(mode), count,
                TypeToString(type), pIndices);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2217,7 +2217,7 @@ GL_API void GL_APIENTRY glDrawElements(GLenum mode, GLsizei count, GLenum type,
 }
 
 GL_API void GL_APIENTRY glEnable(GLenum cap) {
-  __profileAPI(_T(" - %s( cap=%s )\n"), _T(__FUNCTION__), CapToString(cap));
+  __profileAPI(" - %s( cap=%s )\n", __FUNCTION__, CapToString(cap));
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2226,7 +2226,7 @@ GL_API void GL_APIENTRY glEnable(GLenum cap) {
 }
 
 GL_API void GL_APIENTRY glEnableClientState(GLenum array) {
-  __profileAPI(_T(" - %s( array=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( array=%s )\n", __FUNCTION__,
                ClientStateToString(array));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2236,7 +2236,7 @@ GL_API void GL_APIENTRY glEnableClientState(GLenum array) {
 }
 
 GL_API void GL_APIENTRY glFinish() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2245,7 +2245,7 @@ GL_API void GL_APIENTRY glFinish() {
 }
 
 GL_API void GL_APIENTRY glFlush() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2254,7 +2254,7 @@ GL_API void GL_APIENTRY glFlush() {
 }
 
 GL_API void GL_APIENTRY glFogx(GLenum pname, GLfixed param) {
-  __profileAPI(_T(" - %s( pname=%s, param=0x%x )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, param=0x%x )\n", __FUNCTION__,
                FogToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2264,7 +2264,7 @@ GL_API void GL_APIENTRY glFogx(GLenum pname, GLfixed param) {
 }
 
 GL_API void GL_APIENTRY glFogxv(GLenum pname, const GLfixed *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, pParams=0x%p )\n", __FUNCTION__,
                FogToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2277,7 +2277,7 @@ GL_API void GL_APIENTRY glFogxv(GLenum pname, const GLfixed *pParams) {
 }
 
 GL_API void GL_APIENTRY glFrontFace(GLenum mode) {
-  __profileAPI(_T(" - %s( mode=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__,
                FrontFaceToString(mode));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2289,8 +2289,8 @@ GL_API void GL_APIENTRY glFrontFace(GLenum mode) {
 GL_API void GL_APIENTRY glFrustumx(GLfixed left, GLfixed right, GLfixed bottom,
                                    GLfixed top, GLfixed zNear, GLfixed zFar) {
   __profileAPI(
-      _T(" - %s( left=%d, right=%d, bottom=%d, top=%d, zNear=%d, zFar=%d )\n"),
-      _T(__FUNCTION__), left, right, bottom, top, zNear, zFar);
+      " - %s( left=%d, right=%d, bottom=%d, top=%d, zNear=%d, zFar=%d )\n",
+      __FUNCTION__, left, right, bottom, top, zNear, zFar);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2304,7 +2304,7 @@ GL_API void GL_APIENTRY glFrustumx(GLfixed left, GLfixed right, GLfixed bottom,
 }
 
 GL_API void GL_APIENTRY glGetBooleanv(GLenum pname, GLboolean *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, pParams=0x%p )\n", __FUNCTION__,
                AttributeToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2318,8 +2318,8 @@ GL_API void GL_APIENTRY glGetBooleanv(GLenum pname, GLboolean *pParams) {
 
 GL_API void GL_APIENTRY glGetBufferParameteriv(GLenum target, GLenum pname,
                                                GLint *pParams) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), BufferToString(target),
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, BufferToString(target),
                BufferParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2332,7 +2332,7 @@ GL_API void GL_APIENTRY glGetBufferParameteriv(GLenum target, GLenum pname,
 }
 
 GL_API void GL_APIENTRY glGetClipPlanex(GLenum plane, GLfixed eqn[4]) {
-  __profileAPI(_T(" - %s( plane=%s, eqn[4]=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( plane=%s, eqn[4]=0x%p )\n", __FUNCTION__,
                PlaneToString(plane), eqn);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2342,7 +2342,7 @@ GL_API void GL_APIENTRY glGetClipPlanex(GLenum plane, GLfixed eqn[4]) {
 }
 
 GL_API void GL_APIENTRY glGenBuffers(GLsizei n, GLuint *pBuffers) {
-  __profileAPI(_T(" - %s( n=%d, pBuffers=0x%p )\n"), _T(__FUNCTION__), n,
+  __profileAPI(" - %s( n=%d, pBuffers=0x%p )\n", __FUNCTION__, n,
                pBuffers);
 
   if (nullptr == pBuffers)
@@ -2355,7 +2355,7 @@ GL_API void GL_APIENTRY glGenBuffers(GLsizei n, GLuint *pBuffers) {
 }
 
 GL_API void GL_APIENTRY glGenTextures(GLsizei n, GLuint *pTextures) {
-  __profileAPI(_T(" - %s( n=%d, pTextures=0x%p )\n"), _T(__FUNCTION__), n,
+  __profileAPI(" - %s( n=%d, pTextures=0x%p )\n", __FUNCTION__, n,
                pTextures);
 
   if (nullptr == pTextures)
@@ -2368,7 +2368,7 @@ GL_API void GL_APIENTRY glGenTextures(GLsizei n, GLuint *pTextures) {
 }
 
 GL_API GLenum GL_APIENTRY glGetError() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err = GL_NO_ERROR;
 
@@ -2377,13 +2377,13 @@ GL_API GLenum GL_APIENTRY glGetError() {
     err = pContext->GetError();
   }
 
-  __glLog(_T(" - glGetError()=%d\r\n"), err);
+  __glLog(" - glGetError()=%d\r\n", err);
 
   return err;
 }
 
 GL_API void GL_APIENTRY glGetFixedv(GLenum pname, GLfixed *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, pParams=0x%p )\n", __FUNCTION__,
                AttributeToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2396,7 +2396,7 @@ GL_API void GL_APIENTRY glGetFixedv(GLenum pname, GLfixed *pParams) {
 }
 
 GL_API void GL_APIENTRY glGetIntegerv(GLenum pname, GLint *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, pParams=0x%p )\n", __FUNCTION__,
                AttributeToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2410,8 +2410,8 @@ GL_API void GL_APIENTRY glGetIntegerv(GLenum pname, GLint *pParams) {
 
 GL_API void GL_APIENTRY glGetLightxv(GLenum light, GLenum pname,
                                      GLfixed *pParams) {
-  __profileAPI(_T(" - %s( light=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), LightToString(light),
+  __profileAPI(" - %s( light=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, LightToString(light),
                LightParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2426,8 +2426,8 @@ GL_API void GL_APIENTRY glGetLightxv(GLenum light, GLenum pname,
 
 GL_API void GL_APIENTRY glGetMaterialxv(GLenum face, GLenum pname,
                                         GLfixed *pParams) {
-  __profileAPI(_T(" - %s( face=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), MaterialFaceToString(face),
+  __profileAPI(" - %s( face=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, MaterialFaceToString(face),
                MaterialParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2441,7 +2441,7 @@ GL_API void GL_APIENTRY glGetMaterialxv(GLenum face, GLenum pname,
 }
 
 GL_API void GL_APIENTRY glGetPointerv(GLenum pname, GLvoid **ppParams) {
-  __profileAPI(_T(" - %s( pname=%s, ppParams=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, ppParams=0x%p )\n", __FUNCTION__,
                PointerToString(pname), ppParams);
 
   if (nullptr == ppParams)
@@ -2454,7 +2454,7 @@ GL_API void GL_APIENTRY glGetPointerv(GLenum pname, GLvoid **ppParams) {
 }
 
 GL_API const GLubyte *GL_APIENTRY glGetString(GLenum name) {
-  __profileAPI(_T(" - %s( name=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( name=%s )\n", __FUNCTION__,
                StringToString(name));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2467,8 +2467,8 @@ GL_API const GLubyte *GL_APIENTRY glGetString(GLenum name) {
 
 GL_API void GL_APIENTRY glGetTexEnviv(GLenum env, GLenum pname,
                                       GLint *pParams) {
-  __profileAPI(_T(" - %s( env=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TexEnvToString(env),
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2482,8 +2482,8 @@ GL_API void GL_APIENTRY glGetTexEnviv(GLenum env, GLenum pname,
 
 GL_API void GL_APIENTRY glGetTexEnvxv(GLenum env, GLenum pname,
                                       GLfixed *pParams) {
-  __profileAPI(_T(" - %s( env=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TexEnvToString(env),
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2498,8 +2498,8 @@ GL_API void GL_APIENTRY glGetTexEnvxv(GLenum env, GLenum pname,
 
 GL_API void GL_APIENTRY glGetTexParameteriv(GLenum target, GLenum pname,
                                             GLint *pParams) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target),
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2513,8 +2513,8 @@ GL_API void GL_APIENTRY glGetTexParameteriv(GLenum target, GLenum pname,
 
 GL_API void GL_APIENTRY glGetTexParameterxv(GLenum target, GLenum pname,
                                             GLfixed *pParams) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target),
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2528,7 +2528,7 @@ GL_API void GL_APIENTRY glGetTexParameterxv(GLenum target, GLenum pname,
 }
 
 GL_API void GL_APIENTRY glHint(GLenum target, GLenum mode) {
-  __profileAPI(_T(" - %s( target=%s, mode=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( target=%s, mode=%s )\n", __FUNCTION__,
                HintTargetToString(target), HintModeToString(mode));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2538,7 +2538,7 @@ GL_API void GL_APIENTRY glHint(GLenum target, GLenum mode) {
 }
 
 GL_API GLboolean GL_APIENTRY glIsBuffer(GLuint buffer) {
-  __profileAPI(_T(" - %s( buffer=%d )\n"), _T(__FUNCTION__), buffer);
+  __profileAPI(" - %s( buffer=%d )\n", __FUNCTION__, buffer);
 
   bool bValue = false;
 
@@ -2547,13 +2547,13 @@ GL_API GLboolean GL_APIENTRY glIsBuffer(GLuint buffer) {
     bValue = pContext->IsBuffer(buffer);
   }
 
-  __glLog(_T(" - glIsBuffer()=%d\r\n"), bValue);
+  __glLog(" - glIsBuffer()=%d\r\n", bValue);
 
   return bValue;
 }
 
 GL_API GLboolean GL_APIENTRY glIsEnabled(GLenum cap) {
-  __profileAPI(_T(" - %s( cap=%s )\n"), _T(__FUNCTION__), CapToString(cap));
+  __profileAPI(" - %s( cap=%s )\n", __FUNCTION__, CapToString(cap));
 
   bool bValue = false;
 
@@ -2562,13 +2562,13 @@ GL_API GLboolean GL_APIENTRY glIsEnabled(GLenum cap) {
     bValue = pContext->IsEnabled(cap);
   }
 
-  __glLog(_T(" - glIsEnabled()=%d\r\n"), bValue);
+  __glLog(" - glIsEnabled()=%d\r\n", bValue);
 
   return bValue;
 }
 
 GL_API GLboolean GL_APIENTRY glIsTexture(GLuint texture) {
-  __profileAPI(_T(" - %s( texture=%d )\n"), _T(__FUNCTION__), texture);
+  __profileAPI(" - %s( texture=%d )\n", __FUNCTION__, texture);
 
   bool bValue = false;
 
@@ -2577,13 +2577,13 @@ GL_API GLboolean GL_APIENTRY glIsTexture(GLuint texture) {
     bValue = pContext->IsTexture(texture);
   }
 
-  __glLog(_T(" - glIsTexture()=%d\r\n"), bValue);
+  __glLog(" - glIsTexture()=%d\r\n", bValue);
 
   return bValue;
 }
 
 GL_API void GL_APIENTRY glLightModelx(GLenum pname, GLfixed param) {
-  __profileAPI(_T(" - %s( pname=%s, param=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, param=%d )\n", __FUNCTION__,
                LightModelToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2594,8 +2594,8 @@ GL_API void GL_APIENTRY glLightModelx(GLenum pname, GLfixed param) {
 }
 
 GL_API void GL_APIENTRY glLightModelxv(GLenum pname, const GLfixed *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=(0x%x ,0x%x, 0x%x, 0x%x) )\n"),
-               _T(__FUNCTION__), LightModelToString(pname), pParams[0],
+  __profileAPI(" - %s( pname=%s, pParams=(0x%x ,0x%x, 0x%x, 0x%x) )\n",
+               __FUNCTION__, LightModelToString(pname), pParams[0],
                pParams[1], pParams[2], pParams[3]);
 
   if (nullptr == pParams)
@@ -2609,7 +2609,7 @@ GL_API void GL_APIENTRY glLightModelxv(GLenum pname, const GLfixed *pParams) {
 }
 
 GL_API void GL_APIENTRY glLightx(GLenum light, GLenum pname, GLfixed param) {
-  __profileAPI(_T(" - %s( light=%s, pname=%s, param=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( light=%s, pname=%s, param=%d )\n", __FUNCTION__,
                LightToString(light), LightParamToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2622,8 +2622,8 @@ GL_API void GL_APIENTRY glLightx(GLenum light, GLenum pname, GLfixed param) {
 GL_API void GL_APIENTRY glLightxv(GLenum light, GLenum pname,
                                   const GLfixed *pParams) {
   __profileAPI(
-      _T(" - %s( light=%s, pname=%s, pParams=(0x%x, 0x%x, 0x%x, 0x%x) )\n"),
-      _T(__FUNCTION__), LightToString(light), LightParamToString(pname),
+      " - %s( light=%s, pname=%s, pParams=(0x%x, 0x%x, 0x%x, 0x%x) )\n",
+      __FUNCTION__, LightToString(light), LightParamToString(pname),
       pParams[0], pParams[1], pParams[2], pParams[3]);
 
   if (nullptr == pParams)
@@ -2637,7 +2637,7 @@ GL_API void GL_APIENTRY glLightxv(GLenum light, GLenum pname,
 }
 
 GL_API void GL_APIENTRY glLineWidthx(GLfixed width) {
-  __profileAPI(_T(" - %s( width=%d )\n"), _T(__FUNCTION__), width);
+  __profileAPI(" - %s( width=%d )\n", __FUNCTION__, width);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2646,7 +2646,7 @@ GL_API void GL_APIENTRY glLineWidthx(GLfixed width) {
 }
 
 GL_API void GL_APIENTRY glLoadIdentity() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2655,9 +2655,9 @@ GL_API void GL_APIENTRY glLoadIdentity() {
 }
 
 GL_API void GL_APIENTRY glLoadMatrixx(const GLfixed *pM) {
-  __profileAPI(_T(" - %s( pM=(0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, ")
-               _T("0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x) )\n"),
-               _T(__FUNCTION__), pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
+  __profileAPI(" - %s( pM=(0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, "
+               "0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x) )\n",
+               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
                pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
                pM[14], pM[15]);
 
@@ -2690,7 +2690,7 @@ GL_API void GL_APIENTRY glLoadMatrixx(const GLfixed *pM) {
 }
 
 GL_API void GL_APIENTRY glLogicOp(GLenum opcode) {
-  __profileAPI(_T(" - %s( opcode=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( opcode=%s )\n", __FUNCTION__,
                LogicOpToString(opcode));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2700,7 +2700,7 @@ GL_API void GL_APIENTRY glLogicOp(GLenum opcode) {
 }
 
 GL_API void GL_APIENTRY glMaterialx(GLenum face, GLenum pname, GLfixed param) {
-  __profileAPI(_T(" - %s( face=%s, pname=%s, param=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( face=%s, pname=%s, param=%d )\n", __FUNCTION__,
                MaterialFaceToString(face), MaterialParamToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2713,8 +2713,8 @@ GL_API void GL_APIENTRY glMaterialx(GLenum face, GLenum pname, GLfixed param) {
 GL_API void GL_APIENTRY glMaterialxv(GLenum face, GLenum pname,
                                      const GLfixed *pParams) {
   __profileAPI(
-      _T(" - %s( face=%s, pname=%s, pParams=(0x%x, 0x%x, 0x%x, 0x%x) )\n"),
-      _T(__FUNCTION__), MaterialFaceToString(face),
+      " - %s( face=%s, pname=%s, pParams=(0x%x, 0x%x, 0x%x, 0x%x) )\n",
+      __FUNCTION__, MaterialFaceToString(face),
       MaterialParamToString(pname), pParams[0], pParams[1], pParams[2],
       pParams[3]);
 
@@ -2729,7 +2729,7 @@ GL_API void GL_APIENTRY glMaterialxv(GLenum face, GLenum pname,
 }
 
 GL_API void GL_APIENTRY glMatrixMode(GLenum mode) {
-  __profileAPI(_T(" - %s( mode=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__,
                MatrixModeToString(mode));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2741,9 +2741,9 @@ GL_API void GL_APIENTRY glMatrixMode(GLenum mode) {
 }
 
 GL_API void GL_APIENTRY glMultMatrixx(const GLfixed *pM) {
-  __profileAPI(_T(" - %s( pM=(0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, ")
-               _T("0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x) )\n"),
-               _T(__FUNCTION__), pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
+  __profileAPI(" - %s( pM=(0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, "
+               "0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x) )\n",
+               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
                pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
                pM[14], pM[15]);
 
@@ -2777,8 +2777,8 @@ GL_API void GL_APIENTRY glMultMatrixx(const GLfixed *pM) {
 
 GL_API void GL_APIENTRY glMultiTexCoord4x(GLenum target, GLfixed s, GLfixed t,
                                           GLfixed r, GLfixed q) {
-  __profileAPI(_T(" - %s( target=%s, s=%d, t=%d, r=%d, q=%d )\n"),
-               _T(__FUNCTION__), TextureToString(target), s, t, r, q);
+  __profileAPI(" - %s( target=%s, s=%d, t=%d, r=%d, q=%d )\n",
+               __FUNCTION__, TextureToString(target), s, t, r, q);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2790,7 +2790,7 @@ GL_API void GL_APIENTRY glMultiTexCoord4x(GLenum target, GLfixed s, GLfixed t,
 }
 
 GL_API void GL_APIENTRY glNormal3x(GLfixed nx, GLfixed ny, GLfixed nz) {
-  __profileAPI(_T(" - %s( nx=%d, ny=%d, nz=%d )\n"), _T(__FUNCTION__), nx, ny,
+  __profileAPI(" - %s( nx=%d, ny=%d, nz=%d )\n", __FUNCTION__, nx, ny,
                nz);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2803,8 +2803,8 @@ GL_API void GL_APIENTRY glNormal3x(GLfixed nx, GLfixed ny, GLfixed nz) {
 
 GL_API void GL_APIENTRY glNormalPointer(GLenum type, GLsizei stride,
                                         const GLvoid *pPointer) {
-  __profileAPI(_T(" - %s( type=%s, stride=%d, pPointer=0x%p )\n"),
-               _T(__FUNCTION__), TypeToString(type), stride, pPointer);
+  __profileAPI(" - %s( type=%s, stride=%d, pPointer=0x%p )\n",
+               __FUNCTION__, TypeToString(type), stride, pPointer);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2815,8 +2815,8 @@ GL_API void GL_APIENTRY glNormalPointer(GLenum type, GLsizei stride,
 GL_API void GL_APIENTRY glOrthox(GLfixed left, GLfixed right, GLfixed bottom,
                                  GLfixed top, GLfixed zNear, GLfixed zFar) {
   __profileAPI(
-      _T(" - %s( left=%d, right=%d, bottom=%d, top=%d, zNear=%d, zFar=%d )\n"),
-      _T(__FUNCTION__), left, right, bottom, top, zNear, zFar);
+      " - %s( left=%d, right=%d, bottom=%d, top=%d, zNear=%d, zFar=%d )\n",
+      __FUNCTION__, left, right, bottom, top, zNear, zFar);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2830,7 +2830,7 @@ GL_API void GL_APIENTRY glOrthox(GLfixed left, GLfixed right, GLfixed bottom,
 }
 
 GL_API void GL_APIENTRY glPixelStorei(GLenum pname, GLint param) {
-  __profileAPI(_T(" - %s( pname=%s, param=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, param=%d )\n", __FUNCTION__,
                PixelStoreToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2840,7 +2840,7 @@ GL_API void GL_APIENTRY glPixelStorei(GLenum pname, GLint param) {
 }
 
 GL_API void GL_APIENTRY glPointParameterx(GLenum pname, GLfixed param) {
-  __profileAPI(_T(" - %s( pname=%s, param=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, param=%d )\n", __FUNCTION__,
                PointParameterToString(pname), param);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2852,7 +2852,7 @@ GL_API void GL_APIENTRY glPointParameterx(GLenum pname, GLfixed param) {
 
 GL_API void GL_APIENTRY glPointParameterxv(GLenum pname,
                                            const GLfixed *pParams) {
-  __profileAPI(_T(" - %s( pname=%s, pParams=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( pname=%s, pParams=0x%p )\n", __FUNCTION__,
                PointParameterToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -2866,7 +2866,7 @@ GL_API void GL_APIENTRY glPointParameterxv(GLenum pname,
 }
 
 GL_API void GL_APIENTRY glPointSizex(GLfixed size) {
-  __profileAPI(_T(" - %s( size=%d )\n"), _T(__FUNCTION__), size);
+  __profileAPI(" - %s( size=%d )\n", __FUNCTION__, size);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2875,7 +2875,7 @@ GL_API void GL_APIENTRY glPointSizex(GLfixed size) {
 }
 
 GL_API void GL_APIENTRY glPolygonOffsetx(GLfixed factor, GLfixed units) {
-  __profileAPI(_T(" - %s( factor=%d, units=%d )\n"), _T(__FUNCTION__), factor,
+  __profileAPI(" - %s( factor=%d, units=%d )\n", __FUNCTION__, factor,
                units);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2886,7 +2886,7 @@ GL_API void GL_APIENTRY glPolygonOffsetx(GLfixed factor, GLfixed units) {
 }
 
 GL_API void GL_APIENTRY glPopMatrix() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2895,7 +2895,7 @@ GL_API void GL_APIENTRY glPopMatrix() {
 }
 
 GL_API void GL_APIENTRY glPushMatrix() {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2906,9 +2906,9 @@ GL_API void GL_APIENTRY glPushMatrix() {
 GL_API void GL_APIENTRY glReadPixels(GLint x, GLint y, GLsizei width,
                                      GLsizei height, GLenum format, GLenum type,
                                      GLvoid *pPixels) {
-  __profileAPI(_T(" - %s( x=%d, y=%d, width=%d, height=%d, format=%s, ")
-               _T("type=%s, pPixels=0x%p )\n"),
-               _T(__FUNCTION__), x, y, width, height, FormatToString(format),
+  __profileAPI(" - %s( x=%d, y=%d, width=%d, height=%d, format=%s, "
+               "type=%s, pPixels=0x%p )\n",
+               __FUNCTION__, x, y, width, height, FormatToString(format),
                TypeToString(type), pPixels);
 
   if (nullptr == pPixels)
@@ -2922,7 +2922,7 @@ GL_API void GL_APIENTRY glReadPixels(GLint x, GLint y, GLsizei width,
 
 GL_API void GL_APIENTRY glRotatex(GLfixed angle, GLfixed x, GLfixed y,
                                   GLfixed z) {
-  __profileAPI(_T(" - %s( angle=%d, x=%d, y=%d, z=%d )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( angle=%d, x=%d, y=%d, z=%d )\n", __FUNCTION__,
                angle, x, y, z);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2935,7 +2935,7 @@ GL_API void GL_APIENTRY glRotatex(GLfixed angle, GLfixed x, GLfixed y,
 }
 
 GL_API void GL_APIENTRY glSampleCoverage(GLclampf value, GLboolean invert) {
-  __profileAPI(_T(" - %s( value=%f, invert=%d )\n"), _T(__FUNCTION__), value,
+  __profileAPI(" - %s( value=%f, invert=%d )\n", __FUNCTION__, value,
                invert);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2945,7 +2945,7 @@ GL_API void GL_APIENTRY glSampleCoverage(GLclampf value, GLboolean invert) {
 }
 
 GL_API void GL_APIENTRY glSampleCoveragex(GLclampx value, GLboolean invert) {
-  __profileAPI(_T(" - %s( value=%f, invert=%d )\n"), _T(__FUNCTION__), value,
+  __profileAPI(" - %s( value=%f, invert=%d )\n", __FUNCTION__, value,
                invert);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2955,7 +2955,7 @@ GL_API void GL_APIENTRY glSampleCoveragex(GLclampx value, GLboolean invert) {
 }
 
 GL_API void GL_APIENTRY glScalex(GLfixed x, GLfixed y, GLfixed z) {
-  __profileAPI(_T(" - %s( x=%d, y=%d, z=%d )\n"), _T(__FUNCTION__), x, y, z);
+  __profileAPI(" - %s( x=%d, y=%d, z=%d )\n", __FUNCTION__, x, y, z);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2967,8 +2967,8 @@ GL_API void GL_APIENTRY glScalex(GLfixed x, GLfixed y, GLfixed z) {
 
 GL_API void GL_APIENTRY glScissor(GLint x, GLint y, GLsizei width,
                                   GLsizei height) {
-  __profileAPI(_T(" - %s( x=%d, y=%d, width=%d, height=%d )\n"),
-               _T(__FUNCTION__), x, y, width, height);
+  __profileAPI(" - %s( x=%d, y=%d, width=%d, height=%d )\n",
+               __FUNCTION__, x, y, width, height);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -2977,7 +2977,7 @@ GL_API void GL_APIENTRY glScissor(GLint x, GLint y, GLsizei width,
 }
 
 GL_API void GL_APIENTRY glShadeModel(GLenum mode) {
-  __profileAPI(_T(" - %s( mode=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__,
                ShadeModelToString(mode));
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2987,7 +2987,7 @@ GL_API void GL_APIENTRY glShadeModel(GLenum mode) {
 }
 
 GL_API void GL_APIENTRY glStencilFunc(GLenum func, GLint ref, GLuint mask) {
-  __profileAPI(_T(" - %s( func=%s, ref=%d, mask=0x%x )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( func=%s, ref=%d, mask=0x%x )\n", __FUNCTION__,
                FuncToString(func), ref, mask);
 
   auto pContext = g_driver.GetCurrentContext();
@@ -2997,7 +2997,7 @@ GL_API void GL_APIENTRY glStencilFunc(GLenum func, GLint ref, GLuint mask) {
 }
 
 GL_API void GL_APIENTRY glStencilMask(GLuint mask) {
-  __profileAPI(_T(" - %s( mask=0x%x )\n"), _T(__FUNCTION__), mask);
+  __profileAPI(" - %s( mask=0x%x )\n", __FUNCTION__, mask);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -3006,7 +3006,7 @@ GL_API void GL_APIENTRY glStencilMask(GLuint mask) {
 }
 
 GL_API void GL_APIENTRY glStencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
-  __profileAPI(_T(" - %s( fail=%s, zfail=%s, zpass=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( fail=%s, zfail=%s, zpass=%s )\n", __FUNCTION__,
                StencilOpToString(fail), StencilOpToString(zfail),
                StencilOpToString(zpass));
 
@@ -3019,8 +3019,8 @@ GL_API void GL_APIENTRY glStencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
 GL_API void GL_APIENTRY glTexCoordPointer(GLint size, GLenum type,
                                           GLsizei stride,
                                           const GLvoid *pPointer) {
-  __profileAPI(_T(" - %s( size=%d, type=%s, stride=%d, pPointer=0x%p )\n"),
-               _T(__FUNCTION__), size, TypeToString(type), stride, pPointer);
+  __profileAPI(" - %s( size=%d, type=%s, stride=%d, pPointer=0x%p )\n",
+               __FUNCTION__, size, TypeToString(type), stride, pPointer);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -3029,7 +3029,7 @@ GL_API void GL_APIENTRY glTexCoordPointer(GLint size, GLenum type,
 }
 
 GL_API void GL_APIENTRY glTexEnvi(GLenum env, GLenum pname, GLint param) {
-  __profileAPI(_T(" - %s( env=%s, pname=%s, param=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( env=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TexEnvToString(env), TexEnvParamToString(pname),
                TexEnvValueToString(param));
 
@@ -3040,7 +3040,7 @@ GL_API void GL_APIENTRY glTexEnvi(GLenum env, GLenum pname, GLint param) {
 }
 
 GL_API void GL_APIENTRY glTexEnvx(GLenum env, GLenum pname, GLfixed param) {
-  __profileAPI(_T(" - %s( env=%s, pname=%s, param=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( env=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TexEnvToString(env), TexEnvParamToString(pname),
                TexEnvValueToString(param));
 
@@ -3053,8 +3053,8 @@ GL_API void GL_APIENTRY glTexEnvx(GLenum env, GLenum pname, GLfixed param) {
 
 GL_API void GL_APIENTRY glTexEnviv(GLenum env, GLenum pname,
                                    const GLint *pParams) {
-  __profileAPI(_T(" - %s( env=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TexEnvToString(env),
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -3068,8 +3068,8 @@ GL_API void GL_APIENTRY glTexEnviv(GLenum env, GLenum pname,
 
 GL_API void GL_APIENTRY glTexEnvxv(GLenum env, GLenum pname,
                                    const GLfixed *pParams) {
-  __profileAPI(_T(" - %s( env=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TexEnvToString(env),
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TexEnvToString(env),
                TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -3087,9 +3087,9 @@ GL_API void GL_APIENTRY glTexImage2D(GLenum target, GLint level,
                                      GLsizei height, GLint border,
                                      GLenum format, GLenum type,
                                      const GLvoid *pPixels) {
-  __profileAPI(_T(" - %s( target=%s, level=%d, internalformat=%s, width=%d, ")
-               _T("height=%d, border=%d, format=%s, type=%s, pPixels=0x%p )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target), level,
+  __profileAPI(" - %s( target=%s, level=%d, internalformat=%s, width=%d, "
+               "height=%d, border=%d, format=%s, type=%s, pPixels=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target), level,
                FormatToString(internalformat), width, height, border,
                FormatToString(format), TypeToString(type), pPixels);
 
@@ -3102,7 +3102,7 @@ GL_API void GL_APIENTRY glTexImage2D(GLenum target, GLint level,
 
 GL_API void GL_APIENTRY glTexParameteri(GLenum target, GLenum pname,
                                         GLint param) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, param=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( target=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TextureTypeToString(target), TexParamToString(pname),
                TexParamValueToString(param));
 
@@ -3114,7 +3114,7 @@ GL_API void GL_APIENTRY glTexParameteri(GLenum target, GLenum pname,
 
 GL_API void GL_APIENTRY glTexParameterx(GLenum target, GLenum pname,
                                         GLfixed param) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, param=%s )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( target=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TextureTypeToString(target), TexParamToString(pname),
                TexParamValueToString(param));
 
@@ -3127,8 +3127,8 @@ GL_API void GL_APIENTRY glTexParameterx(GLenum target, GLenum pname,
 
 GL_API void GL_APIENTRY glTexParameteriv(GLenum target, GLenum pname,
                                          const GLint *pParams) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target),
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -3142,8 +3142,8 @@ GL_API void GL_APIENTRY glTexParameteriv(GLenum target, GLenum pname,
 
 GL_API void GL_APIENTRY glTexParameterxv(GLenum target, GLenum pname,
                                          const GLfixed *pParams) {
-  __profileAPI(_T(" - %s( target=%s, pname=%s, pParams=0x%p )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target),
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target),
                TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
@@ -3161,9 +3161,9 @@ GL_API void GL_APIENTRY glTexSubImage2D(GLenum target, GLint level,
                                         GLsizei width, GLsizei height,
                                         GLenum format, GLenum type,
                                         const GLvoid *pPixels) {
-  __profileAPI(_T(" - %s( target=%s, level=%d, xoffset=%d, yoffset=%d, ")
-               _T("width=%d, height=%d, format=%s, type=%s, pPixels=0x%p )\n"),
-               _T(__FUNCTION__), TextureTypeToString(target), level, xoffset,
+  __profileAPI(" - %s( target=%s, level=%d, xoffset=%d, yoffset=%d, "
+               "width=%d, height=%d, format=%s, type=%s, pPixels=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target), level, xoffset,
                yoffset, width, height, FormatToString(format),
                TypeToString(type), pPixels);
 
@@ -3175,7 +3175,7 @@ GL_API void GL_APIENTRY glTexSubImage2D(GLenum target, GLint level,
 }
 
 GL_API void GL_APIENTRY glTranslatex(GLfixed x, GLfixed y, GLfixed z) {
-  __profileAPI(_T(" - %s( x=%d, y=%d, z=%d )\n"), _T(__FUNCTION__), x, y, z);
+  __profileAPI(" - %s( x=%d, y=%d, z=%d )\n", __FUNCTION__, x, y, z);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -3187,8 +3187,8 @@ GL_API void GL_APIENTRY glTranslatex(GLfixed x, GLfixed y, GLfixed z) {
 
 GL_API void GL_APIENTRY glVertexPointer(GLint size, GLenum type, GLsizei stride,
                                         const GLvoid *pPointer) {
-  __profileAPI(_T(" - %s( size=%d, type=%s, stride=%d, pPointer=0x%p )\n"),
-               _T(__FUNCTION__), size, TypeToString(type), stride, pPointer);
+  __profileAPI(" - %s( size=%d, type=%s, stride=%d, pPointer=0x%p )\n",
+               __FUNCTION__, size, TypeToString(type), stride, pPointer);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -3198,8 +3198,8 @@ GL_API void GL_APIENTRY glVertexPointer(GLint size, GLenum type, GLsizei stride,
 
 GL_API void GL_APIENTRY glViewport(GLint x, GLint y, GLsizei width,
                                    GLsizei height) {
-  __profileAPI(_T(" - %s( x=%d, y=%d, width=%d, height=%d )\n"),
-               _T(__FUNCTION__), x, y, width, height);
+  __profileAPI(" - %s( x=%d, y=%d, width=%d, height=%d )\n",
+               __FUNCTION__, x, y, width, height);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -3209,8 +3209,8 @@ GL_API void GL_APIENTRY glViewport(GLint x, GLint y, GLsizei width,
 
 GL_API void GL_APIENTRY glPointSizePointerOES(GLenum type, GLsizei stride,
                                               const GLvoid *pPointer) {
-  __profileAPI(_T(" - %s( type=%s, stride=%d, pPointer=0x%p )\n"),
-               _T(__FUNCTION__), TypeToString(type), stride, pPointer);
+  __profileAPI(" - %s( type=%s, stride=%d, pPointer=0x%p )\n",
+               __FUNCTION__, TypeToString(type), stride, pPointer);
 
   auto pContext = g_driver.GetCurrentContext();
   if (pContext) {
@@ -3220,7 +3220,7 @@ GL_API void GL_APIENTRY glPointSizePointerOES(GLenum type, GLsizei stride,
 
 GL_API GLbitfield GL_APIENTRY glQueryMatrixxOES(GLfixed mantissa[16],
                                                 GLint exponent[16]) {
-  __profileAPI(_T(" - %s( mantissa=0x%p, exponent=0x%p )\n"), _T(__FUNCTION__),
+  __profileAPI(" - %s( mantissa=0x%p, exponent=0x%p )\n", __FUNCTION__,
                mantissa, exponent);
 
   auto pContext = g_driver.GetCurrentContext();

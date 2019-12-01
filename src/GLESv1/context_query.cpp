@@ -36,7 +36,7 @@ const GLubyte *CGLContext::GetString(GLenum name) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::GetString() failed, invalid name parameter: %d.\r\n"),
+        "CGLContext::GetString() failed, invalid name parameter: %d.\r\n",
         name);
     return nullptr;
   }
@@ -70,7 +70,7 @@ void CGLContext::GetPointer(void **ppParams, GLenum pname) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::GetPointer() failed, invalid pname parameter: %d.\r\n"),
+        "CGLContext::GetPointer() failed, invalid pname parameter: %d.\r\n",
         pname);
     return;
   }
@@ -177,7 +177,7 @@ bool CGLContext::IsEnabled(GLenum cap) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        _T("CGLContext::IsEnabled() failed, invalid cap parameter: %d.\r\n"),
+        "CGLContext::IsEnabled() failed, invalid cap parameter: %d.\r\n",
         cap);
     return false;
   }

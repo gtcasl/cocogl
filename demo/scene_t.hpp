@@ -79,7 +79,7 @@ public:
     glEnable(GL_FOG);
 
     // Load our scene file
-    return mesh_.OnInitialize(_T("media/scene.gsd"));
+    return mesh_.OnInitialize("media/scene.gsd");
   }
 
   void OnRender() {

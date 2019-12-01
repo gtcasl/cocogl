@@ -162,7 +162,8 @@ void TDecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, uint32_t stride, uint32
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <bool ColorMaterial, eVertexFormat ColorFormat,
+template <bool ColorMaterial, 
+          eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
 inline void CTNL::TProcessLighting_OneSided(uint32_t count) {
 
@@ -246,7 +247,8 @@ inline void CTNL::TProcessLighting_OneSided(uint32_t count) {
   }
 }
 
-template <bool ColorMaterial, eVertexFormat ColorFormat,
+template <bool ColorMaterial, 
+          eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
 inline void CTNL::TProcessLighting_TwoSided(uint32_t count) {
 
@@ -443,7 +445,8 @@ void CTNL::TProcessPointSize(uint32_t count) {
   }
 }
 
-template <eFogMode FogMode> void CTNL::TProcessFog(uint32_t count) {
+template <eFogMode FogMode> 
+void CTNL::TProcessFog(uint32_t count) {
 
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);

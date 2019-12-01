@@ -49,8 +49,8 @@ void CGLContext::ClientState(GLenum array, bool bValue) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::ClientState() failed, invalid ")
-              _T("array parameter: %d.\r\n"),
+              "CGLContext::ClientState() failed, invalid "
+              "array parameter: %d.\r\n",
               array);
     return;
   }
@@ -60,8 +60,8 @@ void CGLContext::ClientActiveTexture(GLenum texture) {
   uint32_t index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::ClientActiveTexture() failed, ")
-              _T("invalid texture parameter: %d.\r\n"),
+              "CGLContext::ClientActiveTexture() failed, "
+              "invalid texture parameter: %d.\r\n",
               texture);
     return;
   }
@@ -73,8 +73,8 @@ void CGLContext::ActiveTexture(GLenum texture) {
   uint32_t index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::ActiveTexture() failed, ")
-              _T("invalid texture parameter: %d.\r\n"),
+              "CGLContext::ActiveTexture() failed, "
+              "invalid texture parameter: %d.\r\n",
               texture);
     return;
   }
@@ -86,8 +86,8 @@ void CGLContext::VertexPointer(GLint size, GLenum type, GLsizei stride,
                                const GLvoid *pPointer) {
   if ((size < 2) || (size > 4)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::VertexPointer() failed, ")
-              _T("invalid size parameter: %d.\r\n"),
+              "CGLContext::VertexPointer() failed, "
+              "invalid size parameter: %d.\r\n",
               size);
     return;
   }
@@ -95,16 +95,16 @@ void CGLContext::VertexPointer(GLint size, GLenum type, GLsizei stride,
   if ((type != GL_BYTE) && (type != GL_SHORT) && (type != GL_FIXED) &&
       (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::VertexPointer() failed, ")
-              _T("invalid type parameter: %d.\r\n"),
+              "CGLContext::VertexPointer() failed, "
+              "invalid type parameter: %d.\r\n",
               type);
     return;
   }
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::VertexPointer() failed, ")
-              _T("invalid stride parameter: %d.\r\n"),
+              "CGLContext::VertexPointer() failed, "
+              "invalid stride parameter: %d.\r\n",
               stride);
     return;
   }
@@ -126,16 +126,16 @@ void CGLContext::NormalPointer(GLenum type, GLsizei stride,
   if ((type != GL_BYTE) && (type != GL_SHORT) && (type != GL_FIXED) &&
       (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::NormalPointer() failed, ")
-              _T("invalid type parameter: %d.\r\n"),
+              "CGLContext::NormalPointer() failed, "
+              "invalid type parameter: %d.\r\n",
               type);
     return;
   }
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::NormalPointer() failed, ")
-              _T("invalid stride parameter: %d.\r\n"),
+              "CGLContext::NormalPointer() failed, "
+              "invalid stride parameter: %d.\r\n",
               stride);
     return;
   }
@@ -154,24 +154,24 @@ void CGLContext::ColorPointer(GLint size, GLenum type, GLsizei stride,
                               const GLvoid *pPointer) {
   if (size != 4) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::ColorPointer() failed, ")
-              _T("invalid size parameter: %d.\r\n"),
+              "CGLContext::ColorPointer() failed, "
+              "invalid size parameter: %d.\r\n",
               size);
     return;
   }
 
   if ((type != GL_UNSIGNED_BYTE) && (type != GL_FIXED) && (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::ColorPointer() failed, ")
-              _T("invalid type parameter: %d.\r\n"),
+              "CGLContext::ColorPointer() failed, "
+              "invalid type parameter: %d.\r\n",
               type);
     return;
   }
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::ColorPointer() failed, ")
-              _T("invalid stride parameter: %d.\r\n"),
+              "CGLContext::ColorPointer() failed, "
+              "invalid stride parameter: %d.\r\n",
               stride);
     return;
   }
@@ -190,8 +190,8 @@ void CGLContext::TexCoordPointer(GLint size, GLenum type, GLsizei stride,
                                  const GLvoid *pPointer) {
   if ((size < 2) || (size > 4)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::TexCoordPointer() failed, ")
-              _T("invalid size parameter: %d.\r\n"),
+              "CGLContext::TexCoordPointer() failed, "
+              "invalid size parameter: %d.\r\n",
               size);
     return;
   }
@@ -199,16 +199,16 @@ void CGLContext::TexCoordPointer(GLint size, GLenum type, GLsizei stride,
   if ((type != GL_BYTE) && (type != GL_SHORT) && (type != GL_FIXED) &&
       (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::TexCoordPointer() failed, ")
-              _T("invalid type parameter: %d.\r\n"),
+              "CGLContext::TexCoordPointer() failed, "
+              "invalid type parameter: %d.\r\n",
               type);
     return;
   }
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::TexCoordPointer() failed, ")
-              _T("invalid stride parameter: %d.\r\n"),
+              "CGLContext::TexCoordPointer() failed, "
+              "invalid stride parameter: %d.\r\n",
               stride);
     return;
   }
@@ -231,16 +231,16 @@ void CGLContext::PointSizePointerOES(GLenum type, GLsizei stride,
 
   if ((type != GL_FIXED) && (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::PointSizePointerOES() failed, ")
-              _T("invalid type parameter: %d.\r\n"),
+              "CGLContext::PointSizePointerOES() failed, "
+              "invalid type parameter: %d.\r\n",
               type);
     return;
   }
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              _T("CGLContext::PointSizePointerOES() failed, ")
-              _T("invalid stride parameter: %d.\r\n"),
+              "CGLContext::PointSizePointerOES() failed, "
+              "invalid stride parameter: %d.\r\n",
               stride);
     return;
   }
@@ -279,8 +279,8 @@ void CGLContext::MultiTexCoord(GLenum target, floatf s, floatf t, floatf /*r*/,
   uint32_t index = (target - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM,
-              _T("CGLContext::MultiTexCoord() failed, ")
-              _T("invalid target parameter: %d.\r\n"),
+              "CGLContext::MultiTexCoord() failed, "
+              "invalid target parameter: %d.\r\n",
               target);
     return;
   }

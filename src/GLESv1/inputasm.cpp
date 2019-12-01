@@ -35,12 +35,12 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
     if ((offset + stride * count) <= size) {
       pvIndices = pBits + offset;
     } else {
-      __glLogError(_T("The element array buffer is out of range.\r\n"));
+      __glLogError("The element array buffer is out of range.\r\n");
       return GL_INVALID_OPERATION;
     }
   } else {
     if (nullptr == pvIndices) {
-      __glLogError(_T("The indices buffer is nullptr.\r\n"));
+      __glLogError("The indices buffer is nullptr.\r\n");
       return GL_INVALID_OPERATION;
     }
   }
@@ -82,8 +82,8 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
   break;
 
   default:
-    __glLogError(_T("CGLContext::PrepareIndices() failed, invalid type ")
-                 _T("parameter: %d.\r\n"),
+    __glLogError("CGLContext::PrepareIndices() failed, invalid type "
+                 "parameter: %d.\r\n",
                  type);
     return GL_INVALID_ENUM;
   }

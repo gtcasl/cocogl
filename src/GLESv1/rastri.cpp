@@ -83,7 +83,7 @@ bool CRasterizer::CullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
 }
 
 void CRasterizer::RasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
-  __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
   // Setup the triangle attributes
   if (!this->SetupTriangleAttributes(i0, i1, i2))
@@ -273,7 +273,7 @@ bool CRasterizer::SetupTriangleAttributes(uint32_t i0, uint32_t i1,
   // Generate the rasterization routine
   if (!this->GenerateRasterOp()) {
     error_ = GL_INVALID_OPERATION;
-    __glLogError(_T("CRasterizer::GenerateRasterOp() failed.\r\n"));
+    __glLogError("CRasterizer::GenerateRasterOp() failed.\r\n");
     return false;
   }
 
