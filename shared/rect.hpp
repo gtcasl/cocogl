@@ -15,10 +15,10 @@
 #pragma once
 
 struct Rect {
-  int left;
-  int top;
-  int right;
-  int bottom;
+  int32_t left;
+  int32_t top;
+  int32_t right;
+  int32_t bottom;
 };
 
 inline bool IntersectRect(Rect *pDst, const Rect *pSrc1, const Rect *pSrc2) {

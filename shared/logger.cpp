@@ -31,20 +31,6 @@ CLogger::~CLogger() {
   }
 }
 
-void CLogger::SetIndent(uint32_t indent) { indent_ = indent; }
-
-uint32_t CLogger::GetIndent() const { return indent_; }
-
-void CLogger::IncrIndent() {
-  assert(indent_ < MAX_INDENT);
-  ++indent_;
-}
-
-void CLogger::DecrIndent() {
-  assert(indent_);
-  --indent_;
-}
-
 HRESULT CLogger::Open(LPCTSTR lpszFileName, LPCTSTR lpszMode) {
   if ((nullptr == lpszFileName) || (nullptr == lpszMode))
     return E_INVALIDARG;
@@ -97,7 +83,7 @@ HRESULT CLogger::Write(const TCHAR *pszFormat, va_list arglist) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CProfiler::CProfiler(CLogger &logger, const TCHAR *pszFunc, ...)
+CAutoLog::CAutoLog(CLogger &logger, const TCHAR *pszFunc, ...)
     : logger_(logger) {
   va_list arglist;
   va_start(arglist, pszFunc);
@@ -106,4 +92,6 @@ CProfiler::CProfiler(CLogger &logger, const TCHAR *pszFunc, ...)
   va_end(arglist);
 }
 
-CProfiler::~CProfiler() { logger_.DecrIndent(); }
+CAutoLog::~CAutoLog() { 
+  logger_.DecrIndent(); 
+}

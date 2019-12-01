@@ -67,45 +67,52 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class T> inline size_t __countof(const T &a) {
+template <class T> 
+inline size_t __countof(const T &a) {
   return (sizeof(a) / sizeof(a[0]));
 }
 
-template <class T> inline void __safeAcquire(T *p) {
+template <class T> 
+inline void __safeAcquire(T *p) {
   if (p) {
     p->AddRef();
   }
 }
 
-template <class T> inline void __safeRelease(T *&p) {
+template <class T> 
+inline void __safeRelease(T *&p) {
   if (p) {
     p->Release();
     p = nullptr;
   }
 }
 
-template <class T> inline void __safeDelete(T *&p) {
+template <class T> 
+inline void __safeDelete(T *&p) {
   if (p) {
     delete p;
     p = nullptr;
   }
 }
 
-template <class T> inline void __safeDeleteArray(T *&p) {
+template <class T> 
+inline void __safeDeleteArray(T *&p) {
   if (p) {
     delete[] p;
     p = nullptr;
   }
 }
 
-template <class T> inline void __safeFree(T *&p) {
+template <class T> 
+inline void __safeFree(T *&p) {
   if (p) {
     free(p);
     p = nullptr;
   }
 }
 
-template <class T> inline bool __isAligned32(T *ptr) {
+template <class T> 
+inline bool __isAligned32(T *ptr) {
   size_t offset = ptr - (T *)(nullptr);
   return (0 == (offset & 3));
 }
@@ -114,12 +121,14 @@ inline size_t __align(size_t offset, size_t alignment) {
   return (offset + alignment - 1) & ~(alignment - 1);
 }
 
-template <class T> inline T *__alignPtr(T *ptr, size_t alignment) {
+template <class T> 
+inline T *__alignPtr(T *ptr, size_t alignment) {
   size_t offset = ptr - (T *)(nullptr);
   return (T *)(nullptr) + ((offset + alignment - 1) & ~(alignment - 1));
 }
 
-template <class T> inline void __swap(T &a, T &b) {
+template <class T> 
+inline void __swap(T &a, T &b) {
   T c(a);
   a = b;
   b = c;

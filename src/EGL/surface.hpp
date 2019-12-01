@@ -48,7 +48,7 @@ public:
 
   EGLint ReleaseTexBound();
 
-  GLenum SaveBitmap(LPCTSTR lpszFilename);
+  HRESULT SaveBitmap(LPCTSTR lpszFilename);
 
   void Present();
 
@@ -83,7 +83,7 @@ private:
   EGLint width_;
   EGLint height_;
   EGLint largestPBuffer_;
-  GLuint texFormat_;
+  EGLint texFormat_;
   EGLint texTarget_;
   EGLint mipTexture_;
   EGLint mipLevel_;

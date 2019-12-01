@@ -26,14 +26,14 @@
 
 static const struct ScanlineRasterID {
   RASTERID RasterID;
-  PFN_Scanline pfnScanline;
+  PfnScanline pfnScanline;
 }
 
 l_optimizedScanlines[] = {
     MAKE_SCANLINE(0, 0, 0, 0),
 };
 
-COptimizedRasterOp::COptimizedRasterOp(PFN_Scanline pfnScanline) {
+COptimizedRasterOp::COptimizedRasterOp(PfnScanline pfnScanline) {
   __profileAPI(_T(" - %s()\n"), _T(__FUNCTION__));
   pfnScanline_ = pfnScanline;
 }

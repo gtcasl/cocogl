@@ -16,7 +16,7 @@
 
 class CBlitTable {
 public:
-  typedef GLenum (*PFN_COPY)(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
+  typedef GLenum (*PfnCopy)(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
                              uint32_t dstOffsetY, uint32_t copyWidth,
                              uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
                              uint32_t srcOffsetX, uint32_t srcOffsetY);
@@ -178,7 +178,7 @@ public:
     }
   }
 
-  PFN_COPY Get(uint32_t srcFormat, uint32_t dstFormat) const {
+  PfnCopy Get(uint32_t srcFormat, uint32_t dstFormat) const {
     assert(srcFormat < FORMAT_COLOR_SIZE_);
     assert(dstFormat < FORMAT_COLOR_SIZE_);
     return copyFuncs_[srcFormat][dstFormat];
@@ -262,13 +262,13 @@ private:
     return GL_INVALID_OPERATION;
   }
 
-  PFN_COPY copyFuncs_[FORMAT_COLOR_SIZE_][FORMAT_COLOR_SIZE_];
+  PfnCopy copyFuncs_[FORMAT_COLOR_SIZE_][FORMAT_COLOR_SIZE_];
 };
 
-GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
-                   uint32_t dstOffsetY, uint32_t copyWidth, uint32_t copyHeight,
-                   const GLSurfaceDesc &srcDesc, uint32_t srcOffsetX,
-                   uint32_t srcOffsetY) {
+GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, int32_t dstOffsetX,
+                   int32_t dstOffsetY, int32_t copyWidth, int32_t copyHeight,
+                   const GLSurfaceDesc &srcDesc, int32_t srcOffsetX,
+                   int32_t srcOffsetY) {
   static const CBlitTable s_blitTable;
 
   if ((srcOffsetX >= srcDesc.Width) || (srcOffsetY >= srcDesc.Height) ||

@@ -24,6 +24,9 @@
 #include <vector>
 
 #include <platform.hpp>
+#include <GLES/gl.h>
+#include <GLES/glext.h>
+#include <glcommon.hpp>
 #include <utils.hpp>
 #include <bitmap.hpp>
 #include <color.hpp>
@@ -34,11 +37,7 @@
 #include <logger.hpp>
 #include <math.hpp>
 #include <object.hpp>
-#include <profiler.hpp>
 #include <rect.hpp>
-#include <GLES/gl.h>
-#include "glcommon.hpp"
-#include <GLES/glext.h>
 #include "types.hpp"
 #include "utility.hpp"
 

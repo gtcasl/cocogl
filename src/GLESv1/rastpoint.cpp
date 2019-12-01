@@ -29,26 +29,17 @@ void CRasterizer::DrawPoint(uint32_t index) {
 }
 
 void CRasterizer::RasterPoint(uint32_t index) {
-  auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
-  auto pfPointSize =
-      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
+  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+  auto pfPointSize = reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
 
-  const RDVECTOR &vertex = pvScreenPos[index];
+  auto &vertex = pvScreenPos[index];
   auto fPointSize = pfPointSize[index];
   auto fHalfSize = fPointSize >> 1;
 
-  int ymin = Math::TMax<int>(Math::TRoundi<int>(vertex.y - fHalfSize),
-                             scissorRect_.top);
-
-  int ymax = Math::TMin<int>(Math::TRoundi<int>(vertex.y + fHalfSize),
-                             scissorRect_.bottom);
-
-  int xmin = Math::TMax<int>(Math::TRoundi<int>(vertex.x - fHalfSize),
-                             scissorRect_.left);
-
-  int xmax = Math::TMin<int>(Math::TRoundi<int>(vertex.x + fHalfSize),
-                             scissorRect_.right);
+  auto ymin = Math::TMax<int>(Math::TRoundi<int>(vertex.y - fHalfSize), scissorRect_.top);
+  auto ymax = Math::TMin<int>(Math::TRoundi<int>(vertex.y + fHalfSize), scissorRect_.bottom);
+  auto xmin = Math::TMax<int>(Math::TRoundi<int>(vertex.x - fHalfSize), scissorRect_.left);
+  auto xmax = Math::TMin<int>(Math::TRoundi<int>(vertex.x + fHalfSize), scissorRect_.right);
 
   // Early out if the point has no size
   if ((xmin >= xmax) || (ymin >= ymax)) {
@@ -61,10 +52,9 @@ void CRasterizer::RasterPoint(uint32_t index) {
   }
 
   // Obtain the scanline routine
-  PFN_Scanline pfnScanline = rasterData_.pRasterOp->GetScanline();
-
-  Register *pRegisters = rasterData_.Registers;
-  RASTERFLAGS rasterFlags = rasterID_.Flags;
+  auto pfnScanline = rasterData_.pRasterOp->GetScanline();
+  auto *pRegisters = rasterData_.Registers;
+  auto rasterFlags = rasterID_.Flags;
 
   if (rasterFlags.DepthTest) {
     pRegisters->m[0] = TConst<fixedRX>::Zero();
@@ -75,7 +65,7 @@ void CRasterizer::RasterPoint(uint32_t index) {
 
   if (rasterFlags.Color) {
     auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_);
-    ColorARGB cColor = pcColors[index];
+    auto cColor = pcColors[index];
 
     pRegisters[0].m[0] = TConst<fixedRX>::Zero();
     pRegisters[0].m[1] = TConst<fixedRX>::Zero();
@@ -116,7 +106,7 @@ void CRasterizer::RasterPoint(uint32_t index) {
         pRegisters[1].m[2] = (fDelta >> 1) - fDelta * ymin;
       } else {
         auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(
-            pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
+                              pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
         const TEXCOORD2 &vTexCoord = vTexCoords[index];
 
         pRegisters[0].m[0] = TConst<fixedRX>::Zero();
@@ -158,8 +148,7 @@ void CRasterizer::RasterPoint(uint32_t index) {
 
 #ifdef COCOGL_RASTER_PROFILE
   auto end_time = std::chrono::high_resolution_clock::now();
-  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(
-      end_time - start_time);
+  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(end_time - start_time);
   rasterData_.pRasterOp->EndProfile(elapsed_time.count());
 #endif
 }

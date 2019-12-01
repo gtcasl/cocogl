@@ -16,12 +16,14 @@
 #include "raster.hpp"
 #include "raster.inl"
 
-template <class R> inline float TScalar(float lhs, float rhs) {
+template <class R> 
+inline float TScalar(float lhs, float rhs) {
   assert(lhs != rhs);
   return static_cast<R>(lhs / (lhs - rhs));
 }
 
-template <class R, uint32_t T> inline R TScalar(TFixed<T> lhs, TFixed<T> rhs) {
+template <class R, uint32_t T> 
+inline R TScalar(TFixed<T> lhs, TFixed<T> rhs) {
   assert(lhs.data() != rhs.data());
   int diff = lhs.data() - rhs.data();
   return R::make((static_cast<int64_t>(lhs.data()) << R::FRAC) / diff);

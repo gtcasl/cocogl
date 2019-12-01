@@ -87,19 +87,18 @@ EGLAPI EGLint EGLAPIENTRY eglGetError() {
 }
 
 EGLAPI void (*EGLAPIENTRY eglGetProcAddress(LPCSTR lpszProcName))() {
-  __profileAPI(_T(" - %s( lpszProcName=%s )\n"), _T(__FUNCTION__),
-               lpszProcName);
+  __profileAPI(_T(" - %s( lpszProcName=%s )\n"), _T(__FUNCTION__), lpszProcName);
 
-  typedef void (*PFN_PROC)();
-
+  typedef void (*PfnProcAddress)();
+  
   struct t_procedure {
     LPCSTR lpszName;
-    PFN_PROC pfn;
+    PfnProcAddress pfn;
   };
 
   static const t_procedure procedures[] = {
-      {"glQueryMatrixxOES", (PFN_PROC)glQueryMatrixxOES},
-      {"glPointSizePointerOES", (PFN_PROC)glPointSizePointerOES},
+      {"glQueryMatrixxOES", reinterpret_cast<PfnProcAddress>(glQueryMatrixxOES)},
+      {"glPointSizePointerOES", reinterpret_cast<PfnProcAddress>(glPointSizePointerOES)},
   };
 
   if (lpszProcName) {
@@ -958,7 +957,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
     }
 
     // Set the current GL context
-    err = EGLERROR_FROM_GLERROR(__glMakeCurrent(pContext->GetNativeData(),
+    err = EGLERROR_FROM_HRESULT(__glMakeCurrent(pContext->GetNativeData(),
                                                 pSurfDraw->GetNativeData(),
                                                 pSurfRead->GetNativeData()));
     if (__eglFailed(err)) {
@@ -1072,11 +1071,6 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitGL() {
 
   glFinish();
 
-  GLenum err = glGetError();
-  if (__glFailed(err)) {
-    return EGL_FALSE;
-  }
-
   return EGL_TRUE;
 }
 
@@ -1130,13 +1124,14 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
     return EGL_FALSE;
   }
 
-  // Perform implicit glFlush
-  glFlush();
-
   // Only operate on window surfaces
   if (EGL_WINDOW_BIT != pSurface->GetType()) {
-    return EGL_TRUE;
+    __eglError(EGL_BAD_SURFACE, _T("Not a window rendering surface.\r\n"));
+    return EGL_FALSE;
   }
+
+  // Perform implicit glFlush
+  glFlush();
 
   // Blit the surface to the display
   pSurface->Present();
@@ -1181,9 +1176,6 @@ EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers(EGLDisplay display,
     return EGL_FALSE;
   }
 
-  // Perform implicit glFlush
-  glFlush();
-
   // Copy the surface bits
   err = pSurface->CopyBuffer(target);
   if (__eglFailed(err)) {
@@ -1191,6 +1183,9 @@ EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers(EGLDisplay display,
                err);
     return EGL_FALSE;
   }
+
+  // Perform implicit glFlush before returning
+  glFlush();
 
   return EGL_TRUE;
 }

@@ -25,17 +25,20 @@ public:
   void SetError(EGLint error);
   EGLint GetError() const;
 
-  template <class T> inline T TGetObject(void *handle) const {
+  template <class T> 
+  inline T TGetObject(void *handle) const {
     return reinterpret_cast<T>(
         handles_->GetObject(reinterpret_cast<intptr_t>(handle), this));
   }
 
-  template <class T> inline T UnregisterObject(void *handle) const {
+  template <class T> 
+  inline T UnregisterObject(void *handle) const {
     return reinterpret_cast<T>(
         handles_->Delete(reinterpret_cast<intptr_t>(handle), this));
   }
 
-  template <class T> inline T TGetObject(void *handle, void *pOwner) const {
+  template <class T> 
+  inline T TGetObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
         handles_->GetObject(reinterpret_cast<intptr_t>(handle), pOwner));
   }

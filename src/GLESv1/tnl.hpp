@@ -16,13 +16,13 @@
 
 #include "inputasm.hpp"
 
-typedef void (*PFN_DECODEPOSITION)(VECTOR4 *pOut, const uint8_t *pbIn,
+typedef void (*PfnDecodePosition)(VECTOR4 *pOut, const uint8_t *pbIn,
                                    uint32_t stride, uint32_t count);
 
 class CTNL : public CInputAssembler {
 public:
-  typedef void (CTNL::*PFN_VERTEXDECODE)(uint32_t count);
-  typedef void (CTNL::*PFN_DECODETEXCOORD)(uint32_t dstIndex, uint32_t srcIndex,
+  typedef void (CTNL::*PfnDecodeVertices)(uint32_t count);
+  typedef void (CTNL::*PfnDecodeTexCoord)(uint32_t dstIndex, uint32_t srcIndex,
                                            uint32_t count);
 
   template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
@@ -160,11 +160,11 @@ protected:
   MATRIX44 mModelViewProj_;
   ScreenXform screenXform_;
 
-  PFN_DECODEPOSITION pfnDecodePosition_;
-  PFN_VERTEXDECODE pfnPointSize_;
-  PFN_VERTEXDECODE pfnColor_;
-  PFN_DECODETEXCOORD pfnTexCoords_[MAX_TEXTURES];
-  PFN_VERTEXDECODE pfnFog_;
+  PfnDecodePosition pfnDecodePosition_;
+  PfnDecodeVertices pfnPointSize_;
+  PfnDecodeVertices pfnColor_;
+  PfnDecodeTexCoord pfnTexCoords_[MAX_TEXTURES];
+  PfnDecodeVertices pfnFog_;
 
   VertexDecoder positionDecode_;
   VertexDecoder normalDecode_;

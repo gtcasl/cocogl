@@ -17,7 +17,6 @@
 #include "rasterop.hpp"
 #include "rasterop_gen.hpp"
 #include "rasterop_opt.hpp"
-#include "rastri.inl"
 
 #ifdef COCOGL_RASTER_PROFILE
 

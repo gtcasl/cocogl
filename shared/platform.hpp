@@ -14,6 +14,16 @@
 //
 #pragma once
 
+#define GL_GLEXT_PROTOTYPES
+
+#define COCOGL_RASTER_A8R8G8B8
+//#define COCOGL_RASTER_R5G6B5
+
+//#define COCOGL_PIXEDPOINT
+//#define COCOGL_RASTER_PROFILE
+//#define COCOGL_API_PROFILE
+//#define COCOGL_SNAPSHOTS 1
+
 #include <assert.h>
 #include <functional>
 #include <stdint.h>

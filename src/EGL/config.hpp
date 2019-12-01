@@ -29,7 +29,7 @@ public:
     return attributes_[name - ATTRIBUTES_FIRST];
   }
 
-  void SetAttribute(GLint name, GLint value) {
+  void SetAttribute(EGLint name, EGLint value) {
     assert((name >= ATTRIBUTES_FIRST) && (name <= ATTRIBUTES_LAST));
     attributes_[name - ATTRIBUTES_FIRST] = value;
   }

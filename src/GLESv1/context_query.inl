@@ -226,7 +226,8 @@ inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
   }
 }
 
-template <> inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
+template <> 
+inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -261,7 +262,8 @@ template <> inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
   }
 }
 
-template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
+template <> 
+inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -571,7 +573,8 @@ template <> inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
   }
 }
 
-template <class T> inline void CGLContext::TGet(GLenum pname, T *pParams) {
+template <class T> 
+inline void CGLContext::TGet(GLenum pname, T *pParams) {
   assert(pParams);
 
   switch (pname) {

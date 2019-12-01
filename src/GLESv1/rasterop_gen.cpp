@@ -27,8 +27,8 @@
   }
 
 static const struct ScanlineRasterID {
-  PFN_Scanline pfnAffine;
-  PFN_Scanline pfnPerspective;
+  PfnScanline pfnAffine;
+  PfnScanline pfnPerspective;
 }
 
 l_genericScanlines[] = {
@@ -106,7 +106,7 @@ l_genericScanlines[] = {
     MAKE_SCANLINE(true, 2, 2, true, true),
 };
 
-static const PFN_GetTexelColor l_pfnGetTexelColorTable[] = {
+static const PfnGetTexelColor l_pfnGetTexelColorTable[] = {
     TGetTexelColorPt<FORMAT_A8, ADDRESS_WRAP, ADDRESS_WRAP>,
     TGetTexelColorPt<FORMAT_A8, ADDRESS_WRAP, ADDRESS_CLAMP>,
     TGetTexelColorPt<FORMAT_A8, ADDRESS_CLAMP, ADDRESS_WRAP>,
@@ -151,14 +151,14 @@ static const PFN_GetTexelColor l_pfnGetTexelColorTable[] = {
     TGetTexelColorLn<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
 };
 
-static const PFN_Compare s_pfnCompare[] = {
+static const PfnCompare s_pfnCompare[] = {
     TCompare<COMPARE_NEVER>,   TCompare<COMPARE_LESS>,
     TCompare<COMPARE_EQUAL>,   TCompare<COMPARE_LEQUAL>,
     TCompare<COMPARE_GREATER>, TCompare<COMPARE_NOTEQUAL>,
     TCompare<COMPARE_GEQUAL>,  TCompare<COMPARE_ALWAYS>,
 };
 
-static const PFN_GetTexEnvColor s_pfnGetTexEnvColorTable[] = {
+static const PfnGetTexEnvColor s_pfnGetTexEnvColorTable[] = {
     TGetTexEnvColorA<ENVMODE_ADD>,        TGetTexEnvColorA<ENVMODE_BLEND>,
     TGetTexEnvColorA<ENVMODE_REPLACE>,    TGetTexEnvColorA<ENVMODE_MODULATE>,
     TGetTexEnvColorA<ENVMODE_DECAL>,
@@ -172,7 +172,7 @@ static const PFN_GetTexEnvColor s_pfnGetTexEnvColorTable[] = {
     TGetTexEnvColorARGB<ENVMODE_DECAL>,
 };
 
-static const PFN_Blend s_pfnBlendTable[] = {
+static const PfnBlend s_pfnBlendTable[] = {
 #if defined(COCOGL_RASTER_R5G6B5)
     TBlend<FORMAT_R5G6B5, BLEND_ZERO, BLEND_ZERO>,
     TBlend<FORMAT_R5G6B5, BLEND_ONE, BLEND_ZERO>,
@@ -366,7 +366,7 @@ static const PFN_Blend s_pfnBlendTable[] = {
 #endif
 };
 
-static const PFN_WriteColor s_pfnWriteColorTable[] = {
+static const PfnWriteColor s_pfnWriteColorTable[] = {
 #if defined(COCOGL_RASTER_R5G6B5)
     TWriteColor<FORMAT_R5G6B5, false, LOGICOP_CLEAR>,
     TWriteColor<FORMAT_R5G6B5, false, LOGICOP_AND>,

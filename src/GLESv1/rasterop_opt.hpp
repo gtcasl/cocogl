@@ -16,15 +16,15 @@
 
 class COptimizedRasterOp : public IRasterOp {
 public:
-  COptimizedRasterOp(PFN_Scanline pfnScanline);
+  COptimizedRasterOp(PfnScanline pfnScanline);
   ~COptimizedRasterOp();
 
-  PFN_Scanline GetScanline() const { return pfnScanline_; }
+  PfnScanline GetScanline() const { return pfnScanline_; }
 
-  uint32_t GetCbSize() const { return sizeof(PFN_Scanline); }
+  uint32_t GetCbSize() const { return sizeof(PfnScanline); }
 
   static GLenum Create(IRasterOp **ppRasterOp, const RASTERID &rasterID);
 
 private:
-  PFN_Scanline pfnScanline_;
+  PfnScanline pfnScanline_;
 };

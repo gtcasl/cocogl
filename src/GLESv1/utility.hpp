@@ -31,7 +31,7 @@ private:
 #ifndef COCOGL_API_PROFILE
 #define __profileAPI(func, ...)
 #else
-#define __profileAPI(func, ...) CProfiler profiler(g_logger, func, __VA_ARGS__);
+#define __profileAPI(func, ...) CAutoLog profiler(g_logger, func, __VA_ARGS__);
 #endif
 
 inline bool __glFailed(uint32_t err) { return (err != GL_NO_ERROR); }
@@ -112,20 +112,23 @@ GLenum EnumFromTexAddress(uint32_t param);
 eEnvMode TexEnvFromEnum(GLenum param);
 GLenum EnumFromTexEnv(uint32_t param);
 
-GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
-                   uint32_t dstOffsetY, uint32_t copyWidth, uint32_t copyHeight,
-                   const GLSurfaceDesc &srcDesc, uint32_t srcOffsetX,
-                   uint32_t srcOffsetY);
+GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, int32_t dstOffsetX,
+                   int32_t dstOffsetY, int32_t copyWidth, int32_t copyHeight,
+                   const GLSurfaceDesc &srcDesc, int32_t srcOffsetX,
+                   int32_t srcOffsetY);
 
-template <> inline GLenum TToGLenum<float>(float param) {
+template <> 
+inline GLenum TToGLenum<float>(float param) {
   return static_cast<GLenum>(param);
 }
 
-template <> inline GLenum TToGLenum<fixed16>(fixed16 param) {
+template <> 
+inline GLenum TToGLenum<fixed16>(fixed16 param) {
   return *reinterpret_cast<const GLenum *>(&param);
 }
 
-template <> inline GLenum TToGLenum<int>(int param) {
+template <> 
+inline GLenum TToGLenum<int>(int param) {
   return static_cast<GLenum>(param);
 }
 

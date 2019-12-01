@@ -321,7 +321,7 @@ EGLint CEGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   }
 
   // Create the GL surface
-  err = EGLERROR_FROM_GLERROR(
+  err = EGLERROR_FROM_HRESULT(
       __glCreateSurface(&colorDesc, &depthStencilDesc, &glSurface_));
   if (__eglFailed(err)) {
     __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
@@ -419,7 +419,7 @@ EGLint CEGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   }
 
   // Create the GL surface
-  err = EGLERROR_FROM_GLERROR(
+  err = EGLERROR_FROM_HRESULT(
       __glCreateSurface(&colorDesc, &depthStencilDesc, &glSurface_));
   if (__eglFailed(err)) {
     __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
@@ -515,7 +515,7 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
     }
 
     // Create the GL surface
-    err = EGLERROR_FROM_GLERROR(
+    err = EGLERROR_FROM_HRESULT(
         __glCreateSurface(&colorDesc, &depthStencilDesc, &glSurface_));
     if (__eglFailed(err)) {
       __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
@@ -524,7 +524,7 @@ EGLint CEGLSurface::InitializePBF(EGLint width, EGLint height,
   } else {
     // Create the GL surface
     err =
-        EGLERROR_FROM_GLERROR(__glCreateSurface(nullptr, nullptr, &glSurface_));
+        EGLERROR_FROM_HRESULT(__glCreateSurface(nullptr, nullptr, &glSurface_));
     if (__eglFailed(err)) {
       __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
       return err;
@@ -559,7 +559,7 @@ EGLint CEGLSurface::BindTexture() {
 
   bool bGenMipmaps = (0 == mipLevel_) && (mipLevels_ > 1);
 
-  err = EGLERROR_FROM_GLERROR(__glBindTexImage(glSurface_, bGenMipmaps));
+  err = EGLERROR_FROM_HRESULT(__glBindTexImage(glSurface_, bGenMipmaps));
   if (__eglFailed(err)) {
     __eglLogError(_T("__glBindTexImage() failed, err = %d.\r\n"), err);
     return err;
@@ -653,7 +653,7 @@ EGLint CEGLSurface::SetAttribute(EGLint attribute, EGLint value) {
       this->GetPBufferDesc(&surfDesc);
 
       // Update the GL surface
-      err = EGLERROR_FROM_GLERROR(
+      err = EGLERROR_FROM_HRESULT(
           __glUpdateSurface(glSurface_, &surfDesc, nullptr));
       if (__eglFailed(err)) {
         __eglLogError(_T("__glCreateSurface() failed, err = %d.\r\n"), err);
@@ -755,7 +755,7 @@ EGLint CEGLSurface::CopyBuffer(EGLNativePixmapType hPixmap) {
 #endif
 
   // Copy buffers using GL
-  err = EGLERROR_FROM_GLERROR(__glCopyBuffers(&dstDesc, &srcDesc));
+  err = EGLERROR_FROM_HRESULT(__glCopyBuffers(&dstDesc, &srcDesc));
   if (__eglFailed(err)) {
     __eglLogError(_T("__glCopySurface() failed, err = %d.\r\n"), err);
     return err;
@@ -774,7 +774,7 @@ void CEGLSurface::Present() {
 #endif
 }
 
-GLenum CEGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
+HRESULT CEGLSurface::SaveBitmap(LPCTSTR lpszFilename) {
   return __glSaveBitmap(glSurface_, lpszFilename);
 }
 

@@ -18,12 +18,12 @@ struct PrimitiveData;
 struct RasterData;
 struct Register;
 
-typedef void (*PFN_Scanline)(const RasterData &rasterData, int y, int lx,
+typedef void (*PfnScanline)(const RasterData &rasterData, int y, int lx,
                              int rx);
 
 class IRasterOp : public CObject {
 public:
-  virtual PFN_Scanline GetScanline() const = 0;
+  virtual PfnScanline GetScanline() const = 0;
 
   virtual uint32_t GetCbSize() const = 0;
 

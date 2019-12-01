@@ -29,15 +29,37 @@ public:
 
   HRESULT Write(const TCHAR *pszFormat, va_list arglist);
 
-  void SetIndent(uint32_t indent);
+  void SetIndent(uint32_t indent) {
+    indent_ = indent;
+  }
 
-  uint32_t GetIndent() const;
+  auto GetIndent() const {
+    return indent_;
+  }
 
-  void IncrIndent();
+  void IncrIndent() {
+    assert(indent_ < MAX_INDENT);
+    ++indent_;
+  }
 
-  void DecrIndent();
+  void DecrIndent() {
+    assert(indent_);
+    --indent_;
+  }
 
 private:
   FILE *file_;
   uint32_t indent_;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+class CAutoLog {
+public:
+  CAutoLog(CLogger &logger, const TCHAR *pszFunc, ...);
+
+  ~CAutoLog();
+
+private:
+  CLogger &logger_;
 };

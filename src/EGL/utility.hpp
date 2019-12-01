@@ -20,7 +20,7 @@ inline bool __eglSucceeded(EGLint err) { return err == EGL_SUCCESS; }
 #ifndef COCOGL_API_PROFILE
 #define __profileAPI(func, ...)
 #else
-#define __profileAPI(func, ...) CProfiler profiler(g_logger, func, __VA_ARGS__);
+#define __profileAPI(func, ...) CAutoLog profiler(g_logger, func, __VA_ARGS__);
 #endif
 
 #ifndef NDEBUG
@@ -40,10 +40,11 @@ inline bool __eglSucceeded(EGLint err) { return err == EGL_SUCCESS; }
   __eglLogError(__VA_ARGS__);                                                  \
   g_driver.SetError(error);
 
-inline bool __glFailed(GLenum err) { return err != GL_NO_ERROR; }
-
-inline bool __glSucceeded(GLenum err) { return err == GL_NO_ERROR; }
-
-EGLint EGLERROR_FROM_HRESULT(HRESULT hr);
-
-EGLint EGLERROR_FROM_GLERROR(GLenum glErr);
+inline EGLint EGLERROR_FROM_HRESULT(HRESULT hr) {
+   if (SUCCEEDED(hr)) {
+    return EGL_SUCCESS;
+  } else if (E_INVALIDARG == hr) {
+    return EGL_BAD_PARAMETER;
+  }
+  return EGL_BAD_ALLOC;
+}

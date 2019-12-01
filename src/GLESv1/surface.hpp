@@ -22,7 +22,7 @@ public:
     ATTRIBUTES_SIZE = (ATTRIBUTES_LAST - ATTRIBUTES_FIRST) + 1,
   };
 
-  typedef void (*PFN_ColorFill)(const GLSurfaceDesc &surfDesc, uint32_t value,
+  typedef void (*PfnColorFill)(const GLSurfaceDesc &surfDesc, uint32_t value,
                                 uint32_t mask, const Rect &rect);
 
   static GLenum Create(CGLSurface **ppSurface, const GLSurfaceDesc *pColorDesc,
@@ -138,8 +138,8 @@ private:
 
   Format::pfn_convert_to pfnColorConv_;
 
-  PFN_ColorFill pfnColorFill_;
-  PFN_ColorFill pfnDepthStencilFill_;
+  PfnColorFill pfnColorFill_;
+  PfnColorFill pfnDepthStencilFill_;
 
   GLSurfaceDesc pColorDesc_;
   GLSurfaceDesc pDepthStencilDesc_;

@@ -25,5 +25,5 @@
 #include "logger.hpp"
 #include "math.hpp"
 #include "object.hpp"
-#include "profiler.hpp"
 #include "rect.hpp"
+#include "glcommon.hpp"

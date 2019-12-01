@@ -142,7 +142,8 @@ template <uint32_t Format> struct TColorNative {
   }
 };
 
-template <uint32_t Compare> inline bool TCompare(uint32_t a, uint32_t b) {
+template <uint32_t Compare> 
+inline bool TCompare(uint32_t a, uint32_t b) {
 
   if constexpr (Compare == COMPARE_NEVER) {
     __unreferenced(a);
@@ -220,12 +221,11 @@ inline uint32_t TStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <uint32_t Address> inline int TAddress(int x) {
-
+template <uint32_t Address> 
+inline int TAddress(int x) {
   if constexpr (Address == ADDRESS_WRAP) {
     return x & fixedRX::MASK;
   }
-
   if constexpr (Address == ADDRESS_CLAMP) {
     return Math::TClamp<int>(x, 0, fixedRX::MASK);
   }

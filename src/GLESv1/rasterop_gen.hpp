@@ -14,23 +14,23 @@
 //
 #pragma once
 
-typedef bool (*PFN_Compare)(uint32_t a, uint32_t b);
+typedef bool (*PfnCompare)(uint32_t a, uint32_t b);
 
-typedef void (*PFN_GetTexelColor)(Color4 *pOut, const SurfaceDesc &surface,
+typedef void (*PfnGetTexelColor)(Color4 *pOut, const SurfaceDesc &surface,
                                   fixedRX fU, fixedRX fV);
 
-typedef void (*PFN_GetSamplerColor)(Color4 *pOut,
-                                    PFN_GetTexelColor pfnGetTexelColorMin,
-                                    PFN_GetTexelColor pfnGetTexelColorMag,
+typedef void (*PfnGetSamplerColor)(Color4 *pOut,
+                                    PfnGetTexelColor pfnGetTexelColorMin,
+                                    PfnGetTexelColor pfnGetTexelColorMag,
                                     const Sampler &sampler, fixedRX fU,
                                     fixedRX fV, fixedRX fM);
 
-typedef void (*PFN_GetTexEnvColor)(Color4 *pInOut, const Color4 &cTexture,
+typedef void (*PfnGetTexEnvColor)(Color4 *pInOut, const Color4 &cTexture,
                                    ColorARGB cEnvColor);
 
-typedef void (*PFN_Blend)(Color4 *pInOut, const uint8_t *pCB);
+typedef void (*PfnBlend)(Color4 *pInOut, const uint8_t *pCB);
 
-typedef void (*PFN_WriteColor)(const RasterData &rasterData,
+typedef void (*PfnWriteColor)(const RasterData &rasterData,
                                const Color4 &cSrcColor, uint8_t *pCB);
 
 class CGenericRasterOp : public IRasterOp {
@@ -38,9 +38,9 @@ public:
   CGenericRasterOp(const RASTERID &rasterID);
   ~CGenericRasterOp();
 
-  PFN_Scanline GetScanline() const { return pfnScanline_; }
+  PfnScanline GetScanline() const { return pfnScanline_; }
 
-  uint32_t GetCbSize() const { return sizeof(PFN_Scanline); }
+  uint32_t GetCbSize() const { return sizeof(PfnScanline); }
 
   const RASTERID &GetRasterID() const { return rasterID_; }
 
@@ -94,9 +94,9 @@ public:
 
 private:
   struct _Sampler {
-    PFN_GetTexelColor pfnGetTexelColorMin;
-    PFN_GetTexelColor pfnGetTexelColorMag;
-    PFN_GetTexEnvColor pfnGetTexEnvColor;
+    PfnGetTexelColor pfnGetTexelColorMin;
+    PfnGetTexelColor pfnGetTexelColorMag;
+    PfnGetTexEnvColor pfnGetTexEnvColor;
 
     _Sampler()
         : pfnGetTexelColorMin(nullptr), pfnGetTexelColorMag(nullptr),
@@ -112,17 +112,17 @@ private:
   void SelectBlendFunc();
   void SelectWriteColorFunc();
 
-  PFN_Scanline pfnScanline_;
+  PfnScanline pfnScanline_;
 
   RASTERID rasterID_;
 
   _Sampler samplers_[MAX_TEXTURES];
 
-  PFN_Compare pfnAlphaTest_;
-  PFN_Compare pfnDepthTest_;
-  PFN_Compare pfnStencilTest_;
-  PFN_Blend pfnBlend_;
-  PFN_WriteColor pfnWriteColor_;
+  PfnCompare pfnAlphaTest_;
+  PfnCompare pfnDepthTest_;
+  PfnCompare pfnStencilTest_;
+  PfnBlend pfnBlend_;
+  PfnWriteColor pfnWriteColor_;
 
   uint8_t colorStride_;
   uint8_t depthStencilStride_;

@@ -84,10 +84,10 @@ EGLint CEGLContext::Initialize(CEGLContext *pCtxShared) {
 
   // Create the GL context
   if (pCtxShared) {
-    err = EGLERROR_FROM_GLERROR(
+    err = EGLERROR_FROM_HRESULT(
         __glCreateContext(pCtxShared->glContext_, &glContext_));
   } else {
-    err = EGLERROR_FROM_GLERROR(__glCreateContext(nullptr, &glContext_));
+    err = EGLERROR_FROM_HRESULT(__glCreateContext(nullptr, &glContext_));
   }
 
   if (__eglFailed(err)) {
