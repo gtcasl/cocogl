@@ -18,7 +18,7 @@
 GLBuffer::GLBuffer() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
-  dwHandle_ = 0;
+  handle_ = 0;
   pBits_ = nullptr;
   size_ = 0;
   usage_ = GL_STATIC_DRAW;

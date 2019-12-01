@@ -35,27 +35,29 @@ public:
   }
 
   template <class T> 
-  inline T unregisterObject(void *handle) const {
-    return reinterpret_cast<T>(
-        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
-  }
-
-  template <class T> 
   inline T getObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
         handles_->getObject(reinterpret_cast<intptr_t>(handle), pOwner));
+  }  
+
+  GLenum registerObject(uint32_t *phandle, void *pObject, uint8_t type) {
+    return GLERROR_FROM_HRESULT(handles_->insert(phandle, pObject, type, this));
+  }  
+
+  GLenum registerObject(uint32_t *phandle, void *pObject, uint8_t type, void *pOwner) {
+    return GLERROR_FROM_HRESULT(handles_->insert(phandle, pObject, type, pOwner));
+  }
+
+  template <class T> 
+  inline T unregisterObject(void *handle) const {
+    return reinterpret_cast<T>(
+        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T>
   inline T unregisterObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
         handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), pOwner));
-  }
-
-  GLenum registerObject(void *pObject, uint8_t type, void *pOwner,
-                        uint32_t *pdwHandle) {
-    return GLERROR_FROM_HRESULT(
-        handles_->insert(pdwHandle, pObject, type, pOwner));
   }
 
 private:

@@ -1147,15 +1147,15 @@ GL_API GLenum GL_APIENTRY __glCreateSurface(
     return err;
   }
 
-  uint32_t dwHandle;
-  err = g_driver.registerObject(pSurface, HANDLE_SURFACE, &g_driver, &dwHandle);
-  if (__glFailed(err)) {
-    __safeRelease(pSurface);
+  uint32_t handle;
+  err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE);
+  if (__glFailed(err)) {    
     __glLogError("GLDriver::registerObject() failed, err = %d.\r\n", err);
+    __safeRelease(pSurface);
     return err;
   }
 
-  *pGLSurface = reinterpret_cast<__GLSurface>(dwHandle);
+  *pGLSurface = reinterpret_cast<__GLSurface>(handle);
 
   return GL_NO_ERROR;
 }
@@ -1226,15 +1226,15 @@ GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
     return err;
   }
 
-  uint32_t dwHandle;
-  err = g_driver.registerObject(pContext, HANDLE_CONTEXT, &g_driver, &dwHandle);
-  if (__glFailed(err)) {
-    __safeRelease(pContext);
+  uint32_t handle;
+  err = g_driver.registerObject(&handle, pContext, HANDLE_CONTEXT);
+  if (__glFailed(err)) {    
     __glLogError("GLDriver::registerObject() failed, err = %d.\r\n", err);
+    __safeRelease(pContext);
     return err;
   }
 
-  *pGLContext = reinterpret_cast<__GLContext>(dwHandle);
+  *pGLContext = reinterpret_cast<__GLContext>(handle);
 
   return GL_NO_ERROR;
 }

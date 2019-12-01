@@ -32,15 +32,15 @@ public:
 
   GLenum getUsage() const { return usage_; }
 
-  uint32_t getHandle() const { return dwHandle_; }
+  uint32_t getHandle() const { return handle_; }
 
-  void setHandle(uint32_t dwHandle) { dwHandle_ = dwHandle; }
+  void setHandle(uint32_t handle) { handle_ = handle; }
 
 private:
   GLBuffer();
   ~GLBuffer();
 
-  uint32_t dwHandle_;
+  uint32_t handle_;
   uint8_t *pBits_;
   uint32_t size_;
   GLenum usage_;

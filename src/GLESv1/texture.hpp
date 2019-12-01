@@ -120,9 +120,9 @@ public:
 
   ePixelFormat getFormat() const { return surfaces_[0].getFormat(); }
 
-  uint32_t getHandle() const { return dwHandle_; }
+  uint32_t getHandle() const { return handle_; }
 
-  void setHandle(uint32_t dwHandle) { dwHandle_ = dwHandle; }
+  void setHandle(uint32_t handle) { handle_ = handle; }
 
   GLenum InitializeSurface(uint32_t level, uint32_t width, uint32_t height,
                            ePixelFormat format) {
@@ -162,7 +162,7 @@ private:
   CSurface2D surfaces_[MAX_TEXTURE_LEVELS];
   uint8_t *pbMipBuffer_;
   GLSurface *pBoundSurface_;
-  uint32_t dwHandle_;
+  uint32_t handle_;
   uint8_t maxMipLevel_;
   bool bIsDirty_;
 };
@@ -175,7 +175,9 @@ public:
 
   TexUnit() : pTexture_(nullptr) {}
 
-  ~TexUnit() { __safeRelease(pTexture_); }
+  ~TexUnit() { 
+    __safeRelease(pTexture_); 
+  }
 
   CTexture *getTexture() const { return pTexture_; }
 

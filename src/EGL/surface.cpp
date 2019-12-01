@@ -110,9 +110,9 @@ EGLint _EGLSurface::CreateWND(_EGLSurface **ppSurface, _EGLDisplay *display,
 
   // Initialize the surface
   err = pSurface->InitializeWND(hWnd);
-  if (__eglFailed(err)) {
-    __safeRelease(pSurface);
+  if (__eglFailed(err)) {    
     __eglLogError("Surface::initialize() failed, err = %d.\r\n", err);
+    __safeRelease(pSurface);
     return err;
   }
 
@@ -141,9 +141,9 @@ EGLint _EGLSurface::CreatePXM(_EGLSurface **ppSurface, _EGLDisplay *display,
 
   // Initialize the surface
   err = pSurface->InitializePXM(hPixmap);
-  if (__eglFailed(err)) {
-    __safeRelease(pSurface);
+  if (__eglFailed(err)) {    
     __eglLogError("Surface::initialize() failed, err = %d.\r\n", err);
+    __safeRelease(pSurface);
     return err;
   }
 
@@ -175,9 +175,9 @@ EGLint _EGLSurface::CreatePBF(_EGLSurface **ppSurface, _EGLDisplay *display,
   // Initialize the surface
   err = pSurface->InitializePBF(width, height, largestPBuffer, texTarget,
                                 texFormat, bGenMipMaps);
-  if (__eglFailed(err)) {
-    __safeRelease(pSurface);
+  if (__eglFailed(err)) {    
     __eglLogError("Surface::initialize() failed, err = %d.\r\n", err);
+    __safeRelease(pSurface);
     return err;
   }
 

@@ -105,9 +105,9 @@ GLenum GLContext::Create(GLContext **ppContext, HandleTable *pHandles,
 
   // Initialize the context
   err = pContext->initialize();
-  if (__glFailed(err)) {
-    __safeRelease(pContext);
+  if (__glFailed(err)) {    
     __glLogError("GLContext::initialize() failed, err = %d.\r\n", err);
+    __safeRelease(pContext);
     return err;
   }
 

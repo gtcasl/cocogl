@@ -36,18 +36,18 @@ void GLContext::genBuffers(GLsizei n, GLuint *phBuffers) {
       return;
     }
 
-    uint32_t dwHandle;
+    uint32_t handle;
     err = GLERROR_FROM_HRESULT(
-        handles_->insert(&dwHandle, pBuffer, HANDLE_BUFFER, this));
-    if (__glFailed(err)) {
-      __safeRelease(pBuffer);
+        handles_->insert(&handle, pBuffer, HANDLE_BUFFER, this));
+    if (__glFailed(err)) {      
       __glError(err, "HandleTable::insert() failed, err = %d.\r\n", err);
+      __safeRelease(pBuffer);
       return;
     }
 
-    pBuffer->setHandle(dwHandle);
+    pBuffer->setHandle(handle);
 
-    *phBuf = dwHandle;
+    *phBuf = handle;
   }
 }
 

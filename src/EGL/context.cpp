@@ -68,9 +68,9 @@ EGLint _EGLContext::Create(_EGLContext **ppGLContext,
 
   // Initialize the context
   err = pGLContext->initialize(pCtxShared);
-  if (__eglFailed(err)) {
-    __safeRelease(pGLContext);
+  if (__eglFailed(err)) {    
     __eglLogError("GLContext::initialize() failed, err = %d.\r\n", err);
+    __safeRelease(pGLContext);
     return err;
   }
 
@@ -120,10 +120,10 @@ EGLint _EGLContext::getAttribute(EGLint name, EGLint *pValue) {
   return EGL_SUCCESS;
 }
 
-void _EGLContext::setBindings(std::thread::id dwThreadID,
+void _EGLContext::setBindings(std::thread::id threadID,
                               _EGLSurface *pSurfDraw, 
                               _EGLSurface *pSurfRead) {
-  dwThreadID_ = dwThreadID;
+  threadID_ = threadID;
 
   if (pSurfDraw) {
     pSurfDraw->addRef();

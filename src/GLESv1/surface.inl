@@ -25,8 +25,8 @@ inline void GLSurface::colorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
 
   auto wValue = static_cast<uint16_t>(value);
   auto wMask = static_cast<uint16_t>(mask);
-  uint32_t dwInvMask = (~wMask << 16) | ~wMask;
-  uint32_t dwValueMask = ((wValue & wMask) << 16) | (wValue & wMask);
+  uint32_t invMask = (~wMask << 16) | ~wMask;
+  uint32_t valueMask = ((wValue & wMask) << 16) | (wValue & wMask);
 
   if (int32_t(width * sizeof(uint16_t)) == pitch) {
     if (0xffff == wMask) {
@@ -44,7 +44,7 @@ inline void GLSurface::colorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
       auto pdwBits = reinterpret_cast<uint32_t *>(pbBits);
       uint32_t size = (width >> 1) * height;
       for (uint32_t i = 0; i < size; ++i) {
-        pdwBits[i] = (pdwBits[i] & dwInvMask) | dwValueMask;
+        pdwBits[i] = (pdwBits[i] & invMask) | valueMask;
       }
     }
   } else {
@@ -70,7 +70,7 @@ inline void GLSurface::colorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
       while (height--) {
         auto pdwBits = reinterpret_cast<uint32_t *>(pbBits);
         for (uint32_t i = 0; i < width_d2; ++i) {
-          pdwBits[i] = (pdwBits[i] & dwInvMask) | dwValueMask;
+          pdwBits[i] = (pdwBits[i] & invMask) | valueMask;
         }
         pbBits += pitch;
       }
@@ -100,11 +100,11 @@ inline void GLSurface::colorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
 #endif
     } else {
       auto pdwBits = reinterpret_cast<uint32_t *>(pbBits);
-      uint32_t dwValueMask = value & mask;
-      uint32_t dwInvMask = ~mask;
+      uint32_t valueMask = value & mask;
+      uint32_t invMask = ~mask;
       uint32_t size = width * height;
       for (uint32_t i = 0; i < size; ++i) {
-        pdwBits[i] = (pdwBits[i] & dwInvMask) | dwValueMask;
+        pdwBits[i] = (pdwBits[i] & invMask) | valueMask;
       }
     }
   } else {
@@ -124,12 +124,12 @@ inline void GLSurface::colorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
       }
 #endif
     } else {
-      uint32_t dwValueMask = value & mask;
-      uint32_t dwInvMask = ~mask;
+      uint32_t valueMask = value & mask;
+      uint32_t invMask = ~mask;
       while (height--) {
         auto pdwBits = reinterpret_cast<uint32_t *>(pbBits);
         for (int32_t i = 0; i < width; ++i) {
-          pdwBits[i] = (pdwBits[i] & dwInvMask) | dwValueMask;
+          pdwBits[i] = (pdwBits[i] & invMask) | valueMask;
         }
         pbBits += pitch;
       }

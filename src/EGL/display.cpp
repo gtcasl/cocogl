@@ -150,19 +150,19 @@ EGLint _EGLDisplay::createConfig(EGLint red, EGLint green, EGLint blue,
   // Insert the config object into sorted list
   configs_.insert(iter, pConfig);
 
-  uint32_t dwHandle;
+  uint32_t handle;
 
   // Add the config object into handle table
   err = EGLERROR_FROM_HRESULT(
-      handles_->insert(&dwHandle, pConfig, HANDLE_CONFIG, this));
-  if (__eglFailed(err)) {
-    __safeRelease(pConfig);
+      handles_->insert(&handle, pConfig, HANDLE_CONFIG, this));
+  if (__eglFailed(err)) {    
     __eglLogError("HandleTable::insert() failed, err = %d.\r\n", err);
+    __safeRelease(pConfig);
     return err;
   }
 
   // Update the config ID
-  pConfig->setAttribute(EGL_CONFIG_ID, dwHandle);
+  pConfig->setAttribute(EGL_CONFIG_ID, handle);
 
   return EGL_SUCCESS;
 }
@@ -228,9 +228,9 @@ EGLint _EGLDisplay::chooseConfig(const EGLint *pAttrib_list,
 
     if (bResult) {
       if (pConfigs) {
-        auto dwHandle = handles_->findHandle(pConfig, this);
-        assert(dwHandle);
-        pConfigs[num_config] = reinterpret_cast<EGLConfig>(dwHandle);
+        auto handle = handles_->findHandle(pConfig, this);
+        assert(handle);
+        pConfigs[num_config] = reinterpret_cast<EGLConfig>(handle);
       }
 
       ++num_config;

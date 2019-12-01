@@ -199,7 +199,7 @@ CTexture::CTexture() {
 
   pbMipBuffer_ = nullptr;
   bIsDirty_ = true;
-  dwHandle_ = 0;
+  handle_ = 0;
   maxMipLevel_ = 0;
   pBoundSurface_ = nullptr;
 
@@ -283,7 +283,6 @@ void CTexture::freeSurfaces() {
   }
 
   __safeDeleteArray(pbMipBuffer_);
-
   __safeRelease(pBoundSurface_);
 }
 

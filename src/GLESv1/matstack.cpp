@@ -44,9 +44,9 @@ GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
 
   // Initialize the object
   err = pMatrixStack->initialize(size);
-  if (__glFailed(err)) {
-    __safeRelease(pMatrixStack);
+  if (__glFailed(err)) {    
     __glLogError("CMatrixStack::initialize() failed, err = %d.\r\n", err);
+    __safeRelease(pMatrixStack);
     return err;
   }
 

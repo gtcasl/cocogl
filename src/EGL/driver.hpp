@@ -20,7 +20,7 @@ public:
   _EGLDriver();
   ~_EGLDriver();
 
-  EGLint getDisplay(uint32_t *pdwHandle, EGLNativeDisplayType display_id);
+  EGLint getDisplay(uint32_t *phandle, EGLNativeDisplayType display_id);
 
   void setError(EGLint error);
   EGLint getError() const;
@@ -32,15 +32,25 @@ public:
   }
 
   template <class T> 
-  inline T unregisterObject(void *handle) const {
-    return reinterpret_cast<T>(
-        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
-  }
-
-  template <class T> 
   inline T getObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
         handles_->getObject(reinterpret_cast<intptr_t>(handle), pOwner));
+  }
+
+  EGLint registerObject(uint32_t *phandle, void *pObject, uint8_t type) {
+    return EGLERROR_FROM_HRESULT(
+        handles_->insert(phandle, pObject, type, this));
+  }  
+
+  EGLint registerObject(uint32_t *phandle, void *pObject, uint8_t type, void *pOwner) {
+    return EGLERROR_FROM_HRESULT(
+        handles_->insert(phandle, pObject, type, pOwner));
+  }
+
+  template <class T> 
+  inline T unregisterObject(void *handle) const {
+    return reinterpret_cast<T>(
+        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T>
@@ -58,16 +68,11 @@ public:
   }
 
   void makeCurrent(_EGLContext *pContext, 
-                   std::thread::id dwThreadID,
+                   std::thread::id threadID,
                    _EGLSurface *pSurfDraw, 
                    _EGLSurface *pSurfRead);
 
   _EGLContext *getCurrentContext() const;
-
-  EGLint registerObject(uint32_t *pdwHandle, void *pObject, uint8_t type, void *pOwner) {
-    return EGLERROR_FROM_HRESULT(
-        handles_->insert(pdwHandle, pObject, type, pOwner));
-  }
 
 private:
   HandleTable *handles_;

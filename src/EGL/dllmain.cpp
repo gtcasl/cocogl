@@ -117,14 +117,14 @@ EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(EGLNativeDisplayType display_id) {
 
   EGLint err;
 
-  uint32_t dwHandle;
-  err = g_driver.getDisplay(&dwHandle, display_id);
+  uint32_t handle;
+  err = g_driver.getDisplay(&handle, display_id);
   if (__eglFailed(err)) {
     __eglError(err, "EGLDriver::getDisplay() failed, err = %d.\r\n", err);
     return EGL_NO_DISPLAY;
   }
 
-  return reinterpret_cast<EGLDisplay>(dwHandle);
+  return reinterpret_cast<EGLDisplay>(handle);
 }
 
 EGLAPI EGLBoolean EGLAPIENTRY eglInitialize(EGLDisplay display, EGLint *pMajor,
@@ -336,16 +336,15 @@ eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
   }
 
   // Create the new surface handle
-  uint32_t dwHandle;
-  err = g_driver.registerObject(&dwHandle, pSurface, HANDLE_SURFACE, pDisplay);
-  if (__eglFailed(err)) {
+  uint32_t handle;
+  err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE, pDisplay);
+  if (__eglFailed(err)) {    
+    __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
-    __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n",
-               err);
     return EGL_NO_SURFACE;
   }
 
-  return reinterpret_cast<EGLSurface>(dwHandle);
+  return reinterpret_cast<EGLSurface>(handle);
 }
 
 EGLAPI EGLSurface EGLAPIENTRY
@@ -401,16 +400,15 @@ eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
   }
 
   // Create the new surface handle
-  uint32_t dwHandle;
-  err = g_driver.registerObject(&dwHandle, pSurface, HANDLE_SURFACE, pDisplay);
-  if (__eglFailed(err)) {
+  uint32_t handle;
+  err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE, pDisplay);
+  if (__eglFailed(err)) {    
+    __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
-    __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n",
-               err);
     return EGL_NO_SURFACE;
   }
 
-  return reinterpret_cast<EGLSurface>(dwHandle);
+  return reinterpret_cast<EGLSurface>(handle);
 }
 
 EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
@@ -503,16 +501,15 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
   }
 
   // Create the new surface handle
-  uint32_t dwHandle;
-  err = g_driver.registerObject(&dwHandle, pSurface, HANDLE_SURFACE, pDisplay);
-  if (__eglFailed(err)) {
+  uint32_t handle;
+  err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE, pDisplay);
+  if (__eglFailed(err)) {    
+    __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
-    __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n",
-               err);
     return EGL_NO_SURFACE;
   }
 
-  return reinterpret_cast<EGLSurface>(dwHandle);
+  return reinterpret_cast<EGLSurface>(handle);
 }
 
 EGLAPI EGLBoolean EGLAPIENTRY eglDestroySurface(EGLDisplay display,
@@ -832,16 +829,15 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
     return EGL_NO_CONTEXT;
   }
 
-  uint32_t dwHandle;
-  err = g_driver.registerObject(&dwHandle, pContext, HANDLE_CONTEXT, pDisplay);
-  if (__eglFailed(err)) {
+  uint32_t handle;
+  err = g_driver.registerObject(&handle, pContext, HANDLE_CONTEXT, pDisplay);
+  if (__eglFailed(err)) {    
+    __eglError(err, "_EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pContext);
-    __eglError(err, "_EGLDriver::registerObject() failed, err = %d.\r\n",
-               err);
     return EGL_NO_CONTEXT;
   }
 
-  return reinterpret_cast<EGLContext>(dwHandle);
+  return reinterpret_cast<EGLContext>(handle);
 }
 
 EGLAPI EGLBoolean EGLAPIENTRY eglDestroyContext(EGLDisplay display,
@@ -926,11 +922,10 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
     }
   }
 
-  auto dwCurThreadID = std::this_thread::get_id();
-  ;
-
+  auto curThreadID = std::this_thread::get_id();
+  
   if (pContext) {
-    if (pContext->hasBindings() && pContext->getThreadID() != dwCurThreadID) {
+    if (pContext->hasBindings() && pContext->getThreadID() != curThreadID) {
       __eglError(EGL_BAD_ACCESS,
                  "The context is current to some other thread.\r\n");
       return EGL_FALSE;
@@ -976,7 +971,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
   }
 
   // Set the current EGL context
-  g_driver.makeCurrent(pContext, dwCurThreadID, pSurfDraw, pSurfRead);
+  g_driver.makeCurrent(pContext, curThreadID, pSurfDraw, pSurfRead);
 
   return EGL_TRUE;
 }

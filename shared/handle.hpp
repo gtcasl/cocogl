@@ -95,14 +95,14 @@ public:
     , count_(0) 
   {}
 
-  void *getObject(uint32_t dwHandle, const void *pOwner = nullptr);
+  void *getObject(uint32_t handle, const void *pOwner = nullptr);
 
-  uint8_t getType(uint32_t dwHandle, const void *pOwner = nullptr);
+  uint8_t getType(uint32_t handle, const void *pOwner = nullptr);
 
-  HRESULT insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
+  HRESULT insert(uint32_t *phandle, void *pObject, uint8_t type,
                  void *pOwner = nullptr);
 
-  void *deleteHandle(uint32_t dwHandle, const void *pOwner = nullptr);
+  void *deleteHandle(uint32_t handle, const void *pOwner = nullptr);
 
   void optimize();
 
@@ -131,21 +131,21 @@ private:
     }
   }
 
-  static uint32_t getHandleIndex(uint32_t dwHandle) {
-    return (dwHandle & HANDLE_INDEX_MASK);
+  static uint32_t getHandleIndex(uint32_t handle) {
+    return (handle & HANDLE_INDEX_MASK);
   }
 
-  static uint32_t getHandleSerial(uint32_t dwHandle) {
-    return (dwHandle & HANDLE_SERIAL_MASK) >> HANDLE_SERIAL_SHIFT;
+  static uint32_t getHandleSerial(uint32_t handle) {
+    return (handle & HANDLE_SERIAL_MASK) >> HANDLE_SERIAL_SHIFT;
   }
 
-  Entry *getEntry(uint32_t dwHandle) const {
+  Entry *getEntry(uint32_t handle) const {
     // Get the handle entry from the table
-    auto index = this->getHandleIndex(dwHandle);
+    auto index = this->getHandleIndex(handle);
     if (index < size_) {
       // Validate the handle serial
       auto pEntry = entries_ + index;
-      if (pEntry->Serial == this->getHandleSerial(dwHandle)) {
+      if (pEntry->Serial == this->getHandleSerial(handle)) {
         return pEntry;
       }
     }

@@ -26,13 +26,13 @@ public:
 
   EGLint getAttribute(EGLint name, EGLint *pValue);
 
-  void setBindings(std::thread::id dwThreadID, _EGLSurface *pSurfDraw, _EGLSurface *pSurfRead);
+  void setBindings(std::thread::id threadID, _EGLSurface *pSurfDraw, _EGLSurface *pSurfRead);
 
   auto getDisplay() const { return pDisplay_; }
 
   auto getConfig() const { return pConfig_; }
 
-  auto getThreadID() const { return dwThreadID_; }
+  auto getThreadID() const { return threadID_; }
 
   auto getDrawSurface() const { return pSurfDraw_; }
 
@@ -53,6 +53,6 @@ private:
   _EGLConfig  *pConfig_;
   _EGLSurface *pSurfDraw_;
   _EGLSurface *pSurfRead_;
-  std::thread::id dwThreadID_;
+  std::thread::id threadID_;
   __GLContext glContext_;
 };

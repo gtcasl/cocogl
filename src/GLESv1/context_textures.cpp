@@ -37,18 +37,18 @@ void GLContext::genTextures(GLsizei n, GLuint *phTextures) {
       return;
     }
 
-    uint32_t dwHandle;
+    uint32_t handle;
     err = GLERROR_FROM_HRESULT(
-        handles_->insert(&dwHandle, pTexture, HANDLE_TEXTURE, this));
+        handles_->insert(&handle, pTexture, HANDLE_TEXTURE, this));
     if (__glFailed(err)) {
       __safeRelease(pTexture);
       __glError(err, "HandleTable::insert() failed, err = %d.\r\n", err);
       return;
     }
 
-    pTexture->setHandle(dwHandle);
+    pTexture->setHandle(handle);
 
-    *phTex = dwHandle;
+    *phTex = handle;
   }
 }
 

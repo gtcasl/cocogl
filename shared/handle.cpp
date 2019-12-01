@@ -14,11 +14,11 @@
 //
 #include "stdafx.h"
 
-void *HandleTable::getObject(uint32_t dwHandle, const void *pOwner) {
+void *HandleTable::getObject(uint32_t handle, const void *pOwner) {
   std::lock_guard<std::mutex> lock(cs_);
 
   // Retrieve the corresponding table entry
-  auto pEntry = this->getEntry(dwHandle);
+  auto pEntry = this->getEntry(handle);
   if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
     return pEntry->pObject;
   }
@@ -26,11 +26,11 @@ void *HandleTable::getObject(uint32_t dwHandle, const void *pOwner) {
   return nullptr;
 }
 
-uint8_t HandleTable::getType(uint32_t dwHandle, const void *pOwner) {
+uint8_t HandleTable::getType(uint32_t handle, const void *pOwner) {
   std::lock_guard<std::mutex> lock(cs_);
 
   // Retrieve the corresponding table entry
-  auto pEntry = this->getEntry(dwHandle);
+  auto pEntry = this->getEntry(handle);
   if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
     return pEntry->Type;
   }
@@ -38,13 +38,13 @@ uint8_t HandleTable::getType(uint32_t dwHandle, const void *pOwner) {
   return 0;
 }
 
-HRESULT HandleTable::insert(uint32_t *pdwHandle, 
+HRESULT HandleTable::insert(uint32_t *phandle, 
                             void *pObject, 
                             uint8_t type,
                             void *pOwner) {
   std::lock_guard<std::mutex> lock(cs_);
 
-  if ((nullptr == pObject) || (0 == type) || (nullptr == pdwHandle)) {
+  if ((nullptr == pObject) || (0 == type) || (nullptr == phandle)) {
     return E_FAIL;
   }
 
@@ -61,13 +61,13 @@ HRESULT HandleTable::insert(uint32_t *pdwHandle,
     index = size_;
 
     // Calculate the table new size
-    uint32_t dwNewSize = size_ + GROW_INCREMENT;
-    if (dwNewSize > HANDLE_INDEX_MASK)
+    uint32_t newSize = size_ + GROW_INCREMENT;
+    if (newSize > HANDLE_INDEX_MASK)
       return E_FAIL;
 
     // Reallocate the table's buffer
     auto pEntries = reinterpret_cast<Entry *>(
-        realloc(entries_, dwNewSize * sizeof(Entry)));
+        realloc(entries_, newSize * sizeof(Entry)));
     if (nullptr == pEntries) {
       return E_OUTOFMEMORY;
     }
@@ -91,7 +91,7 @@ HRESULT HandleTable::insert(uint32_t *pdwHandle,
     }
 
     // Reset newly allocated entries
-    for (uint32_t i = size_; i < dwNewSize; ++i) {
+    for (uint32_t i = size_; i < newSize; ++i) {
       Entry &entry = pEntries[i];
       entry.pOwner = nullptr;
       entry.Type = 0;
@@ -101,7 +101,7 @@ HRESULT HandleTable::insert(uint32_t *pdwHandle,
     }
 
     entries_ = pEntries;
-    size_ = dwNewSize;
+    size_ = newSize;
   }
 
   // Update the new handle entry
@@ -131,16 +131,16 @@ HRESULT HandleTable::insert(uint32_t *pdwHandle,
   ++count_;
 
   // Return the new handle
-  *pdwHandle = (pEntryNew->Serial << HANDLE_SERIAL_SHIFT) | index;
+  *phandle = (pEntryNew->Serial << HANDLE_SERIAL_SHIFT) | index;
 
   return S_OK;
 }
 
-void *HandleTable::deleteHandle(uint32_t dwHandle, const void *pOwner) {
+void *HandleTable::deleteHandle(uint32_t handle, const void *pOwner) {
   std::lock_guard<std::mutex> lock(cs_);
 
   // Retrieve the corresponding table entry
-  auto pEntry = this->getEntry(dwHandle);
+  auto pEntry = this->getEntry(handle);
   if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
     // Get the object pointer
     auto pObject = pEntry->pObject;

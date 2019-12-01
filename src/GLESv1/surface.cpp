@@ -53,9 +53,9 @@ GLenum GLSurface::Create(GLSurface **ppSurface,
 
   // Initialize the surface
   err = pSurface->initialize(pColorDesc, pDepthStencilDesc);
-  if (__glFailed(err)) {
-    __safeRelease(pSurface);
+  if (__glFailed(err)) {    
     __glLogError("GLSurface::initialize() failed, err = %d.\r\n", err);
+    __safeRelease(pSurface);
     return err;
   }
 

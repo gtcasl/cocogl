@@ -48,7 +48,7 @@ _EGLDriver::~_EGLDriver() {
   }
 }
 
-void _EGLDriver::makeCurrent(_EGLContext *pContext, std::thread::id dwThreadID,
+void _EGLDriver::makeCurrent(_EGLContext *pContext, std::thread::id threadID,
                              _EGLSurface *pSurfDraw, _EGLSurface *pSurfRead) {
 
   auto pCtxCurr = tls_eglctx;
@@ -58,14 +58,14 @@ void _EGLDriver::makeCurrent(_EGLContext *pContext, std::thread::id dwThreadID,
     }
 
     if (pCtxCurr) {
-      pCtxCurr->setBindings(dwThreadID, nullptr, nullptr);
+      pCtxCurr->setBindings(threadID, nullptr, nullptr);
       pCtxCurr->release();
     }
     tls_eglctx = pContext;
   }
 
   if (pContext) {
-    pContext->setBindings(dwThreadID, pSurfDraw, pSurfRead);
+    pContext->setBindings(threadID, pSurfDraw, pSurfRead);
   }
 }
 
@@ -79,13 +79,13 @@ EGLint _EGLDriver::getError() const {
   return error;
 }
 
-EGLint _EGLDriver::getDisplay(uint32_t *pdwHandle,
+EGLint _EGLDriver::getDisplay(uint32_t *phandle,
                               EGLNativeDisplayType display_id) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
 
-  assert(pdwHandle);
+  assert(phandle);
 
   if (EGL_DEFAULT_DISPLAY == display_id) {
 // Set the default display ID
@@ -102,7 +102,7 @@ EGLint _EGLDriver::getDisplay(uint32_t *pdwHandle,
     if (HANDLE_DISPLAY == enumerator.getType()) {
       auto pDisplay = reinterpret_cast<_EGLDisplay *>(enumerator.getObject());
       if (display_id == pDisplay->getNativeHandle()) {
-        *pdwHandle = enumerator.getHandle();
+        *phandle = enumerator.getHandle();
         return EGL_SUCCESS;
       }
     }
@@ -121,11 +121,10 @@ EGLint _EGLDriver::getDisplay(uint32_t *pdwHandle,
 
   // Add the display to the handle table
   err = EGLERROR_FROM_HRESULT(
-      handles_->insert(pdwHandle, pDisplay, HANDLE_DISPLAY, this));
-  if (__eglFailed(err)) {
+      handles_->insert(phandle, pDisplay, HANDLE_DISPLAY, this));
+  if (__eglFailed(err)) {    
+    __eglLogError("HandleTable::insert() failed, err = %x.\r\n", err);
     __safeRelease(pDisplay);
-    __eglLogError("HandleTable::insert() failed, err = %x.\r\n",
-                  err);
     return EGL_BAD_ALLOC;
   }
 
