@@ -15,7 +15,7 @@
 #include "stdafx.h"
 #include "raster.hpp"
 
-void CRasterizer::DrawPoint(uint32_t index) {
+void CRasterizer::drawPoint(uint32_t index) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   uint32_t flags = pwFlags[index];
 
@@ -25,10 +25,10 @@ void CRasterizer::DrawPoint(uint32_t index) {
   }
 
   // Raster the point
-  this->RasterPoint(index);
+  this->rasterPoint(index);
 }
 
-void CRasterizer::RasterPoint(uint32_t index) {
+void CRasterizer::rasterPoint(uint32_t index) {
   auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   auto pfPointSize = reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
 
@@ -46,13 +46,13 @@ void CRasterizer::RasterPoint(uint32_t index) {
     return;
   }
 
-  if (!this->GenerateRasterOp()) {
-    __glLogError("CRasterizer::GenerateRasterOp() failed.\r\n");
+  if (!this->generateRasterOp()) {
+    __glLogError("CRasterizer::generateRasterOp() failed.\r\n");
     return;
   }
 
   // Obtain the scanline routine
-  auto pfnScanline = rasterData_.pRasterOp->GetScanline();
+  auto pfnScanline = rasterData_.pRasterOp->getScanline();
   auto *pRegisters = rasterData_.Registers;
   auto rasterFlags = rasterID_.Flags;
 

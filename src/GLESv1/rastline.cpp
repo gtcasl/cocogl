@@ -16,7 +16,7 @@
 #include "raster.hpp"
 #include "raster.inl"
 
-void CRasterizer::DrawLine(uint32_t i0, uint32_t i1) {
+void CRasterizer::drawLine(uint32_t i0, uint32_t i1) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   uint32_t flags0 = pwFlags[i0];
   uint32_t flags1 = pwFlags[i1];
@@ -25,29 +25,29 @@ void CRasterizer::DrawLine(uint32_t i0, uint32_t i1) {
   uint32_t clipUnion = (flags0 | flags1) & CLIPPING_MASK;
   if (0 == clipUnion) {
     // Raster the line
-    this->RasterLine(i0, i1);
+    this->rasterLine(i0, i1);
   } else {
     // Discard primitives falling outside of the same plane.
     uint32_t clipIntersect = (flags0 & flags1) & CLIPPING_MASK;
     if (0 == clipIntersect) {
       // Clip and raster the triangle
-      this->RasterClippedLine(i0, i1, clipUnion);
+      this->rasterClippedLine(i0, i1, clipUnion);
     }
   }
 }
 
-void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
+void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
   LineGradient gradient;
 
   // Setup the line attributes
-  if (!this->SetupLineAttributes(&gradient, i0, i1))
+  if (!this->setupLineAttributes(&gradient, i0, i1))
     return;
 
   auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
 
-  auto pfnScanline = rasterData_.pRasterOp->GetScanline();
+  auto pfnScanline = rasterData_.pRasterOp->getScanline();
 
   auto fLineWidth = Math::TCast<fixedDDA>(fLineWidth_);
   auto fRndCeil = fixedDDA::make(fixedDDA::MASK) - TConst<fixedDDA>::Half();
@@ -141,7 +141,7 @@ void CRasterizer::RasterLine(uint32_t i0, uint32_t i1) {
 #endif
 }
 
-bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
+bool CRasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
                                       uint32_t i1) {
   auto rasterFlags = rasterID_.Flags;
   auto pRegister = rasterData_.Registers;
@@ -176,7 +176,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
   if (rasterFlags.DepthTest) {
     auto delta = v1.z - v0.z;
     if (fixed16(Math::TAbs(delta)) > TConst<fixed16>::Epsilon()) {
-      pRegister->m[attribIdx] = pGradient->TCalcDelta<fixedRX>(delta);
+      pRegister->m[attribIdx] = pGradient->calcDelta<fixedRX>(delta);
       pRegister->m[attribIdx ^ 0x1] = TConst<fixedRX>::Zero();
       rasterID_.Flags.InterpolateDepth = 1;
     } else {
@@ -198,7 +198,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
       for (uint32_t i = 0; i < 4; ++i) {
         int delta = c1.m[i] - c0.m[i];
         if (Math::TAbs(delta) > 1) {
-          pRegister[i].m[attribIdx] = pGradient->TCalcDelta<fixedRX>(delta);
+          pRegister[i].m[attribIdx] = pGradient->calcDelta<fixedRX>(delta);
           pRegister[i].m[attribIdx ^ 0x1] = TConst<fixedRX>::Zero();
         } else {
           pRegister->m[0] = TConst<fixedRX>::Zero();
@@ -229,11 +229,11 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
       auto &uv0 = vTexCoords[i0];
       auto &uv1 = vTexCoords[i1];
 
-      pRegister[0].m[attribIdx] = pGradient->TCalcDelta<fixedRX>(uv1.m[0] - uv0.m[0]);
+      pRegister[0].m[attribIdx] = pGradient->calcDelta<fixedRX>(uv1.m[0] - uv0.m[0]);
       pRegister[0].m[attribIdx ^ 0x1] = TConst<fixedRX>::Zero();
       pRegister[0].m[2] = static_cast<fixedRX>(uv0.m[0]);
 
-      pRegister[1].m[attribIdx] = pGradient->TCalcDelta<fixedRX>(uv1.m[1] - uv0.m[1]);
+      pRegister[1].m[attribIdx] = pGradient->calcDelta<fixedRX>(uv1.m[1] - uv0.m[1]);
       pRegister[1].m[attribIdx ^ 0x1] = TConst<fixedRX>::Zero();
       pRegister[1].m[2] = static_cast<fixedRX>(uv0.m[1]);
 
@@ -248,7 +248,7 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
 
     auto delta = fFog1 - fFog0;
     if (fixedRX(Math::TAbs(delta)) > TConst<fixedRX>::Epsilon()) {
-      pRegister->m[attribIdx] = pGradient->TCalcDelta<fixedRX>(delta);
+      pRegister->m[attribIdx] = pGradient->calcDelta<fixedRX>(delta);
       pRegister->m[attribIdx ^ 0x1] = TConst<fixedRX>::Zero();
       rasterID_.Flags.InterpolateFog = 1;
     } else {
@@ -260,8 +260,8 @@ bool CRasterizer::SetupLineAttributes(LineGradient *pGradient, uint32_t i0,
   }
 
   // Generate the rasterization routine
-  if (!this->GenerateRasterOp()) {
-    __glLogError("CRasterizer::GenerateRasterOp() failed.\r\n");
+  if (!this->generateRasterOp()) {
+    __glLogError("CRasterizer::generateRasterOp() failed.\r\n");
     return false;
   }
 

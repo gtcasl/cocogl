@@ -15,7 +15,7 @@
 #include "stdafx.h"
 #include "context.hpp"
 
-void CGLContext::FrontFace(GLenum mode) {
+void GLContext::setFrontFace(GLenum mode) {
   switch (mode) {
   case GL_CW:
   case GL_CCW:
@@ -25,13 +25,13 @@ void CGLContext::FrontFace(GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::FrontFace() failed, invalid mode parameter: %d.\r\n",
+        "GLContext::setFrontFace() failed, invalid mode parameter: %d.\r\n",
         mode);
     return;
   }
 }
 
-void CGLContext::CullFace(GLenum mode) {
+void GLContext::setCullFace(GLenum mode) {
   switch (mode) {
   case GL_FRONT:
   case GL_BACK:
@@ -42,7 +42,7 @@ void CGLContext::CullFace(GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::CullFace() failed, invalid mode parameter: %d.\r\n",
+        "GLContext::setCullFace() failed, invalid mode parameter: %d.\r\n",
         mode);
     return;
   }

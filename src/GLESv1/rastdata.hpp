@@ -21,25 +21,25 @@ struct Register;
 typedef void (*PfnScanline)(const RasterData &rasterData, int y, int lx,
                              int rx);
 
-class IRasterOp : public CObject {
+class IRasterOp : public Object {
 public:
-  virtual PfnScanline GetScanline() const = 0;
+  virtual PfnScanline getScanline() const = 0;
 
-  virtual uint32_t GetCbSize() const = 0;
+  virtual uint32_t getCbSize() const = 0;
 
 #ifdef COCOGL_RASTER_PROFILE
 public:
-  void StartProfile(uint32_t numPixels);
-  void EndProfile(float elapsedTime);
-  void LogProfile(const RASTERID &rasterID);
-  const ProfileCounter &GetProfile() const { return profile_; }
+  void startProfile(uint32_t numPixels);
+  void endProfile(float elapsedTime);
+  void logProfile(const RASTERID &rasterID);
+  const ProfileCounter &getProfile() const { return profile_; }
 
 private:
   ProfileCounter profile_;
 #endif
 };
 
-class CRasterCache : public CObject {
+class CRasterCache : public Object {
 public:
   ~CRasterCache() {
 #ifndef NDEBUG
@@ -58,11 +58,11 @@ public:
       Cache::List sortedList;
       if (SUCCEEDED(map_.ToList(&sortedList))) {
         // Sort the list
-        sortedList.Sort(ProfileCompare);
+        sortedList.Sort(Profilecompare);
 
         // Dump the profile result
-        for (Cache::Iter iter = sortedList.GetBegin(),
-                         iterEnd = sortedList.GetEnd();
+        for (Cache::Iter iter = sortedList.getBegin(),
+                         iterEnd = sortedList.getEnd();
              iter != iterEnd; ++iter) {
           iter->Second->LogProfile(iter->First);
         }
@@ -76,7 +76,7 @@ public:
     }
   }
 
-  bool Lookup(const RASTERID &rasterID, IRasterOp **ppRasterOp) {
+  bool lookup(const RASTERID &rasterID, IRasterOp **ppRasterOp) {
     assert(ppRasterOp);
     auto it = map_.find(rasterID);
     if (it == map_.end())
@@ -85,14 +85,14 @@ public:
     return true;
   }
 
-  void Insert(const RASTERID &rasterID, IRasterOp *pRasterOp) {
+  void insert(const RASTERID &rasterID, IRasterOp *pRasterOp) {
     uint32_t cbTotalSize = cbTotalSize_;
     if (cbTotalSize > MAX_CACHE_SIZE) {
       uint32_t compactSize = cbTotalSize / COMPACT_RATIO;
       if (cbTotalSize > compactSize) {
         for (auto iter = map_.rbegin(); cbTotalSize > compactSize;) {
           auto iterCur = iter--;
-          cbTotalSize -= iterCur->second->GetCbSize();
+          cbTotalSize -= iterCur->second->getCbSize();
           __safeRelease(iterCur->second);
           map_.erase(iterCur->first);
         }
@@ -100,7 +100,7 @@ public:
       }
     }
 
-    uint32_t cbSize = pRasterOp->GetCbSize();
+    uint32_t cbSize = pRasterOp->getCbSize();
     cbTotalSize_ += cbSize;
     map_.insert(std::make_pair(rasterID, pRasterOp));
   }
@@ -117,13 +117,13 @@ public:
       return GL_OUT_OF_MEMORY;
     }
 
-    pRasterCache->AddRef();
+    pRasterCache->addRef();
     *ppRasterCache = pRasterCache;
 
     return GL_NO_ERROR;
   }
 
-  void TrackSlowRasterID(const RASTERID &rasterID) {
+  void trackSlowRasterID(const RASTERID &rasterID) {
     for (auto &rid : slowRasterIDs_) {
       if (rid == rasterID) {
         return;
@@ -135,9 +135,9 @@ public:
 private:
 #ifdef COCOGL_RASTER_PROFILE
 
-  static bool ProfileCompare(const Cache::List::Type &lhs,
+  static bool profilecompare(const Cache::List::Type &lhs,
                              const Cache::List::Type &rhs) {
-    return (lhs.Second->GetProfile() < rhs.Second->GetProfile());
+    return (lhs.Second->getProfile() < rhs.Second->getProfile());
   }
 
 #endif

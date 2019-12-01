@@ -107,69 +107,75 @@ l_genericScanlines[] = {
 };
 
 static const PfnGetTexelColor l_pfnGetTexelColorTable[] = {
-    TGetTexelColorPt<FORMAT_A8, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_A8, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorPt<FORMAT_A8, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_A8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
-    TGetTexelColorPt<FORMAT_L8, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_L8, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorPt<FORMAT_L8, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_L8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
-    TGetTexelColorPt<FORMAT_A8L8, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_A8L8, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorPt<FORMAT_A8L8, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_A8L8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
-    TGetTexelColorPt<FORMAT_RGB, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_RGB, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorPt<FORMAT_RGB, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_RGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
-    TGetTexelColorPt<FORMAT_ARGB, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_ARGB, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorPt<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorPt<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_A8, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_A8, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_A8, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_A8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_L8, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_L8, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_L8, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_L8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_A8L8, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_A8L8, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_A8L8, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_A8L8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_RGB, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_RGB, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_RGB, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_RGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_ARGB, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_ARGB, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorPt<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorPt<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
 
     //--
-    TGetTexelColorLn<FORMAT_A8, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_A8, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorLn<FORMAT_A8, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_A8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
-    TGetTexelColorLn<FORMAT_L8, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_L8, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorLn<FORMAT_L8, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_L8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
-    TGetTexelColorLn<FORMAT_A8L8, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_A8L8, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorLn<FORMAT_A8L8, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_A8L8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
-    TGetTexelColorLn<FORMAT_RGB, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_RGB, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorLn<FORMAT_RGB, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_RGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
-    TGetTexelColorLn<FORMAT_ARGB, ADDRESS_WRAP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_ARGB, ADDRESS_WRAP, ADDRESS_CLAMP>,
-    TGetTexelColorLn<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_WRAP>,
-    TGetTexelColorLn<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_A8, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_A8, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_A8, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_A8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_L8, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_L8, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_L8, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_L8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_A8L8, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_A8L8, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_A8L8, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_A8L8, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_RGB, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_RGB, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_RGB, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_RGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_ARGB, ADDRESS_WRAP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_ARGB, ADDRESS_WRAP, ADDRESS_CLAMP>,
+    GetTexelColorLn<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_WRAP>,
+    GetTexelColorLn<FORMAT_ARGB, ADDRESS_CLAMP, ADDRESS_CLAMP>,
 };
 
-static const PfnCompare s_pfnCompare[] = {
-    TCompare<COMPARE_NEVER>,   TCompare<COMPARE_LESS>,
-    TCompare<COMPARE_EQUAL>,   TCompare<COMPARE_LEQUAL>,
-    TCompare<COMPARE_GREATER>, TCompare<COMPARE_NOTEQUAL>,
-    TCompare<COMPARE_GEQUAL>,  TCompare<COMPARE_ALWAYS>,
+static const Pfncompare s_pfncompare[] = {
+    DoCompare<COMPARE_NEVER>,   DoCompare<COMPARE_LESS>,
+    DoCompare<COMPARE_EQUAL>,   DoCompare<COMPARE_LEQUAL>,
+    DoCompare<COMPARE_GREATER>, DoCompare<COMPARE_NOTEQUAL>,
+    DoCompare<COMPARE_GEQUAL>,  DoCompare<COMPARE_ALWAYS>,
 };
 
 static const PfnGetTexEnvColor s_pfnGetTexEnvColorTable[] = {
-    TGetTexEnvColorA<ENVMODE_ADD>,        TGetTexEnvColorA<ENVMODE_BLEND>,
-    TGetTexEnvColorA<ENVMODE_REPLACE>,    TGetTexEnvColorA<ENVMODE_MODULATE>,
-    TGetTexEnvColorA<ENVMODE_DECAL>,
+    GetTexEnvColorA<ENVMODE_ADD>,        
+    GetTexEnvColorA<ENVMODE_BLEND>,
+    GetTexEnvColorA<ENVMODE_REPLACE>,    
+    GetTexEnvColorA<ENVMODE_MODULATE>,
+    GetTexEnvColorA<ENVMODE_DECAL>,
 
-    TGetTexEnvColorRGB<ENVMODE_ADD>,      TGetTexEnvColorRGB<ENVMODE_BLEND>,
-    TGetTexEnvColorRGB<ENVMODE_REPLACE>,  TGetTexEnvColorRGB<ENVMODE_MODULATE>,
-    TGetTexEnvColorRGB<ENVMODE_DECAL>,
+    GetTexEnvColorRGB<ENVMODE_ADD>,      
+    GetTexEnvColorRGB<ENVMODE_BLEND>,
+    GetTexEnvColorRGB<ENVMODE_REPLACE>,  
+    GetTexEnvColorRGB<ENVMODE_MODULATE>,
+    GetTexEnvColorRGB<ENVMODE_DECAL>,
 
-    TGetTexEnvColorARGB<ENVMODE_ADD>,     TGetTexEnvColorARGB<ENVMODE_BLEND>,
-    TGetTexEnvColorARGB<ENVMODE_REPLACE>, TGetTexEnvColorARGB<ENVMODE_MODULATE>,
-    TGetTexEnvColorARGB<ENVMODE_DECAL>,
+    GetTexEnvColorARGB<ENVMODE_ADD>,     
+    GetTexEnvColorARGB<ENVMODE_BLEND>,
+    GetTexEnvColorARGB<ENVMODE_REPLACE>, 
+    GetTexEnvColorARGB<ENVMODE_MODULATE>,
+    GetTexEnvColorARGB<ENVMODE_DECAL>,
 };
 
 static const PfnBlend s_pfnBlendTable[] = {
@@ -368,71 +374,71 @@ static const PfnBlend s_pfnBlendTable[] = {
 
 static const PfnWriteColor s_pfnWriteColorTable[] = {
 #if defined(COCOGL_RASTER_R5G6B5)
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_CLEAR>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_AND>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_AND_REVERSE>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_COPY>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_AND_INVERTED>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_NOOP>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_XOR>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_OR>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_NOR>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_EQUIV>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_INVERT>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_OR_REVERSE>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_COPY_INVERTED>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_OR_INVERTED>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_NAND>,
-    TWriteColor<FORMAT_R5G6B5, false, LOGICOP_SET>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_CLEAR>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_AND>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_AND_REVERSE>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_COPY>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_AND_INVERTED>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_NOOP>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_XOR>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_OR>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_NOR>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_EQUIV>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_INVERT>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_OR_REVERSE>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_COPY_INVERTED>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_OR_INVERTED>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_NAND>,
-    TWriteColor<FORMAT_R5G6B5, true, LOGICOP_SET>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_CLEAR>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_AND>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_AND_REVERSE>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_COPY>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_AND_INVERTED>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_NOOP>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_XOR>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_OR>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_NOR>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_EQUIV>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_INVERT>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_OR_REVERSE>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_COPY_INVERTED>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_OR_INVERTED>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_NAND>,
+    DoWriteColor<FORMAT_R5G6B5, false, LOGICOP_SET>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_CLEAR>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_AND>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_AND_REVERSE>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_COPY>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_AND_INVERTED>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_NOOP>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_XOR>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_OR>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_NOR>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_EQUIV>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_INVERT>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_OR_REVERSE>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_COPY_INVERTED>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_OR_INVERTED>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_NAND>,
+    DoWriteColor<FORMAT_R5G6B5, true, LOGICOP_SET>,
 #elif defined(COCOGL_RASTER_A8R8G8B8)
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_CLEAR>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND_REVERSE>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_COPY>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND_INVERTED>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_NOOP>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_XOR>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_OR>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_NOR>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_EQUIV>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_INVERT>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_OR_REVERSE>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_COPY_INVERTED>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_OR_INVERTED>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_NAND>,
-    TWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_SET>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_CLEAR>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_AND>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_AND_REVERSE>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_COPY>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_AND_INVERTED>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NOOP>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_XOR>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NOR>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_EQUIV>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_INVERT>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR_REVERSE>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_COPY_INVERTED>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR_INVERTED>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NAND>,
-    TWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_SET>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_CLEAR>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND_REVERSE>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_COPY>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_AND_INVERTED>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_NOOP>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_XOR>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_OR>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_NOR>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_EQUIV>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_INVERT>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_OR_REVERSE>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_COPY_INVERTED>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_OR_INVERTED>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_NAND>,
+    DoWriteColor<FORMAT_A8R8G8B8, false, LOGICOP_SET>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_CLEAR>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_AND>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_AND_REVERSE>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_COPY>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_AND_INVERTED>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NOOP>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_XOR>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NOR>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_EQUIV>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_INVERT>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR_REVERSE>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_COPY_INVERTED>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_OR_INVERTED>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_NAND>,
+    DoWriteColor<FORMAT_A8R8G8B8, true, LOGICOP_SET>,
 #endif
 };
 
@@ -471,13 +477,13 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
     return GL_OUT_OF_MEMORY;
   }
 
-  pRasterOp->AddRef();
+  pRasterOp->addRef();
 
   // Initialize the rasterOp
-  err = pRasterOp->Initialize();
+  err = pRasterOp->initialize();
   if (__glFailed(err)) {
-    pRasterOp->Release();
-    __glLogError("CGenericRasterOp::Initialize() failed, err = %d.\r\n",
+    pRasterOp->release();
+    __glLogError("CGenericRasterOp::initialize() failed, err = %d.\r\n",
                  err);
     return err;
   }
@@ -487,7 +493,7 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
   return GL_NO_ERROR;
 }
 
-GLenum CGenericRasterOp::Initialize() {
+GLenum CGenericRasterOp::initialize() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   RASTERFLAGS rasterFlags = rasterID_.Flags;
@@ -496,29 +502,29 @@ GLenum CGenericRasterOp::Initialize() {
 
   // Select depth function
   if (rasterFlags.DepthTest || rasterFlags.StencilTest) {
-    this->SelectDepthStencilFunc();
+    this->selectDepthStencilFunc();
   } else {
     depthStencilStride_ = 0;
   }
 
   // Select sampler function
   if (rasterFlags.NumTextures) {
-    this->SelectSamplerFunc();
-    this->SelectTexEnvFunc();
+    this->selectSamplerFunc();
+    this->selectTexEnvFunc();
   }
 
   // Select alpha test function
   if (rasterFlags.AlphaTest) {
-    this->SelectAlphaTestFunc();
+    this->selectAlphaTestFunc();
   }
 
   if (rasterFlags.Blend) {
     // Select blend function
-    this->SelectBlendFunc();
+    this->selectBlendFunc();
   }
 
   // Select write color function
-  this->SelectWriteColorFunc();
+  this->selectWriteColorFunc();
 
   bool bTexMip0 = ((rasterFlags.TextureMips >> 0) & 0x1);
   bool bTexMip1 = ((rasterFlags.TextureMips >> 1) & 0x1);
@@ -539,16 +545,16 @@ GLenum CGenericRasterOp::Initialize() {
   return GL_NO_ERROR;
 }
 
-void CGenericRasterOp::SelectDepthStencilFunc() {
+void CGenericRasterOp::selectDepthStencilFunc() {
   RASTERFLAGS rasterFlags = rasterID_.Flags;
   RASTERSTATES rasterStates = rasterID_.States;
 
   if (rasterFlags.DepthTest) {
     uint32_t index = rasterStates.DepthFunc;
-    assert(index < __countof(s_pfnCompare));
-    pfnDepthTest_ = s_pfnCompare[index];
+    assert(index < __countof(s_pfncompare));
+    pfnDepthTest_ = s_pfncompare[index];
   } else {
-    pfnDepthTest_ = TCompare<COMPARE_ALWAYS>;
+    pfnDepthTest_ = DoCompare<COMPARE_ALWAYS>;
   }
 
   depthStencilStride_ =
@@ -556,12 +562,12 @@ void CGenericRasterOp::SelectDepthStencilFunc() {
 
   if (rasterFlags.StencilTest) {
     uint32_t index = rasterStates.StencilFunc;
-    assert(index < __countof(s_pfnCompare));
-    pfnStencilTest_ = s_pfnCompare[index];
+    assert(index < __countof(s_pfncompare));
+    pfnStencilTest_ = s_pfncompare[index];
   }
 }
 
-void CGenericRasterOp::SelectSamplerFunc() {
+void CGenericRasterOp::selectSamplerFunc() {
   RASTERFLAGS rasterFlags = rasterID_.Flags;
   for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
     TEXTURESTATES texState = rasterID_.Textures[i];
@@ -581,7 +587,7 @@ void CGenericRasterOp::SelectSamplerFunc() {
   }
 }
 
-void CGenericRasterOp::SelectTexEnvFunc() {
+void CGenericRasterOp::selectTexEnvFunc() {
   RASTERFLAGS rasterFlags = rasterID_.Flags;
   for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
     uint32_t index;
@@ -614,15 +620,15 @@ void CGenericRasterOp::SelectTexEnvFunc() {
   }
 }
 
-void CGenericRasterOp::SelectAlphaTestFunc() {
+void CGenericRasterOp::selectAlphaTestFunc() {
   RASTERSTATES rasterStates = rasterID_.States;
 
   uint32_t index = rasterStates.AlphaFunc;
-  assert(index < __countof(s_pfnCompare));
-  pfnAlphaTest_ = s_pfnCompare[index];
+  assert(index < __countof(s_pfncompare));
+  pfnAlphaTest_ = s_pfncompare[index];
 }
 
-void CGenericRasterOp::SelectBlendFunc() {
+void CGenericRasterOp::selectBlendFunc() {
   RASTERSTATES rasterStates = rasterID_.States;
   uint32_t index = rasterStates.BlendDst * BLEND_SIZE_ + rasterStates.BlendSrc;
 
@@ -630,7 +636,7 @@ void CGenericRasterOp::SelectBlendFunc() {
   pfnBlend_ = s_pfnBlendTable[index];
 }
 
-void CGenericRasterOp::SelectWriteColorFunc() {
+void CGenericRasterOp::selectWriteColorFunc() {
   RASTERFLAGS rasterFlags = rasterID_.Flags;
   RASTERSTATES rasterStates = rasterID_.States;
 
@@ -644,7 +650,7 @@ void CGenericRasterOp::SelectWriteColorFunc() {
   pfnWriteColor_ = s_pfnWriteColorTable[index];
 }
 
-bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
+bool CGenericRasterOp::doStencilTest(const RasterData &rasterData,
                                      uint32_t depthValue,
                                      void *pDSBuffer) const {
   assert(pDSBuffer);
@@ -652,7 +658,7 @@ bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
   auto pRasterOp =
       reinterpret_cast<const CGenericRasterOp *>(rasterData.pRasterOp);
 
-  const RASTERID &rasterID = pRasterOp->GetRasterID();
+  const RASTERID &rasterID = pRasterOp->getRasterID();
   RASTERFLAGS rasterFlags = rasterID.Flags;
   RASTERSTATES rasterStates = rasterID.States;
 
@@ -722,7 +728,7 @@ bool CGenericRasterOp::DoStencilTest(const RasterData &rasterData,
   return bStencilTest;
 }
 
-void CGenericRasterOp::GetSamplerColor(Color4 *pOut, uint32_t unit,
+void CGenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
                                        const RasterData &rasterData, fixedRX fU,
                                        fixedRX fV, fixedRX fM) const {
   const Sampler &sampler = rasterData.Samplers[unit];
@@ -788,7 +794,7 @@ void CGenericRasterOp::GetSamplerColor(Color4 *pOut, uint32_t unit,
   }
 }
 
-void CGenericRasterOp::ApplyFog(const RasterData &rasterData, Color4 *pInOut,
+void CGenericRasterOp::applyFog(const RasterData &rasterData, Color4 *pInOut,
                                 fixedRX fFactor) {
   const Color4 &cFogColor = rasterData.cFogColor;
   int factor = fFactor.data();

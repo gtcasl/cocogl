@@ -13,12 +13,12 @@
 //
 #pragma once
 
-class CCubeTest : public CTestBase {
+class CubeTest : public TestBase {
 private:
   int rotation_;
 
 public:
-  CCubeTest() : rotation_(0) {}
+  CubeTest() : rotation_(0) {}
 
   bool OnInitialize(uint32_t width, uint32_t height) {
     /*Remember: because we are programming for a mobile device, we cant

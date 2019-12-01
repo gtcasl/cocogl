@@ -18,13 +18,13 @@
 
 class CRasterizer : public CTNL {
 public:
-  GLenum RenderPrimitive(GLenum mode, uint32_t count);
+  GLenum renderPrimitive(GLenum mode, uint32_t count);
 
   template <class T>
-  GLenum TRenderIndexedPrimitive(GLenum mode, const T *pIndices, uint32_t count,
+  GLenum renderIndexedPrimitive(GLenum mode, const T *pIndices, uint32_t count,
                                  uint32_t startVertex);
 
-  void PostRender();
+  void postRender();
 
 protected:
   struct TriangleGradient {
@@ -38,7 +38,7 @@ protected:
                      floatQ fRatio_)
         : fdX0(fdX0_), fdY0(fdY0_), fdX1(fdX1_), fdY1(fdY1_), fRatio(fRatio_) {}
 
-    template <class T, class D> T TCalcDeltaX(D delta0, D delta1) const {
+    template <class T, class D> T calcDeltaX(D delta0, D delta1) const {
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       auto half = static_cast<int64_t>(1) << (FRAC - 1);
@@ -51,7 +51,7 @@ protected:
 #endif
     }
 
-    template <class T, class D> T TCalcDeltaY(D delta0, D delta1) const {
+    template <class T, class D> T calcDeltaY(D delta0, D delta1) const {
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       auto half = static_cast<int64_t>(1) << (FRAC - 1);
@@ -64,7 +64,7 @@ protected:
 #endif
     }
 
-    template <class T> T TCalcDeltaX(int delta0, int delta1) const {
+    template <class T> T calcDeltaX(int delta0, int delta1) const {
       auto diff = this->fdY1 * delta0 - this->fdY0 * delta1;
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
@@ -75,7 +75,7 @@ protected:
 #endif
     }
 
-    template <class T> T TCalcDeltaY(int delta0, int delta1) const {
+    template <class T> T calcDeltaY(int delta0, int delta1) const {
       auto diff = this->fdX0 * delta1 - this->fdX1 * delta0;
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
@@ -90,7 +90,7 @@ protected:
   struct LineGradient {
     floatQ fRatio;
 
-    template <class T, class D> T TCalcDelta(D delta) const {
+    template <class T, class D> T calcDelta(D delta) const {
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
@@ -100,7 +100,7 @@ protected:
 #endif
     }
 
-    template <class T> T TCalcDelta(int delta) const {
+    template <class T> T calcDelta(int delta) const {
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
@@ -117,92 +117,94 @@ protected:
 
   ~CRasterizer() {}
 
-  GLenum SetupRasterStates(GLenum mode);
+  GLenum setupRasterStates(GLenum mode);
 
-  bool GenerateRasterOp();
+  bool generateRasterOp();
 
-  void UpdateScissorRect();
+  void updateScissorRect();
 
-  void DrawTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
-  void DrawLine(uint32_t i0, uint32_t i1);
-  void DrawPoint(uint32_t index);
+  void drawTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
+  
+  void drawLine(uint32_t i0, uint32_t i1);
 
-  bool CullScreenSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
+  void drawPoint(uint32_t index);
 
-  bool CullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
+  bool cullScreenSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
 
-  void RasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
+  bool cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
+
+  void rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
                              uint32_t clipUnion);
 
-  void RasterClippedLine(uint32_t i0, uint32_t i1, uint32_t clipUnion);
+  void rasterClippedLine(uint32_t i0, uint32_t i1, uint32_t clipUnion);
 
   template <eClipFlags ClipFlags>
-  uint32_t TClipTriangle(uint32_t nNumVertices, uint32_t *pSrc, uint32_t *pDst,
+  uint32_t clipTriangle(uint32_t nNumVertices, uint32_t *pSrc, uint32_t *pDst,
                          uint32_t *pTmp);
 
-  uint32_t UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
+  uint32_t clipTriangle(uint32_t plane, uint32_t nNumVertices,
                             uint32_t *pSrc, uint32_t *pDst, uint32_t *pTmp);
 
-  void InterpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA, floatf fDistB,
+  void interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA, floatf fDistB,
                          uint32_t i2);
 
-  void RasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
+  void rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
 
-  void RasterLine(uint32_t i0, uint32_t i1);
+  void rasterLine(uint32_t i0, uint32_t i1);
 
-  void RasterPoint(uint32_t index);
+  void rasterPoint(uint32_t index);
 
-  bool SetupLineAttributes(LineGradient *pGradient, uint32_t i0, uint32_t i1);
+  bool setupLineAttributes(LineGradient *pGradient, uint32_t i0, uint32_t i1);
 
-  bool SetupTriangleAttributes(uint32_t i0, uint32_t i1, uint32_t i2);
+  bool setupTriangleAttributes(uint32_t i0, uint32_t i1, uint32_t i2);
 
-  Register *DepthGradient(Register *pRegister, const TriangleGradient &gradient,
+  Register *applyDepthGradient(Register *pRegister, const TriangleGradient &gradient,
                           const RDVECTOR &v0, const RDVECTOR &v1,
                           const RDVECTOR &v2);
 
-  void ApplyPolygonOffset(Register *pRegister);
+  void applyPolygonOffset(Register *pRegister);
 
-  Register *ColorGradient(Register *pRegister, const TriangleGradient &gradient,
+  Register *applyColorGradient(Register *pRegister, const TriangleGradient &gradient,
                           uint32_t i0, uint32_t i1, uint32_t i2);
 
-  Register *AffineTextureGradient(Register *pRegister,
+  Register *applyAffineTextureGradient(Register *pRegister,
                                   const TriangleGradient &gradient, uint32_t i0,
                                   uint32_t i1, uint32_t i2);
 
-  Register *PerspectiveTextureGradient(Register *pRegister,
+  Register *applyPerspectiveTextureGradient(Register *pRegister,
                                        const TriangleGradient &gradient,
                                        uint32_t i0, uint32_t i1, uint32_t i2);
 
-  Register *AffineTextureMipmapGradient(Register *pRegister);
+  Register *applyAffineTextureMipmapGradient(Register *pRegister);
 
-  Register *PerspectiveTextureMipmapGradient(
+  Register *applyPerspectiveTextureMipmapGradient(
       Register *pRegister, const TriangleGradient &gradient, const RDVECTOR &v0,
       const RDVECTOR &v1, const RDVECTOR &v2, floatRW rhws[3]);
 
-  Register *FogGradient(Register *pRegister, const TriangleGradient &gradient,
+  Register *applyFogGradient(Register *pRegister, const TriangleGradient &gradient,
                         uint32_t i0, uint32_t i1, uint32_t i2);
 
-  void EnsureClearColor() {
+  void ensureClearColor() {
     Color4 tmp(Math::TToUNORM8(Math::TSat(vClearColor_.w)),
                Math::TToUNORM8(Math::TSat(vClearColor_.x)),
                Math::TToUNORM8(Math::TSat(vClearColor_.y)),
                Math::TToUNORM8(Math::TSat(vClearColor_.z)));
-    pSurfDraw_->ConvertColor(&clearColor_, tmp);
+    pSurfDraw_->convertColor(&clearColor_, tmp);
     dirtyFlags_.ClearColor = 0;
   }
 
-  void EnsureClearDepth() {
+  void ensureClearDepth() {
     clearDepth_ = Math::TToUNORM16(Math::TSat(fClearDepth_));
     dirtyFlags_.ClearDepth = 0;
   }
 
-  void EnsureColorWriteMask() {
+  void ensureColorWriteMask() {
     Color4 tmp(cColorWriteMask_);
-    pSurfDraw_->ConvertColor(&rasterData_.ColorWriteMask, tmp);
+    pSurfDraw_->convertColor(&rasterData_.ColorWriteMask, tmp);
     dirtyFlags_.ColorWriteMask = 0;
   }
 
-  void EnsureFogColor() {
+  void ensureFogColor() {
     rasterData_.cFogColor.a =
         static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(vFogColor_.w)));
     rasterData_.cFogColor.r =

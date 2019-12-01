@@ -13,7 +13,7 @@
 //
 #pragma once
 
-class CDebugTest : public CTestBase {
+class DebugTest : public TestBase {
 public:
   bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) {
     glViewport(0, 0, 48, 48);

@@ -15,17 +15,17 @@
 #pragma once
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-void TGetTexelColorPt(Color4 *pOut, const SurfaceDesc &surface, fixedRX fU,
+void GetTexelColorPt(Color4 *pOut, const SurfaceDesc &surface, fixedRX fU,
                       fixedRX fV) {
-  Format::TConvertFrom<Format, false>(
-      pOut, TGetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
+  Format::ConvertFrom<Format, false>(
+      pOut, GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
 }
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-void TGetTexelColorLn(Color4 *pOut, const SurfaceDesc &surface, fixedRX fU,
+void GetTexelColorLn(Color4 *pOut, const SurfaceDesc &surface, fixedRX fU,
                       fixedRX fV) {
-  Format::TConvertFrom<Format, false>(
-      pOut, TGetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV));
+  Format::ConvertFrom<Format, false>(
+      pOut, GetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -34,10 +34,10 @@ template <ePixelFormat Format, eBlendOp OpSrc, eBlendOp OpDst>
 void TBlend(Color4 *pInOut, const uint8_t *pCB) {
   Color4 cDstColor, cSrcCoeff, cDstCoeff;
 
-  Format::TConvertFrom<Format, true>(&cDstColor, pCB);
+  Format::ConvertFrom<Format, true>(&cDstColor, pCB);
 
-  TGetBlendCoeff<OpSrc>(pInOut, *pInOut, cDstColor);
-  TGetBlendCoeff<OpDst>(&cDstColor, *pInOut, cDstColor);
+  GetBlendCoeff<OpSrc>(pInOut, *pInOut, cDstColor);
+  GetBlendCoeff<OpDst>(&cDstColor, *pInOut, cDstColor);
 
   pInOut->r = Math::Add8(pInOut->r, cDstColor.r);
   pInOut->g = Math::Add8(pInOut->g, cDstColor.g);
@@ -48,12 +48,12 @@ void TBlend(Color4 *pInOut, const uint8_t *pCB) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <ePixelFormat Format, bool bWriteMask, eLogicOp LogicOp>
-void TWriteColor(const RasterData &rasterData, const Color4 &cColor,
+void DoWriteColor(const RasterData &rasterData, const Color4 &cColor,
                  uint8_t *pCB) {
   uint32_t dstColor =
       *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB);
-  uint32_t result = Format::TConvertTo<Format>(cColor);
-  result = TLogicOp<LogicOp>(result, dstColor);
+  uint32_t result = Format::ConvertTo<Format>(cColor);
+  result = ApplyLogicOp<LogicOp>(result, dstColor);
 
   if constexpr (bWriteMask) {
     uint32_t writeMask = rasterData.ColorWriteMask;
@@ -114,15 +114,15 @@ public:
                                int rx) {
     auto pRasterOp =
         reinterpret_cast<const CGenericRasterOp *>(rasterData.pRasterOp);
-    RASTERFLAGS rasterFlags = pRasterOp->GetRasterID().Flags;
+    RASTERFLAGS rasterFlags = pRasterOp->getRasterID().Flags;
 
     auto pColorBits = rasterData.pColorBits;
     int32_t colorPitch = rasterData.ColorPitch;
-    uint8_t colorStride = pRasterOp->GetColorStride();
+    uint8_t colorStride = pRasterOp->getColorStride();
 
     auto pDepthStencilBits = rasterData.pDepthStencilBits;
     int32_t depthStencilPitch = rasterData.DepthStencilPitch;
-    uint8_t depthStencilStride = pRasterOp->GetDepthStencilStride();
+    uint8_t depthStencilStride = pRasterOp->getDepthStencilStride();
 
     auto fOffsetX = fixed4(lx) - rasterData.fRefX;
     auto fOffsetY = fixed4(y) - rasterData.fRefY;
@@ -222,7 +222,7 @@ public:
 
           // Early out depth test
           if (!rasterFlags.StencilTest &&
-              !pRasterOp->DoDepthTest(depthValue, pDS)) {
+              !pRasterOp->doDepthTest(depthValue, pDS)) {
             break;
           }
         }
@@ -236,35 +236,35 @@ public:
           Color4 cTexture;
 
           if constexpr (2 == Texture0) {
-            pRasterOp->GetSamplerColor(&cTexture, 0, rasterData, fU0, fV0, fM0);
+            pRasterOp->getSamplerColor(&cTexture, 0, rasterData, fU0, fV0, fM0);
           } else {
-            pRasterOp->GetSamplerColor(&cTexture, 0, rasterData, fU0, fV0);
+            pRasterOp->getSamplerColor(&cTexture, 0, rasterData, fU0, fV0);
           }
 
-          pRasterOp->GetTexEnvColor(&cColor, cTexture, 0, rasterData);
+          pRasterOp->getTexEnvColor(&cColor, cTexture, 0, rasterData);
 
           if constexpr (Texture1 != 0) {
             if constexpr (2 == Texture1) {
-              pRasterOp->GetSamplerColor(&cTexture, 1, rasterData, fU1, fV1,
+              pRasterOp->getSamplerColor(&cTexture, 1, rasterData, fU1, fV1,
                                          fM1);
             } else {
-              pRasterOp->GetSamplerColor(&cTexture, 1, rasterData, fU1, fV1);
+              pRasterOp->getSamplerColor(&cTexture, 1, rasterData, fU1, fV1);
             }
 
-            pRasterOp->GetTexEnvColor(&cColor, cTexture, 1, rasterData);
+            pRasterOp->getTexEnvColor(&cColor, cTexture, 1, rasterData);
           }
         }
 
         if (rasterFlags.AlphaTest) {
           // Execute alpha test
-          if (!pRasterOp->DoAlphaTest(rasterData, cColor)) {
+          if (!pRasterOp->doAlphaTest(rasterData, cColor)) {
             break;
           }
         }
 
         if (rasterFlags.StencilTest) {
           // Execute stencil test
-          if (!pRasterOp->DoStencilTest(rasterData, depthValue, pDS)) {
+          if (!pRasterOp->doStencilTest(rasterData, depthValue, pDS)) {
             break;
           }
         } else {
@@ -279,16 +279,16 @@ public:
 
         if constexpr (Fog) {
           // Execute fog blend
-          pRasterOp->ApplyFog(rasterData, &cColor, fFog);
+          pRasterOp->applyFog(rasterData, &cColor, fFog);
         }
 
         if (rasterFlags.Blend) {
           // Execute pixel blend
-          pRasterOp->DoBlend(&cColor, pCB);
+          pRasterOp->doBlend(&cColor, pCB);
         }
 
         // Write output color
-        pRasterOp->WriteColor(rasterData, cColor, pCB);
+        pRasterOp->writeColor(rasterData, cColor, pCB);
 
         break;
       }
@@ -367,15 +367,15 @@ public:
                                int rx) {
     auto pRasterOp =
         reinterpret_cast<const CGenericRasterOp *>(rasterData.pRasterOp);
-    RASTERFLAGS rasterFlags = pRasterOp->GetRasterID().Flags;
+    RASTERFLAGS rasterFlags = pRasterOp->getRasterID().Flags;
 
     auto pColorBits = rasterData.pColorBits;
     int32_t colorPitch = rasterData.ColorPitch;
-    uint8_t colorStride = pRasterOp->GetColorStride();
+    uint8_t colorStride = pRasterOp->getColorStride();
 
     auto pDepthStencilBits = rasterData.pDepthStencilBits;
     int32_t depthStencilPitch = rasterData.DepthStencilPitch;
-    uint8_t depthStencilStride = pRasterOp->GetDepthStencilStride();
+    uint8_t depthStencilStride = pRasterOp->getDepthStencilStride();
 
     auto fOffsetX = fixed4(lx) - rasterData.fRefX;
     auto fOffsetY = fixed4(y) - rasterData.fRefY;
@@ -583,7 +583,7 @@ public:
 
             // Execute early out depth test
             if (!rasterFlags.StencilTest &&
-                !pRasterOp->DoDepthTest(depthValue, pDS)) {
+                !pRasterOp->doDepthTest(depthValue, pDS)) {
               break;
             }
           }
@@ -597,36 +597,36 @@ public:
             Color4 cTexture;
 
             if constexpr (2 == Texture0) {
-              pRasterOp->GetSamplerColor(&cTexture, 0, rasterData, fU0, fV0,
+              pRasterOp->getSamplerColor(&cTexture, 0, rasterData, fU0, fV0,
                                          fM0);
             } else {
-              pRasterOp->GetSamplerColor(&cTexture, 0, rasterData, fU0, fV0);
+              pRasterOp->getSamplerColor(&cTexture, 0, rasterData, fU0, fV0);
             }
 
-            pRasterOp->GetTexEnvColor(&cColor, cTexture, 0, rasterData);
+            pRasterOp->getTexEnvColor(&cColor, cTexture, 0, rasterData);
 
             if constexpr (Texture1 != 0) {
               if constexpr (2 == Texture1) {
-                pRasterOp->GetSamplerColor(&cTexture, 1, rasterData, fU1, fV1,
+                pRasterOp->getSamplerColor(&cTexture, 1, rasterData, fU1, fV1,
                                            fM1);
               } else {
-                pRasterOp->GetSamplerColor(&cTexture, 1, rasterData, fU1, fV1);
+                pRasterOp->getSamplerColor(&cTexture, 1, rasterData, fU1, fV1);
               }
 
-              pRasterOp->GetTexEnvColor(&cColor, cTexture, 1, rasterData);
+              pRasterOp->getTexEnvColor(&cColor, cTexture, 1, rasterData);
             }
           }
 
           if (rasterFlags.AlphaTest) {
             // Execute alpha test
-            if (!pRasterOp->DoAlphaTest(rasterData, cColor)) {
+            if (!pRasterOp->doAlphaTest(rasterData, cColor)) {
               break;
             }
           }
 
           if (rasterFlags.StencilTest) {
             // Execute stencil test
-            if (!pRasterOp->DoStencilTest(rasterData, depthValue, pDS)) {
+            if (!pRasterOp->doStencilTest(rasterData, depthValue, pDS)) {
               break;
             }
           } else {
@@ -641,16 +641,16 @@ public:
 
           if constexpr (Fog) {
             // Execute fog blend
-            pRasterOp->ApplyFog(rasterData, &cColor, fFog);
+            pRasterOp->applyFog(rasterData, &cColor, fFog);
           }
 
           if (rasterFlags.Blend) {
             // Execute pixel blend
-            pRasterOp->DoBlend(&cColor, pCB);
+            pRasterOp->doBlend(&cColor, pCB);
           }
 
           // Write output color
-          pRasterOp->WriteColor(rasterData, cColor, pCB);
+          pRasterOp->writeColor(rasterData, cColor, pCB);
 
           break;
         }

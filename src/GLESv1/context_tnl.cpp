@@ -15,17 +15,17 @@
 #include "stdafx.h"
 #include "context.hpp"
 
-void CGLContext::ClipPlane(GLenum plane, const VECTOR4 &equation) {
+void GLContext::setClipPlane(GLenum plane, const VECTOR4 &equation) {
   if ((plane - GL_CLIP_PLANE0) >= MAX_CLIPPLANES) {
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::ClipPlane() failed, invalid plane parameter: %d.\r\n",
+        "GLContext::setClipPlane() failed, invalid plane parameter: %d.\r\n",
         plane);
     return;
   }
 
   if (dirtyFlags_.ModelViewInvT44) {
-    this->UpdateModelViewInvT44();
+    this->updateModelViewInvT44();
   }
 
   uint32_t index = (plane - GL_CLIP_PLANE0);
@@ -34,17 +34,17 @@ void CGLContext::ClipPlane(GLenum plane, const VECTOR4 &equation) {
   dirtyFlags_.ClipPlanesCS |= (1 << index);
 }
 
-void CGLContext::DepthRange(floatf zNear, floatf zFar) {
+void GLContext::setDepthRange(floatf zNear, floatf zFar) {
   depthRange_.fNear = Math::TSat(zNear);
   depthRange_.fFar = Math::TSat(zFar);
 
   dirtyFlags_.ScreenXform = 1;
 }
 
-void CGLContext::Viewport(GLint x, GLint y, GLsizei width, GLsizei height) {
+void GLContext::setViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
   if ((width < 0) || (height < 0)) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::Viewport() failed, invalid "
+              "GLContext::setViewport() failed, invalid "
               "width=%d or height=%d parameters.\r\n",
               width, height);
     return;

@@ -14,31 +14,31 @@
 //
 #pragma once
 
-class CBuffer : public CObject {
+class GLBuffer : public Object {
 public:
-  static GLenum Create(CBuffer **ppBuffer);
+  static GLenum Create(GLBuffer **ppBuffer);
 
-  GLenum Initialize(uint32_t size, GLenum usage, const GLvoid *pData);
+  GLenum initialize(uint32_t size, GLenum usage, const GLvoid *pData);
 
-  void CopyData(uint32_t offset, uint32_t size, const GLvoid *pData) {
+  void copyData(uint32_t offset, uint32_t size, const GLvoid *pData) {
     ::memcpy(pBits_ + offset, pData, size);
   }
 
-  GLenum GetParameter(GLenum pname, GLint *pParams);
+  GLenum getParameter(GLenum pname, GLint *pParams);
 
-  const uint8_t *GetBits() const { return pBits_; }
+  const uint8_t *getBits() const { return pBits_; }
 
-  uint32_t GetSize() const { return size_; }
+  uint32_t getSize() const { return size_; }
 
-  GLenum GetUsage() const { return usage_; }
+  GLenum getUsage() const { return usage_; }
 
-  uint32_t GetHandle() const { return dwHandle_; }
+  uint32_t getHandle() const { return dwHandle_; }
 
-  void SetHandle(uint32_t dwHandle) { dwHandle_ = dwHandle; }
+  void setHandle(uint32_t dwHandle) { dwHandle_ = dwHandle; }
 
 private:
-  CBuffer();
-  ~CBuffer();
+  GLBuffer();
+  ~GLBuffer();
 
   uint32_t dwHandle_;
   uint8_t *pBits_;

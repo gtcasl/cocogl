@@ -40,13 +40,13 @@ GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
     return GL_OUT_OF_MEMORY;
   }
 
-  pMatrixStack->AddRef();
+  pMatrixStack->addRef();
 
   // Initialize the object
-  err = pMatrixStack->Initialize(size);
+  err = pMatrixStack->initialize(size);
   if (__glFailed(err)) {
     __safeRelease(pMatrixStack);
-    __glLogError("CMatrixStack::Initialize() failed, err = %d.\r\n", err);
+    __glLogError("CMatrixStack::initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -55,7 +55,7 @@ GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
   return GL_NO_ERROR;
 }
 
-GLenum CMatrixStack::Initialize(uint8_t size) {
+GLenum CMatrixStack::initialize(uint8_t size) {
   assert(size <= 16);
 
   __profileAPI(" - %s()\n", __FUNCTION__);

@@ -17,19 +17,19 @@
 #include "buffer.hpp"
 #include "vertarray.hpp"
 
-GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
+GLenum CInputAssembler::prepareIndices(GLenum type, const GLvoid **ppvIndices,
                                        uint32_t count, uint32_t *pMin,
                                        uint32_t *pMax) {
   assert(ppvIndices);
 
   const GLvoid *pvIndices = *ppvIndices;
-  auto pBufElements = this->GetBufferObject(GL_ELEMENT_ARRAY_BUFFER);
+  auto pBufElements = this->getBufferObject(GL_ELEMENT_ARRAY_BUFFER);
   assert(pBufElements);
 
-  auto pBits = pBufElements->GetBits();
+  auto pBits = pBufElements->getBits();
   if (pBits) {
     uint32_t stride = GLSizeOf(type);
-    uint32_t size = pBufElements->GetSize();
+    uint32_t size = pBufElements->getSize();
     auto offset = static_cast<const uint8_t *>(pvIndices) -
                   static_cast<const uint8_t *>(nullptr);
     if ((offset + stride * count) <= size) {
@@ -82,7 +82,7 @@ GLenum CInputAssembler::PrepareIndices(GLenum type, const GLvoid **ppvIndices,
   break;
 
   default:
-    __glLogError("CGLContext::PrepareIndices() failed, invalid type "
+    __glLogError("GLContext::prepareIndices() failed, invalid type "
                  "parameter: %d.\r\n",
                  type);
     return GL_INVALID_ENUM;

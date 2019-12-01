@@ -98,37 +98,37 @@ int main(int argc, char **argv) {
   parse_args(argc, argv);
 
   // create test
-  CTestBase *test = nullptr;
+  TestBase *test = nullptr;
   switch (testid) {
   case 0:
-    test = new CClearTest();
+    test = new ClearTest();
     break;
   case 1:
-    test = new CLine_Test();
+    test = new LineTest();
     break;
   case 2:
-    test = new CTriangleTest();
+    test = new TriangleTest();
     break;
   case 3:
-    test = new CCubeTest();
+    test = new CubeTest();
     break;
   case 4:
-    test = new CTextureTest();
+    test = new TextureTest();
     break;
   case 5:
-    test = new CSceneTest();
+    test = new SceneTest();
     break;
   case 6:
-    test = new CFogTest();
+    test = new FogTest();
     break;
   case 7:
-    test = new CStencilTest();
+    test = new StencilTest();
     break;
   case 8:
-    test = new CQuadTest();
+    test = new QuadTest();
     break;
   case 9:
-    test = new CDebugTest();
+    test = new DebugTest();
     break;
   default:
     std::cout << "invalid testid=" << testid << std::endl;

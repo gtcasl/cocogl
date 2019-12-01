@@ -14,7 +14,8 @@
 //
 #pragma once
 
-template <uint32_t Format> struct TColorNative {
+template <uint32_t Format> 
+struct TColorNative {
   uint32_t Low;
   uint32_t High;
 
@@ -73,7 +74,7 @@ template <uint32_t Format> struct TColorNative {
     }
   }
 
-  TColorNative<Format> Mul(uint32_t frac) const {
+  TColorNative<Format> multiply(uint32_t frac) const {
     TColorNative<Format> result;
 
     if constexpr (Format == FORMAT_A8) {
@@ -104,7 +105,7 @@ template <uint32_t Format> struct TColorNative {
     return result;
   }
 
-  TColorNative<Format> Lerp(const TColorNative<Format> &c1,
+  TColorNative<Format> lerp(const TColorNative<Format> &c1,
                             uint32_t frac) const {
     TColorNative<Format> result;
 
@@ -142,40 +143,40 @@ template <uint32_t Format> struct TColorNative {
   }
 };
 
-template <uint32_t Compare> 
-inline bool TCompare(uint32_t a, uint32_t b) {
+template <uint32_t compare> 
+inline bool DoCompare(uint32_t a, uint32_t b) {
 
-  if constexpr (Compare == COMPARE_NEVER) {
+  if constexpr (compare == COMPARE_NEVER) {
     __unreferenced(a);
     __unreferenced(b);
     return false;
   }
 
-  if constexpr (Compare == COMPARE_LESS) {
+  if constexpr (compare == COMPARE_LESS) {
     return (a < b);
   }
 
-  if constexpr (Compare == COMPARE_EQUAL) {
+  if constexpr (compare == COMPARE_EQUAL) {
     return (a == b);
   }
 
-  if constexpr (Compare == COMPARE_LEQUAL) {
+  if constexpr (compare == COMPARE_LEQUAL) {
     return (a <= b);
   }
 
-  if constexpr (Compare == COMPARE_GREATER) {
+  if constexpr (compare == COMPARE_GREATER) {
     return (a > b);
   }
 
-  if constexpr (Compare == COMPARE_NOTEQUAL) {
+  if constexpr (compare == COMPARE_NOTEQUAL) {
     return (a != b);
   }
 
-  if constexpr (Compare == COMPARE_GEQUAL) {
+  if constexpr (compare == COMPARE_GEQUAL) {
     return (a >= b);
   }
 
-  if constexpr (Compare == COMPARE_ALWAYS) {
+  if constexpr (compare == COMPARE_ALWAYS) {
     __unreferenced(a);
     __unreferenced(b);
     return true;
@@ -234,12 +235,12 @@ inline int TAddress(int x) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-inline uint32_t TGetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
+inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
                                   fixedRX fV) {
   auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
-      surface.GetBits());
-  uint32_t logWidth = surface.GetLogWidth();
-  uint32_t logHeight = surface.GetLogHeight();
+      surface.getBits());
+  uint32_t logWidth = surface.getLogWidth();
+  uint32_t logHeight = surface.getLogHeight();
 
   uint32_t u = TAddress<AddressU>(fU.data());
   uint32_t v = TAddress<AddressV>(fV.data());
@@ -252,15 +253,15 @@ inline uint32_t TGetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
 }
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-inline TColorNative<Format> TGetTexelColorLnX(const SurfaceDesc &surface,
+inline TColorNative<Format> GetTexelColorLnX(const SurfaceDesc &surface,
                                               fixedRX fU, fixedRX fV) {
   int lerpBits = TFormatInfo<Format>::LERP;
   int lerpMask = (1 << lerpBits) - 1;
 
   auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
-      surface.GetBits());
-  uint32_t logWidth = surface.GetLogWidth();
-  uint32_t logHeight = surface.GetLogHeight();
+      surface.getBits());
+  uint32_t logWidth = surface.getLogWidth();
+  uint32_t logHeight = surface.getLogHeight();
 
   uint32_t v0 = TAddress<AddressV>(fV.data() - (fixedRX::HALF >> logHeight));
   uint32_t v1 = TAddress<AddressV>(fV.data() + (fixedRX::HALF >> logHeight));
@@ -288,59 +289,59 @@ inline TColorNative<Format> TGetTexelColorLnX(const SurfaceDesc &surface,
 
   TColorNative<Format> nc0(c0);
   TColorNative<Format> nc1(c1);
-  nc0 = nc0.Lerp(nc1, alpha);
+  nc0 = nc0.lerp(nc1, alpha);
 
   TColorNative<Format> nc2(c2);
   TColorNative<Format> nc3(c3);
-  nc2 = nc2.Lerp(nc3, alpha);
+  nc2 = nc2.lerp(nc3, alpha);
 
-  return nc0.Lerp(nc2, beta);
+  return nc0.lerp(nc2, beta);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t Filter, uint32_t Format, uint32_t AddressU,
           uint32_t AddressV>
-inline uint32_t TGetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
+inline uint32_t GetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
                                fixedRX fV) {
   if constexpr (Filter == FILTER_NEAREST) {
-    return TGetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV);
+    return GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV);
   }
 
   if constexpr (Filter == FILTER_LINEAR) {
-    return TGetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
+    return GetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
   }
 }
 
 template <uint32_t Filter, uint32_t Format, uint32_t AddressU,
           uint32_t AddressV>
-inline TColorNative<Format> TGetMinFilterX(const SurfaceDesc &surface,
+inline TColorNative<Format> GetMinFilterX(const SurfaceDesc &surface,
                                            fixedRX fU, fixedRX fV) {
   if constexpr (Filter == FILTER_NEAREST) {
     return TColorNative<Format>(
-        TGetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
+        GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
   }
 
   if constexpr (Filter == FILTER_LINEAR) {
-    return TGetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
+    return GetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
   }
 }
 
 template <uint32_t MipFilter, uint32_t MinFilter, uint32_t MagFilter,
           uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
+inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
                                fixedRX fM) {
   if constexpr (MipFilter == FILTER_NONE) {
     if constexpr (MinFilter == MagFilter) {
-      return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
+      return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[0], fU, fV);
     } else {
       auto fJ = fixed16::make(fM.data());
       if (fJ > TConst<fixed16>::One()) {
-        return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
+        return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[0], fU, fV);
       } else {
-        return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(
+        return GetMinFilterN<MagFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[0], fU, fV);
       }
     }
@@ -354,7 +355,7 @@ inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
       int mipLevel = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                      sampler.MaxMipLevel);
 
-      return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
+      return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[mipLevel], fU, fV);
     } else {
       auto fJ = fixed16::make(fM.data());
@@ -362,10 +363,10 @@ inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
         int mipLevel = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                        sampler.MaxMipLevel);
 
-        return TGetMinFilterN<MinFilter, Format, AddressU, AddressV>(
+        return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[mipLevel], fU, fV);
       } else {
-        return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(
+        return GetMinFilterN<MagFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[0], fU, fV);
       }
     }
@@ -387,11 +388,11 @@ inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
           (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
       const TColorNative<Format> c0 =
-          TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
+          GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
               sampler.pMipLevels[mipLevel0], fU, fV);
 
       const TColorNative<Format> c1 =
-          TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
+          GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
               sampler.pMipLevels[mipLevel1], fU, fV);
 
       return c0.Lerp(c1, mipLerp);
@@ -406,16 +407,16 @@ inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
             (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
         const TColorNative<Format> c0 =
-            TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
+            GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
                 sampler.pMipLevels[mipLevel0], fU, fV);
 
         const TColorNative<Format> c1 =
-            TGetMinFilterX<MinFilter, Format, AddressU, AddressV>(
+            GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
                 sampler.pMipLevels[mipLevel1], fU, fV);
 
         return c0.Lerp(c1, mipLerp);
       } else {
-        return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(
+        return GetMinFilterN<MagFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[0], fU, fV);
       }
     }
@@ -425,7 +426,7 @@ inline uint32_t TGetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t EnvMode>
-void TGetTexEnvColorA(Color4 *pInOut, const Color4 &cTexture,
+void GetTexEnvColorA(Color4 *pInOut, const Color4 &cTexture,
                       ColorARGB cEnvColor) {
 
   __unreferenced(cEnvColor);
@@ -452,7 +453,7 @@ void TGetTexEnvColorA(Color4 *pInOut, const Color4 &cTexture,
 }
 
 template <uint32_t EnvMode>
-void TGetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
+void GetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
                         ColorARGB cEnvColor) {
 
   if constexpr (EnvMode == ENVMODE_ADD) {
@@ -491,7 +492,7 @@ void TGetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
 }
 
 template <uint32_t EnvMode>
-void TGetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
+void GetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
                          ColorARGB cEnvColor) {
 
   if constexpr (EnvMode == ENVMODE_ADD) {
@@ -537,7 +538,7 @@ void TGetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t BlendOp>
-void TGetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
+void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
 
   if constexpr (BlendOp == BLEND_ZERO) {
     __unreferenced(cSrc);
@@ -640,7 +641,7 @@ void TGetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t LogicOp>
-uint32_t TLogicOp(uint32_t srcColor, uint32_t dstColor) {
+uint32_t ApplyLogicOp(uint32_t srcColor, uint32_t dstColor) {
 
   if constexpr (LogicOp == LOGICOP_CLEAR) {
     __unreferenced(srcColor);

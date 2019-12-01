@@ -14,7 +14,7 @@
 //
 #pragma once
 
-class CGLSurface : public CObject {
+class GLSurface : public Object {
 public:
   enum {
     ATTRIBUTES_FIRST = GL_SUBPIXEL_BITS,
@@ -25,103 +25,104 @@ public:
   typedef void (*PfnColorFill)(const GLSurfaceDesc &surfDesc, uint32_t value,
                                 uint32_t mask, const Rect &rect);
 
-  static GLenum Create(CGLSurface **ppSurface, const GLSurfaceDesc *pColorDesc,
+  static GLenum Create(GLSurface **ppSurface, const GLSurfaceDesc *pColorDesc,
                        const GLSurfaceDesc *pDepthStencilDesc);
 
-  void GetColorDesc(GLSurfaceDesc *pSurfDesc) const {
+  void getColorDesc(GLSurfaceDesc *pSurfDesc) const {
     assert(pSurfDesc);
-    *pSurfDesc = pColorDesc_;
+    *pSurfDesc = colorDesc_;
   }
 
-  void GetDepthStencilDesc(GLSurfaceDesc *pSurfDesc) const {
+  void getDepthStencilDesc(GLSurfaceDesc *pSurfDesc) const {
     assert(pSurfDesc);
-    *pSurfDesc = pDepthStencilDesc_;
+    *pSurfDesc = depthStencilDesc_;
   }
 
-  void GetRect(Rect *pRect) const {
+  void getRect(Rect *pRect) const {
     assert(pRect);
     pRect->left = 0;
     pRect->top = 0;
-    pRect->right = pColorDesc_.Width;
-    pRect->bottom = pColorDesc_.Height;
+    pRect->right = colorDesc_.Width;
+    pRect->bottom = colorDesc_.Height;
   }
 
-  uint32_t GetColorFormat() const { return pColorDesc_.Format; }
+  uint32_t getColorFormat() const { return colorDesc_.Format; }
 
-  uint32_t GetDepthStencilFormat() const { return pDepthStencilDesc_.Format; }
+  uint32_t getDepthStencilFormat() const { return depthStencilDesc_.Format; }
 
-  uint32_t GetAlignment() const { return 1; }
+  uint32_t getAlignment() const { return 1; }
 
-  GLint GetAttribute(GLint name) const {
+  GLint getAttribute(GLint name) const {
     assert(name >= ATTRIBUTES_FIRST && name <= ATTRIBUTES_LAST);
     return attributes_[name - ATTRIBUTES_FIRST];
   }
 
-  void SetAttribute(GLint name, GLint value) {
+  void setAttribute(GLint name, GLint value) {
     assert(name >= ATTRIBUTES_FIRST && name <= ATTRIBUTES_LAST);
     attributes_[name - ATTRIBUTES_FIRST] = value;
   }
 
-  uint32_t GetWidth() const { return pColorDesc_.Width; }
+  uint32_t getWidth() const { return colorDesc_.Width; }
 
-  uint32_t GetHeight() const { return pColorDesc_.Height; }
+  uint32_t getHeight() const { return colorDesc_.Height; }
 
-  const GLSurfaceDesc &GetColorDesc() const { return pColorDesc_; }
+  const GLSurfaceDesc &getColorDesc() const { return colorDesc_; }
 
-  const GLSurfaceDesc &GetDepthStencilDesc() const {
-    return pDepthStencilDesc_;
+  const GLSurfaceDesc &getDepthStencilDesc() const {
+    return depthStencilDesc_;
   }
 
-  GLenum Update(const GLSurfaceDesc *pColorDesc,
+  GLenum update(const GLSurfaceDesc *pColorDesc,
                 const GLSurfaceDesc *pDepthStencilDesc) {
-    return this->Initialize(pColorDesc, pDepthStencilDesc);
+    return this->initialize(pColorDesc, pDepthStencilDesc);
   }
 
-  void ConvertColor(void *pOut, const Color4 &color) const {
+  void convertColor(void *pOut, const Color4 &color) const {
     (pfnColorConv_)(pOut, color);
   }
 
-  void ClearColor(uint32_t colorValue, uint32_t colorMask, const Rect &rect) {
-    (pfnColorFill_)(pColorDesc_, colorValue, colorMask, rect);
+  void clearColor(uint32_t colorValue, uint32_t colorMask, const Rect &rect) {
+    (pfnColorFill_)(colorDesc_, colorValue, colorMask, rect);
   }
 
-  void ClearDepth(uint32_t depthValue, uint32_t depthMask, const Rect &rect) {
-    (pfnDepthStencilFill_)(pDepthStencilDesc_, depthValue, depthMask, rect);
+  void clearDepth(uint32_t depthValue, uint32_t depthMask, const Rect &rect) {
+    (pfnDepthStencilFill_)(depthStencilDesc_, depthValue, depthMask, rect);
   }
 
-  void ClearStencil(uint32_t clearStencil, uint32_t stencilMask,
+  void clearStencil(uint32_t clearStencil, uint32_t stencilMask,
                     const Rect &rect) {
     uint32_t value = clearStencil << 16;
     uint32_t mask = stencilMask << 16;
-    (pfnDepthStencilFill_)(pDepthStencilDesc_, value, mask, rect);
+    (pfnDepthStencilFill_)(depthStencilDesc_, value, mask, rect);
   }
 
-  void ClearDepthStencil(uint32_t depthValue, uint32_t depthMask,
+  void clearDepthStencil(uint32_t depthValue, uint32_t depthMask,
                          uint32_t stencilValue, uint32_t stencilMask,
                          const Rect &rect) {
     uint32_t value = 0xff000000 | (stencilValue << 16) | depthValue;
     uint32_t mask = 0xff000000 | (stencilMask << 16) | depthMask;
-    (pfnDepthStencilFill_)(pDepthStencilDesc_, value, mask, rect);
+    (pfnDepthStencilFill_)(depthStencilDesc_, value, mask, rect);
   }
 
-  GLenum SaveBitmap(const char *filename);
+  GLenum saveBitmap(const char *filename);
 
 private:
   enum {
     SUBPIXEL_BITS = 4,
   };
 
-  CGLSurface();
-  ~CGLSurface();
+  GLSurface();
+  
+  ~GLSurface();
 
-  GLenum Initialize(const GLSurfaceDesc *pColorDesc,
+  GLenum initialize(const GLSurfaceDesc *pColorDesc,
                     const GLSurfaceDesc *pDepthStencilDesc);
 
   template <class T>
-  static void TColorFill(const GLSurfaceDesc &surfDesc, uint32_t value,
+  static void colorFill(const GLSurfaceDesc &surfDesc, uint32_t value,
                          uint32_t mask, const Rect &rect);
 
-  static void ColorFillNoop(const GLSurfaceDesc &surfDesc, uint32_t value,
+  static void colorFillNoop(const GLSurfaceDesc &surfDesc, uint32_t value,
                             uint32_t mask, const Rect &rect) {
     __unreferenced(surfDesc);
     __unreferenced(value);
@@ -129,7 +130,7 @@ private:
     __unreferenced(rect);
   }
 
-  static void ColorConvNoop(void *pColorOut, const Color4 &color) {
+  static void colorConvNoop(void *pColorOut, const Color4 &color) {
     __unreferenced(pColorOut);
     __unreferenced(color);
   }
@@ -141,6 +142,6 @@ private:
   PfnColorFill pfnColorFill_;
   PfnColorFill pfnDepthStencilFill_;
 
-  GLSurfaceDesc pColorDesc_;
-  GLSurfaceDesc pDepthStencilDesc_;
+  GLSurfaceDesc colorDesc_;
+  GLSurfaceDesc depthStencilDesc_;
 };

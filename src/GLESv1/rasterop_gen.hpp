@@ -14,7 +14,7 @@
 //
 #pragma once
 
-typedef bool (*PfnCompare)(uint32_t a, uint32_t b);
+typedef bool (*Pfncompare)(uint32_t a, uint32_t b);
 
 typedef void (*PfnGetTexelColor)(Color4 *pOut, const SurfaceDesc &surface,
                                   fixedRX fU, fixedRX fV);
@@ -38,54 +38,54 @@ public:
   CGenericRasterOp(const RASTERID &rasterID);
   ~CGenericRasterOp();
 
-  PfnScanline GetScanline() const { return pfnScanline_; }
+  PfnScanline getScanline() const { return pfnScanline_; }
 
-  uint32_t GetCbSize() const { return sizeof(PfnScanline); }
+  uint32_t getCbSize() const { return sizeof(PfnScanline); }
 
-  const RASTERID &GetRasterID() const { return rasterID_; }
+  const RASTERID &getRasterID() const { return rasterID_; }
 
-  uint8_t GetColorStride() const { return colorStride_; }
+  uint8_t getColorStride() const { return colorStride_; }
 
-  uint8_t GetDepthStencilStride() const { return depthStencilStride_; }
+  uint8_t getDepthStencilStride() const { return depthStencilStride_; }
 
-  void GetSamplerColor(Color4 *pOut, uint32_t unit,
+  void getSamplerColor(Color4 *pOut, uint32_t unit,
                        const RasterData &rasterData, fixedRX fU,
                        fixedRX fV) const {
     (samplers_[unit].pfnGetTexelColorMag)(
         pOut, rasterData.Samplers[unit].pMipLevels[0], fU, fV);
   }
 
-  void GetSamplerColor(Color4 *pOut, uint32_t unit,
+  void getSamplerColor(Color4 *pOut, uint32_t unit,
                        const RasterData &rasterData, fixedRX fU, fixedRX fV,
                        fixedRX fM) const;
 
-  void GetTexEnvColor(Color4 *pInOut, const Color4 &in, uint32_t unit,
+  void getTexEnvColor(Color4 *pInOut, const Color4 &in, uint32_t unit,
                       const RasterData &rasterData) const {
     (samplers_[unit].pfnGetTexEnvColor)(
         pInOut, in, rasterData.Samplers[unit].cEnvColor_MaxMipLevel);
   }
 
-  bool DoAlphaTest(const RasterData &rasterData, const Color4 &cColor) const {
+  bool doAlphaTest(const RasterData &rasterData, const Color4 &cColor) const {
     return (pfnAlphaTest_)(cColor.a, rasterData.AlphaRef);
   }
 
-  bool DoStencilTest(const RasterData &rasterData, uint32_t depthValue,
+  bool doStencilTest(const RasterData &rasterData, uint32_t depthValue,
                      void *pDSBuffer) const;
 
-  bool DoDepthTest(uint32_t depthValue, void *pDSBuffer) const {
+  bool doDepthTest(uint32_t depthValue, void *pDSBuffer) const {
     assert(pDSBuffer);
     return (pfnDepthTest_)(depthValue,
                            *reinterpret_cast<const uint16_t *>(pDSBuffer));
   }
 
-  static void ApplyFog(const RasterData &rasterData, Color4 *pInOut,
+  static void applyFog(const RasterData &rasterData, Color4 *pInOut,
                        fixedRX fFactor);
 
-  void DoBlend(Color4 *pInOut, const uint8_t *pCB) const {
+  void doBlend(Color4 *pInOut, const uint8_t *pCB) const {
     (pfnBlend_)(pInOut, pCB);
   }
 
-  void WriteColor(const RasterData &rasterData, const Color4 &cColor,
+  void writeColor(const RasterData &rasterData, const Color4 &cColor,
                   uint8_t *pCB) const {
     (pfnWriteColor_)(rasterData, cColor, pCB);
   }
@@ -103,14 +103,14 @@ private:
           pfnGetTexEnvColor(nullptr) {}
   };
 
-  GLenum Initialize();
+  GLenum initialize();
 
-  void SelectDepthStencilFunc();
-  void SelectSamplerFunc();
-  void SelectTexEnvFunc();
-  void SelectAlphaTestFunc();
-  void SelectBlendFunc();
-  void SelectWriteColorFunc();
+  void selectDepthStencilFunc();
+  void selectSamplerFunc();
+  void selectTexEnvFunc();
+  void selectAlphaTestFunc();
+  void selectBlendFunc();
+  void selectWriteColorFunc();
 
   PfnScanline pfnScanline_;
 
@@ -118,9 +118,9 @@ private:
 
   _Sampler samplers_[MAX_TEXTURES];
 
-  PfnCompare pfnAlphaTest_;
-  PfnCompare pfnDepthTest_;
-  PfnCompare pfnStencilTest_;
+  Pfncompare pfnAlphaTest_;
+  Pfncompare pfnDepthTest_;
+  Pfncompare pfnStencilTest_;
   PfnBlend pfnBlend_;
   PfnWriteColor pfnWriteColor_;
 

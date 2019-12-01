@@ -15,7 +15,7 @@
 #pragma once
 
 template <eClipFlags ClipPlane>
-inline uint32_t CRasterizer::TClipTriangle(uint32_t nNumVertices,
+inline uint32_t CRasterizer::clipTriangle(uint32_t nNumVertices,
                                            uint32_t *pSrc, uint32_t *pDst,
                                            uint32_t *pTmp) {
   auto pvClipPos =
@@ -48,7 +48,7 @@ inline uint32_t CRasterizer::TClipTriangle(uint32_t nNumVertices,
       }
 
       // Compute the intersecting vertex
-      this->InterpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
+      this->interpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
 
       // Add the new vertex to the current list
       assert(nClipVertices < CLIP_BUFFER_SIZE);
@@ -72,7 +72,7 @@ inline uint32_t CRasterizer::TClipTriangle(uint32_t nNumVertices,
       }
 
       // Compute the intersecting vertex
-      this->InterpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
+      this->interpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
 
       // Add the new vertex to the current list
       assert(nClipVertices < CLIP_BUFFER_SIZE);
@@ -87,7 +87,7 @@ inline uint32_t CRasterizer::TClipTriangle(uint32_t nNumVertices,
 
 template <class T>
 inline GLenum
-CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
+CRasterizer::renderIndexedPrimitive(GLenum mode, const T *pIndices,
                                      uint32_t count, uint32_t startVertex) {
   assert(pIndices);
 
@@ -97,7 +97,7 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
       uint32_t i0 = *pIndices++ - startVertex;
       uint32_t i1 = *pIndices++ - startVertex;
       uint32_t i2 = *pIndices++ - startVertex;
-      this->DrawTriangle(i0, i1, i2);
+      this->drawTriangle(i0, i1, i2);
     }
     break;
 
@@ -109,10 +109,10 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
 
       for (auto pEnd2 = pEnd - 1; pIndices < pEnd2;) {
         uint32_t i2 = *pIndices++ - startVertex;
-        this->DrawTriangle(i0, i1, i2);
+        this->drawTriangle(i0, i1, i2);
 
         uint32_t i3 = *pIndices++ - startVertex;
-        this->DrawTriangle(i2, i1, i3);
+        this->drawTriangle(i2, i1, i3);
 
         i0 = i2;
         i1 = i3;
@@ -120,7 +120,7 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
 
       if (pIndices < pEnd) {
         uint32_t i2 = *pIndices++ - startVertex;
-        this->DrawTriangle(i0, i1, i2);
+        this->drawTriangle(i0, i1, i2);
       }
     }
     break;
@@ -133,7 +133,7 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
 
       for (; pIndices < pEnd;) {
         uint32_t i1 = *pIndices++ - startVertex;
-        this->DrawTriangle(is, i0, i1);
+        this->drawTriangle(is, i0, i1);
         i0 = i1;
       }
     }
@@ -143,7 +143,7 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
     for (auto pEnd = pIndices + count - 1; pIndices < pEnd;) {
       uint32_t i0 = *pIndices++ - startVertex;
       uint32_t i1 = *pIndices++ - startVertex;
-      this->DrawLine(i0, i1);
+      this->drawLine(i0, i1);
     }
     break;
 
@@ -154,7 +154,7 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
 
       for (; pIndices < pEnd;) {
         uint32_t i1 = *pIndices++ - startVertex;
-        this->DrawLine(i0, i1);
+        this->drawLine(i0, i1);
         i0 = i1;
       }
     }
@@ -168,23 +168,23 @@ CRasterizer::TRenderIndexedPrimitive(GLenum mode, const T *pIndices,
 
       for (; pIndices < pEnd;) {
         uint32_t i1 = *pIndices++ - startVertex;
-        this->DrawLine(i0, i1);
+        this->drawLine(i0, i1);
         i0 = i1;
       }
 
-      this->DrawLine(i0, is);
+      this->drawLine(i0, is);
     }
     break;
 
   case GL_POINTS:
     for (auto pEnd = pIndices + count; pIndices < pEnd;) {
       uint32_t i0 = *pIndices++ - startVertex;
-      this->DrawPoint(i0);
+      this->drawPoint(i0);
     }
     break;
 
   default:
-    __glLogError("CGLContext::RenderPrimitive() failed, invalid mode "
+    __glLogError("GLContext::renderPrimitive() failed, invalid mode "
                  "parameter: %d.\r\n",
                  mode);
     return GL_INVALID_ENUM;

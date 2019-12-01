@@ -14,24 +14,27 @@
 //
 #pragma once
 
-class CBuffer;
+class GLBuffer;
 struct VertexDecoder;
 
 struct VertexArray {
   eVertexFormat Format;
   uint32_t Stride;
   const void *pPointer;
-  CBuffer *pBuffer;
+  GLBuffer *pBuffer;
 
   VertexArray()
-      : Format(VERTEX_UNKNOWN), Stride(0), pPointer(nullptr), pBuffer(nullptr) {
-  }
+    : Format(VERTEX_UNKNOWN)
+    , Stride(0)
+    , pPointer(nullptr)
+    , pBuffer(nullptr) 
+  {}
 
   ~VertexArray() {}
 
-  uint32_t GetBufferHandle() const;
+  uint32_t getBufferHandle() const;
 
-  GLenum Prepare(VertexDecoder *pDecoder, int first, uint32_t count);
+  GLenum prepare(VertexDecoder *pDecoder, int first, uint32_t count);
 };
 
 struct VertexDecoder {

@@ -17,33 +17,34 @@
 #include "context.hpp"
 #include "surface.hpp"
 
-class CConfig;
+class _EGConfig;
 
-class CDisplay : public CObject {
+class _EGLDisplay : public Object {
 public:
-  static EGLint Create(CDisplay **ppDisplay, EGLNativeDisplayType hNative,
-                       CHandleTable *pHandles);
+  static EGLint Create(_EGLDisplay **ppDisplay, 
+                       EGLNativeDisplayType hNative,
+                       HandleTable *pHandles);
 
-  EGLint Initialize(EGLint *pMajor, EGLint *pMinor);
+  EGLint initialize(EGLint *pMajor, EGLint *pMinor);
 
-  EGLint QueryString(const char **plpValue, EGLint name);
+  EGLint queryString(const char **plpValue, EGLint name);
 
-  EGLint ChooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
+  EGLint chooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
                       EGLint config_size, EGLint *pNum_config);
 
-  EGLNativeDisplayType GetNativeHandle() const { return hNative_; }
+  auto getNativeHandle() const { return hNative_; }
 
-  bool IsInitialized() const { return bInitialized_; }
+  bool isInitialized() const { return bInitialized_; }
 
 private:
-  CDisplay(EGLNativeDisplayType hDC, CHandleTable *pHandles);
-  ~CDisplay();
+  _EGLDisplay(EGLNativeDisplayType hDC, HandleTable *pHandles);
+  ~_EGLDisplay();
 
-  EGLint CreateConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
+  EGLint createConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
                       EGLint depth, EGLint stencil);
 
-  CHandleTable *handles_;
+  HandleTable *handles_;
   EGLNativeDisplayType hNative_;
-  std::list<CConfig *> configs_;
+  std::list<_EGLConfig *> configs_;
   bool bInitialized_;
 };

@@ -60,7 +60,7 @@ GLenum COptimizedRasterOp::Create(IRasterOp **ppRasterOp,
         return GL_OUT_OF_MEMORY;
       }
 
-      pRasterOp->AddRef();
+      pRasterOp->addRef();
       *ppRasterOp = pRasterOp;
       return GL_NO_ERROR;
     }

@@ -31,7 +31,7 @@ private:
 #ifndef COCOGL_API_PROFILE
 #define __profileAPI(func, ...)
 #else
-#define __profileAPI(func, ...) CAutoLog profiler(g_logger, func, __VA_ARGS__);
+#define __profileAPI(func, ...) AutoLog profiler(g_logger, func, __VA_ARGS__);
 #endif
 
 inline bool __glFailed(uint32_t err) { return (err != GL_NO_ERROR); }
@@ -39,12 +39,11 @@ inline bool __glFailed(uint32_t err) { return (err != GL_NO_ERROR); }
 inline bool __glSucceeded(uint32_t err) { return (err == GL_NO_ERROR); }
 
 #ifndef NDEBUG
-#define __glLog(...) g_logger.Write(__VA_ARGS__);
+#define __glLog(...) g_logger.write(__VA_ARGS__);
 
 #define __glLogError(...)                                                      \
-  g_logger.Write("*** Error in file %s at line %d.\r\n", __FILE__,     \
-                 __LINE__);                                                    \
-  g_logger.Write(__VA_ARGS__);                                                 \
+  g_logger.write("*** Error in file %s at line %d.\r\n", __FILE__, __LINE__);  \
+  g_logger.write(__VA_ARGS__);                                                 \
   assert(false);
 #else
 #define __glLog(...)
@@ -52,7 +51,7 @@ inline bool __glSucceeded(uint32_t err) { return (err == GL_NO_ERROR); }
 #endif
 #define __glError(error, ...)                                                  \
   __glLogError(__VA_ARGS__);                                                   \
-  this->SetError(error);
+  this->setError(error);
 
 void memset16(void *dst, int fill, int cwCount);
 void memset32(void *dst, int fill, int cwCount);
@@ -74,10 +73,10 @@ GLenum ToPixelFormat(ePixelFormat *pOut, uint32_t *pBPP, GLenum format,
 
 GLenum ToPixelFormat(ePixelFormat *pOut, GLint format);
 
-eCompare Reverse(eCompare compare);
+ecompare Reverse(ecompare compare);
 
-uint32_t CompareFuncFromEnum(GLenum func);
-GLenum EnumFromCompareFunc(uint32_t func);
+uint32_t compareFuncFromEnum(GLenum func);
+GLenum EnumFromcompareFunc(uint32_t func);
 
 uint32_t StencilOpFromEnum(GLenum op);
 GLenum EnumFromStencilOp(uint32_t op);

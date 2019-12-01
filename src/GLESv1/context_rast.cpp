@@ -15,7 +15,7 @@
 #include "stdafx.h"
 #include "context.hpp"
 
-void CGLContext::ShadeModel(GLenum mode) {
+void GLContext::setShadeModel(GLenum mode) {
   switch (mode) {
   case GL_FLAT:
   case GL_SMOOTH:
@@ -25,16 +25,16 @@ void CGLContext::ShadeModel(GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::ShadeMode() failed, invalid mode parameter: %d.\r\n",
+        "GLContext::setShadeMode() failed, invalid mode parameter: %d.\r\n",
         mode);
     return;
   }
 }
 
-void CGLContext::Scissor(GLint x, GLint y, GLsizei width, GLsizei height) {
+void GLContext::setScissor(GLint x, GLint y, GLsizei width, GLsizei height) {
   if ((width < 0) || (height < 0)) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::Scissor() failed, invalid "
+              "GLContext::setScissor() failed, invalid "
               "width=%d or height=%d parameters.\r\n",
               width, height);
     return;
@@ -48,21 +48,21 @@ void CGLContext::Scissor(GLint x, GLint y, GLsizei width, GLsizei height) {
   dirtyFlags_.ScissorRECT = 1;
 }
 
-void CGLContext::SampleCoverage(floatf value, GLboolean invert) {
+void GLContext::setSampleCoverage(floatf value, GLboolean invert) {
   sampleCoverage_.fValue = Math::TSat(value);
   sampleCoverage_.bInvert = invert ? true : false;
 }
 
-void CGLContext::PolygonOffset(floatf factor, floatf units) {
+void GLContext::setPolygonOffset(floatf factor, floatf units) {
   polygonOffset_.fFactor = factor;
   polygonOffset_.fUnits = units;
 }
 
-void CGLContext::PointSize(floatf size) {
+void GLContext::setPointSize(floatf size) {
   if (size <= fZERO) {
     __glError(
         GL_INVALID_VALUE,
-        "CGLContext::PointSize() failed, invalid size parameter: %d.\r\n",
+        "GLContext::setPointSize() failed, invalid size parameter: %d.\r\n",
         size);
     return;
   }
@@ -70,11 +70,11 @@ void CGLContext::PointSize(floatf size) {
   fPointSize_ = size;
 }
 
-void CGLContext::LineWidth(floatf width) {
+void GLContext::setLineWidth(floatf width) {
   if (width <= fZERO) {
     __glError(
         GL_INVALID_VALUE,
-        "CGLContext::LineWidth() failed, invalid width parameter: %d.\r\n",
+        "GLContext::setLineWidth() failed, invalid width parameter: %d.\r\n",
         width);
     return;
   }
@@ -82,7 +82,7 @@ void CGLContext::LineWidth(floatf width) {
   fLineWidth_ = width;
 }
 
-void CGLContext::AlphaFunc(GLenum func, floatf ref) {
+void GLContext::setAlphaFunc(GLenum func, floatf ref) {
   switch (func) {
   case GL_NEVER:
   case GL_LESS:
@@ -92,7 +92,7 @@ void CGLContext::AlphaFunc(GLenum func, floatf ref) {
   case GL_NOTEQUAL:
   case GL_GEQUAL:
   case GL_ALWAYS:
-    rasterStates_.AlphaFunc = CompareFuncFromEnum(func);
+    rasterStates_.AlphaFunc = compareFuncFromEnum(func);
     rasterData_.AlphaRef =
         static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(ref)));
     break;
@@ -100,13 +100,13 @@ void CGLContext::AlphaFunc(GLenum func, floatf ref) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::AlphaFunc() failed, invalid func parameter: %d.\r\n",
+        "GLContext::setAlphaFunc() failed, invalid func parameter: %d.\r\n",
         func);
     return;
   }
 }
 
-void CGLContext::StencilFunc(GLenum func, GLint ref, GLuint mask) {
+void GLContext::setStencilFunc(GLenum func, GLint ref, GLuint mask) {
   switch (func) {
   case GL_NEVER:
   case GL_LESS:
@@ -116,7 +116,7 @@ void CGLContext::StencilFunc(GLenum func, GLint ref, GLuint mask) {
   case GL_NOTEQUAL:
   case GL_GEQUAL:
   case GL_ALWAYS:
-    rasterStates_.StencilFunc = CompareFuncFromEnum(func);
+    rasterStates_.StencilFunc = compareFuncFromEnum(func);
     rasterData_.StencilRef = static_cast<uint8_t>(ref);
     rasterData_.StencilMask = static_cast<uint8_t>(mask);
     break;
@@ -124,13 +124,13 @@ void CGLContext::StencilFunc(GLenum func, GLint ref, GLuint mask) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::StencilFunc() failed, invalid func parameter: %d.\r\n",
+        "GLContext::setStencilFunc() failed, invalid func parameter: %d.\r\n",
         func);
     return;
   }
 }
 
-void CGLContext::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
+void GLContext::setStencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
 #ifndef NDEBUG
   static const char *op_names[3] = {"fail", "zfail", "zpass"};
 #endif
@@ -152,7 +152,7 @@ void CGLContext::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
     default:
       __glError(
           GL_INVALID_VALUE,
-          "CGLContext::StencilOp() failed, invalid %s parameter: %d.\r\n",
+          "GLContext::setStencilOp() failed, invalid %s parameter: %d.\r\n",
           op_names[i], op);
       return;
     }
@@ -163,7 +163,7 @@ void CGLContext::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
   rasterStates_.StencilZPass = results[2];
 }
 
-void CGLContext::DepthFunc(GLenum func) {
+void GLContext::setDepthFunc(GLenum func) {
   switch (func) {
   case GL_NEVER:
   case GL_LESS:
@@ -173,19 +173,19 @@ void CGLContext::DepthFunc(GLenum func) {
   case GL_NOTEQUAL:
   case GL_GEQUAL:
   case GL_ALWAYS:
-    rasterStates_.DepthFunc = CompareFuncFromEnum(func);
+    rasterStates_.DepthFunc = compareFuncFromEnum(func);
     break;
 
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::DepthFunc() failed, invalid func parameter: %d.\r\n",
+        "GLContext::setDepthFunc() failed, invalid func parameter: %d.\r\n",
         func);
     return;
   }
 }
 
-void CGLContext::BlendFunc(GLenum sfactor, GLenum dfactor) {
+void GLContext::setBlendFunc(GLenum sfactor, GLenum dfactor) {
   switch (sfactor) {
   case GL_ZERO:
   case GL_ONE:
@@ -201,7 +201,7 @@ void CGLContext::BlendFunc(GLenum sfactor, GLenum dfactor) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              "CGLContext::BlendFunc() failed, invalid "
+              "GLContext::setBlendFunc() failed, invalid "
               "sfactor parameter: %d.\r\n",
               sfactor);
     return;
@@ -221,14 +221,14 @@ void CGLContext::BlendFunc(GLenum sfactor, GLenum dfactor) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              "CGLContext::BlendFunc() failed, invalid "
+              "GLContext::setBlendFunc() failed, invalid "
               "dfactor parameter: %d.\r\n",
               dfactor);
     return;
   }
 }
 
-void CGLContext::LogicOp(GLenum opcode) {
+void GLContext::setLogicOp(GLenum opcode) {
   switch (opcode) {
   case GL_CLEAR:
   case GL_AND:
@@ -252,7 +252,7 @@ void CGLContext::LogicOp(GLenum opcode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::LogicOp() failed, invalid opcode parameter: %d.\r\n",
+        "GLContext::setLogicOp() failed, invalid opcode parameter: %d.\r\n",
         opcode);
     return;
   }

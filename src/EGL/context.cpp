@@ -17,15 +17,15 @@
 #include "display.hpp"
 #include "surface.hpp"
 
-CEGLContext::CEGLContext(CDisplay *pDisplay, CConfig *pConfig) {
+_EGLContext::_EGLContext(_EGLDisplay *pDisplay, _EGLConfig *pConfig) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(pDisplay);
-  pDisplay->AddRef();
+  pDisplay->addRef();
   pDisplay_ = pDisplay;
 
   assert(pConfig);
-  pConfig->AddRef();
+  pConfig->addRef();
   pConfig_ = pConfig;
 
   pSurfDraw_ = nullptr;
@@ -34,7 +34,7 @@ CEGLContext::CEGLContext(CDisplay *pDisplay, CConfig *pConfig) {
   glContext_ = nullptr;
 }
 
-CEGLContext::~CEGLContext() {
+_EGLContext::~_EGLContext() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (glContext_) {
@@ -47,37 +47,39 @@ CEGLContext::~CEGLContext() {
   __safeRelease(pDisplay_);
 }
 
-EGLint CEGLContext::Create(CEGLContext **ppContext, CDisplay *pDisplay,
-                           CConfig *pConfig, CEGLContext *pCtxShared) {
+EGLint _EGLContext::Create(_EGLContext **ppGLContext, 
+                           _EGLDisplay *pDisplay,
+                           _EGLConfig *pConfig, 
+                           _EGLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
 
-  assert(pDisplay && pConfig && ppContext);
+  assert(pDisplay && pConfig && ppGLContext);
 
   // Create a new context object
-  auto pContext = new CEGLContext(pDisplay, pConfig);
-  if (nullptr == pContext) {
-    __eglLogError("CEGLContext allocation failed, out of memory.\r\n");
+  auto pGLContext = new _EGLContext(pDisplay, pConfig);
+  if (nullptr == pGLContext) {
+    __eglLogError("EGLGLContext allocation failed, out of memory.\r\n");
     return EGL_BAD_ALLOC;
   }
 
-  pContext->AddRef();
+  pGLContext->addRef();
 
   // Initialize the context
-  err = pContext->Initialize(pCtxShared);
+  err = pGLContext->initialize(pCtxShared);
   if (__eglFailed(err)) {
-    __safeRelease(pContext);
-    __eglLogError("CEGLContext::Initialize() failed, err = %d.\r\n", err);
+    __safeRelease(pGLContext);
+    __eglLogError("GLContext::initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
-  *ppContext = pContext;
+  *ppGLContext = pGLContext;
 
   return EGL_SUCCESS;
 }
 
-EGLint CEGLContext::Initialize(CEGLContext *pCtxShared) {
+EGLint _EGLContext::initialize(_EGLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
@@ -91,19 +93,19 @@ EGLint CEGLContext::Initialize(CEGLContext *pCtxShared) {
   }
 
   if (__eglFailed(err)) {
-    __eglLogError("__glCreateContext() failed, err = %d.\r\n", err);
+    __eglLogError("__glCreateGLContext() failed, err = %d.\r\n", err);
     return err;
   }
 
   return EGL_SUCCESS;
 }
 
-EGLint CEGLContext::GetAttribute(EGLint name, EGLint *pValue) {
+EGLint _EGLContext::getAttribute(EGLint name, EGLint *pValue) {
   EGLint value;
 
   switch (name) {
   case EGL_CONFIG_ID:
-    value = pConfig_->GetAttribute(EGL_CONFIG_ID);
+    value = pConfig_->getAttribute(EGL_CONFIG_ID);
     break;
 
   default:
@@ -118,26 +120,27 @@ EGLint CEGLContext::GetAttribute(EGLint name, EGLint *pValue) {
   return EGL_SUCCESS;
 }
 
-void CEGLContext::SetBindings(std::thread::id dwThreadID,
-                              CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead) {
+void _EGLContext::setBindings(std::thread::id dwThreadID,
+                              _EGLSurface *pSurfDraw, 
+                              _EGLSurface *pSurfRead) {
   dwThreadID_ = dwThreadID;
 
   if (pSurfDraw) {
-    pSurfDraw->AddRef();
+    pSurfDraw->addRef();
   }
 
   if (pSurfDraw_) {
-    pSurfDraw_->Release();
+    pSurfDraw_->release();
   }
 
   pSurfDraw_ = pSurfDraw;
 
   if (pSurfRead) {
-    pSurfRead->AddRef();
+    pSurfRead->addRef();
   }
 
   if (pSurfRead_) {
-    pSurfRead_->Release();
+    pSurfRead_->release();
   }
 
   pSurfRead_ = pSurfRead;

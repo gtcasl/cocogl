@@ -68,7 +68,7 @@ inline int CullSign(float x0, float y0, float w0, float x1, float y1, float w1,
   return 0;
 }
 
-bool CRasterizer::CullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
+bool CRasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   bool bIsCulled;
 
   CullStates cullStates = cullStates_;
@@ -115,7 +115,7 @@ bool CRasterizer::CullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   return true;
 }
 
-void CRasterizer::RasterClippedLine(uint32_t i0, uint32_t i1,
+void CRasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
                                     uint32_t clipUnion) {
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
@@ -185,31 +185,31 @@ void CRasterizer::RasterClippedLine(uint32_t i0, uint32_t i1,
           continue;
         }
 
-        this->InterpolateVertex(iTo, iFrom, fDistA, fDistB, iNext);
+        this->interpolateVertex(iTo, iFrom, fDistA, fDistB, iNext);
         iTo = iNext++;
       } else if (fDistB < fZERO) {
         continue;
       }
 
-      this->InterpolateVertex(iFrom, iTo, fDistB, fDistA, iNext);
+      this->interpolateVertex(iFrom, iTo, fDistB, fDistA, iNext);
       iFrom = iNext++;
     }
   }
 
   // Transform clipped vertices back to screen space
   if (pwFlags[iFrom] & CLIPPING_MASK) {
-    this->XformScreenSpace(&pvScreenPos[iFrom], &pvClipPos[iFrom], 1);
+    this->transformScreenSpace(&pvScreenPos[iFrom], &pvClipPos[iFrom], 1);
   }
 
   if (pwFlags[iTo] & CLIPPING_MASK) {
-    this->XformScreenSpace(&pvScreenPos[iTo], &pvClipPos[iTo], 1);
+    this->transformScreenSpace(&pvScreenPos[iTo], &pvClipPos[iTo], 1);
   }
 
   // Raster the resulting line
-  this->RasterLine(iFrom, iTo);
+  this->rasterLine(iFrom, iTo);
 }
 
-void CRasterizer::RasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
+void CRasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
                                         uint32_t clipUnion) {
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
@@ -237,32 +237,32 @@ void CRasterizer::RasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
         __no_default;
 
       case CLIP_LEFT:
-        nNumVertices = this->TClipTriangle<CLIP_LEFT>(nNumVertices, pSrc, pDst,
+        nNumVertices = this->clipTriangle<CLIP_LEFT>(nNumVertices, pSrc, pDst,
                                                       &iTmpVertices);
         break;
 
       case CLIP_RIGHT:
-        nNumVertices = this->TClipTriangle<CLIP_RIGHT>(nNumVertices, pSrc, pDst,
+        nNumVertices = this->clipTriangle<CLIP_RIGHT>(nNumVertices, pSrc, pDst,
                                                        &iTmpVertices);
         break;
 
       case CLIP_TOP:
-        nNumVertices = this->TClipTriangle<CLIP_TOP>(nNumVertices, pSrc, pDst,
+        nNumVertices = this->clipTriangle<CLIP_TOP>(nNumVertices, pSrc, pDst,
                                                      &iTmpVertices);
         break;
 
       case CLIP_BOTTOM:
-        nNumVertices = this->TClipTriangle<CLIP_BOTTOM>(nNumVertices, pSrc,
+        nNumVertices = this->clipTriangle<CLIP_BOTTOM>(nNumVertices, pSrc,
                                                         pDst, &iTmpVertices);
         break;
 
       case CLIP_FRONT:
-        nNumVertices = this->TClipTriangle<CLIP_FRONT>(nNumVertices, pSrc, pDst,
+        nNumVertices = this->clipTriangle<CLIP_FRONT>(nNumVertices, pSrc, pDst,
                                                        &iTmpVertices);
         break;
 
       case CLIP_BACK:
-        nNumVertices = this->TClipTriangle<CLIP_BACK>(nNumVertices, pSrc, pDst,
+        nNumVertices = this->clipTriangle<CLIP_BACK>(nNumVertices, pSrc, pDst,
                                                       &iTmpVertices);
         break;
 
@@ -272,8 +272,7 @@ void CRasterizer::RasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
       case CLIP_PLANE3:
       case CLIP_PLANE4:
       case CLIP_PLANE5:
-        nNumVertices = this->UserClipTriangle(plane, nNumVertices, pSrc, pDst,
-                                              &iTmpVertices);
+        nNumVertices = this->clipTriangle(plane, nNumVertices, pSrc, pDst, &iTmpVertices);
         break;
       }
 
@@ -289,7 +288,7 @@ void CRasterizer::RasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
   for (uint32_t i = 0; i < nNumVertices; ++i) {
     uint32_t index = pSrc[i];
     if (pwFlags[index] & CLIPPING_MASK) {
-      this->XformScreenSpace(&pvScreenPos[index], &pvClipPos[index], 1);
+      this->transformScreenSpace(&pvScreenPos[index], &pvClipPos[index], 1);
     }
   }
 
@@ -298,12 +297,12 @@ void CRasterizer::RasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
     uint32_t v0 = *pSrc;
     for (uint32_t *pV = pSrc + 1, *const pEnd = pSrc + nNumVertices - 1;
          pV != pEnd; ++pV) {
-      this->RasterTriangle(v0, pV[0], pV[1]);
+      this->rasterTriangle(v0, pV[0], pV[1]);
     }
   }
 }
 
-uint32_t CRasterizer::UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
+uint32_t CRasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
                                        uint32_t *pSrc, uint32_t *pDst,
                                        uint32_t *pTmp) {
   auto pvClipPos =
@@ -337,7 +336,7 @@ uint32_t CRasterizer::UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
     }
 
     // Compute the intersecting vertex
-    this->InterpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
+    this->interpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
 
     // Add the new vertex to the current list
     assert(nClipVertices < CLIP_BUFFER_SIZE);
@@ -349,7 +348,7 @@ uint32_t CRasterizer::UserClipTriangle(uint32_t plane, uint32_t nNumVertices,
   return nClipVertices;
 }
 
-void CRasterizer::InterpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
+void CRasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
                                     floatf fDistB, uint32_t i2) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   auto pvClipPos =

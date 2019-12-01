@@ -20,16 +20,16 @@
 
 #ifdef COCOGL_RASTER_PROFILE
 
-void IRasterOp::StartProfile(uint32_t numPixels) {
+void IRasterOp::startProfile(uint32_t numPixels) {
   profile_.Invocations += 1;
   profile_.DrawnPixels += numPixels;
 }
 
-void IRasterOp::EndProfile(float elapsedTime) {
+void IRasterOp::endProfile(float elapsedTime) {
   profile_.RenderTime += elapsedTime;
 }
 
-void IRasterOp::LogProfile(const RASTERID &rasterID) {
+void IRasterOp::logProfile(const RASTERID &rasterID) {
 
   float fRenderTime = profile_.RenderTime;
   float fMPs = profile_.DrawnPixels / fRenderTime;
@@ -48,15 +48,15 @@ void IRasterOp::LogProfile(const RASTERID &rasterID) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-GLenum CRasterizer::SetupRasterStates(GLenum mode) {
+GLenum CRasterizer::setupRasterStates(GLenum mode) {
   if (nullptr == rasterData_.pColorBits) {
-    __glLogError("CRasterizer::SetupRasterStates() failed, missing color "
+    __glLogError("CRasterizer::setupRasterStates() failed, missing color "
                  "buffer.\r\n");
     return GL_INVALID_OPERATION;
   }
 
   if (dirtyFlags_.ScissorRECT) {
-    this->UpdateScissorRect();
+    this->updateScissorRect();
   }
 
   cullStates_.bCullFaceEnabled = caps_.CullFace ? true : false;
@@ -69,7 +69,7 @@ GLenum CRasterizer::SetupRasterStates(GLenum mode) {
     rasterID.Flags.ColorWriteMask = 1;
 
     if (dirtyFlags_.ColorWriteMask) {
-      this->EnsureColorWriteMask();
+      this->ensureColorWriteMask();
     }
   }
 
@@ -78,7 +78,7 @@ GLenum CRasterizer::SetupRasterStates(GLenum mode) {
 
     for (uint32_t i = 0, mask = caps_.Texture2D; mask; mask >>= 1, ++i) {
       if (mask & 0x1) {
-        if (texUnits_[i].Prepare(&rasterData_.Samplers[n],
+        if (texUnits_[i].prepare(&rasterData_.Samplers[n],
                                  &rasterID.Textures[n])) {
           switch (mode) {
           default:
@@ -169,7 +169,7 @@ GLenum CRasterizer::SetupRasterStates(GLenum mode) {
     rasterID.Flags.Fog = caps_.Fog;
 
     if (dirtyFlags_.FogColor) {
-      this->EnsureFogColor();
+      this->ensureFogColor();
     }
   }
 
@@ -191,23 +191,23 @@ GLenum CRasterizer::SetupRasterStates(GLenum mode) {
   return GL_NO_ERROR;
 }
 
-void CRasterizer::UpdateScissorRect() {
+void CRasterizer::updateScissorRect() {
   if (caps_.ScissorTest) {
     Rect rect;
-    pSurfDraw_->GetRect(&rect);
+    pSurfDraw_->getRect(&rect);
     ::IntersectRect(&scissorRect_, &scissor_, &rect);
   } else {
-    pSurfDraw_->GetRect(&scissorRect_);
+    pSurfDraw_->getRect(&scissorRect_);
   }
 
   dirtyFlags_.ScissorRECT = 0;
 }
 
-bool CRasterizer::GenerateRasterOp() {
+bool CRasterizer::generateRasterOp() {
   GLenum err;
 
   IRasterOp *pRasterOp = nullptr;
-  if (!pRasterCache_->Lookup(rasterID_, &pRasterOp)) {
+  if (!pRasterCache_->lookup(rasterID_, &pRasterOp)) {
 #ifndef NDEBUG
     DbgPrintf(3, "RASTERID: %d,%d,%d,%d\r\n", rasterID_.Flags.Value,
               rasterID_.States.Value, rasterID_.Textures[0].Value,
@@ -232,7 +232,7 @@ bool CRasterizer::GenerateRasterOp() {
 #endif
 #ifndef NDEBUG
         // Add the unoptimized scanline to the tracking list
-        pRasterCache_->TrackSlowRasterID(rasterID_);
+        pRasterCache_->trackSlowRasterID(rasterID_);
 #endif
       } else {
         __glLogError("COptimizedRasterOp::Create() failed, err = %d.\r\n",
@@ -241,72 +241,72 @@ bool CRasterizer::GenerateRasterOp() {
       }
     }
 
-    pRasterCache_->Insert(rasterID_, pRasterOp);
+    pRasterCache_->insert(rasterID_, pRasterOp);
   }
 
   // Set the new rasterop
-  pRasterOp->AddRef();
+  pRasterOp->addRef();
   __safeRelease(rasterData_.pRasterOp);
   rasterData_.pRasterOp = pRasterOp;
 
   return true;
 }
 
-void CRasterizer::PostRender() {
+void CRasterizer::postRender() {
   // Free the rasterop
   __safeRelease(rasterData_.pRasterOp);
 }
 
-GLenum CRasterizer::RenderPrimitive(GLenum mode, uint32_t count) {
+GLenum CRasterizer::renderPrimitive(GLenum mode, uint32_t count) {
   switch (mode) {
   case GL_TRIANGLES:
     for (uint32_t i = 2; i < count; i += 3) {
-      this->DrawTriangle(i - 2, i - 1, i);
+      this->drawTriangle(i - 2, i - 1, i);
     }
     break;
 
   case GL_TRIANGLE_STRIP:
     for (uint32_t i = 2, p = 0; i < count; ++i, p ^= 1) {
-      this->DrawTriangle(i - 2 + p, i - 1 - p, i);
+      this->drawTriangle(i - 2 + p, i - 1 - p, i);
     }
     break;
 
   case GL_TRIANGLE_FAN:
     for (uint32_t i = 2; i < count; ++i) {
-      this->DrawTriangle(0, i - 1, i);
+      this->drawTriangle(0, i - 1, i);
     }
     break;
 
   case GL_LINES:
     for (uint32_t i = 1; i < count; i += 2) {
-      this->DrawLine(i - 1, i);
+      this->drawLine(i - 1, i);
     }
     break;
 
   case GL_LINE_STRIP:
     for (uint32_t i = 1; i < count; ++i) {
-      this->DrawLine(i - 1, i);
+      this->drawLine(i - 1, i);
     }
     break;
 
   case GL_LINE_LOOP:
     if (count > 1) {
       for (uint32_t i = 1; i < count; ++i) {
-        this->DrawLine(i - 1, i);
+        this->drawLine(i - 1, i);
       }
 
-      this->DrawLine(count - 1, 0);
+      this->drawLine(count - 1, 0);
     }
     break;
 
   case GL_POINTS:
     for (uint32_t i = 0; i < count; ++i) {
-      this->DrawPoint(i);
+      this->drawPoint(i);
     }
     break;
 
   default:
-    __glLogError("CGLContext::RenderPrimitive() failed, invalid mode "
+    __glLogError("GLContext::renderPrimitive() failed, invalid mode "
                  "parameter: %d.\r\n",
                  mode);
     return GL_INVALID_ENUM;

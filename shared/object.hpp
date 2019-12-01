@@ -18,19 +18,19 @@
 
 class IObject {
 public:
-  virtual long AddRef() const = 0;
-  virtual long Release() const = 0;
+  virtual long addRef() const = 0;
+  virtual long release() const = 0;
 
 protected:
   IObject() {}
   virtual ~IObject() {}
 };
 
-class CObject : public IObject {
+class Object : public IObject {
 public:
-  virtual long AddRef() const { return ++refcount_; }
+  virtual long addRef() const { return ++refcount_; }
 
-  virtual long Release() const {
+  virtual long release() const {
     assert(refcount_ > 0);
     auto refcount = --refcount_;
     if (0 == refcount) {
@@ -40,8 +40,8 @@ public:
   }
 
 protected:
-  CObject() : refcount_(0) {}
-  virtual ~CObject() {}
+  Object() : refcount_(0) {}
+  virtual ~Object() {}
 
 private:
   mutable std::atomic<long> refcount_;

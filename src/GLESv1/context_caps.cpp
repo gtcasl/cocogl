@@ -15,10 +15,10 @@
 #include "stdafx.h"
 #include "context.hpp"
 
-void CGLContext::Hint(GLenum target, GLenum mode) {
+void GLContext::hint(GLenum target, GLenum mode) {
   if ((mode != GL_DONT_CARE) && (mode != GL_FASTEST) && (mode != GL_NICEST)) {
     __glError(GL_INVALID_ENUM,
-              "CGLContext::Hint() failed, invalid mode parameter: %d.\r\n",
+              "GLContext::hint() failed, invalid mode parameter: %d.\r\n",
               mode);
     return;
   }
@@ -49,13 +49,13 @@ void CGLContext::Hint(GLenum target, GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::Hint() failed, invalid target parameter: %d.\r\n",
+        "GLContext::hint() failed, invalid target parameter: %d.\r\n",
         target);
     return;
   }
 }
 
-void CGLContext::Activate(GLenum cap, bool bValue) {
+void GLContext::activate(GLenum cap, bool bValue) {
   switch (cap) {
   case GL_FOG:
     caps_.Fog = bValue;
@@ -198,7 +198,7 @@ void CGLContext::Activate(GLenum cap, bool bValue) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::Activate() failed, invalid cap parameter: %d.\r\n",
+        "GLContext::activate() failed, invalid cap parameter: %d.\r\n",
         cap);
     return;
   }

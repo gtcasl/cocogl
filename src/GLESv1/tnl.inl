@@ -197,7 +197,7 @@ void TDecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, uint32_t stride, uint32
 template <bool ColorMaterial, 
           eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
-inline void CTNL::TProcessLighting_OneSided(uint32_t count) {
+inline void CTNL::processLightingOneSided(uint32_t count) {
 
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   auto pcFrontColors = reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
@@ -260,9 +260,9 @@ inline void CTNL::TProcessLighting_OneSided(uint32_t count) {
 
     // Apply lights components
     if constexpr (ColorMaterial) {
-      this->ProcessLights_OneSided(&vResult, pvEyePos[i], vNormal, vVertexColor);
+      this->processLightsOneSided(&vResult, pvEyePos[i], vNormal, vVertexColor);
     } else {
-      this->ProcessLights_OneSided(&vResult, pvEyePos[i], vNormal);
+      this->processLightsOneSided(&vResult, pvEyePos[i], vNormal);
     }
 
     // Clamp the front color
@@ -282,7 +282,7 @@ inline void CTNL::TProcessLighting_OneSided(uint32_t count) {
 template <bool ColorMaterial, 
           eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
-inline void CTNL::TProcessLighting_TwoSided(uint32_t count) {
+inline void CTNL::processLightingTwoSided(uint32_t count) {
 
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   auto pcFrontColors = reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
@@ -350,9 +350,9 @@ inline void CTNL::TProcessLighting_TwoSided(uint32_t count) {
 
     // Apply lights components
     if constexpr (ColorMaterial) {
-      this->ProcessLights_TwoSided(vResults, pvEyePos[i], vNormal, vVertexColor);
+      this->processLightsTwoSided(vResults, pvEyePos[i], vNormal, vVertexColor);
     } else {
-      this->ProcessLights_TwoSided(vResults, pvEyePos[i], vNormal);
+      this->processLightsTwoSided(vResults, pvEyePos[i], vNormal);
     }
 
     // Clamp the front color
@@ -382,7 +382,7 @@ inline void CTNL::TProcessLighting_TwoSided(uint32_t count) {
 }
 
 template <eVertexFormat VertexFormat>
-void CTNL::TProcessVertexColor(uint32_t count) {
+void CTNL::processVertexColor(uint32_t count) {
   auto pcFrontColors = reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
   auto pbIn = colorDecode_.pBits;
   auto stride = colorDecode_.Stride;
@@ -407,11 +407,11 @@ void CTNL::TProcessVertexColor(uint32_t count) {
 
 template <bool Transform, 
           eVertexFormat VertexFormat>
-void CTNL::TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
+void CTNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
                              uint32_t count) {
   auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
             pbVertexData_[VERTEXDATA_TEXCOORD0 + dstIndex]);
-  auto &transform = pMsTexCoords_[srcIndex]->GetMatrix();
+  auto &transform = pMsTexCoords_[srcIndex]->getMatrix();
 
   auto pbIn = texCoordDecodes_[srcIndex].pBits;
   auto stride = texCoordDecodes_[srcIndex].Stride;
@@ -441,7 +441,7 @@ void CTNL::TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
 
 template <bool QuadraticAttenuation, 
           eVertexFormat VertexFormat>
-void CTNL::TProcessPointSize(uint32_t count) {
+void CTNL::processPointSize(uint32_t count) {
   auto pfPointSizes = reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
   auto &vAttenuation = pointParams_.vAttenuation;
   const VECTOR3 *pvEyePos;
@@ -479,13 +479,13 @@ void CTNL::TProcessPointSize(uint32_t count) {
 }
 
 template <eFogMode FogMode> 
-void CTNL::TProcessFog(uint32_t count) {
+void CTNL::processFog(uint32_t count) {
 
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);
 
   if constexpr (FogMode == FogLinear) {
-    auto fFogEnd = fog_.GetFactor(GL_FOG_END);
+    auto fFogEnd = fog_.getFactor(GL_FOG_END);
     auto fFogRatio = fog_.fRatio;
 
     for (uint32_t i = 0; i < count; ++i) {
@@ -494,7 +494,7 @@ void CTNL::TProcessFog(uint32_t count) {
     }
   }
   if constexpr (FogMode == FogExp) {
-    auto fFogDensity = fog_.GetFactor(GL_FOG_DENSITY);
+    auto fFogDensity = fog_.getFactor(GL_FOG_DENSITY);
 
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = Math::TAbs(pvEyePos[i].z);
@@ -503,7 +503,7 @@ void CTNL::TProcessFog(uint32_t count) {
     }
   }
   if constexpr (FogMode == FogExp2) {
-    auto fFogDensity = fog_.GetFactor(GL_FOG_DENSITY);
+    auto fFogDensity = fog_.getFactor(GL_FOG_DENSITY);
 
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = Math::TAbs(pvEyePos[i].z);

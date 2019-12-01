@@ -15,7 +15,7 @@
 #include "stdafx.h"
 #include "context.hpp"
 
-void CGLContext::MatrixMode(GLenum mode) {
+void GLContext::setMatrixMode(GLenum mode) {
   switch (mode) {
   case GL_MODELVIEW:
     pMatrixStack_ = pMsModelView_;
@@ -35,7 +35,7 @@ void CGLContext::MatrixMode(GLenum mode) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::MatrixMode() failed, invalid mode parameter: %d.\r\n",
+        "GLContext::setMatrixMode() failed, invalid mode parameter: %d.\r\n",
         mode);
     return;
   }
@@ -43,101 +43,101 @@ void CGLContext::MatrixMode(GLenum mode) {
   matrixMode_ = mode;
 }
 
-void CGLContext::PushMatrix() {
-  if (!pMatrixStack_->Push()) {
-    __glError(GL_STACK_OVERFLOW, "CGLContext::PushMatrix() failed, the "
+void GLContext::pushMatrix() {
+  if (!pMatrixStack_->push()) {
+    __glError(GL_STACK_OVERFLOW, "GLContext::pushMatrix() failed, the "
                                  "current matrix stack is full.\r\n");
     return;
   }
 }
 
-void CGLContext::PopMatrix() {
-  if (!pMatrixStack_->Pop()) {
-    __glError(GL_STACK_UNDERFLOW, "CGLContext::PopMatrix() failed, the "
+void GLContext::popMatrix() {
+  if (!pMatrixStack_->pop()) {
+    __glError(GL_STACK_UNDERFLOW, "GLContext::popMatrix() failed, the "
                                   "current matrix stack contains only a "
                                   "single matrix.\r\n");
     return;
   }
 
-  this->UpdateMatrixDirtyFlags();
+  this->updateMatrixDirtyFlags();
 }
 
-void CGLContext::LoadIdentity() {
-  if (!pMatrixStack_->IsIdentity()) {
-    pMatrixStack_->ToIdentity();
-    this->UpdateMatrixDirtyFlags();
+void GLContext::loadIdentity() {
+  if (!pMatrixStack_->isIdentity()) {
+    pMatrixStack_->toIdentity();
+    this->updateMatrixDirtyFlags();
   }
 }
 
-void CGLContext::LoadMatrix(const MATRIX44 &matrix) {
-  pMatrixStack_->SetMatrix(matrix);
-  this->UpdateMatrixDirtyFlags();
+void GLContext::loadMatrix(const MATRIX44 &matrix) {
+  pMatrixStack_->setMatrix(matrix);
+  this->updateMatrixDirtyFlags();
 }
 
-void CGLContext::Frustum(floatf left, floatf right, floatf bottom, floatf top,
+void GLContext::frustum(floatf left, floatf right, floatf bottom, floatf top,
                          floatf zNear, floatf zFar) {
   if (zNear < fZERO) {
     __glError(
         GL_INVALID_VALUE,
-        "CGLContext::Frustum() failed, zNear should not be negative.\r\n");
+        "GLContext::frustum() failed, zNear should not be negative.\r\n");
     return;
   }
 
   if (zFar < fZERO) {
     __glError(
         GL_INVALID_VALUE,
-        "CGLContext::Frustum() failed, zFar should not be negative.\r\n");
+        "GLContext::frustum() failed, zFar should not be negative.\r\n");
     return;
   }
 
   if (left == right) {
-    __glError(GL_INVALID_VALUE, "CGLContext::Frustum() failed, left and "
+    __glError(GL_INVALID_VALUE, "GLContext::frustum() failed, left and "
                                 "right parameters should not be "
                                 "equal.\r\n");
     return;
   }
 
   if (bottom == top) {
-    __glError(GL_INVALID_VALUE, "CGLContext::Frustum() failed, bottom and "
+    __glError(GL_INVALID_VALUE, "GLContext::frustum() failed, bottom and "
                                 "top parameters should not be equal.\r\n");
     return;
   }
 
   MATRIX44 matTmp;
   Math::Frustum(&matTmp, left, right, bottom, top, zNear, zFar);
-  this->Multiply(matTmp);
+  this->multiply(matTmp);
 }
 
-void CGLContext::Ortho(floatf left, floatf right, floatf bottom, floatf top,
+void GLContext::ortho(floatf left, floatf right, floatf bottom, floatf top,
                        floatf zNear, floatf zFar) {
   MATRIX44 matTmp;
   Math::Ortho(&matTmp, left, right, bottom, top, zNear, zFar);
-  this->Multiply(matTmp);
+  this->multiply(matTmp);
 }
 
-void CGLContext::Scale(floatf x, floatf y, floatf z) {
+void GLContext::scale(floatf x, floatf y, floatf z) {
   MATRIX44 matTmp;
   Math::Scale(&matTmp, x, y, z);
-  this->Multiply(matTmp);
+  this->multiply(matTmp);
 }
 
-void CGLContext::Translate(floatf x, floatf y, floatf z) {
+void GLContext::translate(floatf x, floatf y, floatf z) {
   MATRIX44 matrix, matTmp;
   Math::Translate(&matrix, x, y, z);
-  Math::Mul(&matTmp, pMatrixStack_->GetMatrix(), matrix);
-  pMatrixStack_->SetMatrix(matTmp);
-  this->UpdateMatrixDirtyFlags();
+  Math::Mul(&matTmp, pMatrixStack_->getMatrix(), matrix);
+  pMatrixStack_->setMatrix(matTmp);
+  this->updateMatrixDirtyFlags();
 }
 
-void CGLContext::Rotate(floatf angle, floatf x, floatf y, floatf z) {
+void GLContext::rotate(floatf angle, floatf x, floatf y, floatf z) {
   MATRIX44 matTmp;
   Math::Rotate(&matTmp, Math::DegToRad(angle), x, y, z);
-  this->Multiply(matTmp);
+  this->multiply(matTmp);
 }
 
-void CGLContext::Multiply(const MATRIX44 &matrix) {
+void GLContext::multiply(const MATRIX44 &matrix) {
   MATRIX44 matTmp;
-  Math::Mul(&matTmp, pMatrixStack_->GetMatrix(), matrix);
-  pMatrixStack_->SetMatrix(matTmp);
-  this->UpdateMatrixDirtyFlags();
+  Math::Mul(&matTmp, pMatrixStack_->getMatrix(), matrix);
+  pMatrixStack_->setMatrix(matTmp);
+  this->updateMatrixDirtyFlags();
 }

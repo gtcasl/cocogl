@@ -13,53 +13,55 @@
 //
 #pragma once
 
-class CConfig;
-class CDisplay;
+class _EGLConfig;
+class _EGLDisplay;
 
-class CEGLSurface : public CObject {
+class _EGLSurface : public Object {
 public:
-  static EGLint CreateWND(CEGLSurface **ppSurface, CDisplay *display,
-                          EGLint surfaceType, CConfig *pConfig,
+  static EGLint CreateWND(_EGLSurface **ppSurface, _EGLDisplay *display,
+                          EGLint surfaceType, _EGLConfig *pConfig,
                           EGLNativeWindowType hWnd);
 
-  static EGLint CreatePXM(CEGLSurface **ppSurface, CDisplay *display,
-                          EGLint surfaceType, CConfig *pConfig,
+  static EGLint CreatePXM(_EGLSurface **ppSurface, _EGLDisplay *display,
+                          EGLint surfaceType, _EGLConfig *pConfig,
                           EGLNativePixmapType hPixmap);
 
-  static EGLint CreatePBF(CEGLSurface **ppSurface, CDisplay *display,
-                          EGLint surfaceType, CConfig *pConfig, EGLint width,
+  static EGLint CreatePBF(_EGLSurface **ppSurface, _EGLDisplay *display,
+                          EGLint surfaceType, _EGLConfig *pConfig, EGLint width,
                           EGLint height, EGLint largestPBuffer,
                           EGLint texTarget, EGLint texFormat,
                           EGLint bGenMipMaps);
 
-  EGLint GetAttribute(EGLint *pValue, EGLint name) const;
+  EGLint getAttribute(EGLint *pValue, EGLint name) const;
 
-  EGLint SetAttribute(EGLint name, EGLint value);
+  EGLint setAttribute(EGLint name, EGLint value);
 
-  EGLint CopyBuffer(EGLNativePixmapType hPixmap);
+  EGLint copyBuffer(EGLNativePixmapType hPixmap);
 
-  CConfig *GetConfig() const { return pConfig_; }
+  auto getConfig() const { return pConfig_; }
 
-  EGLint GetType() const { return surfaceType_; }
+  auto getType() const { return surfaceType_; }
 
-  __GLSurface GetNativeData() const { return glSurface_; }
+  auto getNativeData() const { return glSurface_; }
 
-  EGLint BindTexture();
+  EGLint bindTexture();
 
-  EGLint ReleaseTexBound();
+  EGLint releaseTexBound();
 
-  HRESULT SaveBitmap(const char *filename);
+  HRESULT saveBitmap(const char *filename);
 
-  void Present();
+  void present();
 
 private:
+
   enum {
     MAX_WIDTH = 480,
     MAX_HEIGHT = 480,
   };
 
-  CEGLSurface(CDisplay *pDisplay, EGLint surfaceType, CConfig *pConfig);
-  ~CEGLSurface();
+  _EGLSurface(_EGLDisplay *pDisplay, EGLint surfaceType, _EGLConfig *pConfig);
+
+  ~_EGLSurface();
 
   EGLint InitializeWND(EGLNativeWindowType hWnd);
 
@@ -68,15 +70,15 @@ private:
   EGLint InitializePBF(EGLint width, EGLint height, EGLint largestPBuffer,
                        EGLint texTarget, EGLint texFormat, EGLint bGenMipMaps);
 
-  static uint8_t GetColorFormat(uint32_t cBitsPerPixel);
-
   EGLint InitDepthStencil(uint32_t width, uint32_t height,
                           GLSurfaceDesc *pSurfaceDesc);
 
-  void GetPBufferDesc(GLSurfaceDesc *pSurfaceDesc);
-
-  CDisplay *pDisplay_;
-  CConfig *pConfig_;
+  void getPBufferDesc(GLSurfaceDesc *pSurfaceDesc);
+  
+  static uint8_t getColorFormat(uint32_t cBitsPerPixel);
+  
+  _EGLDisplay *pDisplay_;
+  _EGLConfig *pConfig_;
   EGLint surfaceType_;
 
   bool bBoundTexture_;

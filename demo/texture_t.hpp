@@ -13,7 +13,7 @@
 //
 #pragma once
 
-class CTextureTest : public CTestBase {
+class TextureTest : public TestBase {
 private:
   // Texture handles
   GLuint texture1_;
@@ -22,9 +22,9 @@ private:
   int rotation_;
 
 public:
-  CTextureTest() : offset_(0), rotation_(0) {}
+  TextureTest() : offset_(0), rotation_(0) {}
 
-  ~CTextureTest() {}
+  ~TextureTest() {}
 
   bool OnInitialize(uint32_t width, uint32_t height) {
     /*Remember: because we are programming for a mobile device, we cant

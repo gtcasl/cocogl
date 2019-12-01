@@ -14,10 +14,10 @@
 //
 #pragma once
 
-class CMesh {
+class Mesh {
 public:
-  CMesh();
-  ~CMesh();
+  Mesh();
+  ~Mesh();
 
   bool OnInitialize(const char *fileName); 
 

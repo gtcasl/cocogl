@@ -17,7 +17,7 @@
 
 class CInputAssembler : public CDevice {
 public:
-  GLenum PrepareIndices(GLenum type, const GLvoid **ppvIndices, uint32_t count,
+  GLenum prepareIndices(GLenum type, const GLvoid **ppvIndices, uint32_t count,
                         uint32_t *pMin, uint32_t *pMax);
 
 protected:

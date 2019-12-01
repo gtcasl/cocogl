@@ -25,26 +25,28 @@ public:
   typedef void (CTNL::*PfnDecodeTexCoord)(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
 
   template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
-  void TProcessPointSize(uint32_t count);
+  void processPointSize(uint32_t count);
 
   template <bool ColorMaterial, eVertexFormat ColorFormat,
             eVertexFormat NormalFormat>
-  void TProcessLighting_OneSided(uint32_t count);
+  void processLightingOneSided(uint32_t count);
 
   template <bool ColorMaterial, eVertexFormat ColorFormat,
             eVertexFormat NormalFormat>
-  void TProcessLighting_TwoSided(uint32_t count);
+  void processLightingTwoSided(uint32_t count);
 
   template <eVertexFormat VertexFormat>
-  void TProcessVertexColor(uint32_t count);
+  void processVertexColor(uint32_t count);
 
   template <bool Transform, eVertexFormat VertexFormat>
-  void TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
+  void processTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
 
-  template <eFogMode FogMode> void TProcessFog(uint32_t count);
+  template <eFogMode FogMode> void processFog(uint32_t count);
 
 protected:
+
   CTNL() {}
+  
   ~CTNL() {}
 
   struct Lighting {
@@ -65,70 +67,70 @@ protected:
     MATRIX44 mProjectionInvT;
   };
 
-  GLenum SetupTNLStates(GLenum mode, int first, uint32_t count);
+  GLenum setupTNLStates(GLenum mode, int first, uint32_t count);
 
-  void ProcessVertices(uint32_t count);
+  void processVertices(uint32_t count);
 
-  GLenum UpdatePoints(uint8_t **ppbVertexData, int first, uint32_t count);
+  GLenum updatePoints(uint8_t **ppbVertexData, int first, uint32_t count);
 
-  GLenum UpdateColor(uint8_t **ppbVertexData, int first, uint32_t count);
+  GLenum updateColor(uint8_t **ppbVertexData, int first, uint32_t count);
 
-  GLenum UpdateLighting(uint8_t **ppbVertexData, int first, uint32_t count);
+  GLenum updateLighting(uint8_t **ppbVertexData, int first, uint32_t count);
 
-  void UpdateNormal();
+  void updateNormal();
 
-  GLenum UpdateTexcoords(uint8_t **ppbVertexData, int first, uint32_t count);
+  GLenum updateTexcoords(uint8_t **ppbVertexData, int first, uint32_t count);
 
-  void UpdateFog(uint8_t **ppbVertexData, int first, uint32_t count);
+  void updateFog(uint8_t **ppbVertexData, int first, uint32_t count);
 
-  void UpdateModelViewInvT44();
+  void updateModelViewInvT44();
 
-  void UpdateModelViewProj();
+  void updateModelViewProj();
 
-  void UpdateScreenXform();
+  void updateScreenXform();
 
-  void UpdateClipPlanes();
+  void updateClipPlanes();
 
-  void UpdateProjectionInvT();
+  void updateProjectionInvT();
 
-  void UpdateModelViewInvT33();
+  void updateModelViewInvT33();
 
-  void UpdateMaterial();
+  void updateMaterial();
 
-  void SetupLights();
+  void setupLights();
 
-  void UpdateLights();
+  void updateLights();
 
   static uint32_t CalcClipFlags(const VECTOR4 &vPosition);
 
-  uint32_t CalcUserClipFlags(uint32_t count);
+  uint32_t calcUserClipFlags(uint32_t count);
 
-  void XformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
+  void transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
                         uint32_t count);
 
-  void XformEyeSpace(uint32_t count);
+  void transformEyeSpace(uint32_t count);
 
-  void ProcessPointSize(uint32_t count);
+  void processPointSize(uint32_t count);
 
-  void ProcessColor(uint32_t count);
+  void processColor(uint32_t count);
 
-  void ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+  void processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                               const VECTOR3 &vNormal,
                               const VECTOR4 &vVertexColor);
 
-  void ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+  void processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                               const VECTOR3 &vNormal);
 
-  void ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+  void processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                               const VECTOR3 &vNormal,
                               const VECTOR4 &vVertexColor);
 
-  void ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+  void processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                               const VECTOR3 &vNormal);
 
-  void ProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
+  void processTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
 
-  void UpdateMatrixDirtyFlags();
+  void updateMatrixDirtyFlags();
 
   std::vector<uint8_t> vertexBuffer_;
 

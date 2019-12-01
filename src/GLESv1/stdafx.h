@@ -41,4 +41,4 @@
 #include "types.hpp"
 #include "utility.hpp"
 
-extern CLogger g_logger;
+extern Logger g_logger;

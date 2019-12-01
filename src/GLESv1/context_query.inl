@@ -21,10 +21,10 @@ extern const GLint g_compressedFormats[] = {
     GL_PALETTE8_RGB5_A1_OES};
 
 template <class T>
-inline void CGLContext::TGetClipPlane(GLenum plane, T eqn[4]) {
+inline void GLContext::getClipPlane(GLenum plane, T eqn[4]) {
   if ((plane - GL_CLIP_PLANE0) >= MAX_CLIPPLANES) {
     __glError(GL_INVALID_ENUM,
-              "CGLContext::TGetClipPlane() failed, "
+              "GLContext::getClipPlane() failed, "
               "invalid plane parameter: %d.\r\n",
               plane);
     return;
@@ -39,13 +39,13 @@ inline void CGLContext::TGetClipPlane(GLenum plane, T eqn[4]) {
 }
 
 template <class T>
-inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
+inline void GLContext::getLight(GLenum light, GLenum pname, T *pParams) {
   assert(pParams);
 
   if ((light - GL_LIGHT0) >= MAX_LIGHTS) {
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::TGetLight() failed, invalid light parameter: %d.\r\n",
+        "GLContext::getLight() failed, invalid light parameter: %d.\r\n",
         light);
     return;
   }
@@ -57,10 +57,10 @@ inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
   case GL_AMBIENT:
   case GL_DIFFUSE:
   case GL_SPECULAR:
-    pParams[0] = Math::TCast<T>(_light.GetColor(pname).x);
-    pParams[1] = Math::TCast<T>(_light.GetColor(pname).y);
-    pParams[2] = Math::TCast<T>(_light.GetColor(pname).z);
-    pParams[3] = Math::TCast<T>(_light.GetColor(pname).w);
+    pParams[0] = Math::TCast<T>(_light.getColor(pname).x);
+    pParams[1] = Math::TCast<T>(_light.getColor(pname).y);
+    pParams[2] = Math::TCast<T>(_light.getColor(pname).z);
+    pParams[3] = Math::TCast<T>(_light.getColor(pname).w);
     break;
 
   case GL_POSITION:
@@ -87,25 +87,25 @@ inline void CGLContext::TGetLight(GLenum light, GLenum pname, T *pParams) {
   case GL_CONSTANT_ATTENUATION:
   case GL_LINEAR_ATTENUATION:
   case GL_QUADRATIC_ATTENUATION:
-    pParams[0] = Math::TCast<T>(_light.GetAttenuation(pname));
+    pParams[0] = Math::TCast<T>(_light.getAttenuation(pname));
     break;
 
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::TGetLight() failed, invalid pname parameter: %d.\r\n",
+        "GLContext::getLight() failed, invalid pname parameter: %d.\r\n",
         pname);
     return;
   }
 }
 
 template <class T>
-inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
+inline void GLContext::getMaterial(GLenum face, GLenum pname, T *pParams) {
   assert(pParams);
 
   if (face != GL_FRONT && face != GL_BACK) {
     __glError(GL_INVALID_ENUM,
-              "CGLContext::TGetMaterial() failed, invalid "
+              "GLContext::getMaterial() failed, invalid "
               "face parameter: %d.\r\n",
               face);
     return;
@@ -115,10 +115,10 @@ inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
   case GL_AMBIENT:
   case GL_DIFFUSE:
   case GL_SPECULAR:
-    pParams[0] = Math::TCast<T>(material_.GetColor(pname).x);
-    pParams[1] = Math::TCast<T>(material_.GetColor(pname).y);
-    pParams[2] = Math::TCast<T>(material_.GetColor(pname).z);
-    pParams[3] = Math::TCast<T>(material_.GetColor(pname).w);
+    pParams[0] = Math::TCast<T>(material_.getColor(pname).x);
+    pParams[1] = Math::TCast<T>(material_.getColor(pname).y);
+    pParams[2] = Math::TCast<T>(material_.getColor(pname).z);
+    pParams[3] = Math::TCast<T>(material_.getColor(pname).w);
     break;
 
   case GL_EMISSION:
@@ -134,7 +134,7 @@ inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              "CGLContext::TGetMaterial() failed, invalid "
+              "GLContext::getMaterial() failed, invalid "
               "pname parameter: %d.\r\n",
               pname);
     return;
@@ -142,7 +142,7 @@ inline void CGLContext::TGetMaterial(GLenum face, GLenum pname, T *pParams) {
 }
 
 template <class T>
-inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
+inline void GLContext::getTexEnv(GLenum env, GLenum pname, T *pParams) {
   assert(pParams);
 
   TexUnit &texUnit = texUnits_[activeTexture_];
@@ -163,7 +163,7 @@ inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
 
     default:
       __glError(GL_INVALID_ENUM,
-                "CGLContext::TGetTexEnv() failed, invalid "
+                "GLContext::getTexEnv() failed, invalid "
                 "pname parameter: %d.\r\n",
                 pname);
       return;
@@ -174,26 +174,26 @@ inline void CGLContext::TGetTexEnv(GLenum env, GLenum pname, T *pParams) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::TGetTexEnv() failed, invalid env parameter: %d.\r\n",
+        "GLContext::getTexEnv() failed, invalid env parameter: %d.\r\n",
         env);
     return;
   }
 }
 
 template <class T>
-inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
+inline void GLContext::getTexParameter(GLenum target, GLenum pname,
                                          T *pParams) {
   assert(pParams);
 
   if (target != GL_TEXTURE_2D) {
     __glError(GL_INVALID_ENUM,
-              "CGLContext::TGetTexParameter() failed, "
+              "GLContext::getTexParameter() failed, "
               "invalid target parameter: %d.\r\n",
               target);
     return;
   }
 
-  auto pTexture = this->GetTexture(activeTexture_);
+  auto pTexture = this->getTexture(activeTexture_);
   assert(pTexture);
 
   switch (pname) {
@@ -219,7 +219,7 @@ inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
 
   default:
     __glError(GL_INVALID_ENUM,
-              "CGLContext::TGetTexParameter() failed, "
+              "GLContext::getTexParameter() failed, "
               "invalid pname parameter: %d.\r\n",
               pname);
     return;
@@ -227,7 +227,7 @@ inline void CGLContext::TGetTexParameter(GLenum target, GLenum pname,
 }
 
 template <> 
-inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
+inline void GLContext::get<bool>(GLenum pname, bool *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -256,14 +256,14 @@ inline void CGLContext::TGet<bool>(GLenum pname, bool *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              "CGLContext::TGet() failed, invalid pname parameter: %d.\r\n",
+              "GLContext::get() failed, invalid pname parameter: %d.\r\n",
               pname);
     return;
   }
 }
 
 template <> 
-inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
+inline void GLContext::get<int>(GLenum pname, int *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -278,31 +278,31 @@ inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_SUBPIXEL_BITS:
-    pParams[0] = pSurfDraw_->GetAttribute(GL_SUBPIXEL_BITS);
+    pParams[0] = pSurfDraw_->getAttribute(GL_SUBPIXEL_BITS);
     break;
 
   case GL_RED_BITS:
-    pParams[0] = pSurfDraw_->GetAttribute(GL_RED_BITS);
+    pParams[0] = pSurfDraw_->getAttribute(GL_RED_BITS);
     break;
 
   case GL_GREEN_BITS:
-    pParams[0] = pSurfDraw_->GetAttribute(GL_GREEN_BITS);
+    pParams[0] = pSurfDraw_->getAttribute(GL_GREEN_BITS);
     break;
 
   case GL_BLUE_BITS:
-    pParams[0] = pSurfDraw_->GetAttribute(GL_BLUE_BITS);
+    pParams[0] = pSurfDraw_->getAttribute(GL_BLUE_BITS);
     break;
 
   case GL_ALPHA_BITS:
-    pParams[0] = pSurfDraw_->GetAttribute(GL_ALPHA_BITS);
+    pParams[0] = pSurfDraw_->getAttribute(GL_ALPHA_BITS);
     break;
 
   case GL_DEPTH_BITS:
-    pParams[0] = pSurfDraw_->GetAttribute(GL_DEPTH_BITS);
+    pParams[0] = pSurfDraw_->getAttribute(GL_DEPTH_BITS);
     break;
 
   case GL_STENCIL_BITS:
-    pParams[0] = pSurfDraw_->GetAttribute(GL_STENCIL_BITS);
+    pParams[0] = pSurfDraw_->getAttribute(GL_STENCIL_BITS);
     break;
 
   case GL_COMPRESSED_TEXTURE_FORMATS:
@@ -324,15 +324,15 @@ inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_MAX_MODELVIEW_STACK_DEPTH:
-    pParams[0] = pMsModelView_->GetSize();
+    pParams[0] = pMsModelView_->getSize();
     break;
 
   case GL_MAX_PROJECTION_STACK_DEPTH:
-    pParams[0] = pMsProjection_->GetSize();
+    pParams[0] = pMsProjection_->getSize();
     break;
 
   case GL_MAX_TEXTURE_STACK_DEPTH:
-    pParams[0] = pMsTexCoords_[activeTexture_]->GetSize();
+    pParams[0] = pMsTexCoords_[activeTexture_]->getSize();
     break;
 
   case GL_MAX_TEXTURE_SIZE:
@@ -409,35 +409,35 @@ inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_VERTEX_ARRAY_BUFFER_BINDING:
-    pParams[0] = positionArray_.GetBufferHandle();
+    pParams[0] = positionArray_.getBufferHandle();
     break;
 
   case GL_NORMAL_ARRAY_BUFFER_BINDING:
-    pParams[0] = normalArray_.GetBufferHandle();
+    pParams[0] = normalArray_.getBufferHandle();
     break;
 
   case GL_COLOR_ARRAY_BUFFER_BINDING:
-    pParams[0] = colorArray_.GetBufferHandle();
+    pParams[0] = colorArray_.getBufferHandle();
     break;
 
   case GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING:
-    pParams[0] = texCoordArrays_[clientActiveTexture_].GetBufferHandle();
+    pParams[0] = texCoordArrays_[clientActiveTexture_].getBufferHandle();
     break;
 
   case GL_POINT_SIZE_ARRAY_BUFFER_BINDING_OES:
-    pParams[0] = pointSizeArray_.GetBufferHandle();
+    pParams[0] = pointSizeArray_.getBufferHandle();
     break;
 
   case GL_ARRAY_BUFFER_BINDING:
-    pParams[0] = this->GetBufferObjectHandle(GL_ARRAY_BUFFER);
+    pParams[0] = this->getBufferObjectHandle(GL_ARRAY_BUFFER);
     break;
 
   case GL_ELEMENT_ARRAY_BUFFER_BINDING:
-    pParams[0] = this->GetBufferObjectHandle(GL_ELEMENT_ARRAY_BUFFER);
+    pParams[0] = this->getBufferObjectHandle(GL_ELEMENT_ARRAY_BUFFER);
     break;
 
   case GL_TEXTURE_BINDING_2D:
-    pParams[0] = this->GetBoundTextureHandle();
+    pParams[0] = this->getBoundTextureHandle();
     break;
 
   case GL_UNPACK_ALIGNMENT:
@@ -479,11 +479,11 @@ inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_ALPHA_TEST_FUNC:
-    pParams[0] = EnumFromCompareFunc(rasterStates_.AlphaFunc);
+    pParams[0] = EnumFromcompareFunc(rasterStates_.AlphaFunc);
     break;
 
   case GL_STENCIL_FUNC:
-    pParams[0] = EnumFromCompareFunc(rasterStates_.StencilFunc);
+    pParams[0] = EnumFromcompareFunc(rasterStates_.StencilFunc);
     break;
 
   case GL_STENCIL_FAIL:
@@ -499,7 +499,7 @@ inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_DEPTH_FUNC:
-    pParams[0] = EnumFromCompareFunc(rasterStates_.DepthFunc);
+    pParams[0] = EnumFromcompareFunc(rasterStates_.DepthFunc);
     break;
 
   case GL_LOGIC_OP_MODE:
@@ -567,14 +567,14 @@ inline void CGLContext::TGet<int>(GLenum pname, int *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              "CGLContext::TGet() failed, invalid pname parameter: %d.\r\n",
+              "GLContext::get() failed, invalid pname parameter: %d.\r\n",
               pname);
     return;
   }
 }
 
 template <class T> 
-inline void CGLContext::TGet(GLenum pname, T *pParams) {
+inline void GLContext::get(GLenum pname, T *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -603,15 +603,15 @@ inline void CGLContext::TGet(GLenum pname, T *pParams) {
     break;
 
   case GL_MODELVIEW_MATRIX:
-    pMsModelView_->TGetTop<T>(pParams);
+    pMsModelView_->getTop<T>(pParams);
     break;
 
   case GL_PROJECTION_MATRIX:
-    pMsProjection_->TGetTop<T>(pParams);
+    pMsProjection_->getTop<T>(pParams);
     break;
 
   case GL_TEXTURE_MATRIX:
-    pMsTexCoords_[activeTexture_]->TGetTop<T>(pParams);
+    pMsTexCoords_[activeTexture_]->getTop<T>(pParams);
     break;
 
   case GL_FOG_COLOR:
@@ -622,15 +622,15 @@ inline void CGLContext::TGet(GLenum pname, T *pParams) {
     break;
 
   case GL_FOG_DENSITY:
-    pParams[0] = Math::TCast<T>(fog_.GetFactor(GL_FOG_DENSITY));
+    pParams[0] = Math::TCast<T>(fog_.getFactor(GL_FOG_DENSITY));
     break;
 
   case GL_FOG_START:
-    pParams[0] = Math::TCast<T>(fog_.GetFactor(GL_FOG_START));
+    pParams[0] = Math::TCast<T>(fog_.getFactor(GL_FOG_START));
     break;
 
   case GL_FOG_END:
-    pParams[0] = Math::TCast<T>(fog_.GetFactor(GL_FOG_END));
+    pParams[0] = Math::TCast<T>(fog_.getFactor(GL_FOG_END));
     break;
 
   case GL_ALPHA_TEST_REF:
@@ -664,15 +664,15 @@ inline void CGLContext::TGet(GLenum pname, T *pParams) {
     break;
 
   case GL_POINT_SIZE_MIN:
-    pParams[0] = Math::TCast<T>(pointParams_.Get(GL_POINT_SIZE_MIN));
+    pParams[0] = Math::TCast<T>(pointParams_.get(GL_POINT_SIZE_MIN));
     break;
 
   case GL_POINT_SIZE_MAX:
-    pParams[0] = Math::TCast<T>(pointParams_.Get(GL_POINT_SIZE_MAX));
+    pParams[0] = Math::TCast<T>(pointParams_.get(GL_POINT_SIZE_MAX));
     break;
 
   case GL_POINT_FADE_THRESHOLD_SIZE:
-    pParams[0] = Math::TCast<T>(pointParams_.Get(GL_POINT_FADE_THRESHOLD_SIZE));
+    pParams[0] = Math::TCast<T>(pointParams_.get(GL_POINT_FADE_THRESHOLD_SIZE));
     break;
 
   case GL_POINT_DISTANCE_ATTENUATION:
@@ -695,14 +695,14 @@ inline void CGLContext::TGet(GLenum pname, T *pParams) {
     break;
 
   default:
-    __glError(GL_INVALID_ENUM, "CGLContext::TGet() failed, invalid pname parameter: %d.\r\n", pname);
+    __glError(GL_INVALID_ENUM, "GLContext::get() failed, invalid pname parameter: %d.\r\n", pname);
     return;
   }
 }
 
 template <class T>
-inline GLbitfield CGLContext::TQueryMatrix(T *pMantissa, GLint exponent[16]) {
-  const MATRIX44 &matrix = pMatrixStack_->GetMatrix();
+inline GLbitfield GLContext::queryMatrix(T *pMantissa, GLint exponent[16]) {
+  const MATRIX44 &matrix = pMatrixStack_->getMatrix();
 
   for (uint32_t i = 0; i < 16; ++i) {
     pMantissa[i] = static_cast<T>(matrix._m[i]);

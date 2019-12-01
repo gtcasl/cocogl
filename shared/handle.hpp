@@ -17,7 +17,7 @@
 #include <mutex>
 #include "object.hpp"
 
-class CHandleTable : public CObject {
+class HandleTable : public Object {
 private:
   enum {
     GROW_INCREMENT = 64,
@@ -45,20 +45,20 @@ private:
 public:
   class Enumerator {
   public:
-    uint8_t GetType() const { return list_->Type; }
+    uint8_t getType() const { return list_->Type; }
 
-    void *GetObject() const { return list_->pObject; }
+    void *getObject() const { return list_->pObject; }
 
-    void *GetOwner() const { return list_->pOwner; }
+    void *getOwner() const { return list_->pOwner; }
 
-    uint32_t GetHandle() const {
+    uint32_t getHandle() const {
       return (list_->Serial << HANDLE_SERIAL_SHIFT) |
              ((list_ - handles_->entries_) & HANDLE_INDEX_MASK);
     }
 
-    bool IsEnd() const { return (nullptr == list_); }
+    bool isEnd() const { return (nullptr == list_); }
 
-    void MoveNext() {
+    void moveNext() {
       if (list_) {
         do {
           list_ = list_->pNext;
@@ -66,10 +66,10 @@ public:
       }
     }
 
-    void *RemoveNext() {
+    void *removeNext() {
       if (list_) {
         auto pObject = list_->pObject;
-        list_ = handles_->DeleteEntry(list_);
+        list_ = handles_->deleteEntry(list_);
         while (list_ && owner_ && (list_->pOwner != owner_)) {
           list_ = list_->pNext;
         }
@@ -79,299 +79,80 @@ public:
     }
 
   private:
-    Enumerator(CHandleTable *pHandles, const void *pOwner) {
-      assert(pHandles);
-      std::lock_guard<std::mutex> lock(pHandles->cs_);
+    Enumerator(HandleTable *pHandles, const void *pOwner);
 
-      handles_ = pHandles;
-      list_ = pHandles->activelist_;
-      owner_ = pOwner;
-
-      // Find the next owned entry
-      while (list_ && pOwner && (list_->pOwner != pOwner)) {
-        list_ = list_->pNext;
-      }
-    }
-
-    CHandleTable *handles_;
+    HandleTable *handles_;
     Entry *list_;
     const void *owner_;
 
-    friend class CHandleTable;
+    friend class HandleTable;
   };
+  
+  HandleTable() 
+    : size_(0)
+    , entries_(nullptr)
+    , activelist_(nullptr)
+    , count_(0) 
+  {}
 
-  static HRESULT Create(CHandleTable **ppCHandleTable) {
-    assert(ppCHandleTable);
+  void *getObject(uint32_t dwHandle, const void *pOwner = nullptr);
 
-    // Allocate a new handle table
-    auto pHandleTable = new CHandleTable();
-    if (nullptr == pHandleTable) {
-      return E_OUTOFMEMORY;
-    }
+  uint8_t getType(uint32_t dwHandle, const void *pOwner = nullptr);
 
-    pHandleTable->AddRef();
+  HRESULT insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
+                 void *pOwner = nullptr);
 
-    *ppCHandleTable = pHandleTable;
+  void *deleteHandle(uint32_t dwHandle, const void *pOwner = nullptr);
 
-    return S_OK;
-  }
+  void optimize();
 
-  void *GetObject(uint32_t dwHandle, const void *pOwner = nullptr) {
-    std::lock_guard<std::mutex> lock(cs_);
-
-    // Retrieve the corresponding table entry
-    auto pEntry = this->GetEntry(dwHandle);
-    if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
-      return pEntry->pObject;
-    }
-
-    return nullptr;
-  }
-
-  uint8_t GetType(uint32_t dwHandle, const void *pOwner = nullptr) {
-    std::lock_guard<std::mutex> lock(cs_);
-
-    // Retrieve the corresponding table entry
-    auto pEntry = this->GetEntry(dwHandle);
-    if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
-      return pEntry->Type;
-    }
-
-    return 0;
-  }
-
-  HRESULT Insert(uint32_t *pdwHandle, void *pObject, uint8_t type,
-                 void *pOwner = nullptr) {
-    std::lock_guard<std::mutex> lock(cs_);
-
-    if ((nullptr == pObject) || (0 == type) || (nullptr == pdwHandle)) {
-      return E_FAIL;
-    }
-
-    uint32_t index;
-
-    if (count_ < size_) {
-      // Find next free handle entry int he table
-      for (index = 0; index < size_; ++index) {
-        if (0 == entries_[index].Type) {
-          break;
-        }
-      }
-    } else {
-      index = size_;
-
-      // Calculate the table new size
-      uint32_t dwNewSize = size_ + GROW_INCREMENT;
-      if (dwNewSize > HANDLE_INDEX_MASK)
-        return E_FAIL;
-
-      // Reallocate the table's buffer
-      auto pEntries = reinterpret_cast<Entry *>(
-          realloc(entries_, dwNewSize * sizeof(Entry)));
-      if (nullptr == pEntries) {
-        return E_OUTOFMEMORY;
-      }
-
-      if (activelist_) {
-        // Calculate the reallocation offset
-        int offset = pEntries - entries_;
-        if (offset) {
-          // Update active pointers to refect the offset
-          activelist_ += offset;
-
-          auto pCurEntry = activelist_;
-          while (pCurEntry) {
-            if (pCurEntry->pNext) {
-              pCurEntry->pNext += offset;
-            }
-
-            pCurEntry = pCurEntry->pNext;
-          }
-        }
-      }
-
-      // Reset newly allocated entries
-      for (uint32_t i = size_; i < dwNewSize; ++i) {
-        Entry &entry = pEntries[i];
-        entry.pOwner = nullptr;
-        entry.Type = 0;
-        entry.Reuse = 0;
-        entry.pObject = nullptr;
-        entry.pNext = nullptr;
-      }
-
-      entries_ = pEntries;
-      size_ = dwNewSize;
-    }
-
-    // Update the new handle entry
-    auto pEntryNew = entries_ + index;
-    pEntryNew->pOwner = pOwner;
-    pEntryNew->Type = static_cast<uint8_t>(type);
-    pEntryNew->pObject = pObject;
-    ++pEntryNew->Reuse;
-    pEntryNew->pNext = nullptr;
-
-    // Add the entry to the active list ( sorted by address )
-    Entry *pPrevEntry = nullptr;
-    auto pCurEntry = activelist_;
-    while (pCurEntry && (pCurEntry < pEntryNew)) {
-      pPrevEntry = pCurEntry;
-      pCurEntry = pCurEntry->pNext;
-    }
-
-    pEntryNew->pNext = pCurEntry;
-    if (pPrevEntry) {
-      pPrevEntry->pNext = pEntryNew;
-    } else {
-      activelist_ = pEntryNew;
-    }
-
-    // Update the handle count
-    ++count_;
-
-    // Return the new handle
-    *pdwHandle = (pEntryNew->Serial << HANDLE_SERIAL_SHIFT) | index;
-
-    return S_OK;
-  }
-
-  void *Delete(uint32_t dwHandle, const void *pOwner = nullptr) {
-    std::lock_guard<std::mutex> lock(cs_);
-
-    // Retrieve the corresponding table entry
-    auto pEntry = this->GetEntry(dwHandle);
-    if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
-      // Get the object pointer
-      auto pObject = pEntry->pObject;
-
-      // Remove the entry from the table
-      this->DeleteEntry(pEntry);
-
-      // Return the object
-      return pObject;
-    }
-
-    return nullptr;
-  }
-
-  void Optimize() {
-    std::lock_guard<std::mutex> lock(cs_);
-
-    // Check if we need to optimize the table
-    if ((size_ - count_) < GROW_INCREMENT) {
-      return;
-    }
-
-    uint32_t freeSlots = 0;
-
-    // Calculate the size of consecutive free slots starting at the end
-    for (uint32_t i = size_; i--;) {
-      if (entries_[i].Type != 0) {
-        break;
-      }
-
-      ++freeSlots;
-    }
-
-    if (freeSlots >= GROW_INCREMENT) {
-      size_ -= GROW_INCREMENT * (freeSlots / GROW_INCREMENT);
-      if (size_) {
-        // Shrink the table's buffer
-        entries_ =
-            reinterpret_cast<Entry *>(realloc(entries_, size_ * sizeof(Entry)));
-        assert(entries_);
-      } else {
-        // Destroy table's buffer
-        free(entries_);
-        entries_ = nullptr;
-      }
-    }
-  }
-
-  auto GetEnumerator(const void *pOwner = nullptr) {
+  auto getEnumerator(const void *pOwner = nullptr) {
     return Enumerator(this, pOwner);
   }
 
-  uint32_t GetNumHandles() const { return count_; }
+  uint32_t getNumHandles() const { return count_; }
 
-  uint32_t FindHandle(const void *pObject, const void *pOwner = nullptr) {
-    auto enumerator = this->GetEnumerator(pOwner);
-    while (!enumerator.IsEnd()) {
-      if (pObject == enumerator.GetObject()) {
-        return enumerator.GetHandle();
+  uint32_t findHandle(const void *pObject, const void *pOwner = nullptr) {
+    auto enumerator = this->getEnumerator(pOwner);
+    while (!enumerator.isEnd()) {
+      if (pObject == enumerator.getObject()) {
+        return enumerator.getHandle();
       }
-      enumerator.MoveNext();
+      enumerator.moveNext();
     }
     return 0;
   }
 
 private:
-  CHandleTable()
-      : size_(0), entries_(nullptr), activelist_(nullptr), count_(0) {}
 
-  ~CHandleTable() {
+  ~HandleTable() {
     if (entries_) {
       free(entries_);
     }
   }
 
-  static uint32_t GetHandleIndex(uint32_t dwHandle) {
+  static uint32_t getHandleIndex(uint32_t dwHandle) {
     return (dwHandle & HANDLE_INDEX_MASK);
   }
 
-  static uint32_t GetHandleSerial(uint32_t dwHandle) {
+  static uint32_t getHandleSerial(uint32_t dwHandle) {
     return (dwHandle & HANDLE_SERIAL_MASK) >> HANDLE_SERIAL_SHIFT;
   }
 
-  Entry *GetEntry(uint32_t dwHandle) const {
+  Entry *getEntry(uint32_t dwHandle) const {
     // Get the handle entry from the table
-    auto index = this->GetHandleIndex(dwHandle);
+    auto index = this->getHandleIndex(dwHandle);
     if (index < size_) {
       // Validate the handle serial
       auto pEntry = entries_ + index;
-      if (pEntry->Serial == this->GetHandleSerial(dwHandle)) {
+      if (pEntry->Serial == this->getHandleSerial(dwHandle)) {
         return pEntry;
       }
     }
     return nullptr;
   }
 
-  Entry *DeleteEntry(Entry *pEntry) {
-    assert(pEntry);
-
-    // Save the next entry
-    auto pNextEntry = pEntry->pNext;
-
-    // Remove the entry from the active list
-    Entry *pPrevEntry = nullptr;
-    auto pCurEntry = activelist_;
-    while (pCurEntry) {
-      if (pCurEntry == pEntry) {
-        if (pPrevEntry) {
-          pPrevEntry->pNext = pNextEntry;
-        } else {
-          activelist_ = pNextEntry;
-        }
-        break;
-      }
-
-      pPrevEntry = pCurEntry;
-      pCurEntry = pCurEntry->pNext;
-    }
-
-    // Reset the entry
-    pEntry->pOwner = nullptr;
-    pEntry->Type = 0;
-    pEntry->pObject = nullptr;
-    pEntry->pNext = nullptr;
-
-    // Update the handle count
-    --count_;
-
-    // Return the next entry
-    return pNextEntry;
-  }
+  Entry *deleteEntry(Entry *pEntry);
 
   std::mutex cs_;
   uint32_t size_;

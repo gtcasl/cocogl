@@ -32,10 +32,10 @@ bool LoadTGA(const char *fileName, GLuint* id);
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class CTestBase {
+class TestBase {
 public:
-  CTestBase() {}
-  virtual ~CTestBase() {}
+  TestBase() {}
+  virtual ~TestBase() {}
 
   virtual bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) { return true; };
 

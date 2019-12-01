@@ -15,22 +15,22 @@
 
 #pragma once
 
-class CGLSurface;
+class GLSurface;
 class CSurface2D;
 
 class SurfaceDesc {
 public:
-  const uint8_t *GetBits() const { return pbBits_; }
+  const uint8_t *getBits() const { return pbBits_; }
 
-  uint8_t *GetBits() { return pbBits_; }
+  uint8_t *getBits() { return pbBits_; }
 
-  uint8_t GetLogWidth() const { return logWidth_; }
+  uint8_t getLogWidth() const { return logWidth_; }
 
-  uint8_t GetLogHeight() const { return logHeight_; }
+  uint8_t getLogHeight() const { return logHeight_; }
 
-  uint16_t GetWidth() const { return 1 << logWidth_; }
+  uint16_t getWidth() const { return 1 << logWidth_; }
 
-  uint16_t GetHeight() const { return 1 << logHeight_; }
+  uint16_t getHeight() const { return 1 << logHeight_; }
 
 protected:
   uint8_t *pbBits_;
@@ -68,97 +68,100 @@ struct Sampler {
 
 class CSurface2D : public SurfaceDesc {
 public:
-  CSurface2D() { this->Clear(); }
+  CSurface2D() { this->clear(); }
 
-  ~CSurface2D() { this->Destroy(); }
+  ~CSurface2D() { this->destroy(); }
 
-  GLenum Initialize(uint32_t width, uint32_t height, ePixelFormat format);
+  GLenum initialize(uint32_t width, uint32_t height, ePixelFormat format);
 
-  GLenum Initialize(uint32_t width, uint32_t height, int32_t pitch,
+  GLenum initialize(uint32_t width, uint32_t height, int32_t pitch,
                     ePixelFormat format, GLvoid *pPixels);
 
-  GLenum Initialize(uint32_t width, uint32_t height, ePixelFormat format,
+  GLenum initialize(uint32_t width, uint32_t height, ePixelFormat format,
                     const GLvoid *pPixels);
 
-  uint32_t GetPitch() const { return pitch_; }
+  uint32_t getPitch() const { return pitch_; }
 
-  ePixelFormat GetFormat() const { return static_cast<ePixelFormat>(format_); }
+  ePixelFormat getFormat() const { return static_cast<ePixelFormat>(format_); }
 
-  void GetDesc(GLSurfaceDesc *pSurfaceDesc) const {
+  void getDesc(GLSurfaceDesc *pSurfaceDesc) const {
     assert(pSurfaceDesc);
     pSurfaceDesc->pBits = pbBits_;
-    pSurfaceDesc->Width = this->GetWidth();
-    pSurfaceDesc->Height = this->GetHeight();
+    pSurfaceDesc->Width = this->getWidth();
+    pSurfaceDesc->Height = this->getHeight();
     pSurfaceDesc->Pitch = pitch_;
     pSurfaceDesc->Format = format_;
   }
 
-  void Destroy();
+  void destroy();
 
 private:
-  void Clear();
+
+  void clear();
 
   int32_t pitch_;
   uint8_t format_;
   bool bOwnedBuffer_;
 };
 
-class CTexture : public CObject {
+class CTexture : public Object {
 public:
   TexParams Params;
   bool bGenMipMaps;
 
   static GLenum Create(CTexture **ppTexture);
 
-  const CSurface2D &GetSurface(uint32_t level) const {
+  const CSurface2D &getSurface(uint32_t level) const {
     assert(level < MAX_TEXTURE_LEVELS);
     return surfaces_[level];
   }
 
-  const CSurface2D *GetSurfaces() const { return surfaces_; }
+  const CSurface2D *getSurfaces() const { return surfaces_; }
 
-  ePixelFormat GetFormat() const { return surfaces_[0].GetFormat(); }
+  ePixelFormat getFormat() const { return surfaces_[0].getFormat(); }
 
-  uint32_t GetHandle() const { return dwHandle_; }
+  uint32_t getHandle() const { return dwHandle_; }
 
-  void SetHandle(uint32_t dwHandle) { dwHandle_ = dwHandle; }
+  void setHandle(uint32_t dwHandle) { dwHandle_ = dwHandle; }
 
   GLenum InitializeSurface(uint32_t level, uint32_t width, uint32_t height,
                            ePixelFormat format) {
     if (pBoundSurface_) {
-      this->ReleaseSurface(pBoundSurface_);
+      this->releaseSurface(pBoundSurface_);
     }
 
-    return surfaces_[level].Initialize(width, height, format);
+    return surfaces_[level].initialize(width, height, format);
   }
 
-  GLenum BindSurface(CGLSurface *pSurface, bool bGenMipMaps);
+  GLenum bindSurface(GLSurface *pSurface, bool bGenMipMaps);
 
-  GLenum ReleaseSurface(CGLSurface *pSurface);
+  GLenum releaseSurface(GLSurface *pSurface);
 
-  GLenum GenerateMipmaps();
+  GLenum generateMipmaps();
 
-  bool Validate();
+  bool validate();
 
-  bool IsDirty() const { return bIsDirty_; }
+  bool isDirty() const { return bIsDirty_; }
 
   void Invalidate() { bIsDirty_ = true; }
 
-  uint8_t GetLogWidth() const { return surfaces_[0].GetLogWidth(); }
+  uint8_t getLogWidth() const { return surfaces_[0].getLogWidth(); }
 
-  uint8_t GetLogHeight() const { return surfaces_[0].GetLogHeight(); }
+  uint8_t getLogHeight() const { return surfaces_[0].getLogHeight(); }
 
-  uint8_t GetMaxMipLevel() const { return maxMipLevel_; }
+  uint8_t getMaxMipLevel() const { return maxMipLevel_; }
 
-  void FreeSurfaces();
+  void freeSurfaces();
 
 private:
+
   CTexture();
+  
   ~CTexture();
 
   CSurface2D surfaces_[MAX_TEXTURE_LEVELS];
   uint8_t *pbMipBuffer_;
-  CGLSurface *pBoundSurface_;
+  GLSurface *pBoundSurface_;
   uint32_t dwHandle_;
   uint8_t maxMipLevel_;
   bool bIsDirty_;
@@ -174,31 +177,31 @@ public:
 
   ~TexUnit() { __safeRelease(pTexture_); }
 
-  CTexture *GetTexture() const { return pTexture_; }
+  CTexture *getTexture() const { return pTexture_; }
 
-  void SetTexture(CTexture *pTexture) {
+  void setTexture(CTexture *pTexture) {
     if (pTexture) {
-      pTexture->AddRef();
+      pTexture->addRef();
     }
 
     if (pTexture_) {
-      pTexture_->Release();
+      pTexture_->release();
     }
 
     pTexture_ = pTexture;
   }
 
-  ePixelFormat GetFormat() const {
+  ePixelFormat getFormat() const {
     assert(pTexture_);
-    return pTexture_->GetFormat();
+    return pTexture_->getFormat();
   }
 
-  const TexParams &GetParams() const {
+  const TexParams &getParams() const {
     assert(pTexture_);
     return pTexture_->Params;
   }
 
-  bool Prepare(Sampler *pSampler, TEXTURESTATES *pStates);
+  bool prepare(Sampler *pSampler, TEXTURESTATES *pStates);
 
 private:
   CTexture *pTexture_;

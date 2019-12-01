@@ -16,7 +16,7 @@
 #include "light.hpp"
 #include "context.hpp"
 
-void CGLContext::ActivateLight(GLenum cap, bool bValue) {
+void GLContext::setActivateLight(GLenum cap, bool bValue) {
   auto pLight = lights_.data() + (cap - GL_LIGHT0);
   Light *pPrevLight = nullptr;
   Light *pCurLight = pActiveLights_;

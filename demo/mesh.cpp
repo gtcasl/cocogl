@@ -19,7 +19,7 @@ struct GSDHeader {
   int num_sub_objs;
 };
 
-CMesh::CMesh() 
+Mesh::Mesh() 
 : num__indices(0)
 , num__vertices(0)
 , pIndices_(nullptr)
@@ -28,14 +28,14 @@ CMesh::CMesh()
 , pTexCoords_(nullptr)
 {}
 
-CMesh::~CMesh() {
+Mesh::~Mesh() {
   delete[] pIndices_;
   delete[] pGeometry_;
   delete[] pNormals_;
   delete[] pTexCoords_;
 }
 
-bool CMesh::OnInitialize(const char *fileName) {
+bool Mesh::OnInitialize(const char *fileName) {
   FILE* file = nullptr;
   uint32_t num_indices = 0;
   uint32_t num_vertices = 0;
@@ -123,7 +123,7 @@ bool CMesh::OnInitialize(const char *fileName) {
   return status;
 }
 
-void CMesh::OnRender() {
+void Mesh::OnRender() {
   glEnableClientState(GL_VERTEX_ARRAY);
   glVertexPointer(3, GL_FLOAT, 0, pGeometry_);
 

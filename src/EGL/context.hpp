@@ -12,44 +12,47 @@
 // OR INDEMNITIES.
 //
 #pragma once
-class CDisplay;
-class CConfig;
-class CEGLSurface;
 
-class CEGLContext : public CObject {
+class _EGLDisplay;
+class _EGLConfig;
+class _EGLSurface;
+
+class _EGLContext : public Object {
 public:
-  static EGLint Create(CEGLContext **ppContext, CDisplay *pDisplay,
-                       CConfig *pConfig, CEGLContext *pCtxShared);
+  static EGLint Create(_EGLContext **ppContext, 
+                       _EGLDisplay *pDisplay,
+                       _EGLConfig *pConfig, 
+                       _EGLContext *pCtxShared);
 
-  EGLint GetAttribute(EGLint name, EGLint *pValue);
+  EGLint getAttribute(EGLint name, EGLint *pValue);
 
-  void SetBindings(std::thread::id dwThreadID, CEGLSurface *pSurfDraw,
-                   CEGLSurface *pSurfRead);
+  void setBindings(std::thread::id dwThreadID, _EGLSurface *pSurfDraw, _EGLSurface *pSurfRead);
 
-  CDisplay *GetDisplay() const { return pDisplay_; }
+  auto getDisplay() const { return pDisplay_; }
 
-  CConfig *GetConfig() const { return pConfig_; }
+  auto getConfig() const { return pConfig_; }
 
-  auto GetThreadID() const { return dwThreadID_; }
+  auto getThreadID() const { return dwThreadID_; }
 
-  CEGLSurface *GetDrawSurface() const { return pSurfDraw_; }
+  auto getDrawSurface() const { return pSurfDraw_; }
 
-  CEGLSurface *GetReadSurface() const { return pSurfRead_; }
+  auto getReadSurface() const { return pSurfRead_; }
 
-  __GLContext GetNativeData() const { return glContext_; }
+  auto getNativeData() const { return glContext_; }
 
-  bool HasBindings() const { return (pSurfDraw_ || pSurfRead_); }
+  bool hasBindings() const { return (pSurfDraw_ || pSurfRead_); }
 
 private:
-  CEGLContext(CDisplay *pDisplay, CConfig *pConfig);
-  ~CEGLContext();
 
-  EGLint Initialize(CEGLContext *pCtxShared);
+  _EGLContext(_EGLDisplay *pDisplay, _EGLConfig *pConfig);
+  ~_EGLContext();
 
-  CDisplay *pDisplay_;
-  CConfig *pConfig_;
-  CEGLSurface *pSurfDraw_;
-  CEGLSurface *pSurfRead_;
+  EGLint initialize(_EGLContext *pCtxShared);
+
+  _EGLDisplay *pDisplay_;
+  _EGLConfig  *pConfig_;
+  _EGLSurface *pSurfDraw_;
+  _EGLSurface *pSurfRead_;
   std::thread::id dwThreadID_;
   __GLContext glContext_;
 };

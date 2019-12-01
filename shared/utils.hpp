@@ -75,14 +75,14 @@ inline size_t __countof(const T &a) {
 template <class T> 
 inline void __safeAcquire(T *p) {
   if (p) {
-    p->AddRef();
+    p->addRef();
   }
 }
 
 template <class T> 
 inline void __safeRelease(T *&p) {
   if (p) {
-    p->Release();
+    p->release();
     p = nullptr;
   }
 }

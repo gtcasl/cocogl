@@ -12,62 +12,63 @@
 //
 #pragma once
 
-class CEGLContext;
-class CEGLSurface;
+class _EGLContext;
+class _EGLSurface;
 
-class CEGLDriver {
+class _EGLDriver {
 public:
-  CEGLDriver();
-  ~CEGLDriver();
+  _EGLDriver();
+  ~_EGLDriver();
 
-  EGLint GetDisplay(uint32_t *pdwHandle, EGLNativeDisplayType display_id);
+  EGLint getDisplay(uint32_t *pdwHandle, EGLNativeDisplayType display_id);
 
-  void SetError(EGLint error);
-  EGLint GetError() const;
+  void setError(EGLint error);
+  EGLint getError() const;
 
   template <class T> 
-  inline T TGetObject(void *handle) const {
+  inline T getObject(void *handle) const {
     return reinterpret_cast<T>(
-        handles_->GetObject(reinterpret_cast<intptr_t>(handle), this));
+        handles_->getObject(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T> 
-  inline T UnregisterObject(void *handle) const {
+  inline T unregisterObject(void *handle) const {
     return reinterpret_cast<T>(
-        handles_->Delete(reinterpret_cast<intptr_t>(handle), this));
+        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T> 
-  inline T TGetObject(void *handle, void *pOwner) const {
+  inline T getObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        handles_->GetObject(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_->getObject(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
   template <class T>
-  inline T UnregisterObject(void *handle, void *pOwner) const {
+  inline T unregisterObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        handles_->Delete(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
-  uint32_t GetHandle(const void *pObject) {
-    return handles_->FindHandle(pObject, this);
+  uint32_t getHandle(const void *pObject) {
+    return handles_->findHandle(pObject, this);
   }
 
-  uint32_t GetHandle(const void *pObject, void *pOwner) {
-    return handles_->FindHandle(pObject, pOwner);
+  uint32_t getHandle(const void *pObject, void *pOwner) {
+    return handles_->findHandle(pObject, pOwner);
   }
 
-  void MakeCurrent(CEGLContext *pContext, std::thread::id dwThreadID,
-                   CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead);
+  void makeCurrent(_EGLContext *pContext, 
+                   std::thread::id dwThreadID,
+                   _EGLSurface *pSurfDraw, 
+                   _EGLSurface *pSurfRead);
 
-  CEGLContext *GetCurrentContext() const;
+  _EGLContext *getCurrentContext() const;
 
-  EGLint RegisterObject(uint32_t *pdwHandle, void *pObject, uint8_t type,
-                        void *pOwner) {
+  EGLint registerObject(uint32_t *pdwHandle, void *pObject, uint8_t type, void *pOwner) {
     return EGLERROR_FROM_HRESULT(
-        handles_->Insert(pdwHandle, pObject, type, pOwner));
+        handles_->insert(pdwHandle, pObject, type, pOwner));
   }
 
 private:
-  CHandleTable *handles_;
+  HandleTable *handles_;
 };

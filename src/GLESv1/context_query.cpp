@@ -15,15 +15,15 @@
 #include "stdafx.h"
 #include "context.hpp"
 
-void CGLContext::SetError(GLenum error) { error_ = error; }
+void GLContext::setError(GLenum error) { error_ = error; }
 
-GLenum CGLContext::GetError() const {
+GLenum GLContext::getError() const {
   GLenum error = error_;
   error_ = GL_NO_ERROR;
   return error;
 }
 
-const GLubyte *CGLContext::GetString(GLenum name) {
+const GLubyte *GLContext::getString(GLenum name) {
   switch (name) {
   case GL_VENDOR:
     return reinterpret_cast<const GLubyte *>(EGL_CONFIG_VENDOR);
@@ -36,13 +36,13 @@ const GLubyte *CGLContext::GetString(GLenum name) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::GetString() failed, invalid name parameter: %d.\r\n",
+        "GLContext::getString() failed, invalid name parameter: %d.\r\n",
         name);
     return nullptr;
   }
 }
 
-void CGLContext::GetPointer(void **ppParams, GLenum pname) {
+void GLContext::getPointer(void **ppParams, GLenum pname) {
   assert(ppParams);
 
   switch (pname) {
@@ -70,13 +70,13 @@ void CGLContext::GetPointer(void **ppParams, GLenum pname) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::GetPointer() failed, invalid pname parameter: %d.\r\n",
+        "GLContext::getPointer() failed, invalid pname parameter: %d.\r\n",
         pname);
     return;
   }
 }
 
-bool CGLContext::IsEnabled(GLenum cap) {
+bool GLContext::isEnabled(GLenum cap) {
   switch (cap) {
   case GL_VERTEX_ARRAY:
     return vertexStates_.Position;
@@ -177,16 +177,16 @@ bool CGLContext::IsEnabled(GLenum cap) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::IsEnabled() failed, invalid cap parameter: %d.\r\n",
+        "GLContext::isEnabled() failed, invalid cap parameter: %d.\r\n",
         cap);
     return false;
   }
 }
 
-bool CGLContext::IsBuffer(GLuint buffer) {
-  return (HANDLE_BUFFER == handles_->GetType(buffer));
+bool GLContext::isBuffer(GLuint buffer) {
+  return (HANDLE_BUFFER == handles_->getType(buffer));
 }
 
-bool CGLContext::IsTexture(GLuint texture) {
-  return (HANDLE_TEXTURE == handles_->GetType(texture));
+bool GLContext::isTexture(GLuint texture) {
+  return (HANDLE_TEXTURE == handles_->getType(texture));
 }

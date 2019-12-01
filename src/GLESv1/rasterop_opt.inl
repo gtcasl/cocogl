@@ -17,7 +17,7 @@
 template <bool DepthTest, uint32_t DepthFunc, bool DepthWrite,
           uint32_t StencilFunc, uint32_t StencilPass, uint32_t StencilFail,
           uint32_t StencilZFail, bool StencilWrite>
-bool TStencilTest(uint32_t depthValue, uint32_t stencilRef,
+bool DoStencilTest(uint32_t depthValue, uint32_t stencilRef,
                   uint32_t stencilMask, uint32_t stencilWriteMask,
                   void *pDSBuffer) {
   assert(pDSBuffer);
@@ -35,9 +35,9 @@ bool TStencilTest(uint32_t depthValue, uint32_t stencilRef,
     writeMask = stencilWriteMask << 16;
   }
 
-  bool bStencilTest = TCompare<StencilFunc>(_stencilRef, _stencilValue);
+  bool bStencilTest = DoCompare<StencilFunc>(_stencilRef, _stencilValue);
   if (bStencilTest) {
-    if (TCompare<(DepthTest ? DepthFunc
+    if (DoCompare<(DepthTest ? DepthFunc
                             : static_cast<uint32_t>(COMPARE_ALWAYS))>(
             depthValue, _depthValue)) {
       stencilResult = TStencilOp<StencilPass>(stencilValue, stencilRef);
@@ -66,21 +66,21 @@ bool TStencilTest(uint32_t depthValue, uint32_t stencilRef,
 
 template <uint32_t MipFilter, uint32_t MinFilter, uint32_t MagFilter,
           uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-inline uint32_t TGetSamplerColor(const SurfaceDesc &surface, fixedRX fU, fixedRX fV) {
-  return TGetMinFilterN<MagFilter, Format, AddressU, AddressV>(surface, fU, fV);
+inline uint32_t GetSamplerColor(const SurfaceDesc &surface, fixedRX fU, fixedRX fV) {
+  return GetMinFilterN<MagFilter, Format, AddressU, AddressV>(surface, fU, fV);
 }
 
 template <uint32_t MipFilter, uint32_t MinFilter, uint32_t MagFilter,
           uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-uint32_t TGetSamplerColor(const Sampler &sampler, fixedRX fU, fixedRX fV, fixedRX fM) {
-  return TGetMipFilterN<MipFilter, MinFilter, MagFilter, Format, AddressU, AddressV>(
+uint32_t GetSamplerColor(const Sampler &sampler, fixedRX fU, fixedRX fV, fixedRX fM) {
+  return GetMipFilterN<MipFilter, MinFilter, MagFilter, Format, AddressU, AddressV>(
                           sampler, fU, fV, fM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t EnvMode, uint32_t Format, bool NativeColor>
-void TGetTexEnvColor(Color4 *pInOut, uint32_t texture, ColorARGB cEnvColor) {
+void GetTexEnvColor(Color4 *pInOut, uint32_t texture, ColorARGB cEnvColor) {
   typedef TFormatSize<TFormatInfo<Format>> FormatSize;
 
   if constexpr (NativeColor) {
@@ -90,23 +90,23 @@ void TGetTexEnvColor(Color4 *pInOut, uint32_t texture, ColorARGB cEnvColor) {
       }
       if constexpr (FormatSize::ALPHA) {
         Color4 cTexture;
-        Format::TConvertFrom<Format, false>(texture, &cTexture);
+        Format::ConvertFrom<Format, false>(texture, &cTexture);
         pInOut->a = cTexture.a;
       }
     }
   } else {
     Color4 cTexture;
-    Format::TConvertFrom<Format, false>(&cTexture, texture);
+    Format::ConvertFrom<Format, false>(&cTexture, texture);
 
     if constexpr (FormatSize::RGB) {
       if constexpr (FormatSize::ALPHA) {
-        TGetTexEnvColorARGB<EnvMode>(pInOut, cTexture, cEnvColor);
+        GetTexEnvColorARGB<EnvMode>(pInOut, cTexture, cEnvColor);
       } else {
-        TGetTexEnvColorRGB<EnvMode>(pInOut, cTexture, cEnvColor);
+        GetTexEnvColorRGB<EnvMode>(pInOut, cTexture, cEnvColor);
       }
     } else {
       if constexpr (FormatSize::ALPHA) {
-        TGetTexEnvColorA<EnvMode>(pInOut, cTexture, cEnvColor);
+        GetTexEnvColorA<EnvMode>(pInOut, cTexture, cEnvColor);
       }
     }
   }
@@ -115,17 +115,17 @@ void TGetTexEnvColor(Color4 *pInOut, uint32_t texture, ColorARGB cEnvColor) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t Format, bool NativeColor>
-inline void TCalcFog(Color4 *pInOut, ColorARGB cFogColor, fixedRX fFactor) {
+inline void ApplyFog(Color4 *pInOut, ColorARGB cFogColor, fixedRX fFactor) {
 
   int factor = fFactor.data();
 
   if constexpr (NativeColor) {
     Color4 color;
-    Format::TConvertFrom<Format, false>(&color, pInOut->b);
+    Format::ConvertFrom<Format, false>(&color, pInOut->b);
     color.r = cFogColor.r + ((factor * (pInOut->r - cFogColor.r)) >> fixedRX::FRAC);
     color.g = cFogColor.g + ((factor * (pInOut->g - cFogColor.g)) >> fixedRX::FRAC);
     color.b = cFogColor.b + ((factor * (pInOut->b - cFogColor.b)) >> fixedRX::FRAC);
-    pInOut->b = Format::TConvertTo<Format>(color);
+    pInOut->b = Format::ConvertTo<Format>(color);
   } else {
     pInOut->r = cFogColor.r + ((factor * (pInOut->r - cFogColor.r)) >> fixedRX::FRAC);
     pInOut->g = cFogColor.g + ((factor * (pInOut->g - cFogColor.g)) >> fixedRX::FRAC);
@@ -136,8 +136,8 @@ inline void TCalcFog(Color4 *pInOut, ColorARGB cFogColor, fixedRX fFactor) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t AlphaFunc>
-bool TAlphaTest(uint32_t alphaValue, uint32_t alphaRef) {
-  return TCompare<AlphaFunc>(alphaValue, alphaRef);
+bool DoAlphaTest(uint32_t alphaValue, uint32_t alphaRef) {
+  return DoCompare<AlphaFunc>(alphaValue, alphaRef);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -184,13 +184,13 @@ private:
     if constexpr (BlendOp == BLEND_SRC_ALPHA) {
       uint32_t alpha = srcAlpha >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
       const TColorNative<FORMAT_R5G6B5> c0(inColor);
-      return c0.Mul(alpha);
+      return c0.multiply(alpha);
     }
 
     if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
       uint32_t alpha = (0xff - srcAlpha) >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
       const TColorNative<FORMAT_R5G6B5> c0(inColor);
-      return c0.Mul(alpha);
+      return c0.multiply(alpha);
     }
   }
 
@@ -202,7 +202,7 @@ public:
       if constexpr (NativeColor) {
         srcColor = cColor.b;
       } else {
-        srcColor = Format::TConvertTo<FORMAT_R5G6B5>(cColor);
+        srcColor = Format::ConvertTo<FORMAT_R5G6B5>(cColor);
       }
 
       if constexpr (ZeroBlendSrc) {
@@ -217,37 +217,37 @@ public:
         uint32_t alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const TColorNative<FORMAT_R5G6B5> c0(dstColor);
         const TColorNative<FORMAT_R5G6B5> c1(srcColor);
-        return c0.Lerp(c1, alpha);
+        return c0.lerp(c1, alpha);
       }
 
       if constexpr (AlphaBlendDst) {
         uint32_t alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const TColorNative<FORMAT_R5G6B5> c0(srcColor);
         const TColorNative<FORMAT_R5G6B5> c1(dstColor);
-        return c0.Lerp(c1, alpha);
+        return c0.lerp(c1, alpha);
       }
     } else {
       Color4 cSrcColor;
       Color4 cDstColor;
 
       if constexpr (NativeColor) {
-        Format::TConvertFrom<FORMAT_R5G6B5, false>(&cSrcColor, cColor.b);
+        Format::ConvertFrom<FORMAT_R5G6B5, false>(&cSrcColor, cColor.b);
         cSrcColor.a = cColor.a;
       } else {
         cSrcColor = cColor;
       }
 
-      Format::TConvertFrom<FORMAT_R5G6B5, true>(&cDstColor, dstColor);
+      Format::ConvertFrom<FORMAT_R5G6B5, true>(&cDstColor, dstColor);
 
-      TGetBlendCoeff<BlendSrc>(&cSrcColor, cSrcColor, cDstColor);
-      TGetBlendCoeff<BlendDst>(&cDstColor, cSrcColor, cDstColor);
+      GetBlendCoeff<BlendSrc>(&cSrcColor, cSrcColor, cDstColor);
+      GetBlendCoeff<BlendDst>(&cDstColor, cSrcColor, cDstColor);
 
       cSrcColor.r = Math::Add8(cSrcColor.r, cDstColor.r);
       cSrcColor.g = Math::Add8(cSrcColor.g, cDstColor.g);
       cSrcColor.b = Math::Add8(cSrcColor.b, cDstColor.b);
       cSrcColor.a = Math::Add8(cSrcColor.a, cDstColor.a);
 
-      return Format::TConvertTo<FORMAT_R5G6B5>(cSrcColor);
+      return Format::ConvertTo<FORMAT_R5G6B5>(cSrcColor);
     }
   }
 };
@@ -255,11 +255,11 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t ColorFormat, uint32_t LogicFunc, bool ColorWriteMask>
-void TWriteColor(uint32_t color, uint32_t dstColor, uint32_t writeMask,
+void DoWriteColor(uint32_t color, uint32_t dstColor, uint32_t writeMask,
                  uint8_t *pCB) {
   typedef TFormatInfo<ColorFormat> FormatInfo;
 
-  uint32_t result = TLogicOp<LogicFunc>(color, dstColor);
+  uint32_t result = ApplyLogicOp<LogicFunc>(color, dstColor);
 
   if constexpr (ColorWriteMask) {
     result = (result & writeMask) | (dstColor & ~writeMask);
@@ -396,7 +396,7 @@ public:
 
     if constexpr (Fog) {
       if constexpr (NativeColor) {
-        cFogColor = Format::TConvertTo<ColorFormat>(rasterData.cFogColor);
+        cFogColor = Format::ConvertTo<ColorFormat>(rasterData.cFogColor);
       } else {
         cFogColor = rasterData.cFogColor;
       }
@@ -449,7 +449,7 @@ public:
 
       if constexpr (NativeColor) {
         ToColor4(&cNativeColor, fA, fR, fG, fB);
-        cNativeColor.b = Format::TConvertTo<ColorFormat>(cNativeColor);
+        cNativeColor.b = Format::ConvertTo<ColorFormat>(cNativeColor);
       }
     }
 
@@ -530,7 +530,7 @@ public:
           if constexpr (StencilTest) {
             if constexpr (!AlphaTest) {
               // Execute the depth stencil test
-              if (!TStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
+              if (!DoStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
                                 StencilPass, StencilFail, StencilZFail,
                                 StencilWrite>(depthValue, stencilRef,
                                               stencilMask, stencilWriteMask,
@@ -540,7 +540,7 @@ public:
             }
           } else {
             // Early out depth test
-            if (!TCompare<DepthFunc>(
+            if (!DoCompare<DepthFunc>(
                     depthValue, *reinterpret_cast<const uint16_t *>(pDS))) {
               break;
             }
@@ -568,47 +568,47 @@ public:
 
           if constexpr (Mip0) {
             texture =
-                TGetSamplerColor<Tex0_MipFilter, Tex0_MinFilter, Tex0_MagFilter,
+                GetSamplerColor<Tex0_MipFilter, Tex0_MinFilter, Tex0_MagFilter,
                                  Tex0_Format, Tex0_AddressS, Tex0_AddressT>(
                     sampler0, fU0, fV0, fM0);
           } else {
             texture =
-                TGetSamplerColor<Tex0_MipFilter, Tex0_MinFilter, Tex0_MagFilter,
+                GetSamplerColor<Tex0_MipFilter, Tex0_MinFilter, Tex0_MagFilter,
                                  Tex0_Format, Tex0_AddressS, Tex0_AddressT>(
                     surface0, fU0, fV0);
           }
 
-          TGetTexEnvColor<Tex0_EnvMode, Tex0_Format, NativeColor>(
+          GetTexEnvColor<Tex0_EnvMode, Tex0_Format, NativeColor>(
               &cColor, texture, cEnvColor0);
 
           if constexpr (Texture1 != 0) {
             if constexpr (Mip1) {
               texture =
-                  TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
+                  GetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
                                    Tex1_MagFilter, Tex1_Format, Tex1_AddressS,
                                    Tex1_AddressT>(sampler1, fU1, fV1, fM1);
             } else {
               texture =
-                  TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
+                  GetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
                                    Tex1_MagFilter, Tex1_Format, Tex1_AddressS,
                                    Tex1_AddressT>(surface1, fU1, fV1);
             }
 
-            TGetTexEnvColor<Tex1_EnvMode, Tex1_Format, NativeColor>(
+            GetTexEnvColor<Tex1_EnvMode, Tex1_Format, NativeColor>(
                 &cColor, texture, cEnvColor1);
           }
         }
 
         if constexpr (AlphaTest) {
           // Execute alpha test
-          if (!TAlphaTest<AlphaFunc>(cColor.a, alphaRef)) {
+          if (!DoAlphaTest<AlphaFunc>(cColor.a, alphaRef)) {
             break;
           }
 
           if constexpr (DepthTest || StencilTest) {
             if constexpr (StencilTest) {
               // Execute the depth stencil test
-              if (!TStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
+              if (!DoStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
                                 StencilPass, StencilFail, StencilZFail,
                                 StencilWrite>(depthValue, stencilRef,
                                               stencilMask, stencilWriteMask,
@@ -626,7 +626,7 @@ public:
 
         if constexpr (Fog) {
           // Execute fog blend
-          TCalcFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
+          ApplyFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
         }
 
         uint32_t color;
@@ -643,12 +643,12 @@ public:
             color = cColor.b;
           } else {
             // Convert color to native
-            color = Format::TConvertTo<ColorFormat>(cColor);
+            color = Format::ConvertTo<ColorFormat>(cColor);
           }
         }
 
         // Write output color
-        TWriteColor<ColorFormat,
+        DoWriteColor<ColorFormat,
                     (LogicOp ? static_cast<uint32_t>(LogicFunc)
                              : static_cast<uint32_t>(LOGICOP_COPY)),
                     ColorWriteMask>(color, dstColor, colorWriteMask, pCB);
@@ -820,7 +820,7 @@ public:
 
     if constexpr (Fog) {
       if constexpr (NativeColor) {
-        cFogColor = Format::TConvertTo<ColorFormat>(rasterData.cFogColor);
+        cFogColor = Format::ConvertTo<ColorFormat>(rasterData.cFogColor);
       } else {
         cFogColor = rasterData.cFogColor;
       }
@@ -873,7 +873,7 @@ public:
 
       if constexpr (NativeColor) {
         ToColor4(&cNativeColor, fA, fR, fG, fB);
-        cNativeColor.b = Format::TConvertTo<ColorFormat>(cNativeColor);
+        cNativeColor.b = Format::ConvertTo<ColorFormat>(cNativeColor);
       }
     }
 
@@ -1053,7 +1053,7 @@ public:
             if constexpr (StencilTest) {
               if constexpr (!AlphaTest) {
                 // Execute the depth stencil test
-                if (!TStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
+                if (!DoStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
                                   StencilPass, StencilFail, StencilZFail,
                                   StencilWrite>(depthValue, stencilRef,
                                                 stencilMask, stencilWriteMask,
@@ -1063,7 +1063,7 @@ public:
               }
             } else {
               // Early out depth test
-              if (!TCompare<DepthFunc>(
+              if (!DoCompare<DepthFunc>(
                       depthValue, *reinterpret_cast<const uint16_t *>(pDS))) {
                 break;
               }
@@ -1092,47 +1092,47 @@ public:
 
             if constexpr (Mip0) {
               texture =
-                  TGetSamplerColor<Tex0_MipFilter, Tex0_MinFilter,
+                  GetSamplerColor<Tex0_MipFilter, Tex0_MinFilter,
                                    Tex0_MagFilter, Tex0_Format, Tex0_AddressS,
                                    Tex0_AddressT>(sampler0, fU0, fV0, fM0);
             } else {
               texture =
-                  TGetSamplerColor<Tex0_MipFilter, Tex0_MinFilter,
+                  GetSamplerColor<Tex0_MipFilter, Tex0_MinFilter,
                                    Tex0_MagFilter, Tex0_Format, Tex0_AddressS,
                                    Tex0_AddressT>(surface0, fU0, fV0);
             }
 
-            TGetTexEnvColor<Tex0_EnvMode, Tex0_Format, NativeColor>(
+            GetTexEnvColor<Tex0_EnvMode, Tex0_Format, NativeColor>(
                 &cColor, texture, cEnvColor0);
 
             if constexpr (Texture1 != 0) {
               if constexpr (Mip1) {
                 texture =
-                    TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
+                    GetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
                                      Tex1_MagFilter, Tex1_Format, Tex1_AddressS,
                                      Tex1_AddressT>(sampler1, fU1, fV1, fM1);
               } else {
                 texture =
-                    TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
+                    GetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
                                      Tex1_MagFilter, Tex1_Format, Tex1_AddressS,
                                      Tex1_AddressT>(surface1, fU1, fV1);
               }
 
-              TGetTexEnvColor<Tex1_EnvMode, Tex1_Format, NativeColor>(
+              GetTexEnvColor<Tex1_EnvMode, Tex1_Format, NativeColor>(
                   &cColor, texture, cEnvColor1);
             }
           }
 
           if constexpr (AlphaTest) {
             // Execute alpha test
-            if (!TAlphaTest<AlphaFunc>(cColor.a, alphaRef)) {
+            if (!DoAlphaTest<AlphaFunc>(cColor.a, alphaRef)) {
               break;
             }
 
             if constexpr (DepthTest || StencilTest) {
               if constexpr (StencilTest) {
                 // Execute the depth stencil test
-                if (!TStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
+                if (!DoStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
                                   StencilPass, StencilFail, StencilZFail,
                                   StencilWrite>(depthValue, stencilRef,
                                                 stencilMask, stencilWriteMask,
@@ -1150,7 +1150,7 @@ public:
 
           if constexpr (Fog) {
             // Execute fog blend
-            TCalcFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
+            ApplyFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
           }
 
           uint32_t color;
@@ -1168,12 +1168,12 @@ public:
               color = cColor.b;
             } else {
               // Convert color to native
-              color = Format::TConvertTo<ColorFormat>(cColor);
+              color = Format::ConvertTo<ColorFormat>(cColor);
             }
           }
 
           // Write output color
-          TWriteColor<ColorFormat, LogicOp ? LogicFunc : LOGICOP_COPY,
+          DoWriteColor<ColorFormat, LogicOp ? LogicFunc : LOGICOP_COPY,
                       ColorWriteMask>(color, dstColor, colorWriteMask, pCB);
           break;
         }
@@ -1343,7 +1343,7 @@ public:
 
     if constexpr (Fog) {
       if constexpr (NativeColor) {
-        cFogColor = Format::TConvertTo<ColorFormat>(rasterData.cFogColor);
+        cFogColor = Format::ConvertTo<ColorFormat>(rasterData.cFogColor);
       } else {
         cFogColor = rasterData.cFogColor;
       }
@@ -1396,7 +1396,7 @@ public:
 
       if constexpr (NativeColor) {
         ToColor4(&cNativeColor, fA, fR, fG, fB);
-        cNativeColor.b = Format::TConvertTo<ColorFormat>(cNativeColor);
+        cNativeColor.b = Format::ConvertTo<ColorFormat>(cNativeColor);
       }
     }
 
@@ -1473,14 +1473,14 @@ public:
 
         if constexpr (StencilTest) {
           // Execute the depth stencil test
-          if (TStencilTest<DepthTest, DepthFunc, false, StencilFunc,
+          if (DoStencilTest<DepthTest, DepthFunc, false, StencilFunc,
                            STENCIL_KEEP, StencilFail, StencilZFail,
                            StencilWrite>(depthValue, stencilRef, stencilMask,
                                          stencilWriteMask, pDS))
             break;
         } else {
           // Early out depth test
-          if (TCompare<DepthFunc>(depthValue, *reinterpret_cast<const uint16_t *>(pDS)))
+          if (DoCompare<DepthFunc>(depthValue, *reinterpret_cast<const uint16_t *>(pDS)))
             break;
         }
 
@@ -1509,14 +1509,14 @@ public:
 
         if constexpr (StencilTest) {
           // Execute the depth stencil test
-          if (!TStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
+          if (!DoStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
                             StencilPass, STENCIL_KEEP, STENCIL_KEEP,
                             StencilWrite>(depthValue, stencilRef, stencilMask,
                                           stencilWriteMask, pDS))
             break;
         } else {
           // Early out depth test
-          if (!TCompare<DepthFunc>(depthValue, *reinterpret_cast<const uint16_t *>(pDS)))
+          if (!DoCompare<DepthFunc>(depthValue, *reinterpret_cast<const uint16_t *>(pDS)))
             break;
 
           if constexpr (DepthTest && DepthWrite) {
@@ -1579,37 +1579,37 @@ public:
           uint32_t texture;
 
           if constexpr (Mip0) {
-            texture = TGetSamplerColor<Tex0_MipFilter, Tex0_MinFilter, Tex0_MagFilter,
+            texture = GetSamplerColor<Tex0_MipFilter, Tex0_MinFilter, Tex0_MagFilter,
                                        Tex0_Format, Tex0_AddressS, Tex0_AddressT>(
                         *sampler0, fU0, fV0, fM0);
           } else {
-            texture = TGetSamplerColor<Tex0_MipFilter, Tex0_MinFilter, Tex0_MagFilter,
+            texture = GetSamplerColor<Tex0_MipFilter, Tex0_MinFilter, Tex0_MagFilter,
                                        Tex0_Format, Tex0_AddressS, Tex0_AddressT>(
                         surface0, fU0, fV0);
           }
 
-          TGetTexEnvColor<Tex0_EnvMode, Tex0_Format, NativeColor>(
+          GetTexEnvColor<Tex0_EnvMode, Tex0_Format, NativeColor>(
               &cColor, texture, cEnvColor0);
 
           if constexpr (Texture1 != 0) {
             if constexpr (Mip1) {
-              texture = TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
+              texture = GetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
                                          Tex1_MagFilter, Tex1_Format, Tex1_AddressS,
                                          Tex1_AddressT>(*sampler1, fU1, fV1, fM1);
             } else {
-              texture = TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
+              texture = GetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
                                          Tex1_MagFilter, Tex1_Format, Tex1_AddressS,
                                          Tex1_AddressT>(surface1, fU1, fV1);
             }
 
-            TGetTexEnvColor<Tex1_EnvMode, Tex1_Format, NativeColor>(
+            GetTexEnvColor<Tex1_EnvMode, Tex1_Format, NativeColor>(
                 &cColor, texture, cEnvColor1);
           }
         }
 
         if constexpr (Fog) {
           // Execute fog blend
-          TCalcFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
+          ApplyFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
         }
 
         uint32_t color;
@@ -1625,12 +1625,12 @@ public:
             color = cColor.b;
           } else {
             // Convert color to native
-            color = Format::TConvertTo<ColorFormat>(cColor);
+            color = Format::ConvertTo<ColorFormat>(cColor);
           }
         }
 
         // Write output color
-        TWriteColor<ColorFormat, LogicOp ? LogicFunc : LOGICOP_COPY,
+        DoWriteColor<ColorFormat, LogicOp ? LogicFunc : LOGICOP_COPY,
                     ColorWriteMask>(color, dstColor, colorWriteMask, pCB);
 
         if constexpr (InterpolateColor) {
@@ -1782,7 +1782,7 @@ public:
 
     if constexpr (Fog) {
       if constexpr (NativeColor) {
-        cFogColor = Format::TConvertTo<ColorFormat>(rasterData.cFogColor);
+        cFogColor = Format::ConvertTo<ColorFormat>(rasterData.cFogColor);
       } else {
         cFogColor = rasterData.cFogColor;
       }
@@ -1835,7 +1835,7 @@ public:
 
       if constexpr (NativeColor) {
         ToColor4(&cNativeColor, fA, fR, fG, fB);
-        cNativeColor.b = Format::TConvertTo<ColorFormat>(cNativeColor);
+        cNativeColor.b = Format::ConvertTo<ColorFormat>(cNativeColor);
       }
     }
 
@@ -1933,7 +1933,7 @@ public:
 
         if constexpr (StencilTest) {
           // Execute the depth stencil test
-          if (TStencilTest<DepthTest, DepthFunc, false, StencilFunc,
+          if (DoStencilTest<DepthTest, DepthFunc, false, StencilFunc,
                            STENCIL_KEEP, StencilFail, StencilZFail,
                            StencilWrite>(depthValue, stencilRef, stencilMask,
                                          stencilWriteMask, pDS)) {
@@ -1941,7 +1941,7 @@ public:
           }
         } else {
           // Early out if depth test passes
-          if (TCompare<DepthFunc>(depthValue, *reinterpret_cast<const uint16_t *>(pDS)))
+          if (DoCompare<DepthFunc>(depthValue, *reinterpret_cast<const uint16_t *>(pDS)))
             break;
         }
 
@@ -1970,7 +1970,7 @@ public:
 
         if constexpr (StencilTest) {
           // Execute the depth stencil test
-          if (!TStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
+          if (!DoStencilTest<DepthTest, DepthFunc, DepthWrite, StencilFunc,
                             StencilPass, STENCIL_KEEP, STENCIL_KEEP,
                             StencilWrite>(depthValue, stencilRef, stencilMask,
                                           stencilWriteMask, pDS)) {
@@ -1978,7 +1978,7 @@ public:
           }
         } else {
           // Early out depth test
-          if (!TCompare<DepthFunc>(depthValue, *reinterpret_cast<const uint16_t *>(pDS)))
+          if (!DoCompare<DepthFunc>(depthValue, *reinterpret_cast<const uint16_t *>(pDS)))
             break;
 
           if constexpr (DepthTest && DepthWrite) {
@@ -2117,37 +2117,37 @@ public:
             uint32_t texture;
 
             if constexpr (Mip0) {
-              texture = TGetSamplerColor<Tex0_MipFilter, Tex0_MinFilter,
+              texture = GetSamplerColor<Tex0_MipFilter, Tex0_MinFilter,
                                          Tex0_MagFilter, Tex0_Format, Tex0_AddressS,
                                          Tex0_AddressT>(sampler0, fU0, fV0, fM0);
             } else {
-              texture = TGetSamplerColor<Tex0_MipFilter, Tex0_MinFilter,
+              texture = GetSamplerColor<Tex0_MipFilter, Tex0_MinFilter,
                                          Tex0_MagFilter, Tex0_Format, Tex0_AddressS,
                                          Tex0_AddressT>(surface0, fU0, fV0);
             }
 
-            TGetTexEnvColor<Tex0_EnvMode, Tex0_Format, NativeColor>(
+            GetTexEnvColor<Tex0_EnvMode, Tex0_Format, NativeColor>(
                 &cColor, texture, cEnvColor0);
 
             if constexpr (Texture1 != 0) {
               if constexpr (Mip1) {
-                texture = TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
+                texture = GetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
                                            Tex1_MagFilter, Tex1_Format, Tex1_AddressS,
                                            Tex1_AddressT>(sampler1, fU1, fV1, fM1);
               } else {
-                texture = TGetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
+                texture = GetSamplerColor<Tex1_MipFilter, Tex1_MinFilter,
                                            Tex1_MagFilter, Tex1_Format, Tex1_AddressS,
                                            Tex1_AddressT>(surface1, fU1, fV1);
               }
 
-              TGetTexEnvColor<Tex1_EnvMode, Tex1_Format, NativeColor>(
+              GetTexEnvColor<Tex1_EnvMode, Tex1_Format, NativeColor>(
                   &cColor, texture, cEnvColor1);
             }
           }
 
           if constexpr (Fog) {
             // Execute fog blend
-            TCalcFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
+            ApplyFog<ColorFormat, NativeColor>(&cColor, cFogColor, fFog);
           }
 
           uint32_t color;
@@ -2164,12 +2164,12 @@ public:
               color = cColor.b;
             } else {
               // Convert color to native
-              color = Format::TConvertTo<ColorFormat>(cColor);
+              color = Format::ConvertTo<ColorFormat>(cColor);
             }
           }
 
           // Write output color
-          TWriteColor<ColorFormat, LogicOp ? LogicFunc : LOGICOP_COPY,
+          DoWriteColor<ColorFormat, LogicOp ? LogicFunc : LOGICOP_COPY,
                       ColorWriteMask>(color, dstColor, colorWriteMask, pCB);
 
           if constexpr (InterpolateColor) {

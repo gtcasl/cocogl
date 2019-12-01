@@ -24,22 +24,22 @@ struct Light {
     ATTENUATIONS_SIZE = (ATTENUATIONS_LAST - ATTENUATIONS_FIRST) + 1,
   };
 
-  void SetColor(GLenum pname, const VECTOR4 &color) {
+  void setColor(GLenum pname, const VECTOR4 &color) {
     assert((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
     vColors_[pname - COLORS_FIRST] = color;
   }
 
-  const VECTOR4 &GetColor(GLenum pname) const {
+  const VECTOR4 &getColor(GLenum pname) const {
     assert((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
     return vColors_[pname - COLORS_FIRST];
   }
 
-  void SetAttenuation(GLenum pname, floatf value) {
+  void setAttenuation(GLenum pname, floatf value) {
     assert((pname >= ATTENUATIONS_FIRST) && (pname <= ATTENUATIONS_LAST));
     fAttenuations_[pname - ATTENUATIONS_FIRST] = value;
   }
 
-  floatf GetAttenuation(GLenum pname) const {
+  floatf getAttenuation(GLenum pname) const {
     assert((pname >= ATTENUATIONS_FIRST) && (pname <= ATTENUATIONS_LAST));
     return fAttenuations_[pname - ATTENUATIONS_FIRST];
   }
@@ -74,12 +74,12 @@ public:
     COLORS_SIZE = (COLORS_LAST - COLORS_FIRST) + 1,
   };
 
-  void SetColor(GLenum pname, const VECTOR4 &color) {
+  void setColor(GLenum pname, const VECTOR4 &color) {
     assert((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
     vColors_[pname - COLORS_FIRST] = color;
   }
 
-  const VECTOR4 &GetColor(GLenum pname) const {
+  const VECTOR4 &getColor(GLenum pname) const {
     assert((pname >= COLORS_FIRST) && (pname <= COLORS_LAST));
     return vColors_[pname - COLORS_FIRST];
   }

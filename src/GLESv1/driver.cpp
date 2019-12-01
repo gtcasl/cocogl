@@ -15,19 +15,16 @@
 #include "stdafx.h"
 #include "driver.hpp"
 
-thread_local CGLContext *tls_glctx = nullptr;
+thread_local GLContext *tls_glctx = nullptr;
 
-CGLDriver::CGLDriver() : handles_(nullptr), pRasterCache_(nullptr) {
+GLDriver::GLDriver() : handles_(nullptr), pRasterCache_(nullptr) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
   // Create the handle table
-  err = GLERROR_FROM_HRESULT(CHandleTable::Create(&handles_));
-  if (__glFailed(err)) {
-    __glLogError("CHandleTable::Create() failed, err = %x.\r\n", err);
-    return;
-  }
+  handles_ = new HandleTable();
+  handles_->addRef();
 
   // Create the raster cache
   err = CRasterCache::Create(&pRasterCache_);
@@ -37,7 +34,7 @@ CGLDriver::CGLDriver() : handles_(nullptr), pRasterCache_(nullptr) {
   }
 }
 
-CGLDriver::~CGLDriver() {
+GLDriver::~GLDriver() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   __safeRelease(tls_glctx);
@@ -46,49 +43,49 @@ CGLDriver::~CGLDriver() {
   if (handles_) {
     {
       // Release all generated driver handles
-      auto enumerator = handles_->GetEnumerator(this);
-      while (!enumerator.IsEnd()) {
-        reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
+      auto enumerator = handles_->getEnumerator(this);
+      while (!enumerator.isEnd()) {
+        reinterpret_cast<IObject *>(enumerator.removeNext())->release();
       }
     }
 
     {
       // Release all other generated handles
-      auto enumerator = handles_->GetEnumerator(nullptr);
-      while (!enumerator.IsEnd()) {
-        reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
+      auto enumerator = handles_->getEnumerator(nullptr);
+      while (!enumerator.isEnd()) {
+        reinterpret_cast<IObject *>(enumerator.removeNext())->release();
       }
     }
 
     // The handle table should now be empty
-    assert(0 == handles_->GetNumHandles());
+    assert(0 == handles_->getNumHandles());
 
     // Release the handle table
-    handles_->Release();
+    handles_->release();
   }
 }
 
-CGLContext *CGLDriver::GetCurrentContext() const { return tls_glctx; }
+GLContext *GLDriver::getCurrentContext() const { return tls_glctx; }
 
-void CGLDriver::MakeCurrent(CGLContext *pContext, CGLSurface *pSurfDraw,
-                            CGLSurface *pSurfRead) {
-  CGLContext *pCtxCurr = this->GetCurrentContext();
+void GLDriver::makeCurrent(GLContext *pContext, GLSurface *pSurfDraw,
+                            GLSurface *pSurfRead) {
+  GLContext *pCtxCurr = this->getCurrentContext();
   if (pCtxCurr != pContext) {
     if (pContext) {
-      pContext->AddRef();
+      pContext->addRef();
     }
 
     if (pCtxCurr) {
-      pCtxCurr->SetDrawSurface(nullptr);
-      pCtxCurr->SetReadSurface(nullptr);
-      pCtxCurr->Release();
+      pCtxCurr->setDrawSurface(nullptr);
+      pCtxCurr->setReadSurface(nullptr);
+      pCtxCurr->release();
     }
 
     tls_glctx = pContext;
   }
 
   if (pContext) {
-    pContext->SetDrawSurface(pSurfDraw);
-    pContext->SetReadSurface(pSurfRead);
+    pContext->setDrawSurface(pSurfDraw);
+    pContext->setReadSurface(pSurfRead);
   }
 }

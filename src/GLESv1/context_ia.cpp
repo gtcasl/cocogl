@@ -15,7 +15,7 @@
 #include "stdafx.h"
 #include "context.hpp"
 
-void CGLContext::ClientState(GLenum array, bool bValue) {
+void GLContext::setClientState(GLenum array, bool bValue) {
   switch (array) {
   case GL_VERTEX_ARRAY:
     vertexStates_.Position = bValue;
@@ -49,18 +49,18 @@ void CGLContext::ClientState(GLenum array, bool bValue) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              "CGLContext::ClientState() failed, invalid "
+              "GLContext::setClientState() failed, invalid "
               "array parameter: %d.\r\n",
               array);
     return;
   }
 }
 
-void CGLContext::ClientActiveTexture(GLenum texture) {
+void GLContext::setClientActiveTexture(GLenum texture) {
   uint32_t index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM,
-              "CGLContext::ClientActiveTexture() failed, "
+              "GLContext::setClientActiveTexture() failed, "
               "invalid texture parameter: %d.\r\n",
               texture);
     return;
@@ -69,11 +69,11 @@ void CGLContext::ClientActiveTexture(GLenum texture) {
   clientActiveTexture_ = index;
 }
 
-void CGLContext::ActiveTexture(GLenum texture) {
+void GLContext::setActiveTexture(GLenum texture) {
   uint32_t index = (texture - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM,
-              "CGLContext::ActiveTexture() failed, "
+              "GLContext::setActiveTexture() failed, "
               "invalid texture parameter: %d.\r\n",
               texture);
     return;
@@ -82,11 +82,11 @@ void CGLContext::ActiveTexture(GLenum texture) {
   activeTexture_ = index;
 }
 
-void CGLContext::VertexPointer(GLint size, GLenum type, GLsizei stride,
+void GLContext::setVertexPointer(GLint size, GLenum type, GLsizei stride,
                                const GLvoid *pPointer) {
   if ((size < 2) || (size > 4)) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::VertexPointer() failed, "
+              "GLContext::setVertexPointer() failed, "
               "invalid size parameter: %d.\r\n",
               size);
     return;
@@ -95,7 +95,7 @@ void CGLContext::VertexPointer(GLint size, GLenum type, GLsizei stride,
   if ((type != GL_BYTE) && (type != GL_SHORT) && (type != GL_FIXED) &&
       (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::VertexPointer() failed, "
+              "GLContext::setVertexPointer() failed, "
               "invalid type parameter: %d.\r\n",
               type);
     return;
@@ -103,7 +103,7 @@ void CGLContext::VertexPointer(GLint size, GLenum type, GLsizei stride,
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::VertexPointer() failed, "
+              "GLContext::setVertexPointer() failed, "
               "invalid stride parameter: %d.\r\n",
               stride);
     return;
@@ -116,17 +116,17 @@ void CGLContext::VertexPointer(GLint size, GLenum type, GLsizei stride,
   positionArray_.Format = ToVertexFormat(type, size);
   positionArray_.Stride = stride;
   positionArray_.pPointer = pPointer;
-  positionArray_.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
+  positionArray_.pBuffer = this->getBufferObject(GL_ARRAY_BUFFER);
 }
 
-void CGLContext::NormalPointer(GLenum type, GLsizei stride,
+void GLContext::setNormalPointer(GLenum type, GLsizei stride,
                                const GLvoid *pPointer) {
   GLint size = 3;
 
   if ((type != GL_BYTE) && (type != GL_SHORT) && (type != GL_FIXED) &&
       (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::NormalPointer() failed, "
+              "GLContext::setNormalPointer() failed, "
               "invalid type parameter: %d.\r\n",
               type);
     return;
@@ -134,7 +134,7 @@ void CGLContext::NormalPointer(GLenum type, GLsizei stride,
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::NormalPointer() failed, "
+              "GLContext::setNormalPointer() failed, "
               "invalid stride parameter: %d.\r\n",
               stride);
     return;
@@ -147,14 +147,14 @@ void CGLContext::NormalPointer(GLenum type, GLsizei stride,
   normalArray_.Format = ToVertexFormat(type, size);
   normalArray_.Stride = stride;
   normalArray_.pPointer = pPointer;
-  normalArray_.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
+  normalArray_.pBuffer = this->getBufferObject(GL_ARRAY_BUFFER);
 }
 
-void CGLContext::ColorPointer(GLint size, GLenum type, GLsizei stride,
+void GLContext::setColorPointer(GLint size, GLenum type, GLsizei stride,
                               const GLvoid *pPointer) {
   if (size != 4) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::ColorPointer() failed, "
+              "GLContext::setColorPointer() failed, "
               "invalid size parameter: %d.\r\n",
               size);
     return;
@@ -162,7 +162,7 @@ void CGLContext::ColorPointer(GLint size, GLenum type, GLsizei stride,
 
   if ((type != GL_UNSIGNED_BYTE) && (type != GL_FIXED) && (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::ColorPointer() failed, "
+              "GLContext::setColorPointer() failed, "
               "invalid type parameter: %d.\r\n",
               type);
     return;
@@ -170,7 +170,7 @@ void CGLContext::ColorPointer(GLint size, GLenum type, GLsizei stride,
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::ColorPointer() failed, "
+              "GLContext::setColorPointer() failed, "
               "invalid stride parameter: %d.\r\n",
               stride);
     return;
@@ -183,14 +183,14 @@ void CGLContext::ColorPointer(GLint size, GLenum type, GLsizei stride,
   colorArray_.Format = ToVertexFormat(type, size);
   colorArray_.Stride = stride;
   colorArray_.pPointer = pPointer;
-  colorArray_.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
+  colorArray_.pBuffer = this->getBufferObject(GL_ARRAY_BUFFER);
 }
 
-void CGLContext::TexCoordPointer(GLint size, GLenum type, GLsizei stride,
+void GLContext::setTexCoordPointer(GLint size, GLenum type, GLsizei stride,
                                  const GLvoid *pPointer) {
   if ((size < 2) || (size > 4)) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::TexCoordPointer() failed, "
+              "GLContext::setTexCoordPointer() failed, "
               "invalid size parameter: %d.\r\n",
               size);
     return;
@@ -199,7 +199,7 @@ void CGLContext::TexCoordPointer(GLint size, GLenum type, GLsizei stride,
   if ((type != GL_BYTE) && (type != GL_SHORT) && (type != GL_FIXED) &&
       (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::TexCoordPointer() failed, "
+              "GLContext::setTexCoordPointer() failed, "
               "invalid type parameter: %d.\r\n",
               type);
     return;
@@ -207,7 +207,7 @@ void CGLContext::TexCoordPointer(GLint size, GLenum type, GLsizei stride,
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::TexCoordPointer() failed, "
+              "GLContext::setTexCoordPointer() failed, "
               "invalid stride parameter: %d.\r\n",
               stride);
     return;
@@ -222,16 +222,16 @@ void CGLContext::TexCoordPointer(GLint size, GLenum type, GLsizei stride,
   texCoordArray.Format = ToVertexFormat(type, size);
   texCoordArray.Stride = stride;
   texCoordArray.pPointer = pPointer;
-  texCoordArray.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
+  texCoordArray.pBuffer = this->getBufferObject(GL_ARRAY_BUFFER);
 }
 
-void CGLContext::PointSizePointerOES(GLenum type, GLsizei stride,
+void GLContext::setPointSizePointerOES(GLenum type, GLsizei stride,
                                      const GLvoid *pPointer) {
   GLint size = 1;
 
   if ((type != GL_FIXED) && (type != GL_FLOAT)) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::PointSizePointerOES() failed, "
+              "GLContext::setPointSizePointerOES() failed, "
               "invalid type parameter: %d.\r\n",
               type);
     return;
@@ -239,7 +239,7 @@ void CGLContext::PointSizePointerOES(GLenum type, GLsizei stride,
 
   if (stride < 0) {
     __glError(GL_INVALID_VALUE,
-              "CGLContext::PointSizePointerOES() failed, "
+              "GLContext::setPointSizePointerOES() failed, "
               "invalid stride parameter: %d.\r\n",
               stride);
     return;
@@ -252,10 +252,10 @@ void CGLContext::PointSizePointerOES(GLenum type, GLsizei stride,
   pointSizeArray_.Format = ToVertexFormat(type, size);
   pointSizeArray_.Stride = stride;
   pointSizeArray_.pPointer = pPointer;
-  pointSizeArray_.pBuffer = this->GetBufferObject(GL_ARRAY_BUFFER);
+  pointSizeArray_.pBuffer = this->getBufferObject(GL_ARRAY_BUFFER);
 }
 
-void CGLContext::Color(floatf red, floatf green, floatf blue, floatf alpha) {
+void GLContext::setColor(floatf red, floatf green, floatf blue, floatf alpha) {
   vColor_.x = red;
   vColor_.y = green;
   vColor_.z = blue;
@@ -266,7 +266,7 @@ void CGLContext::Color(floatf red, floatf green, floatf blue, floatf alpha) {
       Math::TIsZero(green - fONE) && Math::TIsZero(blue - fONE);
 }
 
-void CGLContext::Normal(floatf nx, floatf ny, floatf nz) {
+void GLContext::setNormal(floatf nx, floatf ny, floatf nz) {
   vNormal_.x = nx;
   vNormal_.y = ny;
   vNormal_.z = nz;
@@ -274,12 +274,12 @@ void CGLContext::Normal(floatf nx, floatf ny, floatf nz) {
   dirtyFlags_.NormalizeNormal = 1;
 }
 
-void CGLContext::MultiTexCoord(GLenum target, floatf s, floatf t, floatf /*r*/,
+void GLContext::setMultiTexCoord(GLenum target, floatf s, floatf t, floatf /*r*/,
                                floatf q) {
   uint32_t index = (target - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM,
-              "CGLContext::MultiTexCoord() failed, "
+              "GLContext::setMultiTexCoord() failed, "
               "invalid target parameter: %d.\r\n",
               target);
     return;

@@ -14,25 +14,25 @@
 //
 #pragma once
 
-class CMatrixStack : public CObject {
+class CMatrixStack : public Object {
 public:
   ~CMatrixStack();
 
   static GLenum Create(CMatrixStack **ppMatrixStack, uint8_t size);
 
-  void ToIdentity() {
-    pMatrices_[curIndex_].ToIdentity();
-    this->SetIdentity(true);
+  void toIdentity() {
+    pMatrices_[curIndex_].toIdentity();
+    this->setIdentity(true);
   }
 
-  void SetMatrix(const MATRIX44 &matrix) {
+  void setMatrix(const MATRIX44 &matrix) {
     pMatrices_[curIndex_] = matrix;
-    this->SetIdentity(false);
+    this->setIdentity(false);
   }
 
-  const MATRIX44 &GetMatrix() const { return pMatrices_[curIndex_]; }
+  const MATRIX44 &getMatrix() const { return pMatrices_[curIndex_]; }
 
-  bool Push() {
+  bool push() {
     if (curIndex_ + 1 < size_) {
       pMatrices_[curIndex_ + 1] = pMatrices_[curIndex_];
       identityMask_ = (identityMask_ & ~(2 << curIndex_)) |
@@ -44,7 +44,7 @@ public:
     return false;
   }
 
-  bool Pop() {
+  bool pop() {
     if (curIndex_ > 0) {
       --curIndex_;
       return true;
@@ -53,11 +53,11 @@ public:
     return false;
   }
 
-  bool IsIdentity() const { return identityMask_ & (1 << curIndex_); }
+  bool isIdentity() const { return identityMask_ & (1 << curIndex_); }
 
-  uint32_t GetSize() const { return size_; }
+  uint32_t getSize() const { return size_; }
 
-  template <class T> void TGetTop(T *pDst) const {
+  template <class T> void getTop(T *pDst) const {
     assert(pDst);
 
     auto pSrc = pMatrices_[curIndex_]._m;
@@ -67,11 +67,11 @@ public:
   }
 
 private:
-  GLenum Initialize(uint8_t size);
+  GLenum initialize(uint8_t size);
 
   CMatrixStack();
 
-  void SetIdentity(bool bValue) {
+  void setIdentity(bool bValue) {
     if (bValue) {
       identityMask_ |= (1 << curIndex_);
     } else {

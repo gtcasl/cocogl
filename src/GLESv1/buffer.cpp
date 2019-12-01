@@ -15,7 +15,7 @@
 #include "stdafx.h"
 #include "buffer.hpp"
 
-CBuffer::CBuffer() {
+GLBuffer::GLBuffer() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   dwHandle_ = 0;
@@ -24,36 +24,36 @@ CBuffer::CBuffer() {
   usage_ = GL_STATIC_DRAW;
 }
 
-CBuffer::~CBuffer() {
+GLBuffer::~GLBuffer() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   __safeDeleteArray(pBits_);
 }
 
-GLenum CBuffer::Create(CBuffer **ppBuffer) {
+GLenum GLBuffer::Create(GLBuffer **ppBuffer) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(ppBuffer);
 
   // Create a new surface object
-  auto pBuffer = new CBuffer();
+  auto pBuffer = new GLBuffer();
   if (nullptr == pBuffer) {
-    __glLogError("CBuffer allocation failed, out of memory.\r\n");
+    __glLogError("GLBuffer allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
-  pBuffer->AddRef();
+  pBuffer->addRef();
   *ppBuffer = pBuffer;
 
   return GL_NO_ERROR;
 }
 
-GLenum CBuffer::Initialize(uint32_t size, GLenum usage, const GLvoid *pData) {
+GLenum GLBuffer::initialize(uint32_t size, GLenum usage, const GLvoid *pData) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pBits = new uint8_t[size];
   if (nullptr == pBits) {
-    __glLogError("CBuffer storage allocation failed, out of memory.\r\n");
+    __glLogError("GLBuffer storage allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -64,13 +64,13 @@ GLenum CBuffer::Initialize(uint32_t size, GLenum usage, const GLvoid *pData) {
   usage_ = usage;
 
   if (pData) {
-    this->CopyData(0, size, pData);
+    this->copyData(0, size, pData);
   }
 
   return GL_NO_ERROR;
 }
 
-GLenum CBuffer::GetParameter(GLenum pname, GLint *pParams) {
+GLenum GLBuffer::getParameter(GLenum pname, GLint *pParams) {
   GLint params;
 
   switch (pname) {
@@ -84,7 +84,7 @@ GLenum CBuffer::GetParameter(GLenum pname, GLint *pParams) {
 
   default:
     __glLogError(
-        "CBuffer::GetParameter() failed, invalid pname parameter: %d.\r\n",
+        "GLBuffer::getParameter() failed, invalid pname parameter: %d.\r\n",
         pname);
     return GL_INVALID_ENUM;
   }

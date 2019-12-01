@@ -330,12 +330,12 @@ struct Fog {
 
   eFogMode Mode;
 
-  void SetFactor(GLenum pname, floatf fValue) {
+  void setFactor(GLenum pname, floatf fValue) {
     assert(pname >= FACTORS_FIRST && pname <= FACTORS_LAST);
     factors_[pname - FACTORS_FIRST] = fValue;
   }
 
-  floatf GetFactor(GLenum pname) const {
+  floatf getFactor(GLenum pname) const {
     assert(pname >= FACTORS_FIRST && pname <= FACTORS_LAST);
     return factors_[pname - FACTORS_FIRST];
   }
@@ -356,12 +356,12 @@ struct PointParams {
 
   VECTOR3 vAttenuation;
 
-  floatf Get(GLenum pname) {
+  floatf get(GLenum pname) {
     assert(pname >= PARAMS_FIRST && pname <= PARAMS_LAST);
     return params_[pname - PARAMS_FIRST];
   }
 
-  void Set(GLenum pname, floatf fValue) {
+  void set(GLenum pname, floatf fValue) {
     assert(pname >= PARAMS_FIRST && pname <= PARAMS_LAST);
     params_[pname - PARAMS_FIRST] = fValue;
   }
@@ -420,7 +420,7 @@ enum eEnvMode {
   ENVMODE_SIZE_,
 };
 
-enum eCompare {
+enum ecompare {
   COMPARE_NEVER,
   COMPARE_LESS,
   COMPARE_EQUAL,

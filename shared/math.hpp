@@ -258,7 +258,7 @@ template <class T> struct TMatrix44 {
     this->_44 = rhs._44;
   }
 
-  void ToIdentity() {
+  void toIdentity() {
     this->_11 = TConst<T>::One();
     this->_12 = TConst<T>::Zero();
     this->_13 = TConst<T>::Zero();
@@ -1399,7 +1399,7 @@ inline void Transpose33(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
 inline void Scale(MATRIX44 *pmatOut, floatf x, floatf y, floatf z) {
   assert(pmatOut);
 
-  pmatOut->ToIdentity();
+  pmatOut->toIdentity();
 
   pmatOut->_11 = x;
   pmatOut->_22 = y;
@@ -1409,7 +1409,7 @@ inline void Scale(MATRIX44 *pmatOut, floatf x, floatf y, floatf z) {
 inline void Translate(MATRIX44 *pmatOut, floatf x, floatf y, floatf z) {
   assert(pmatOut);
 
-  pmatOut->ToIdentity();
+  pmatOut->toIdentity();
 
   pmatOut->_41 = x;
   pmatOut->_42 = y;

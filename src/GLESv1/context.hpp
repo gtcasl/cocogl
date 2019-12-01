@@ -16,204 +16,203 @@
 
 #include "raster.hpp"
 
-class CGLContext : public CRasterizer {
+class GLContext : public CRasterizer {
 public:
   //--
-  static GLenum Create(CGLContext **ppContext, CHandleTable *pHandles,
-                       CRasterCache *pRasterCache, CGLContext *pCtxShared);
+  static GLenum Create(GLContext **ppContext, HandleTable *pHandles,
+                       CRasterCache *pRasterCache, GLContext *pCtxShared);
 
   //--
-  void SetDrawSurface(CGLSurface *pSurface);
-  void SetReadSurface(CGLSurface *pSurface);
+  void setDrawSurface(GLSurface *pSurface);
+  void setReadSurface(GLSurface *pSurface);
 
   //--
-  void SetError(GLenum error);
-  GLenum GetError() const;
+  void setError(GLenum error);
+  GLenum getError() const;
 
   //--
-  void ClearColor(floatf red, floatf green, floatf blue, floatf alpha);
-  void ClearDepth(floatf depth);
-  void ClearStencil(GLint stencil);
+  void clearColor(floatf red, floatf green, floatf blue, floatf alpha);
+  void clearDepth(floatf depth);
+  void clearStencil(GLint stencil);
 
-  void ColorMask(GLboolean red, GLboolean green, GLboolean blue,
+  void setColorMask(GLboolean red, GLboolean green, GLboolean blue,
                  GLboolean alpha);
 
-  void DepthMask(GLboolean flag);
-  void StencilMask(GLuint mask);
+  void setDepthMask(GLboolean flag);
+  void setStencilMask(GLuint mask);
 
-  void ClientState(GLenum array, bool bValue);
-  void ClientActiveTexture(GLenum texture);
-  void ActiveTexture(GLenum texture);
+  void setClientState(GLenum array, bool bValue);
+  void setClientActiveTexture(GLenum texture);
+  void setActiveTexture(GLenum texture);
 
-  void VertexPointer(GLint size, GLenum type, GLsizei stride,
+  void setVertexPointer(GLint size, GLenum type, GLsizei stride,
                      const GLvoid *pPointer);
 
-  void NormalPointer(GLenum type, GLsizei stride, const GLvoid *pPointer);
+  void setNormalPointer(GLenum type, GLsizei stride, const GLvoid *pPointer);
 
-  void ColorPointer(GLint size, GLenum type, GLsizei stride,
+  void setColorPointer(GLint size, GLenum type, GLsizei stride,
                     const GLvoid *pPointer);
 
-  void TexCoordPointer(GLint size, GLenum type, GLsizei stride,
+  void setTexCoordPointer(GLint size, GLenum type, GLsizei stride,
                        const GLvoid *pPointer);
 
-  void PointSizePointerOES(GLenum type, GLsizei stride, const GLvoid *pPointer);
+  void setPointSizePointerOES(GLenum type, GLsizei stride, const GLvoid *pPointer);
 
-  void Color(floatf red, floatf green, floatf blue, floatf alpha);
-  void Normal(floatf nx, floatf ny, floatf nz);
-  void MultiTexCoord(GLenum target, floatf s, floatf t, floatf r, floatf q);
+  void setColor(floatf red, floatf green, floatf blue, floatf alpha);
+  void setNormal(floatf nx, floatf ny, floatf nz);
+  void setMultiTexCoord(GLenum target, floatf s, floatf t, floatf r, floatf q);
 
-  void GenBuffers(GLsizei n, GLuint *phBuffers);
-  void BindBuffer(GLenum target, GLuint buffer);
+  void genBuffers(GLsizei n, GLuint *phBuffers);
+  void bindBuffer(GLenum target, GLuint buffer);
 
-  void BufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
+  void setBufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
                   GLenum usage);
 
-  void BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
+  void setBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
                      const GLvoid *pData);
 
-  void GetBufferParameter(GLenum target, GLenum pname, GLint *pParams);
-  void DeleteBuffers(GLsizei n, const GLuint *phBuffers);
+  void getBufferParameter(GLenum target, GLenum pname, GLint *pParams);
+  void deleteBuffers(GLsizei n, const GLuint *phBuffers);
 
-  void GenTextures(GLsizei n, GLuint *phTextures);
-  void BindTexture(GLenum target, GLuint texture);
+  void genTextures(GLsizei n, GLuint *phTextures);
+  void bindTexture(GLenum target, GLuint texture);
 
-  void TexImage2D(GLenum target, GLint level, GLint internalformat,
+  void setTexImage2D(GLenum target, GLint level, GLint internalformat,
                   GLsizei width, GLsizei height, GLint border, GLenum format,
                   GLenum type, const GLvoid *pPixels);
 
-  void TexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
+  void setTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
                      GLsizei width, GLsizei height, GLenum format, GLenum type,
                      const GLvoid *pPixels);
 
-  void CopyTexImage2D(GLenum target, GLint level, GLenum internalformat,
+  void copyTexImage2D(GLenum target, GLint level, GLenum internalformat,
                       GLint x, GLint y, GLsizei width, GLsizei height,
                       GLint border);
 
-  void CopyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
+  void copyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
                          GLint yoffset, GLint x, GLint y, GLsizei width,
                          GLsizei height);
 
-  void CompressedTexImage2D(GLenum target, GLint level, GLenum internalformat,
+  void compressedTexImage2D(GLenum target, GLint level, GLenum internalformat,
                             GLsizei width, GLsizei height, GLint border,
                             GLsizei imageSize, const GLvoid *pData);
 
-  void CompressedTexSubImage2D(GLenum target, GLint level, GLint xoffset,
+  void compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset,
                                GLint yoffset, GLsizei width, GLsizei height,
                                GLenum format, GLsizei imageSize,
                                const GLvoid *pData);
 
-  void DeleteTextures(GLsizei n, const GLuint *phTextures);
-  void PixelStorei(GLenum pname, GLint param);
+  void deleteTextures(GLsizei n, const GLuint *phTextures);
+  void setPixelStorei(GLenum pname, GLint param);
 
-  void ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
+  void readPixels(GLint x, GLint y, GLsizei width, GLsizei height,
                   GLenum format, GLenum type, GLvoid *pPixels);
 
-  GLenum BindTexImage(CGLSurface *pSurface, bool bGenMipMaps);
-  GLenum ReleaseTexImage(CGLSurface *pSurface);
+  GLenum bindTexImage(GLSurface *pSurface, bool bGenMipMaps);
+  GLenum releaseTexImage(GLSurface *pSurface);
 
-  void MatrixMode(GLenum mode);
-  void PushMatrix();
-  void PopMatrix();
-  void LoadIdentity();
-  void LoadMatrix(const MATRIX44 &matrix);
+  void setMatrixMode(GLenum mode);
+  void pushMatrix();
+  void popMatrix();
+  void loadIdentity();
+  void loadMatrix(const MATRIX44 &matrix);
 
-  void Ortho(floatf left, floatf right, floatf bottom, floatf top, floatf zNear,
+  void scale(floatf x, floatf y, floatf z);
+  void translate(floatf x, floatf y, floatf z);
+  void rotate(floatf angle, floatf x, floatf y, floatf z);
+  void multiply(const MATRIX44 &matrix);
+  void ortho(floatf left, floatf right, floatf bottom, floatf top, floatf zNear,
              floatf zFar);
-
-  void Scale(floatf x, floatf y, floatf z);
-  void Translate(floatf x, floatf y, floatf z);
-  void Rotate(floatf angle, floatf x, floatf y, floatf z);
-  void Multiply(const MATRIX44 &matrix);
-  void Frustum(floatf left, floatf right, floatf bottom, floatf top,
+  void frustum(floatf left, floatf right, floatf bottom, floatf top,
                floatf zNear, floatf zFar);
 
-  template <class T> GLbitfield TQueryMatrix(T *pMantissa, GLint exponent[16]);
+  template <class T> GLbitfield queryMatrix(T *pMantissa, GLint exponent[16]);
 
-  void DepthRange(floatf zNear, floatf zFar);
-  void ClipPlane(GLenum plane, const VECTOR4 &equation);
-  void Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
+  void setDepthRange(floatf zNear, floatf zFar);
+  void setClipPlane(GLenum plane, const VECTOR4 &equation);
+  void setViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
-  template <class T> void TLight(GLenum light, GLenum pname, const T *pParams);
+  template <class T> void setLightParameter(GLenum light, GLenum pname, const T *pParams);
 
-  template <class T> void TLightModel(GLenum pname, const T *pParams);
-
-  template <class T>
-  void TMaterial(GLenum face, GLenum pname, const T *pParams);
-
-  template <class T> void TFog(GLenum pname, const T *pParams);
+  template <class T> void setLightParameterModel(GLenum pname, const T *pParams);
 
   template <class T>
-  void TTexParameter(GLenum target, GLenum pname, const T *pParams);
+  void setMaterial(GLenum face, GLenum pname, const T *pParams);
+
+  template <class T> void setFog(GLenum pname, const T *pParams);
 
   template <class T>
-  void TTexEnv(GLenum target, GLenum pname, const T *pParams);
+  void setTexParameter(GLenum target, GLenum pname, const T *pParams);
 
-  void AlphaFunc(GLenum func, floatf ref);
-  void StencilFunc(GLenum func, GLint ref, GLuint mask);
-  void StencilOp(GLenum fail, GLenum zfail, GLenum zpass);
-  void DepthFunc(GLenum func);
-  void BlendFunc(GLenum sfactor, GLenum dfactor);
-  void LogicOp(GLenum opcode);
+  template <class T>
+  void setTexEnv(GLenum target, GLenum pname, const T *pParams);
 
-  void ShadeModel(GLenum mode);
+  void setAlphaFunc(GLenum func, floatf ref);
+  void setStencilFunc(GLenum func, GLint ref, GLuint mask);
+  void setStencilOp(GLenum fail, GLenum zfail, GLenum zpass);
+  void setDepthFunc(GLenum func);
+  void setBlendFunc(GLenum sfactor, GLenum dfactor);
+  void setLogicOp(GLenum opcode);
 
-  void FrontFace(GLenum mode);
+  void setShadeModel(GLenum mode);
 
-  void CullFace(GLenum mode);
+  void setFrontFace(GLenum mode);
 
-  void Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
+  void setCullFace(GLenum mode);
 
-  void Activate(GLenum cap, bool bValue);
-  void ActivateLight(GLenum cap, bool bValue);
+  void setScissor(GLint x, GLint y, GLsizei width, GLsizei height);
 
-  void SampleCoverage(floatf value, GLboolean invert);
+  void activate(GLenum cap, bool bValue);
+  void setActivateLight(GLenum cap, bool bValue);
 
-  void Hint(GLenum target, GLenum mode);
+  void setSampleCoverage(floatf value, GLboolean invert);
 
-  void PolygonOffset(floatf factor, floatf units);
+  void hint(GLenum target, GLenum mode);
 
-  void PointSize(floatf size);
-  void LineWidth(floatf width);
+  void setPolygonOffset(floatf factor, floatf units);
+
+  void setPointSize(floatf size);
+  void setLineWidth(floatf width);
 
   //--
-  const GLubyte *GetString(GLenum name);
+  const GLubyte *getString(GLenum name);
 
   //--
-  template <class T> void TGetClipPlane(GLenum plane, T eqn[4]);
+  template <class T> void getClipPlane(GLenum plane, T eqn[4]);
 
-  template <class T> void TGet(GLenum pname, T *pParams);
+  template <class T> void get(GLenum pname, T *pParams);
 
-  template <class T> void TGetLight(GLenum light, GLenum pname, T *pParams);
+  template <class T> void getLight(GLenum light, GLenum pname, T *pParams);
 
-  template <class T> void TGetMaterial(GLenum face, GLenum pname, T *pParams);
+  template <class T> void getMaterial(GLenum face, GLenum pname, T *pParams);
 
-  template <class T> void TGetTexEnv(GLenum env, GLenum pname, T *pParams);
+  template <class T> void getTexEnv(GLenum env, GLenum pname, T *pParams);
 
   template <class T>
-  void TGetTexParameter(GLenum target, GLenum pname, T *pParams);
+  void getTexParameter(GLenum target, GLenum pname, T *pParams);
 
-  void GetPointer(void **ppParams, GLenum pname);
-  bool IsEnabled(GLenum cap);
-  bool IsBuffer(GLuint buffer);
-  bool IsTexture(GLuint texture);
+  void getPointer(void **ppParams, GLenum pname);
+  bool isEnabled(GLenum cap);
+  bool isBuffer(GLuint buffer);
+  bool isTexture(GLuint texture);
 
-  template <class T> void TPointParameter(GLenum pname, const T *pParams);
+  template <class T> void setPointParameter(GLenum pname, const T *pParams);
 
-  void Clear(GLbitfield mask);
+  void clear(GLbitfield mask);
 
-  void DrawArrays(GLenum mode, GLint first, GLsizei count);
+  void drawArrays(GLenum mode, GLint first, GLsizei count);
 
-  void DrawElements(GLenum mode, GLsizei count, GLenum type,
+  void drawElements(GLenum mode, GLsizei count, GLenum type,
                     const GLvoid *pIndices);
 
-  void Flush();
-  void Finish();
+  void flush();
+  void finish();
 
 private:
-  CGLContext(CHandleTable *pHandles, CRasterCache *pRasterCache,
-             CGLContext *pSharedCtx);
+  GLContext(HandleTable *pHandles, CRasterCache *pRasterCache,
+             GLContext *pSharedCtx);
 
-  ~CGLContext();
+  ~GLContext();
 
-  GLenum Initialize();
+  GLenum initialize();
 };

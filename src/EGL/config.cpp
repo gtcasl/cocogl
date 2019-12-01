@@ -14,67 +14,69 @@
 #include "stdafx.h"
 #include "config.hpp"
 
-CConfig::CConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
-                 EGLint depth, EGLint stencil) {
+_EGLConfig::_EGLConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
+                       EGLint depth, EGLint stencil) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
-  this->SetAttribute(EGL_BUFFER_SIZE, red + green + blue + alpha);
-  this->SetAttribute(EGL_RED_SIZE, red);
-  this->SetAttribute(EGL_GREEN_SIZE, green);
-  this->SetAttribute(EGL_BLUE_SIZE, blue);
-  this->SetAttribute(EGL_ALPHA_SIZE, alpha);
-  this->SetAttribute(EGL_DEPTH_SIZE, depth);
-  this->SetAttribute(EGL_STENCIL_SIZE, stencil);
-  this->SetAttribute(EGL_CONFIG_CAVEAT, EGL_NONE);
-  this->SetAttribute(EGL_CONFIG_ID, 0);
-  this->SetAttribute(EGL_LEVEL, 0);
-  this->SetAttribute(EGL_MAX_PBUFFER_HEIGHT, MAX_PBUFFER_WIDTH);
-  this->SetAttribute(EGL_MAX_PBUFFER_PIXELS, MAX_PBUFFER_PIXELS);
-  this->SetAttribute(EGL_MAX_PBUFFER_WIDTH, MAX_PBUFFER_WIDTH);
-  this->SetAttribute(EGL_NATIVE_RENDERABLE, EGL_FALSE);
-  this->SetAttribute(EGL_NATIVE_VISUAL_ID, 0);
-  this->SetAttribute(EGL_NATIVE_VISUAL_TYPE, 0);
-  this->SetAttribute(EGL_SAMPLES, 0);
-  this->SetAttribute(EGL_SAMPLE_BUFFERS, 0);
-  this->SetAttribute(EGL_SURFACE_TYPE,
+  this->setAttribute(EGL_BUFFER_SIZE, red + green + blue + alpha);
+  this->setAttribute(EGL_RED_SIZE, red);
+  this->setAttribute(EGL_GREEN_SIZE, green);
+  this->setAttribute(EGL_BLUE_SIZE, blue);
+  this->setAttribute(EGL_ALPHA_SIZE, alpha);
+  this->setAttribute(EGL_DEPTH_SIZE, depth);
+  this->setAttribute(EGL_STENCIL_SIZE, stencil);
+  this->setAttribute(EGL_CONFIG_CAVEAT, EGL_NONE);
+  this->setAttribute(EGL_CONFIG_ID, 0);
+  this->setAttribute(EGL_LEVEL, 0);
+  this->setAttribute(EGL_MAX_PBUFFER_HEIGHT, MAX_PBUFFER_WIDTH);
+  this->setAttribute(EGL_MAX_PBUFFER_PIXELS, MAX_PBUFFER_PIXELS);
+  this->setAttribute(EGL_MAX_PBUFFER_WIDTH, MAX_PBUFFER_WIDTH);
+  this->setAttribute(EGL_NATIVE_RENDERABLE, EGL_FALSE);
+  this->setAttribute(EGL_NATIVE_VISUAL_ID, 0);
+  this->setAttribute(EGL_NATIVE_VISUAL_TYPE, 0);
+  this->setAttribute(EGL_SAMPLES, 0);
+  this->setAttribute(EGL_SAMPLE_BUFFERS, 0);
+  this->setAttribute(EGL_SURFACE_TYPE,
                      EGL_WINDOW_BIT | EGL_PIXMAP_BIT | EGL_PBUFFER_BIT);
-  this->SetAttribute(EGL_TRANSPARENT_TYPE, EGL_NONE);
-  this->SetAttribute(EGL_TRANSPARENT_BLUE_VALUE, 0);
-  this->SetAttribute(EGL_TRANSPARENT_GREEN_VALUE, 0);
-  this->SetAttribute(EGL_TRANSPARENT_RED_VALUE, 0);
-  this->SetAttribute(alpha ? EGL_BIND_TO_TEXTURE_RGBA : EGL_BIND_TO_TEXTURE_RGB,
+  this->setAttribute(EGL_TRANSPARENT_TYPE, EGL_NONE);
+  this->setAttribute(EGL_TRANSPARENT_BLUE_VALUE, 0);
+  this->setAttribute(EGL_TRANSPARENT_GREEN_VALUE, 0);
+  this->setAttribute(EGL_TRANSPARENT_RED_VALUE, 0);
+  this->setAttribute(alpha ? EGL_BIND_TO_TEXTURE_RGBA : EGL_BIND_TO_TEXTURE_RGB,
                      EGL_TRUE);
-  this->SetAttribute(EGL_MIN_SWAP_INTERVAL, 1);
-  this->SetAttribute(EGL_MAX_SWAP_INTERVAL, 1);
-  this->SetAttribute(EGL_LUMINANCE_SIZE, 0);
-  this->SetAttribute(EGL_ALPHA_MASK_SIZE, 0);
-  this->SetAttribute(EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER);
-  this->SetAttribute(EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT);
+  this->setAttribute(EGL_MIN_SWAP_INTERVAL, 1);
+  this->setAttribute(EGL_MAX_SWAP_INTERVAL, 1);
+  this->setAttribute(EGL_LUMINANCE_SIZE, 0);
+  this->setAttribute(EGL_ALPHA_MASK_SIZE, 0);
+  this->setAttribute(EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER);
+  this->setAttribute(EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT);
 }
 
-CConfig::~CConfig() { __profileAPI(" - %s()\n", __FUNCTION__); }
+_EGLConfig::~_EGLConfig() { 
+  __profileAPI(" - %s()\n", __FUNCTION__); 
+}
 
-EGLint CConfig::Create(CConfig **ppConfig, EGLint red, EGLint green,
-                       EGLint blue, EGLint alpha, EGLint depth,
-                       EGLint stencil) {
+EGLint _EGLConfig::Create(_EGLConfig **ppConfig, EGLint red, EGLint green,
+                          EGLint blue, EGLint alpha, EGLint depth,
+                          EGLint stencil) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(ppConfig);
 
-  auto pConfig = new CConfig(red, green, blue, alpha, depth, stencil);
+  auto pConfig = new _EGLConfig(red, green, blue, alpha, depth, stencil);
   if (nullptr == pConfig) {
-    __eglLogError("CConfig allocation failed, out of memory.\r\n");
+    __eglLogError("EGLConfig allocation failed, out of memory.\r\n");
     return EGL_BAD_ALLOC;
   }
 
-  pConfig->AddRef();
+  pConfig->addRef();
 
   *ppConfig = pConfig;
 
   return EGL_SUCCESS;
 }
 
-EGLint CConfig::GetAtttribute(EGLint name, EGLint *pValue) const {
+EGLint _EGLConfig::getAtttribute(EGLint name, EGLint *pValue) const {
   assert(pValue);
 
   if ((name < ATTRIBUTES_FIRST) || (name > ATTRIBUTES_LAST) ||
@@ -88,7 +90,7 @@ EGLint CConfig::GetAtttribute(EGLint name, EGLint *pValue) const {
   return EGL_SUCCESS;
 }
 
-EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
+EGLint _EGLConfig::matches(const EGLint *pAttrib_list, bool *pbResult) const {
   EGLint err;
 
   assert(pbResult);
@@ -101,9 +103,9 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
       EGLint refValue = *pAttrib_list++;
 
       EGLint curValue;
-      err = this->GetAtttribute(name, &curValue);
+      err = this->getAtttribute(name, &curValue);
       if (__eglFailed(err)) {
-        __eglLogError("CConfig::GetAtttribute() failed, err = %d.\r\n",
+        __eglLogError("Config::getAtttribute() failed, err = %d.\r\n",
                       err);
         return err;
       }
@@ -252,7 +254,7 @@ EGLint CConfig::Matches(const EGLint *pAttrib_list, bool *pbResult) const {
   return EGL_SUCCESS;
 }
 
-int CConfig::Compare(const CConfig *pConfigA, const CConfig *pConfigB) {
+int _EGLConfig::compare(const _EGLConfig *pConfigA, const _EGLConfig *pConfigB) {
   assert(pConfigA && pConfigB);
 
   static const EGLint sortedList[] = {
@@ -267,8 +269,8 @@ int CConfig::Compare(const CConfig *pConfigA, const CConfig *pConfigB) {
 
   for (uint32_t i = 0; i < __countof(sortedList); ++i) {
     EGLint name = sortedList[i];
-    EGLint valueA = pConfigA->GetAttribute(name);
-    EGLint valueB = pConfigB->GetAttribute(name);
+    EGLint valueA = pConfigA->getAttribute(name);
+    EGLint valueB = pConfigB->getAttribute(name);
 
     switch (name) {
     case EGL_CONFIG_CAVEAT:

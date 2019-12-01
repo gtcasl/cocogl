@@ -13,7 +13,7 @@
 //
 #pragma once
 
-class CStencilTest : public CTestBase {
+class StencilTest : public TestBase {
 private:
   GLfloat _boxColors[16 * 6];
   GLfloat _box[12 * 6];
@@ -26,14 +26,14 @@ private:
   bool yup_;
 
 public:
-  CStencilTest() {
+  StencilTest() {
     xrot_ = 0.0f;
     yrot_ = 0.0f;
     yval_ = 1.0f;
     yup_ = true;
   }
 
-  ~CStencilTest() {}
+  ~StencilTest() {}
 
   bool OnInitialize(uint32_t width, uint32_t height) {
     static const GLfloat floorVertices[] = {-3.0f, 0.0f, 3.0f,  3.0f,

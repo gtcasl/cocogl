@@ -22,7 +22,7 @@
 #include "rastdata.hpp"
 #include "vertarray.hpp"
 
-class CDevice : public CObject {
+class CDevice : public Object {
 protected:
   enum {
     BUFFER_OBJECTS_FIRST = GL_ARRAY_BUFFER,
@@ -38,57 +38,57 @@ protected:
   CDevice() {}
   ~CDevice() {}
 
-  CBuffer *GetBufferObject(GLenum target) const {
+  GLBuffer *getBufferObject(GLenum target) const {
     assert((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
     return bufferObjects_[target - BUFFER_OBJECTS_FIRST];
   }
 
-  void SetBufferObject(GLenum target, CBuffer *pBuffer) {
+  void setBufferObject(GLenum target, GLBuffer *pBuffer) {
     if (pBuffer) {
-      pBuffer->AddRef();
+      pBuffer->addRef();
     }
 
-    CBuffer *pBufCurr = this->GetBufferObject(target);
+    GLBuffer *pBufCurr = this->getBufferObject(target);
     if (pBufCurr) {
-      pBufCurr->Release();
+      pBufCurr->release();
     }
 
     assert((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
     bufferObjects_[target - BUFFER_OBJECTS_FIRST] = pBuffer;
   }
 
-  uint32_t GetBufferObjectHandle(GLenum target) const {
+  uint32_t getBufferObjectHandle(GLenum target) const {
     assert((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
-    CBuffer *pBuffer = bufferObjects_[target - BUFFER_OBJECTS_FIRST];
-    return pBuffer ? pBuffer->GetHandle() : static_cast<uint32_t>(HANDLE_NONE);
+    GLBuffer *pBuffer = bufferObjects_[target - BUFFER_OBJECTS_FIRST];
+    return pBuffer ? pBuffer->getHandle() : static_cast<uint32_t>(HANDLE_NONE);
   }
 
-  uint32_t GetBoundTextureHandle() const {
-    auto pTexture = texUnits_[activeTexture_].GetTexture();
+  uint32_t getBoundTextureHandle() const {
+    auto pTexture = texUnits_[activeTexture_].getTexture();
     assert(pTexture);
-    return pTexture->GetHandle();
+    return pTexture->getHandle();
   }
 
-  CTexture *GetTexture(uint32_t unit) const {
+  CTexture *getTexture(uint32_t unit) const {
     assert(unit < MAX_TEXTURES);
-    return texUnits_[unit].GetTexture();
+    return texUnits_[unit].getTexture();
   }
 
-  void SetTexture(uint32_t unit, CTexture *pTexture) {
+  void setTexture(uint32_t unit, CTexture *pTexture) {
     assert(unit < MAX_TEXTURES);
-    texUnits_[unit].SetTexture(pTexture);
+    texUnits_[unit].setTexture(pTexture);
   }
 
   mutable GLenum error_;
 
   const CDevice *pCtxShared_;
-  CGLSurface *pSurfDraw_;
-  CGLSurface *pSurfRead_;
-  CHandleTable *handles_;
+  GLSurface *pSurfDraw_;
+  GLSurface *pSurfRead_;
+  HandleTable *handles_;
 
-  CBuffer *bufferObjects_[BUFFER_OBJECTS_SIZE];
+  GLBuffer *bufferObjects_[BUFFER_OBJECTS_SIZE];
   CTexture *pTexDefault_;
-  CBuffer *pBufDefault_;
+  GLBuffer *pBufDefault_;
   CRasterCache *pRasterCache_;
 
 #ifdef GL_COCOJIT

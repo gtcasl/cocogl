@@ -13,7 +13,7 @@
 //
 #pragma once
 
-class CFogTest : public CTestBase {
+class FogTest : public TestBase {
 private:
   GLfloat _box[12 * 6];
   GLfloat _texCoords[8 * 6];
@@ -22,12 +22,12 @@ private:
   float yrot_;
 
 public:
-  CFogTest() {
+  FogTest() {
     xrot_ = 0.0f;
     yrot_ = 0.0f;
   }
 
-  ~CFogTest() {}
+  ~FogTest() {}
 
   bool OnInitialize(uint32_t width, uint32_t height) {
     static const float fogColor[] = {0.5f, 0.5f, 0.5f, 1.0f};

@@ -13,7 +13,7 @@
 //
 #pragma once
 
-class CConfig : public CObject {
+class _EGLConfig : public Object {
 public:
   enum {
     ATTRIBUTES_FIRST = EGL_BUFFER_SIZE,
@@ -21,30 +21,28 @@ public:
     ATTRIBUTES_SIZE = (ATTRIBUTES_LAST - ATTRIBUTES_FIRST) + 1,
   };
 
-  static EGLint Create(CConfig **ppConfig, EGLint red, EGLint green,
+  static EGLint Create(_EGLConfig **ppConfig, EGLint red, EGLint green,
                        EGLint blue, EGLint alpha, EGLint depth, EGLint stencil);
 
-  EGLint GetAttribute(EGLint name) const {
+  EGLint getAttribute(EGLint name) const {
     assert((name >= ATTRIBUTES_FIRST) && (name <= ATTRIBUTES_LAST));
     return attributes_[name - ATTRIBUTES_FIRST];
   }
 
-  void SetAttribute(EGLint name, EGLint value) {
+  void setAttribute(EGLint name, EGLint value) {
     assert((name >= ATTRIBUTES_FIRST) && (name <= ATTRIBUTES_LAST));
     attributes_[name - ATTRIBUTES_FIRST] = value;
   }
 
-  EGLint GetAtttribute(EGLint name, EGLint *pValue) const;
+  EGLint getAtttribute(EGLint name, EGLint *pValue) const;
 
-  EGLint Matches(const EGLint *pAttrib_list, bool *pbResult) const;
+  EGLint matches(const EGLint *pAttrib_list, bool *pbResult) const;
 
-  static int Compare(const CConfig *pConfigA, const CConfig *pConfigB);
+  static int compare(const _EGLConfig *pConfigA, const _EGLConfig *pConfigB);
 
 private:
-  CConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha, EGLint depth,
-          EGLint stencil);
-
-  ~CConfig();
+  _EGLConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha, EGLint depth, EGLint stencil);
+  ~_EGLConfig();
 
   EGLint attributes_[ATTRIBUTES_SIZE];
 };

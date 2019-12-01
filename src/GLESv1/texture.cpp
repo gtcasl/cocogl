@@ -16,19 +16,19 @@
 #include "texture.hpp"
 #include "surface.hpp"
 
-GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
+GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
                               ePixelFormat format) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
     __glLogError(
-        "CSurface2D::Initialize() failed, invalid width parameter: %d.\r\n",
+        "CSurface2D::initialize() failed, invalid width parameter: %d.\r\n",
         width);
     return GL_INVALID_VALUE;
   }
 
   if (height > MAX_TEXTURE_SIZE) {
-    __glLogError("CSurface2D::Initialize() failed, invalid height "
+    __glLogError("CSurface2D::initialize() failed, invalid height "
                  "parameter: %d.\r\n",
                  height);
     return GL_INVALID_VALUE;
@@ -37,7 +37,7 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
   uint8_t nBPP = Format::GetInfo(format).BytePerPixel;
   auto pbBits = new uint8_t[nBPP * width * height];
   if (nullptr == pbBits) {
-    __glLogError("CSurface2D::Initialize() failed, out of memory.\r\n");
+    __glLogError("CSurface2D::initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -55,19 +55,19 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
   return GL_NO_ERROR;
 }
 
-GLenum CSurface2D::Initialize(uint32_t width, uint32_t height, int32_t pitch,
+GLenum CSurface2D::initialize(uint32_t width, uint32_t height, int32_t pitch,
                               ePixelFormat format, GLvoid *pPixels) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
     __glLogError(
-        "CSurface2D::Initialize() failed, invalid width parameter: %d.\r\n",
+        "CSurface2D::initialize() failed, invalid width parameter: %d.\r\n",
         width);
     return GL_INVALID_VALUE;
   }
 
   if (height > MAX_TEXTURE_SIZE) {
-    __glLogError("CSurface2D::Initialize() failed, invalid height "
+    __glLogError("CSurface2D::initialize() failed, invalid height "
                  "parameter: %d.\r\n",
                  height);
     return GL_INVALID_VALUE;
@@ -87,19 +87,19 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height, int32_t pitch,
   return GL_NO_ERROR;
 }
 
-GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
+GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
                               ePixelFormat format, const GLvoid *pPixels) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
     __glLogError(
-        "CSurface2D::Initialize() failed, invalid width parameter: %d.\r\n",
+        "CSurface2D::initialize() failed, invalid width parameter: %d.\r\n",
         width);
     return GL_INVALID_VALUE;
   }
 
   if (height > MAX_TEXTURE_SIZE) {
-    __glLogError("CSurface2D::Initialize() failed, invalid height "
+    __glLogError("CSurface2D::initialize() failed, invalid height "
                  "parameter: %d.\r\n",
                  height);
     return GL_INVALID_VALUE;
@@ -114,7 +114,7 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
 
   auto pColorTable = new Color4[paletteSize];
   if (nullptr == pColorTable) {
-    __glLogError("CSurface2D::Initialize() failed, out of memory.\r\n");
+    __glLogError("CSurface2D::initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -129,7 +129,7 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
   auto pbBits = new uint8_t[nBPP * surfaceSize];
   if (nullptr == pbBits) {
     delete[] pColorTable;
-    __glLogError("CSurface2D::Initialize() failed, out of memory.\r\n");
+    __glLogError("CSurface2D::initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -151,7 +151,7 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
   } else {
     delete[] pbBits;
     delete[] pColorTable;
-    __glLogError("CSurface2D::Initialize() failed, invalid texture palette "
+    __glLogError("CSurface2D::initialize() failed, invalid texture palette "
                  "size: %d.\r\n",
                  paletteSize);
     return GL_INVALID_VALUE;
@@ -173,17 +173,17 @@ GLenum CSurface2D::Initialize(uint32_t width, uint32_t height,
   return GL_NO_ERROR;
 }
 
-void CSurface2D::Destroy() {
+void CSurface2D::destroy() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (bOwnedBuffer_) {
     __safeDeleteArray(pbBits_);
   }
 
-  this->Clear();
+  this->clear();
 }
 
-void CSurface2D::Clear() {
+void CSurface2D::clear() {
   pbBits_ = nullptr;
   logWidth_ = 0;
   logHeight_ = 0;
@@ -212,7 +212,7 @@ CTexture::CTexture() {
 
 CTexture::~CTexture() {
   __profileAPI(" - %s()\n", __FUNCTION__);
-  this->FreeSurfaces();
+  this->freeSurfaces();
 }
 
 GLenum CTexture::Create(CTexture **ppTexture) {
@@ -227,13 +227,13 @@ GLenum CTexture::Create(CTexture **ppTexture) {
     return GL_OUT_OF_MEMORY;
   }
 
-  pTexture->AddRef();
+  pTexture->addRef();
   *ppTexture = pTexture;
 
   return GL_NO_ERROR;
 }
 
-GLenum CTexture::BindSurface(CGLSurface *pSurface, bool bGenMipMaps) {
+GLenum CTexture::bindSurface(GLSurface *pSurface, bool bGenMipMaps) {
   GLenum err;
 
   if (pBoundSurface_) {
@@ -241,24 +241,24 @@ GLenum CTexture::BindSurface(CGLSurface *pSurface, bool bGenMipMaps) {
   }
 
   GLSurfaceDesc colorDesc;
-  pSurface->GetColorDesc(&colorDesc);
+  pSurface->getColorDesc(&colorDesc);
 
   // Initialize the texture surface
-  err = surfaces_[0].Initialize(
+  err = surfaces_[0].initialize(
       colorDesc.Width, colorDesc.Height, colorDesc.Pitch,
       static_cast<ePixelFormat>(colorDesc.Format), colorDesc.pBits);
   if (__glFailed(err)) {
-    __glLogError("CSurface2D::Initialize() failed, err = %d.\r\n", err);
+    __glLogError("CSurface2D::initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
-  pSurface->AddRef();
+  pSurface->addRef();
   pBoundSurface_ = pSurface;
 
   if (bGenMipMaps && this->bGenMipMaps) {
-    err = this->GenerateMipmaps();
+    err = this->generateMipmaps();
     if (__glFailed(err)) {
-      __glLogError("CTexture::GenerateMipmaps() failed, err = %d.\r\n",
+      __glLogError("CTexture::generateMipmaps() failed, err = %d.\r\n",
                    err);
       return err;
     }
@@ -267,19 +267,19 @@ GLenum CTexture::BindSurface(CGLSurface *pSurface, bool bGenMipMaps) {
   return GL_NO_ERROR;
 }
 
-GLenum CTexture::ReleaseSurface(CGLSurface *pSurface) {
+GLenum CTexture::releaseSurface(GLSurface *pSurface) {
   if (pBoundSurface_ != pSurface) {
     return GL_INVALID_VALUE;
   }
 
-  this->FreeSurfaces();
+  this->freeSurfaces();
 
   return GL_NO_ERROR;
 }
 
-void CTexture::FreeSurfaces() {
+void CTexture::freeSurfaces() {
   for (uint32_t i = 0; i < MAX_TEXTURE_LEVELS; ++i) {
-    surfaces_[i].Destroy();
+    surfaces_[i].destroy();
   }
 
   __safeDeleteArray(pbMipBuffer_);
@@ -287,15 +287,15 @@ void CTexture::FreeSurfaces() {
   __safeRelease(pBoundSurface_);
 }
 
-GLenum CTexture::GenerateMipmaps() {
+GLenum CTexture::generateMipmaps() {
   GLenum err;
 
   CSurface2D &surface = surfaces_[0];
 
-  ePixelFormat format = surface.GetFormat();
+  ePixelFormat format = surface.getFormat();
   uint32_t bpp = Format::GetInfo(format).BytePerPixel;
-  uint32_t width = surface.GetWidth();
-  uint32_t height = surface.GetHeight();
+  uint32_t width = surface.getWidth();
+  uint32_t height = surface.getHeight();
 
   //
   // Calculate mipmaps buffer size
@@ -345,9 +345,9 @@ GLenum CTexture::GenerateMipmaps() {
     }
 
     err =
-        surfaceDst.Initialize(width, height, width * bpp, format, pbMipBuffer);
+        surfaceDst.initialize(width, height, width * bpp, format, pbMipBuffer);
     if (__glFailed(err)) {
-      __glLogError("CSurface2D::Initialize() failed, err = %d.\r\n", err);
+      __glLogError("CSurface2D::initialize() failed, err = %d.\r\n", err);
       return err;
     }
 
@@ -355,23 +355,23 @@ GLenum CTexture::GenerateMipmaps() {
 
     switch (format) {
     case FORMAT_A8: {
-      auto pSrc = surfaceSrc.GetBits();
-      auto pDst = surfaceDst.GetBits();
+      auto pSrc = surfaceSrc.getBits();
+      auto pDst = surfaceDst.getBits();
 
       for (uint32_t y = 0; y < height; ++y) {
         auto pSrc1 = pSrc + (2 * y) * (2 * width);
         auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
-          Format::TConvertFrom<FORMAT_A8, false>(&c1, pSrc1 + 2 * x);
-          Format::TConvertFrom<FORMAT_A8, false>(&c2, pSrc1 + 2 * x + 1);
-          Format::TConvertFrom<FORMAT_A8, false>(&c3, pSrc2 + 2 * x);
-          Format::TConvertFrom<FORMAT_A8, false>(&c4, pSrc2 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A8, false>(&c1, pSrc1 + 2 * x);
+          Format::ConvertFrom<FORMAT_A8, false>(&c2, pSrc1 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A8, false>(&c3, pSrc2 + 2 * x);
+          Format::ConvertFrom<FORMAT_A8, false>(&c4, pSrc2 + 2 * x + 1);
 
           Color4 avg;
           avg.a = (c1.a + c2.a + c3.a + c4.a) >> 2;
 
-          Format::TConvertTo<FORMAT_A8>(pDst + x + width * y, avg);
+          Format::ConvertTo<FORMAT_A8>(pDst + x + width * y, avg);
         }
       }
     }
@@ -379,23 +379,23 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_L8: {
-      auto pSrc = surfaceSrc.GetBits();
-      auto pDst = surfaceDst.GetBits();
+      auto pSrc = surfaceSrc.getBits();
+      auto pDst = surfaceDst.getBits();
 
       for (uint32_t y = 0; y < height; ++y) {
         auto pSrc1 = pSrc + (2 * y) * (2 * width);
         auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
-          Format::TConvertFrom<FORMAT_L8, false>(&c1, pSrc1 + 2 * x);
-          Format::TConvertFrom<FORMAT_L8, false>(&c2, pSrc1 + 2 * x + 1);
-          Format::TConvertFrom<FORMAT_L8, false>(&c3, pSrc2 + 2 * x);
-          Format::TConvertFrom<FORMAT_L8, false>(&c4, pSrc2 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_L8, false>(&c1, pSrc1 + 2 * x);
+          Format::ConvertFrom<FORMAT_L8, false>(&c2, pSrc1 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_L8, false>(&c3, pSrc2 + 2 * x);
+          Format::ConvertFrom<FORMAT_L8, false>(&c4, pSrc2 + 2 * x + 1);
 
           Color4 avg;
           avg.b = (c1.b + c2.b + c3.b + c4.b) >> 2;
 
-          Format::TConvertTo<FORMAT_L8>(pDst + x + width * y, avg);
+          Format::ConvertTo<FORMAT_L8>(pDst + x + width * y, avg);
         }
       }
     }
@@ -403,24 +403,24 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_A8L8: {
-      auto pSrc = reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
-      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
+      auto pSrc = reinterpret_cast<const uint16_t *>(surfaceSrc.getBits());
+      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.getBits());
 
       for (uint32_t y = 0; y < height; ++y) {
         auto pSrc1 = pSrc + (2 * y) * (2 * width);
         auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
-          Format::TConvertFrom<FORMAT_A8L8, false>(&c1, pSrc1 + 2 * x);
-          Format::TConvertFrom<FORMAT_A8L8, false>(&c2, pSrc1 + 2 * x + 1);
-          Format::TConvertFrom<FORMAT_A8L8, false>(&c3, pSrc2 + 2 * x);
-          Format::TConvertFrom<FORMAT_A8L8, false>(&c4, pSrc2 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A8L8, false>(&c1, pSrc1 + 2 * x);
+          Format::ConvertFrom<FORMAT_A8L8, false>(&c2, pSrc1 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A8L8, false>(&c3, pSrc2 + 2 * x);
+          Format::ConvertFrom<FORMAT_A8L8, false>(&c4, pSrc2 + 2 * x + 1);
 
           Color4 avg;
           avg.a = (c1.a + c2.a + c3.a + c4.a) >> 2;
           avg.b = (c1.b + c2.b + c3.b + c4.b) >> 2;
 
-          Format::TConvertTo<FORMAT_A8L8>(pDst + x + width * y, avg);
+          Format::ConvertTo<FORMAT_A8L8>(pDst + x + width * y, avg);
         }
       }
     }
@@ -428,24 +428,24 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_R5G6B5: {
-      auto pSrc = reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
-      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
+      auto pSrc = reinterpret_cast<const uint16_t *>(surfaceSrc.getBits());
+      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.getBits());
 
       for (uint32_t y = 0; y < height; ++y) {
         auto pSrc1 = pSrc + (2 * y) * (2 * width);
         auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
-          Format::TConvertFrom<FORMAT_R5G6B5, false>(&c1, pSrc1 + 2 * x);
-          Format::TConvertFrom<FORMAT_R5G6B5, false>(&c2, pSrc1 + 2 * x + 1);
-          Format::TConvertFrom<FORMAT_R5G6B5, false>(&c3, pSrc2 + 2 * x);
-          Format::TConvertFrom<FORMAT_R5G6B5, false>(&c4, pSrc2 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_R5G6B5, false>(&c1, pSrc1 + 2 * x);
+          Format::ConvertFrom<FORMAT_R5G6B5, false>(&c2, pSrc1 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_R5G6B5, false>(&c3, pSrc2 + 2 * x);
+          Format::ConvertFrom<FORMAT_R5G6B5, false>(&c4, pSrc2 + 2 * x + 1);
 
           const Color4 avg((c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);
 
-          Format::TConvertTo<FORMAT_R5G6B5>(pDst + x + width * y, avg);
+          Format::ConvertTo<FORMAT_R5G6B5>(pDst + x + width * y, avg);
         }
       }
     }
@@ -453,25 +453,25 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_A1R5G5B5: {
-      auto pSrc = reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
-      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
+      auto pSrc = reinterpret_cast<const uint16_t *>(surfaceSrc.getBits());
+      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.getBits());
 
       for (uint32_t y = 0; y < height; ++y) {
         auto pSrc1 = pSrc + (2 * y) * (2 * width);
         auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
-          Format::TConvertFrom<FORMAT_A1R5G5B5, false>(&c1, pSrc1 + 2 * x);
-          Format::TConvertFrom<FORMAT_A1R5G5B5, false>(&c2, pSrc1 + 2 * x + 1);
-          Format::TConvertFrom<FORMAT_A1R5G5B5, false>(&c3, pSrc2 + 2 * x);
-          Format::TConvertFrom<FORMAT_A1R5G5B5, false>(&c4, pSrc2 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A1R5G5B5, false>(&c1, pSrc1 + 2 * x);
+          Format::ConvertFrom<FORMAT_A1R5G5B5, false>(&c2, pSrc1 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A1R5G5B5, false>(&c3, pSrc2 + 2 * x);
+          Format::ConvertFrom<FORMAT_A1R5G5B5, false>(&c4, pSrc2 + 2 * x + 1);
 
           const Color4 avg((c1.a + c2.a + c3.a + c4.a) >> 2,
                            (c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);
 
-          Format::TConvertTo<FORMAT_A1R5G5B5>(pDst + x + width * y, avg);
+          Format::ConvertTo<FORMAT_A1R5G5B5>(pDst + x + width * y, avg);
         }
       }
     }
@@ -479,25 +479,25 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_A4R4G4B4: {
-      auto pSrc = reinterpret_cast<const uint16_t *>(surfaceSrc.GetBits());
-      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.GetBits());
+      auto pSrc = reinterpret_cast<const uint16_t *>(surfaceSrc.getBits());
+      auto pDst = reinterpret_cast<uint16_t *>(surfaceDst.getBits());
 
       for (uint32_t y = 0; y < height; ++y) {
         auto pSrc1 = pSrc + (2 * y) * (2 * width);
         auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
-          Format::TConvertFrom<FORMAT_A4R4G4B4, false>(&c1, pSrc1 + 2 * x);
-          Format::TConvertFrom<FORMAT_A4R4G4B4, false>(&c2, pSrc1 + 2 * x + 1);
-          Format::TConvertFrom<FORMAT_A4R4G4B4, false>(&c3, pSrc2 + 2 * x);
-          Format::TConvertFrom<FORMAT_A4R4G4B4, false>(&c4, pSrc2 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A4R4G4B4, false>(&c1, pSrc1 + 2 * x);
+          Format::ConvertFrom<FORMAT_A4R4G4B4, false>(&c2, pSrc1 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A4R4G4B4, false>(&c3, pSrc2 + 2 * x);
+          Format::ConvertFrom<FORMAT_A4R4G4B4, false>(&c4, pSrc2 + 2 * x + 1);
 
           const Color4 avg((c1.a + c2.a + c3.a + c4.a) >> 2,
                            (c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);
 
-          Format::TConvertTo<FORMAT_A4R4G4B4>(pDst + x + width * y, avg);
+          Format::ConvertTo<FORMAT_A4R4G4B4>(pDst + x + width * y, avg);
         }
       }
     }
@@ -505,24 +505,24 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_R8G8B8: {
-      auto pSrc = reinterpret_cast<const uint24_t *>(surfaceSrc.GetBits());
-      auto pDst = reinterpret_cast<uint24_t *>(surfaceDst.GetBits());
+      auto pSrc = reinterpret_cast<const uint24_t *>(surfaceSrc.getBits());
+      auto pDst = reinterpret_cast<uint24_t *>(surfaceDst.getBits());
 
       for (uint32_t y = 0; y < height; ++y) {
         auto pSrc1 = pSrc + (2 * y) * (2 * width);
         auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
-          Format::TConvertFrom<FORMAT_R8G8B8, false>(&c1, pSrc1 + 2 * x);
-          Format::TConvertFrom<FORMAT_R8G8B8, false>(&c2, pSrc1 + 2 * x + 1);
-          Format::TConvertFrom<FORMAT_R8G8B8, false>(&c3, pSrc2 + 2 * x);
-          Format::TConvertFrom<FORMAT_R8G8B8, false>(&c4, pSrc2 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_R8G8B8, false>(&c1, pSrc1 + 2 * x);
+          Format::ConvertFrom<FORMAT_R8G8B8, false>(&c2, pSrc1 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_R8G8B8, false>(&c3, pSrc2 + 2 * x);
+          Format::ConvertFrom<FORMAT_R8G8B8, false>(&c4, pSrc2 + 2 * x + 1);
 
           const Color4 avg((c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);
 
-          Format::TConvertTo<FORMAT_R8G8B8>(pDst + x + width * y, avg);
+          Format::ConvertTo<FORMAT_R8G8B8>(pDst + x + width * y, avg);
         }
       }
     }
@@ -530,25 +530,25 @@ GLenum CTexture::GenerateMipmaps() {
     break;
 
     case FORMAT_A8R8G8B8: {
-      auto pSrc = reinterpret_cast<const uint32_t *>(surfaceSrc.GetBits());
-      auto pDst = reinterpret_cast<uint32_t *>(surfaceDst.GetBits());
+      auto pSrc = reinterpret_cast<const uint32_t *>(surfaceSrc.getBits());
+      auto pDst = reinterpret_cast<uint32_t *>(surfaceDst.getBits());
 
       for (uint32_t y = 0; y < height; ++y) {
         auto pSrc1 = pSrc + (2 * y) * (2 * width);
         auto pSrc2 = pSrc + (2 * y + 1) * (2 * width);
 
         for (uint32_t x = 0; x < width; ++x) {
-          Format::TConvertFrom<FORMAT_A8R8G8B8, false>(&c1, pSrc1 + 2 * x);
-          Format::TConvertFrom<FORMAT_A8R8G8B8, false>(&c2, pSrc1 + 2 * x + 1);
-          Format::TConvertFrom<FORMAT_A8R8G8B8, false>(&c3, pSrc2 + 2 * x);
-          Format::TConvertFrom<FORMAT_A8R8G8B8, false>(&c4, pSrc2 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A8R8G8B8, false>(&c1, pSrc1 + 2 * x);
+          Format::ConvertFrom<FORMAT_A8R8G8B8, false>(&c2, pSrc1 + 2 * x + 1);
+          Format::ConvertFrom<FORMAT_A8R8G8B8, false>(&c3, pSrc2 + 2 * x);
+          Format::ConvertFrom<FORMAT_A8R8G8B8, false>(&c4, pSrc2 + 2 * x + 1);
 
           const Color4 avg((c1.a + c2.a + c3.a + c4.a) >> 2,
                            (c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);
 
-          Format::TConvertTo<FORMAT_A8R8G8B8>(pDst + x + width * y, avg);
+          Format::ConvertTo<FORMAT_A8R8G8B8>(pDst + x + width * y, avg);
         }
       }
     }
@@ -562,17 +562,17 @@ GLenum CTexture::GenerateMipmaps() {
   return GL_NO_ERROR;
 }
 
-bool CTexture::Validate() {
-  const CSurface2D &surface0 = this->GetSurface(0);
+bool CTexture::validate() {
+  const CSurface2D &surface0 = this->getSurface(0);
 
-  ePixelFormat format = surface0.GetFormat();
+  ePixelFormat format = surface0.getFormat();
   if (FORMAT_UNKNOWN == format) {
     return false;
   }
 
   uint32_t level = 0;
-  uint32_t width = surface0.GetWidth();
-  uint32_t height = surface0.GetHeight();
+  uint32_t width = surface0.getWidth();
+  uint32_t height = surface0.getHeight();
 
   for (; ((width > 1) || (height > 1));) {
     if (width > 1) {
@@ -583,10 +583,10 @@ bool CTexture::Validate() {
       height >>= 1;
     }
 
-    const CSurface2D &surfaceN = this->GetSurface(level + 1);
+    const CSurface2D &surfaceN = this->getSurface(level + 1);
 
-    if ((surfaceN.GetFormat() != format) || (surfaceN.GetWidth() != width) ||
-        (surfaceN.GetHeight() != height)) {
+    if ((surfaceN.getFormat() != format) || (surfaceN.getWidth() != width) ||
+        (surfaceN.getHeight() != height)) {
       break;
     }
 
@@ -601,12 +601,12 @@ bool CTexture::Validate() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TexUnit::Prepare(Sampler *pSampler, TEXTURESTATES *pStates) {
+bool TexUnit::prepare(Sampler *pSampler, TEXTURESTATES *pStates) {
   assert(pSampler && pStates);
 
   assert(pTexture_);
-  if (pTexture_->IsDirty()) {
-    if (!pTexture_->Validate()) {
+  if (pTexture_->isDirty()) {
+    if (!pTexture_->validate()) {
       return false;
     }
   }
@@ -655,11 +655,11 @@ bool TexUnit::Prepare(Sampler *pSampler, TEXTURESTATES *pStates) {
   pStates->AddressU = texParams.AddressU;
   pStates->AddressV = texParams.AddressV;
   pStates->EnvMode = this->EnvMode;
-  pStates->Format = this->GetFormat();
+  pStates->Format = this->getFormat();
 
   // Update sampler states
-  pSampler->pMipLevels = pTexture_->GetSurfaces();
-  pSampler->MaxMipLevel = pTexture_->GetMaxMipLevel();
+  pSampler->pMipLevels = pTexture_->getSurfaces();
+  pSampler->MaxMipLevel = pTexture_->getMaxMipLevel();
   pSampler->cEnvColor[0] = this->cEnvColor.b;
   pSampler->cEnvColor[1] = this->cEnvColor.g;
   pSampler->cEnvColor[2] = this->cEnvColor.r;

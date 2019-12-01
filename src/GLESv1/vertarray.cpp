@@ -16,27 +16,27 @@
 #include "vertarray.hpp"
 #include "buffer.hpp"
 
-uint32_t VertexArray::GetBufferHandle() const {
-  return (pBuffer ? pBuffer->GetHandle() : static_cast<uint32_t>(HANDLE_NONE));
+uint32_t VertexArray::getBufferHandle() const {
+  return (pBuffer ? pBuffer->getHandle() : static_cast<uint32_t>(HANDLE_NONE));
 }
 
-GLenum VertexArray::Prepare(VertexDecoder *pDecoder, int first,
+GLenum VertexArray::prepare(VertexDecoder *pDecoder, int first,
                             uint32_t count) {
   assert(pDecoder);
 
   int offset = first * this->Stride;
-  auto pBits = this->pBuffer->GetBits();
+  auto pBits = this->pBuffer->getBits();
   if (pBits) {
     pDecoder->pBits = pBits;
     offset += reinterpret_cast<uintptr_t>(this->pPointer);
     uint32_t dataSize = VertexDataSize(this->Format);
     int padding = this->Stride - offset - dataSize;
     uint32_t bufSize = count * this->Stride - padding;
-    if (bufSize <= this->pBuffer->GetSize()) {
+    if (bufSize <= this->pBuffer->getSize()) {
       pDecoder->pBits = pBits;
     } else {
       __glLogError(
-          "VertexArray::Prepare() failed, index out of range.\r\n");
+          "VertexArray::prepare() failed, index out of range.\r\n");
       return GL_INVALID_OPERATION;
     }
   } else {

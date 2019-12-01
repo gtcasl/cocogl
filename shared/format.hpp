@@ -432,7 +432,7 @@ public:
 
 namespace Format {
 
-inline const FormatInfo &GetInfo(uint32_t pixelFormat) {
+inline static const FormatInfo &GetInfo(uint32_t pixelFormat) {
   static const FormatInfo sc_formatInfos[FORMAT_SIZE_] = {
       __formatInfo(FORMAT_UNKNOWN),
       __formatInfo(FORMAT_A8),
@@ -471,127 +471,127 @@ typedef void (*pfn_convert_from)(Color4 *pOut, const void *pIn);
 
 typedef void (*pfn_convert_to)(void *pOut, const Color4 &in);
 
-template <uint32_t PixelFormat> uint32_t TConvertTo(const Color4 &color);
+template <uint32_t PixelFormat> static uint32_t ConvertTo(const Color4 &color);
 
-template <uint32_t PixelFormat> void TConvertTo(void *pOut, const Color4 &in) {
+template <uint32_t PixelFormat> static void ConvertTo(void *pOut, const Color4 &in) {
   *reinterpret_cast<typename TFormatInfo<PixelFormat>::TYPE *>(pOut) =
       static_cast<typename TFormatInfo<PixelFormat>::TYPE>(
-          TConvertTo<PixelFormat>(in));
+          ConvertTo<PixelFormat>(in));
 }
 
 template <uint32_t PixelFormat, bool bForceAlpha>
-void TConvertFrom(Color4 *pOut, uint32_t in);
+static void ConvertFrom(Color4 *pOut, uint32_t in);
 
 template <uint32_t PixelFormat, bool bForceAlpha>
-void TConvertFrom(Color4 *pOut, const void *pIn) {
-  TConvertFrom<PixelFormat, bForceAlpha>(
+static void ConvertFrom(Color4 *pOut, const void *pIn) {
+  ConvertFrom<PixelFormat, bForceAlpha>(
       pOut,
       *reinterpret_cast<const typename TFormatInfo<PixelFormat>::TYPE *>(pIn));
 }
 
-inline pfn_convert_to GetConvertTo(uint32_t pixelFormat) {
+inline static pfn_convert_to GetConvertTo(uint32_t pixelFormat) {
   switch (pixelFormat) {
   case FORMAT_A8:
-    return &TConvertTo<FORMAT_A8>;
+    return &ConvertTo<FORMAT_A8>;
   case FORMAT_L8:
-    return &TConvertTo<FORMAT_L8>;
+    return &ConvertTo<FORMAT_L8>;
   case FORMAT_A8L8:
-    return &TConvertTo<FORMAT_A8L8>;
+    return &ConvertTo<FORMAT_A8L8>;
   case FORMAT_R5G6B5:
-    return &TConvertTo<FORMAT_R5G6B5>;
+    return &ConvertTo<FORMAT_R5G6B5>;
   case FORMAT_A1R5G5B5:
-    return &TConvertTo<FORMAT_A1R5G5B5>;
+    return &ConvertTo<FORMAT_A1R5G5B5>;
   case FORMAT_A4R4G4B4:
-    return &TConvertTo<FORMAT_A4R4G4B4>;
+    return &ConvertTo<FORMAT_A4R4G4B4>;
   case FORMAT_R8G8B8:
-    return &TConvertTo<FORMAT_R8G8B8>;
+    return &ConvertTo<FORMAT_R8G8B8>;
   case FORMAT_A8R8G8B8:
-    return &TConvertTo<FORMAT_A8R8G8B8>;
+    return &ConvertTo<FORMAT_A8R8G8B8>;
   case FORMAT_R5G5B5A1:
-    return &TConvertTo<FORMAT_R5G5B5A1>;
+    return &ConvertTo<FORMAT_R5G5B5A1>;
   case FORMAT_R4G4B4A4:
-    return &TConvertTo<FORMAT_R4G4B4A4>;
+    return &ConvertTo<FORMAT_R4G4B4A4>;
   case FORMAT_B8G8R8:
-    return &TConvertTo<FORMAT_B8G8R8>;
+    return &ConvertTo<FORMAT_B8G8R8>;
   case FORMAT_A8B8G8R8:
-    return &TConvertTo<FORMAT_A8B8G8R8>;
+    return &ConvertTo<FORMAT_A8B8G8R8>;
   case FORMAT_D16:
-    return &TConvertTo<FORMAT_D16>;
+    return &ConvertTo<FORMAT_D16>;
   case FORMAT_X8S8D16:
-    return &TConvertTo<FORMAT_X8S8D16>;
+    return &ConvertTo<FORMAT_X8S8D16>;
   }
   return nullptr;
 }
 
-inline pfn_convert_from GetConvertFrom(uint32_t pixelFormat, bool bForceAlpha) {
+inline static pfn_convert_from GetConvertFrom(uint32_t pixelFormat, bool bForceAlpha) {
   if (bForceAlpha) {
     switch (pixelFormat) {
     case FORMAT_A8:
-      return &TConvertFrom<FORMAT_A8, true>;
+      return &ConvertFrom<FORMAT_A8, true>;
     case FORMAT_L8:
-      return &TConvertFrom<FORMAT_L8, true>;
+      return &ConvertFrom<FORMAT_L8, true>;
     case FORMAT_A8L8:
-      return &TConvertFrom<FORMAT_A8L8, true>;
+      return &ConvertFrom<FORMAT_A8L8, true>;
     case FORMAT_R5G6B5:
-      return &TConvertFrom<FORMAT_R5G6B5, true>;
+      return &ConvertFrom<FORMAT_R5G6B5, true>;
     case FORMAT_A1R5G5B5:
-      return &TConvertFrom<FORMAT_A1R5G5B5, true>;
+      return &ConvertFrom<FORMAT_A1R5G5B5, true>;
     case FORMAT_A4R4G4B4:
-      return &TConvertFrom<FORMAT_A4R4G4B4, true>;
+      return &ConvertFrom<FORMAT_A4R4G4B4, true>;
     case FORMAT_R8G8B8:
-      return &TConvertFrom<FORMAT_R8G8B8, true>;
+      return &ConvertFrom<FORMAT_R8G8B8, true>;
     case FORMAT_A8R8G8B8:
-      return &TConvertFrom<FORMAT_A8R8G8B8, true>;
+      return &ConvertFrom<FORMAT_A8R8G8B8, true>;
     case FORMAT_R5G5B5A1:
-      return &TConvertFrom<FORMAT_R5G5B5A1, true>;
+      return &ConvertFrom<FORMAT_R5G5B5A1, true>;
     case FORMAT_R4G4B4A4:
-      return &TConvertFrom<FORMAT_R4G4B4A4, true>;
+      return &ConvertFrom<FORMAT_R4G4B4A4, true>;
     case FORMAT_B8G8R8:
-      return &TConvertFrom<FORMAT_B8G8R8, true>;
+      return &ConvertFrom<FORMAT_B8G8R8, true>;
     case FORMAT_A8B8G8R8:
-      return &TConvertFrom<FORMAT_A8B8G8R8, true>;
+      return &ConvertFrom<FORMAT_A8B8G8R8, true>;
     case FORMAT_D16:
-      return &TConvertFrom<FORMAT_D16, false>;
+      return &ConvertFrom<FORMAT_D16, false>;
     case FORMAT_X8S8D16:
-      return &TConvertFrom<FORMAT_X8S8D16, false>;
+      return &ConvertFrom<FORMAT_X8S8D16, false>;
     }
   } else {
     switch (pixelFormat) {
     case FORMAT_A8:
-      return &TConvertFrom<FORMAT_A8, false>;
+      return &ConvertFrom<FORMAT_A8, false>;
     case FORMAT_L8:
-      return &TConvertFrom<FORMAT_L8, false>;
+      return &ConvertFrom<FORMAT_L8, false>;
     case FORMAT_A8L8:
-      return &TConvertFrom<FORMAT_A8L8, false>;
+      return &ConvertFrom<FORMAT_A8L8, false>;
     case FORMAT_R5G6B5:
-      return &TConvertFrom<FORMAT_R5G6B5, false>;
+      return &ConvertFrom<FORMAT_R5G6B5, false>;
     case FORMAT_A1R5G5B5:
-      return &TConvertFrom<FORMAT_A1R5G5B5, false>;
+      return &ConvertFrom<FORMAT_A1R5G5B5, false>;
     case FORMAT_A4R4G4B4:
-      return &TConvertFrom<FORMAT_A4R4G4B4, false>;
+      return &ConvertFrom<FORMAT_A4R4G4B4, false>;
     case FORMAT_R8G8B8:
-      return &TConvertFrom<FORMAT_R8G8B8, false>;
+      return &ConvertFrom<FORMAT_R8G8B8, false>;
     case FORMAT_A8R8G8B8:
-      return &TConvertFrom<FORMAT_A8R8G8B8, false>;
+      return &ConvertFrom<FORMAT_A8R8G8B8, false>;
     case FORMAT_R5G5B5A1:
-      return &TConvertFrom<FORMAT_R5G5B5A1, false>;
+      return &ConvertFrom<FORMAT_R5G5B5A1, false>;
     case FORMAT_R4G4B4A4:
-      return &TConvertFrom<FORMAT_R4G4B4A4, false>;
+      return &ConvertFrom<FORMAT_R4G4B4A4, false>;
     case FORMAT_B8G8R8:
-      return &TConvertFrom<FORMAT_B8G8R8, false>;
+      return &ConvertFrom<FORMAT_B8G8R8, false>;
     case FORMAT_A8B8G8R8:
-      return &TConvertFrom<FORMAT_A8B8G8R8, false>;
+      return &ConvertFrom<FORMAT_A8B8G8R8, false>;
     case FORMAT_D16:
-      return &TConvertFrom<FORMAT_D16, false>;
+      return &ConvertFrom<FORMAT_D16, false>;
     case FORMAT_X8S8D16:
-      return &TConvertFrom<FORMAT_X8S8D16, false>;
+      return &ConvertFrom<FORMAT_X8S8D16, false>;
     }
   }
 
   return nullptr;
 }
 
-inline uint32_t GetNativeFormat(uint32_t pixelFormat) {
+inline static uint32_t GetNativeFormat(uint32_t pixelFormat) {
   switch (pixelFormat) {
   case FORMAT_PAL4_B8G8R8:
   case FORMAT_PAL8_B8G8R8:
@@ -619,19 +619,19 @@ inline uint32_t GetNativeFormat(uint32_t pixelFormat) {
 ///////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_UNKNOWN>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_UNKNOWN>(const Color4 &in) {
   __unreferenced(in);
   return 0;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_UNKNOWN, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_UNKNOWN, false>(Color4 *pOut, uint32_t in) {
   __unreferenced(pOut);
   __unreferenced(in);
 }
 
 template <>
-inline void TConvertFrom<FORMAT_UNKNOWN, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_UNKNOWN, true>(Color4 *pOut, uint32_t in) {
   __unreferenced(pOut);
   __unreferenced(in);
 }
@@ -639,12 +639,12 @@ inline void TConvertFrom<FORMAT_UNKNOWN, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_R5G6B5>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_R5G6B5>(const Color4 &in) {
   return ((in.r & 0xf8) << 8) | ((in.g & 0xfc) << 3) | (in.b >> 3);
 }
 
 template <>
-inline void TConvertFrom<FORMAT_R5G6B5, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_R5G6B5, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->r = ((in >> 11) << 3) | (in >> 13);
   pOut->g = ((in >> 3) & 0xfc) | ((in >> 9) & 0x3);
@@ -652,7 +652,7 @@ inline void TConvertFrom<FORMAT_R5G6B5, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_R5G6B5, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_R5G6B5, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = 0xff;
   pOut->r = ((in >> 11) << 3) | (in >> 13);
@@ -663,13 +663,13 @@ inline void TConvertFrom<FORMAT_R5G6B5, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_A1R5G5B5>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_A1R5G5B5>(const Color4 &in) {
   return (in.a ? 0x8000 : 0) | ((in.r & 0xf8) << 7) | ((in.g & 0xf8) << 2) |
          (in.b >> 3);
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A1R5G5B5, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A1R5G5B5, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = 0xff * (in >> 15);
   pOut->r = ((in >> 7) & 0xf8) | ((in << 1) >> 13);
@@ -678,7 +678,7 @@ inline void TConvertFrom<FORMAT_A1R5G5B5, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A1R5G5B5, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A1R5G5B5, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = 0xff * (in >> 15);
   pOut->r = ((in >> 7) & 0xf8) | ((in << 1) >> 13);
@@ -689,13 +689,13 @@ inline void TConvertFrom<FORMAT_A1R5G5B5, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_R5G5B5A1>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_R5G5B5A1>(const Color4 &in) {
   return ((in.r & 0xf8) << 8) | ((in.g & 0xf8) << 3) | ((in.b & 0xf8) >> 2) |
          (in.a ? 0x1 : 0);
 }
 
 template <>
-inline void TConvertFrom<FORMAT_R5G5B5A1, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_R5G5B5A1, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = 0xff * (in & 0x1);
   pOut->r = ((in >> 8) & 0xf8) | (in >> 13);
@@ -704,7 +704,7 @@ inline void TConvertFrom<FORMAT_R5G5B5A1, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_R5G5B5A1, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_R5G5B5A1, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = 0xff * (in & 0x1);
   pOut->r = ((in >> 8) & 0xf8) | (in >> 13);
@@ -715,13 +715,13 @@ inline void TConvertFrom<FORMAT_R5G5B5A1, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_A4R4G4B4>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_A4R4G4B4>(const Color4 &in) {
   return ((in.a & 0xf0) << 8) | ((in.r & 0xf0) << 4) | ((in.g & 0xf0) << 0) |
          (in.b >> 4);
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A4R4G4B4, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A4R4G4B4, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = ((in >> 8) & 0xf0) | (in >> 12);
   pOut->r = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
@@ -730,7 +730,7 @@ inline void TConvertFrom<FORMAT_A4R4G4B4, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A4R4G4B4, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A4R4G4B4, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = ((in >> 8) & 0xf0) | (in >> 12);
   pOut->r = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
@@ -741,13 +741,13 @@ inline void TConvertFrom<FORMAT_A4R4G4B4, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_R4G4B4A4>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_R4G4B4A4>(const Color4 &in) {
   return ((in.r & 0xf0) << 8) | ((in.g & 0xf0) << 4) | ((in.b & 0xf0) << 0) |
          (in.a >> 4);
 }
 
 template <>
-inline void TConvertFrom<FORMAT_R4G4B4A4, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_R4G4B4A4, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
   pOut->r = ((in >> 8) & 0xf0) | (in >> 12);
@@ -756,7 +756,7 @@ inline void TConvertFrom<FORMAT_R4G4B4A4, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_R4G4B4A4, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_R4G4B4A4, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
   pOut->r = ((in >> 8) & 0xf0) | (in >> 12);
@@ -767,12 +767,12 @@ inline void TConvertFrom<FORMAT_R4G4B4A4, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_R8G8B8>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_R8G8B8>(const Color4 &in) {
   return (in.r << 16) | (in.g << 8) | in.b;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_R8G8B8, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_R8G8B8, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->r = in >> 16;
   pOut->g = (in >> 8) & 0xff;
@@ -780,7 +780,7 @@ inline void TConvertFrom<FORMAT_R8G8B8, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_R8G8B8, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_R8G8B8, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = 0xff;
   pOut->r = in >> 16;
@@ -791,12 +791,12 @@ inline void TConvertFrom<FORMAT_R8G8B8, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_B8G8R8>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_B8G8R8>(const Color4 &in) {
   return (in.b << 16) | (in.g << 8) | in.r;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_B8G8R8, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_B8G8R8, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->r = in & 0xff;
   pOut->g = (in >> 8) & 0xff;
@@ -804,7 +804,7 @@ inline void TConvertFrom<FORMAT_B8G8R8, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_B8G8R8, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_B8G8R8, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = 0xff;
   pOut->r = in & 0xff;
@@ -815,12 +815,12 @@ inline void TConvertFrom<FORMAT_B8G8R8, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_A8R8G8B8>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_A8R8G8B8>(const Color4 &in) {
   return (in.a << 24) | (in.r << 16) | (in.g << 8) | in.b;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A8R8G8B8, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A8R8G8B8, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = in >> 24;
   pOut->r = (in >> 16) & 0xff;
@@ -829,7 +829,7 @@ inline void TConvertFrom<FORMAT_A8R8G8B8, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A8R8G8B8, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A8R8G8B8, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = in >> 24;
   pOut->r = (in >> 16) & 0xff;
@@ -840,12 +840,12 @@ inline void TConvertFrom<FORMAT_A8R8G8B8, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_A8B8G8R8>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_A8B8G8R8>(const Color4 &in) {
   return (in.a << 24) | (in.b << 16) | (in.g << 8) | in.r;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A8B8G8R8, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A8B8G8R8, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = in >> 24;
   pOut->r = in & 0xff;
@@ -854,7 +854,7 @@ inline void TConvertFrom<FORMAT_A8B8G8R8, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A8B8G8R8, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A8B8G8R8, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = in >> 24;
   pOut->r = in & 0xff;
@@ -865,18 +865,18 @@ inline void TConvertFrom<FORMAT_A8B8G8R8, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_A8>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_A8>(const Color4 &in) {
   return in.a;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A8, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A8, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = in;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A8, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A8, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = in;
 }
@@ -884,12 +884,12 @@ inline void TConvertFrom<FORMAT_A8, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_L8>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_L8>(const Color4 &in) {
   return in.r;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_L8, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_L8, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->r = in;
   pOut->g = in;
@@ -897,7 +897,7 @@ inline void TConvertFrom<FORMAT_L8, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_L8, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_L8, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = 0xff;
   pOut->r = in;
@@ -908,12 +908,12 @@ inline void TConvertFrom<FORMAT_L8, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_A8L8>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_A8L8>(const Color4 &in) {
   return (in.a << 8) | in.r;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A8L8, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A8L8, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = in >> 8;
   pOut->r = in & 0xff;
@@ -922,7 +922,7 @@ inline void TConvertFrom<FORMAT_A8L8, false>(Color4 *pOut, uint32_t in) {
 }
 
 template <>
-inline void TConvertFrom<FORMAT_A8L8, true>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_A8L8, true>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->a = in >> 8;
   pOut->r = in & 0xff;
@@ -933,12 +933,12 @@ inline void TConvertFrom<FORMAT_A8L8, true>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_D16>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_D16>(const Color4 &in) {
   return in.b;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_D16, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_D16, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->b = in;
 }
@@ -946,12 +946,12 @@ inline void TConvertFrom<FORMAT_D16, false>(Color4 *pOut, uint32_t in) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <> 
-inline uint32_t TConvertTo<FORMAT_X8S8D16>(const Color4 &in) {
+inline uint32_t ConvertTo<FORMAT_X8S8D16>(const Color4 &in) {
   return in.b;
 }
 
 template <>
-inline void TConvertFrom<FORMAT_X8S8D16, false>(Color4 *pOut, uint32_t in) {
+inline void ConvertFrom<FORMAT_X8S8D16, false>(Color4 *pOut, uint32_t in) {
   assert(pOut);
   pOut->b = in;
 }

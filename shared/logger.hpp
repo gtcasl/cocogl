@@ -14,35 +14,35 @@
 //
 #pragma once
 
-class CLogger {
+class Logger {
 public:
   enum {
     MAX_INDENT = 64,
   };
 
-  CLogger(const char *fileName = nullptr, const char *mode = "w");
-  virtual ~CLogger();
+  Logger(const char *fileName = nullptr, const char *mode = "w");
+  virtual ~Logger();
 
-  HRESULT Open(const char *fileName, const char *mode = "w");
+  HRESULT open(const char *fileName, const char *mode = "w");
 
-  HRESULT Write(const char *format, ...);
+  HRESULT write(const char *format, ...);
 
-  HRESULT Write(const char *format, va_list arglist);
+  HRESULT write(const char *format, va_list arglist);
 
-  void SetIndent(uint32_t indent) {
+  void setIndent(uint32_t indent) {
     indent_ = indent;
   }
 
-  auto GetIndent() const {
+  auto getIndent() const {
     return indent_;
   }
 
-  void IncrIndent() {
+  void incrIndent() {
     assert(indent_ < MAX_INDENT);
     ++indent_;
   }
 
-  void DecrIndent() {
+  void decrIndent() {
     assert(indent_);
     --indent_;
   }
@@ -54,12 +54,11 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class CAutoLog {
+class AutoLog {
 public:
-  CAutoLog(CLogger &logger, const char *func, ...);
-
-  ~CAutoLog();
+  AutoLog(Logger &logger, const char *func, ...);
+  ~AutoLog();
 
 private:
-  CLogger &logger_;
+  Logger &logger_;
 };

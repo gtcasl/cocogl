@@ -15,13 +15,13 @@
 #pragma once
 
 template <class T>
-inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
+inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pParams) {
   assert(pParams);
 
   if ((light - GL_LIGHT0) >= MAX_LIGHTS) {
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::Light() failed, invalid light parameter: %d.\r\n",
+        "GLContext::setLightParameter() failed, invalid light parameter: %d.\r\n",
         light);
     return;
   }
@@ -43,9 +43,9 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
 
     if (GL_POSITION == pname) {
       _light.Flags.DirectionalLight = Math::TIsZero(vParam.w) ? 1 : 0;
-      Math::Mul(&_light.vPosition, vParam, pMsModelView_->GetMatrix());
+      Math::Mul(&_light.vPosition, vParam, pMsModelView_->getMatrix());
     } else {
-      _light.SetColor(pname, vParam);
+      _light.setColor(pname, vParam);
     }
 
     dirtyLights_.States[pname - GL_AMBIENT] |= (1 << index);
@@ -59,7 +59,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
     vParam.z = Math::TCast<floatf>(pParams[2]);
 
     if (dirtyFlags_.ModelViewInvT33) {
-      this->UpdateModelViewInvT33();
+      this->updateModelViewInvT33();
     }
 
     Math::Mul(&_light.vSpotDirection, reinterpret_cast<const VECTOR3 &>(vParam),
@@ -73,7 +73,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
     if ((vParam.x < fZERO) || (vParam.x > f128)) {
       __glError(
           GL_INVALID_VALUE,
-          "CGLContext::TLight() failed, invalid param parameter: %d.\r\n",
+          "GLContext::setLightParameter() failed, invalid param parameter: %d.\r\n",
           vParam.x);
       return;
     }
@@ -88,7 +88,7 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
     if (((vParam.x < fZERO) || (vParam.x > f90)) && (vParam.x != f180)) {
       __glError(
           GL_INVALID_VALUE,
-          "CGLContext::TLight() failed, invalid param parameter: %d.\r\n",
+          "GLContext::setLightParameter() failed, invalid param parameter: %d.\r\n",
           vParam.x);
       return;
     }
@@ -106,12 +106,12 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
     if (vParam.x < fZERO) {
       __glError(
           GL_INVALID_VALUE,
-          "CGLContext::TLight() failed, invalid param parameter: %d.\r\n",
+          "GLContext::setLightParameter() failed, invalid param parameter: %d.\r\n",
           vParam.x);
       return;
     }
 
-    _light.SetAttenuation(pname, vParam.x);
+    _light.setAttenuation(pname, vParam.x);
   }
 
   break;
@@ -119,14 +119,14 @@ inline void CGLContext::TLight(GLenum light, GLenum pname, const T *pParams) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::TLight() failed, invalid pname parameter: %d.\r\n",
+        "GLContext::setLightParameter() failed, invalid pname parameter: %d.\r\n",
         pname);
     return;
   }
 }
 
 template <class T>
-inline void CGLContext::TLightModel(GLenum pname, const T *pParams) {
+inline void GLContext::setLightParameterModel(GLenum pname, const T *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -144,7 +144,7 @@ inline void CGLContext::TLightModel(GLenum pname, const T *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              "CGLContext::TLightModel() failed, invalid "
+              "GLContext::setLightParameterModel() failed, invalid "
               "pname parameter: %d.\r\n",
               pname);
     return;
@@ -152,13 +152,13 @@ inline void CGLContext::TLightModel(GLenum pname, const T *pParams) {
 }
 
 template <class T>
-inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
+inline void GLContext::setMaterial(GLenum face, GLenum pname, const T *pParams) {
   assert(pParams);
 
   if (face != GL_FRONT_AND_BACK) {
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::TMaterial() failed, invalid face parameter: %d.\r\n",
+        "GLContext::setMaterial() failed, invalid face parameter: %d.\r\n",
         face);
     return;
   }
@@ -182,12 +182,12 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
       vMatEmissive_ = vParam;
     } else {
       if (GL_AMBIENT_AND_DIFFUSE == pname) {
-        material_.SetColor(GL_AMBIENT, vParam);
+        material_.setColor(GL_AMBIENT, vParam);
         dirtyLights_.States[0] = LIGHTS_MASK;
         pname = GL_DIFFUSE;
       }
 
-      material_.SetColor(pname, vParam);
+      material_.setColor(pname, vParam);
       dirtyLights_.States[pname - GL_AMBIENT] = LIGHTS_MASK;
     }
   }
@@ -198,7 +198,7 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
     vParam.x = Math::TCast<floatf>(pParams[0]);
     if ((vParam.x < fZERO) || (vParam.x > f128)) {
       __glError(GL_INVALID_VALUE,
-                "CGLContext::TMaterial() failed, invalid "
+                "GLContext::setMaterial() failed, invalid "
                 "param parameter: %d.\r\n",
                 vParam.x);
       return;
@@ -212,14 +212,14 @@ inline void CGLContext::TMaterial(GLenum face, GLenum pname, const T *pParams) {
   default:
     __glError(
         GL_INVALID_ENUM,
-        "CGLContext::TMaterial() failed, invalid pname parameter: %d.\r\n",
+        "GLContext::setMaterial() failed, invalid pname parameter: %d.\r\n",
         pname);
     return;
   }
 }
 
 template <class T>
-inline void CGLContext::TFog(GLenum pname, const T *pParams) {
+inline void GLContext::setFog(GLenum pname, const T *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -235,7 +235,7 @@ inline void CGLContext::TFog(GLenum pname, const T *pParams) {
     default:
       __glError(
           GL_INVALID_ENUM,
-          "CGLContext::TFog() failed, invalid param parameter: %d.\r\n",
+          "GLContext::setFog() failed, invalid param parameter: %d.\r\n",
           param);
       return;
     }
@@ -248,7 +248,7 @@ inline void CGLContext::TFog(GLenum pname, const T *pParams) {
     dirtyFlags_.FogRatio = 1;
     [[fallthrough]];
   case GL_FOG_DENSITY:
-    fog_.SetFactor(pname, Math::TCast<floatf>(pParams[0]));
+    fog_.setFactor(pname, Math::TCast<floatf>(pParams[0]));
     break;
 
   case GL_FOG_COLOR:
@@ -261,7 +261,7 @@ inline void CGLContext::TFog(GLenum pname, const T *pParams) {
 
   default:
     __glError(GL_INVALID_ENUM,
-              "CGLContext::TFog() failed, invalid pname parameter: %d.\r\n",
+              "GLContext::setFog() failed, invalid pname parameter: %d.\r\n",
               pname);
     return;
   }

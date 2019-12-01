@@ -26,107 +26,107 @@ static const PfnDecodePosition g_decodePosition[] = {
 };
 
 static const CTNL::PfnDecodeVertices g_processLighting[] = {
-    &CTNL::TProcessLighting_OneSided<false, VERTEX_UNKNOWN, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_OneSided<false, VERTEX_UNKNOWN, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_OneSided<false, VERTEX_UNKNOWN, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_OneSided<false, VERTEX_UNKNOWN, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_OneSided<false, VERTEX_UNKNOWN, VERTEX_FLOAT3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_UNKNOWN, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_UNKNOWN, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_UNKNOWN, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_UNKNOWN, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_UNKNOWN, VERTEX_FLOAT3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FIXED4, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FIXED4, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FIXED4, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FIXED4, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FIXED4, VERTEX_FLOAT3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FLOAT4, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FLOAT4, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FLOAT4, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FLOAT4, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_FLOAT4, VERTEX_FLOAT3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_RGBA, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_RGBA, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_RGBA, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_RGBA, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_OneSided<true, VERTEX_RGBA, VERTEX_FLOAT3>,
+    &CTNL::processLightingOneSided<false, VERTEX_UNKNOWN, VERTEX_UNKNOWN>,
+    &CTNL::processLightingOneSided<false, VERTEX_UNKNOWN, VERTEX_BYTE3>,
+    &CTNL::processLightingOneSided<false, VERTEX_UNKNOWN, VERTEX_SHORT3>,
+    &CTNL::processLightingOneSided<false, VERTEX_UNKNOWN, VERTEX_FIXED3>,
+    &CTNL::processLightingOneSided<false, VERTEX_UNKNOWN, VERTEX_FLOAT3>,
+    &CTNL::processLightingOneSided<true, VERTEX_UNKNOWN, VERTEX_UNKNOWN>,
+    &CTNL::processLightingOneSided<true, VERTEX_UNKNOWN, VERTEX_BYTE3>,
+    &CTNL::processLightingOneSided<true, VERTEX_UNKNOWN, VERTEX_SHORT3>,
+    &CTNL::processLightingOneSided<true, VERTEX_UNKNOWN, VERTEX_FIXED3>,
+    &CTNL::processLightingOneSided<true, VERTEX_UNKNOWN, VERTEX_FLOAT3>,
+    &CTNL::processLightingOneSided<true, VERTEX_FIXED4, VERTEX_UNKNOWN>,
+    &CTNL::processLightingOneSided<true, VERTEX_FIXED4, VERTEX_BYTE3>,
+    &CTNL::processLightingOneSided<true, VERTEX_FIXED4, VERTEX_SHORT3>,
+    &CTNL::processLightingOneSided<true, VERTEX_FIXED4, VERTEX_FIXED3>,
+    &CTNL::processLightingOneSided<true, VERTEX_FIXED4, VERTEX_FLOAT3>,
+    &CTNL::processLightingOneSided<true, VERTEX_FLOAT4, VERTEX_UNKNOWN>,
+    &CTNL::processLightingOneSided<true, VERTEX_FLOAT4, VERTEX_BYTE3>,
+    &CTNL::processLightingOneSided<true, VERTEX_FLOAT4, VERTEX_SHORT3>,
+    &CTNL::processLightingOneSided<true, VERTEX_FLOAT4, VERTEX_FIXED3>,
+    &CTNL::processLightingOneSided<true, VERTEX_FLOAT4, VERTEX_FLOAT3>,
+    &CTNL::processLightingOneSided<true, VERTEX_RGBA, VERTEX_UNKNOWN>,
+    &CTNL::processLightingOneSided<true, VERTEX_RGBA, VERTEX_BYTE3>,
+    &CTNL::processLightingOneSided<true, VERTEX_RGBA, VERTEX_SHORT3>,
+    &CTNL::processLightingOneSided<true, VERTEX_RGBA, VERTEX_FIXED3>,
+    &CTNL::processLightingOneSided<true, VERTEX_RGBA, VERTEX_FLOAT3>,
 
-    &CTNL::TProcessLighting_TwoSided<false, VERTEX_UNKNOWN, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_TwoSided<false, VERTEX_UNKNOWN, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_TwoSided<false, VERTEX_UNKNOWN, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_TwoSided<false, VERTEX_UNKNOWN, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_TwoSided<false, VERTEX_UNKNOWN, VERTEX_FLOAT3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_UNKNOWN, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_UNKNOWN, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_UNKNOWN, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_UNKNOWN, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_UNKNOWN, VERTEX_FLOAT3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FIXED4, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FIXED4, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FIXED4, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FIXED4, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FIXED4, VERTEX_FLOAT3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FLOAT4, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FLOAT4, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FLOAT4, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FLOAT4, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_FLOAT4, VERTEX_FLOAT3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_RGBA, VERTEX_UNKNOWN>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_RGBA, VERTEX_BYTE3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_RGBA, VERTEX_SHORT3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_RGBA, VERTEX_FIXED3>,
-    &CTNL::TProcessLighting_TwoSided<true, VERTEX_RGBA, VERTEX_FLOAT3>,
+    &CTNL::processLightingTwoSided<false, VERTEX_UNKNOWN, VERTEX_UNKNOWN>,
+    &CTNL::processLightingTwoSided<false, VERTEX_UNKNOWN, VERTEX_BYTE3>,
+    &CTNL::processLightingTwoSided<false, VERTEX_UNKNOWN, VERTEX_SHORT3>,
+    &CTNL::processLightingTwoSided<false, VERTEX_UNKNOWN, VERTEX_FIXED3>,
+    &CTNL::processLightingTwoSided<false, VERTEX_UNKNOWN, VERTEX_FLOAT3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_UNKNOWN, VERTEX_UNKNOWN>,
+    &CTNL::processLightingTwoSided<true, VERTEX_UNKNOWN, VERTEX_BYTE3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_UNKNOWN, VERTEX_SHORT3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_UNKNOWN, VERTEX_FIXED3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_UNKNOWN, VERTEX_FLOAT3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FIXED4, VERTEX_UNKNOWN>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FIXED4, VERTEX_BYTE3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FIXED4, VERTEX_SHORT3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FIXED4, VERTEX_FIXED3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FIXED4, VERTEX_FLOAT3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FLOAT4, VERTEX_UNKNOWN>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FLOAT4, VERTEX_BYTE3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FLOAT4, VERTEX_SHORT3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FLOAT4, VERTEX_FIXED3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_FLOAT4, VERTEX_FLOAT3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_RGBA, VERTEX_UNKNOWN>,
+    &CTNL::processLightingTwoSided<true, VERTEX_RGBA, VERTEX_BYTE3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_RGBA, VERTEX_SHORT3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_RGBA, VERTEX_FIXED3>,
+    &CTNL::processLightingTwoSided<true, VERTEX_RGBA, VERTEX_FLOAT3>,
 };
 
 static const CTNL::PfnDecodeVertices g_processVertexColor[] = {
-    &CTNL::TProcessVertexColor<VERTEX_FIXED4>,
-    &CTNL::TProcessVertexColor<VERTEX_FLOAT4>,
-    &CTNL::TProcessVertexColor<VERTEX_RGBA>,
+    &CTNL::processVertexColor<VERTEX_FIXED4>,
+    &CTNL::processVertexColor<VERTEX_FLOAT4>,
+    &CTNL::processVertexColor<VERTEX_RGBA>,
 };
 
 static const CTNL::PfnDecodeTexCoord g_processTexcoords[] = {
-    &CTNL::TProcessTexCoords<false, VERTEX_BYTE2>,
-    &CTNL::TProcessTexCoords<false, VERTEX_BYTE3>,
-    &CTNL::TProcessTexCoords<false, VERTEX_BYTE4>,
-    &CTNL::TProcessTexCoords<false, VERTEX_SHORT2>,
-    &CTNL::TProcessTexCoords<false, VERTEX_SHORT3>,
-    &CTNL::TProcessTexCoords<false, VERTEX_SHORT4>,
-    &CTNL::TProcessTexCoords<false, VERTEX_FIXED2>,
-    &CTNL::TProcessTexCoords<false, VERTEX_FIXED3>,
-    &CTNL::TProcessTexCoords<false, VERTEX_FIXED4>,
-    &CTNL::TProcessTexCoords<false, VERTEX_FLOAT2>,
-    &CTNL::TProcessTexCoords<false, VERTEX_FLOAT3>,
-    &CTNL::TProcessTexCoords<false, VERTEX_FLOAT4>,
+    &CTNL::processTexCoords<false, VERTEX_BYTE2>,
+    &CTNL::processTexCoords<false, VERTEX_BYTE3>,
+    &CTNL::processTexCoords<false, VERTEX_BYTE4>,
+    &CTNL::processTexCoords<false, VERTEX_SHORT2>,
+    &CTNL::processTexCoords<false, VERTEX_SHORT3>,
+    &CTNL::processTexCoords<false, VERTEX_SHORT4>,
+    &CTNL::processTexCoords<false, VERTEX_FIXED2>,
+    &CTNL::processTexCoords<false, VERTEX_FIXED3>,
+    &CTNL::processTexCoords<false, VERTEX_FIXED4>,
+    &CTNL::processTexCoords<false, VERTEX_FLOAT2>,
+    &CTNL::processTexCoords<false, VERTEX_FLOAT3>,
+    &CTNL::processTexCoords<false, VERTEX_FLOAT4>,
 
-    &CTNL::TProcessTexCoords<true, VERTEX_BYTE2>,
-    &CTNL::TProcessTexCoords<true, VERTEX_BYTE3>,
-    &CTNL::TProcessTexCoords<true, VERTEX_BYTE4>,
-    &CTNL::TProcessTexCoords<true, VERTEX_SHORT2>,
-    &CTNL::TProcessTexCoords<true, VERTEX_SHORT3>,
-    &CTNL::TProcessTexCoords<true, VERTEX_SHORT4>,
-    &CTNL::TProcessTexCoords<true, VERTEX_FIXED2>,
-    &CTNL::TProcessTexCoords<true, VERTEX_FIXED3>,
-    &CTNL::TProcessTexCoords<true, VERTEX_FIXED4>,
-    &CTNL::TProcessTexCoords<true, VERTEX_FLOAT2>,
-    &CTNL::TProcessTexCoords<true, VERTEX_FLOAT3>,
-    &CTNL::TProcessTexCoords<true, VERTEX_FLOAT4>,
+    &CTNL::processTexCoords<true, VERTEX_BYTE2>,
+    &CTNL::processTexCoords<true, VERTEX_BYTE3>,
+    &CTNL::processTexCoords<true, VERTEX_BYTE4>,
+    &CTNL::processTexCoords<true, VERTEX_SHORT2>,
+    &CTNL::processTexCoords<true, VERTEX_SHORT3>,
+    &CTNL::processTexCoords<true, VERTEX_SHORT4>,
+    &CTNL::processTexCoords<true, VERTEX_FIXED2>,
+    &CTNL::processTexCoords<true, VERTEX_FIXED3>,
+    &CTNL::processTexCoords<true, VERTEX_FIXED4>,
+    &CTNL::processTexCoords<true, VERTEX_FLOAT2>,
+    &CTNL::processTexCoords<true, VERTEX_FLOAT3>,
+    &CTNL::processTexCoords<true, VERTEX_FLOAT4>,
 };
 
 static const CTNL::PfnDecodeVertices g_processPointSize[] = {
-    &CTNL::TProcessPointSize<false, VERTEX_FIXED>,
-    &CTNL::TProcessPointSize<false, VERTEX_FLOAT>,
-    &CTNL::TProcessPointSize<true, VERTEX_FIXED>,
-    &CTNL::TProcessPointSize<true, VERTEX_FLOAT>,
+    &CTNL::processPointSize<false, VERTEX_FIXED>,
+    &CTNL::processPointSize<false, VERTEX_FLOAT>,
+    &CTNL::processPointSize<true, VERTEX_FIXED>,
+    &CTNL::processPointSize<true, VERTEX_FLOAT>,
 };
 
 static const CTNL::PfnDecodeVertices g_processFog[] = {
-    &CTNL::TProcessFog<FogLinear>,
-    &CTNL::TProcessFog<FogExp>,
-    &CTNL::TProcessFog<FogExp2>,
+    &CTNL::processFog<FogLinear>,
+    &CTNL::processFog<FogExp>,
+    &CTNL::processFog<FogExp2>,
 };
 
-GLenum CTNL::SetupTNLStates(GLenum mode, int first, uint32_t count) {
+GLenum CTNL::setupTNLStates(GLenum mode, int first, uint32_t count) {
   GLenum err;
 
   auto rasterFlags = rasterID_.Flags;
@@ -134,9 +134,9 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, uint32_t count) {
   TNLFlags_.Value = 0;
 
   if (vertexStates_.Position) {
-    err = positionArray_.Prepare(&positionDecode_, first, count);
+    err = positionArray_.prepare(&positionDecode_, first, count);
     if (__glFailed(err)) {
-      __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
+      __glLogError("VertexArray::prepare() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
@@ -169,43 +169,43 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, uint32_t count) {
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(RDVECTOR), 4);
 
   if (dirtyFlags_.ModelViewProj) {
-    this->UpdateModelViewProj();
+    this->updateModelViewProj();
   }
 
   if (dirtyFlags_.ScreenXform) {
-    this->UpdateScreenXform();
+    this->updateScreenXform();
   }
 
   if (caps_.ClipPlanes) {
-    this->UpdateClipPlanes();
+    this->updateClipPlanes();
   }
 
   if (GL_POINTS == mode) {
-    err = this->UpdatePoints(&pbVertexData, first, count);
+    err = this->updatePoints(&pbVertexData, first, count);
     if (__glFailed(err)) {
-      __glLogError("CTNL::UpdatePoints() failed, err = %d.\r\n", err);
+      __glLogError("CTNL::updatePoints() failed, err = %d.\r\n", err);
       return err;
     }
   }
 
   if (rasterFlags.Color) {
-    err = this->UpdateColor(&pbVertexData, first, count);
+    err = this->updateColor(&pbVertexData, first, count);
     if (__glFailed(err)) {
-      __glLogError("CTNL::UpdateColor() failed, err = %d.\r\n", err);
+      __glLogError("CTNL::updateColor() failed, err = %d.\r\n", err);
       return err;
     }
   }
 
   if (rasterFlags.NumTextures) {
-    err = this->UpdateTexcoords(&pbVertexData, first, count);
+    err = this->updateTexcoords(&pbVertexData, first, count);
     if (__glFailed(err)) {
-      __glLogError("CTNL::UpdateTexcoords() failed, err = %d.\r\n", err);
+      __glLogError("CTNL::updateTexcoords() failed, err = %d.\r\n", err);
       return err;
     }
   }
 
   if (rasterFlags.Fog) {
-    this->UpdateFog(&pbVertexData, first, count);
+    this->updateFog(&pbVertexData, first, count);
   }
 
   uint32_t buffSize = pbVertexData - (uint8_t *)nullptr;
@@ -224,7 +224,7 @@ GLenum CTNL::SetupTNLStates(GLenum mode, int first, uint32_t count) {
   return GL_NO_ERROR;
 }
 
-void CTNL::ProcessVertices(uint32_t count) {
+void CTNL::processVertices(uint32_t count) {
   auto flags = TNLFlags_;
 
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
@@ -250,22 +250,22 @@ void CTNL::ProcessVertices(uint32_t count) {
 
   if (flags.UserClipPlanes) {
     // Compute user clipping flags
-    clipUnion |= this->CalcUserClipFlags(count);
+    clipUnion |= this->calcUserClipFlags(count);
   }
 
   // Transform to screen space
   if (0 == clipUnion) {
-    this->XformScreenSpace(pvScreenPos, pvClipPos, count);
+    this->transformScreenSpace(pvScreenPos, pvClipPos, count);
   } else {
     for (uint32_t i = 0; i < count; ++i) {
       if (0 == pwFlags[i]) {
-        this->XformScreenSpace(&pvScreenPos[i], &pvClipPos[i], 1);
+        this->transformScreenSpace(&pvScreenPos[i], &pvClipPos[i], 1);
       }
     }
   }
 
   if (flags.EyeSpace || flags.EyeSpaceZ) {
-    this->XformEyeSpace(count);
+    this->transformEyeSpace(count);
   }
 
   if (flags.PointSize) {
@@ -314,7 +314,7 @@ uint32_t CTNL::CalcClipFlags(const VECTOR4 &vPosition) {
   return clipFlags;
 }
 
-uint32_t CTNL::CalcUserClipFlags(uint32_t count) {
+uint32_t CTNL::calcUserClipFlags(uint32_t count) {
   uint32_t clipUnion = 0;
 
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
@@ -341,7 +341,7 @@ uint32_t CTNL::CalcUserClipFlags(uint32_t count) {
   return clipUnion;
 }
 
-void CTNL::XformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
+void CTNL::transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
                             uint32_t count) {
   assert(pRDVertex);
   assert(pvClipPos);
@@ -372,8 +372,8 @@ void CTNL::XformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
   }
 }
 
-void CTNL::XformEyeSpace(uint32_t count) {
-  auto &matEyeXform = pMsModelView_->GetMatrix();
+void CTNL::transformEyeSpace(uint32_t count) {
+  auto &matEyeXform = pMsModelView_->getMatrix();
 
   auto pvWorldPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_WORLDPOS]);
@@ -392,7 +392,7 @@ void CTNL::XformEyeSpace(uint32_t count) {
   }
 }
 
-void CTNL::ProcessPointSize(uint32_t count) {
+void CTNL::processPointSize(uint32_t count) {
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   auto pfPointSizes =
       reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
@@ -423,7 +423,7 @@ void CTNL::ProcessPointSize(uint32_t count) {
   }
 }
 
-void CTNL::ProcessColor(uint32_t count) {
+void CTNL::processColor(uint32_t count) {
   auto pcFrontColors =
       reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
 
@@ -438,7 +438,7 @@ void CTNL::ProcessColor(uint32_t count) {
   }
 }
 
-void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+void CTNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal,
                                   const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
@@ -469,9 +469,9 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       if (pLight->Flags.Attenuation) {
         auto fDist = Math::TSqrt(fDistSq);
         auto fInvAtt =
-            pLight->GetAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
-            pLight->GetAttenuation(GL_LINEAR_ATTENUATION) * fDist +
-            pLight->GetAttenuation(GL_CONSTANT_ATTENUATION);
+            pLight->getAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
+            pLight->getAttenuation(GL_LINEAR_ATTENUATION) * fDist +
+            pLight->getAttenuation(GL_CONSTANT_ATTENUATION);
         if (!Math::TIsZero(fInvAtt - fONE)) {
           fAtt = Math::TInv<floatf>(fInvAtt);
         }
@@ -492,7 +492,7 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 
     auto fDotNL = Math::TDot<floatf>(vNormal, vL);
     if (fDotNL > fZERO) {
-      auto &vLightDiffuse = pLight->GetColor(GL_DIFFUSE);
+      auto &vLightDiffuse = pLight->getColor(GL_DIFFUSE);
       vFrontDS.x += vVertexColor.x * vLightDiffuse.x * fDotNL;
       vFrontDS.y += vVertexColor.y * vLightDiffuse.y * fDotNL;
       vFrontDS.z += vVertexColor.z * vLightDiffuse.z * fDotNL;
@@ -526,7 +526,7 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+void CTNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
@@ -556,9 +556,9 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       if (pLight->Flags.Attenuation) {
         auto fDist = Math::TSqrt(fDistSq);
         auto fInvAtt =
-            pLight->GetAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
-            pLight->GetAttenuation(GL_LINEAR_ATTENUATION) * fDist +
-            pLight->GetAttenuation(GL_CONSTANT_ATTENUATION);
+            pLight->getAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
+            pLight->getAttenuation(GL_LINEAR_ATTENUATION) * fDist +
+            pLight->getAttenuation(GL_CONSTANT_ATTENUATION);
         if (!Math::TIsZero(fInvAtt - fONE)) {
           fAtt = Math::TInv<floatf>(fInvAtt);
         }
@@ -612,7 +612,7 @@ void CTNL::ProcessLights_OneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+void CTNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal,
                                   const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
@@ -652,9 +652,9 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       if (pLight->Flags.Attenuation) {
         auto fDist = Math::TSqrt(fDistSq);
         auto fInvAtt =
-            pLight->GetAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
-            pLight->GetAttenuation(GL_LINEAR_ATTENUATION) * fDist +
-            pLight->GetAttenuation(GL_CONSTANT_ATTENUATION);
+            pLight->getAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
+            pLight->getAttenuation(GL_LINEAR_ATTENUATION) * fDist +
+            pLight->getAttenuation(GL_CONSTANT_ATTENUATION);
         if (!Math::TIsZero(fInvAtt - fONE)) {
           fAtt = Math::TInv<floatf>(fInvAtt);
         }
@@ -678,7 +678,7 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
     auto fDotNL = Math::TDot<floatf>(vNormal, vL);
     auto fDiffFactor = (fDotNL > fZERO) ? fDotNL : -fDotNL;
 
-    auto &vLightDiffuse = pLight->GetColor(GL_DIFFUSE);
+    auto &vLightDiffuse = pLight->getColor(GL_DIFFUSE);
     vColor.x = vVertexColor.x * vLightDiffuse.x * fDiffFactor;
     vColor.y = vVertexColor.y * vLightDiffuse.y * fDiffFactor;
     vColor.z = vVertexColor.z * vLightDiffuse.z * fDiffFactor;
@@ -718,7 +718,7 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+void CTNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                   const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
@@ -757,9 +757,9 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       if (pLight->Flags.Attenuation) {
         auto fDist = Math::TSqrt(fDistSq);
         auto fInvAtt =
-            pLight->GetAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
-            pLight->GetAttenuation(GL_LINEAR_ATTENUATION) * fDist +
-            pLight->GetAttenuation(GL_CONSTANT_ATTENUATION);
+            pLight->getAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
+            pLight->getAttenuation(GL_LINEAR_ATTENUATION) * fDist +
+            pLight->getAttenuation(GL_CONSTANT_ATTENUATION);
         if (!Math::TIsZero(fInvAtt - fONE)) {
           fAtt = Math::TInv<floatf>(fInvAtt);
         }
@@ -822,15 +822,15 @@ void CTNL::ProcessLights_TwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-void CTNL::ProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
+void CTNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
                             uint32_t count) {
   auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
       pbVertexData_[VERTEXDATA_TEXCOORD0 + dstIndex]);
 
   auto vIn = vTexCoords_[srcIndex];
 
-  if (!pMsTexCoords_[srcIndex]->IsIdentity()) {
-    Math::Mul(&vIn, vIn, pMsTexCoords_[srcIndex]->GetMatrix());
+  if (!pMsTexCoords_[srcIndex]->isIdentity()) {
+    Math::Mul(&vIn, vIn, pMsTexCoords_[srcIndex]->getMatrix());
   }
 
   for (uint32_t k = 0; k < count; ++k) {
@@ -839,13 +839,13 @@ void CTNL::ProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
   }
 }
 
-GLenum CTNL::UpdatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
+GLenum CTNL::updatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
   GLenum err;
 
   if (vertexStates_.PointSize) {
-    err = pointSizeArray_.Prepare(&pointSizeDecode_, first, count);
+    err = pointSizeArray_.prepare(&pointSizeDecode_, first, count);
     if (__glFailed(err)) {
-      __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
+      __glLogError("VertexArray::prepare() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
@@ -872,7 +872,7 @@ GLenum CTNL::UpdatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
     assert(uiFunc < __countof(g_processPointSize));
     pfnPointSize_ = g_processPointSize[uiFunc];
   } else {
-    pfnPointSize_ = &CTNL::ProcessPointSize;
+    pfnPointSize_ = &CTNL::processPointSize;
   }
 
   TNLFlags_.PointSize = 1;
@@ -880,13 +880,13 @@ GLenum CTNL::UpdatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
   return GL_NO_ERROR;
 }
 
-GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
+GLenum CTNL::updateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
   GLenum err;
 
   if (vertexStates_.Color) {
-    err = colorArray_.Prepare(&colorDecode_, first, count);
+    err = colorArray_.prepare(&colorDecode_, first, count);
     if (__glFailed(err)) {
-      __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
+      __glLogError("VertexArray::prepare() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
@@ -900,9 +900,9 @@ GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
   cullStates_.bTwoSidedLighting = false;
 
   if (caps_.Lighting) {
-    err = this->UpdateLighting(ppbVertexData, first, count);
+    err = this->updateLighting(ppbVertexData, first, count);
     if (__glFailed(err)) {
-      __glLogError("CTNL::UpdateLighting() failed, err = %d.\r\n", err);
+      __glLogError("CTNL::updateLighting() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
@@ -911,7 +911,7 @@ GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
       assert(uiFunc < __countof(g_processVertexColor));
       pfnColor_ = g_processVertexColor[uiFunc];
     } else {
-      pfnColor_ = &CTNL::ProcessColor;
+      pfnColor_ = &CTNL::processColor;
     }
   }
 
@@ -920,18 +920,18 @@ GLenum CTNL::UpdateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
   return GL_NO_ERROR;
 }
 
-GLenum CTNL::UpdateLighting(uint8_t **ppbVertexData, int first,
+GLenum CTNL::updateLighting(uint8_t **ppbVertexData, int first,
                             uint32_t count) {
   GLenum err;
 
   if (dirtyFlags_.ModelViewInvT33) {
-    this->UpdateModelViewInvT33();
+    this->updateModelViewInvT33();
   }
 
   if (vertexStates_.Normal) {
-    err = normalArray_.Prepare(&normalDecode_, first, count);
+    err = normalArray_.prepare(&normalDecode_, first, count);
     if (__glFailed(err)) {
-      __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
+      __glLogError("VertexArray::prepare() failed, err = %d.\r\n", err);
       return err;
     }
   } else {
@@ -942,23 +942,23 @@ GLenum CTNL::UpdateLighting(uint8_t **ppbVertexData, int first,
     TNLFlags_.Normalize = caps_.Normalize;
   } else {
     if (dirtyFlags_.NormalizeNormal) {
-      this->UpdateNormal();
+      this->updateNormal();
     }
   }
 
   if (dirtyFlags_.ScaledAmbient) {
-    this->UpdateMaterial();
+    this->updateMaterial();
   }
 
   if (dirtyFlags_.Lights) {
-    this->SetupLights();
+    this->setupLights();
   }
 
   if (pActiveLights_) {
     TNLFlags_.EyeSpace = 1;
 
     if (dirtyLights_.Ambient || dirtyLights_.Diffuse || dirtyLights_.Specular) {
-      this->UpdateLights();
+      this->updateLights();
     }
   }
 
@@ -993,16 +993,16 @@ GLenum CTNL::UpdateLighting(uint8_t **ppbVertexData, int first,
   return GL_NO_ERROR;
 }
 
-GLenum CTNL::UpdateTexcoords(uint8_t **ppbVertexData, int first,
+GLenum CTNL::updateTexcoords(uint8_t **ppbVertexData, int first,
                              uint32_t count) {
   GLenum err;
 
   for (uint32_t i = 0, j = 0, mask = caps_.Texture2D; mask; mask >>= 1, ++i) {
     if (mask & 0x1) {
       if ((vertexStates_.TexCoords >> i) & 0x1) {
-        err = texCoordArrays_[i].Prepare(&texCoordDecodes_[i], first, count);
+        err = texCoordArrays_[i].prepare(&texCoordDecodes_[i], first, count);
         if (__glFailed(err)) {
-          __glLogError("VertexArray::Prepare() failed, err = %d.\r\n", err);
+          __glLogError("VertexArray::prepare() failed, err = %d.\r\n", err);
           return err;
         }
       } else {
@@ -1018,14 +1018,14 @@ GLenum CTNL::UpdateTexcoords(uint8_t **ppbVertexData, int first,
             texCoordArrays_[i].Format - 1 - uiFormatType * 4;
         uint32_t uiFunc = uiFormatType * 3 + uiFormatSize - 1;
 
-        if (!pMsTexCoords_[i]->IsIdentity()) {
+        if (!pMsTexCoords_[i]->isIdentity()) {
           uiFunc += 12;
         }
 
         assert(uiFunc < __countof(g_processTexcoords));
         pfnTexCoords_[i] = g_processTexcoords[uiFunc];
       } else {
-        pfnTexCoords_[i] = &CTNL::ProcessTexCoords;
+        pfnTexCoords_[i] = &CTNL::processTexCoords;
       }
     }
   }
@@ -1035,13 +1035,13 @@ GLenum CTNL::UpdateTexcoords(uint8_t **ppbVertexData, int first,
   return GL_NO_ERROR;
 }
 
-void CTNL::UpdateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
+void CTNL::updateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
   TNLFlags_.Fog = 1;
   TNLFlags_.EyeSpaceZ = 1;
 
   if (dirtyFlags_.FogRatio) {
-    auto fFogStart = fog_.GetFactor(GL_FOG_START);
-    auto fFogEnd = fog_.GetFactor(GL_FOG_END);
+    auto fFogStart = fog_.getFactor(GL_FOG_START);
+    auto fFogEnd = fog_.getFactor(GL_FOG_END);
 
     if (fFogStart != fFogEnd) {
       fog_.fRatio = Math::TInv<fixedRF>(fFogEnd - fFogStart);
@@ -1060,9 +1060,9 @@ void CTNL::UpdateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
   pfnFog_ = g_processFog[uiFunc];
 }
 
-void CTNL::UpdateModelViewInvT44() {
+void CTNL::updateModelViewInvT44() {
   MATRIX44 matTmp;
-  Math::Inverse(&matTmp, pMsModelView_->GetMatrix());
+  Math::Inverse(&matTmp, pMsModelView_->getMatrix());
   Math::Transpose(&mModelViewInvT_, matTmp);
   dirtyFlags_.ModelViewInvT44 = 0;
 
@@ -1072,12 +1072,12 @@ void CTNL::UpdateModelViewInvT44() {
   }
 }
 
-void CTNL::UpdateModelViewProj() {
-  Math::Mul(&mModelViewProj_, pMsProjection_->GetMatrix(), pMsModelView_->GetMatrix());
+void CTNL::updateModelViewProj() {
+  Math::Mul(&mModelViewProj_, pMsProjection_->getMatrix(), pMsModelView_->getMatrix());
   dirtyFlags_.ModelViewProj = 0;
 }
 
-void CTNL::UpdateScreenXform() {
+void CTNL::updateScreenXform() {
   screenXform_.fMinX = static_cast<fixed4>((viewport_.left + viewport_.right) / 2);
   screenXform_.iScaleX = (viewport_.right - viewport_.left) / 2;
 
@@ -1090,12 +1090,12 @@ void CTNL::UpdateScreenXform() {
   dirtyFlags_.ScreenXform = 0;
 }
 
-void CTNL::UpdateClipPlanes() {
+void CTNL::updateClipPlanes() {
   TNLFlags_.UserClipPlanes = 1;
 
   if (dirtyFlags_.ClipPlanesCS) {
     if (dirtyFlags_.ProjectionInvT) {
-      this->UpdateProjectionInvT();
+      this->updateProjectionInvT();
     }
 
     uint32_t updateMask = dirtyFlags_.ClipPlanesCS & caps_.ClipPlanes;
@@ -1111,17 +1111,17 @@ void CTNL::UpdateClipPlanes() {
   }
 }
 
-void CTNL::UpdateProjectionInvT() {
+void CTNL::updateProjectionInvT() {
   MATRIX44 matTmp;
-  Math::Inverse(&matTmp, pMsProjection_->GetMatrix());
+  Math::Inverse(&matTmp, pMsProjection_->getMatrix());
   Math::Transpose(&mProjectionInvT_, matTmp);
 
   dirtyFlags_.ProjectionInvT = 0;
 }
 
-void CTNL::UpdateModelViewInvT33() {
+void CTNL::updateModelViewInvT33() {
   MATRIX44 matTmp;
-  Math::Inverse33(&matTmp, pMsModelView_->GetMatrix());
+  Math::Inverse33(&matTmp, pMsModelView_->getMatrix());
 
   if (caps_.RescaleNormal) {
     auto fSum = (matTmp._31 * matTmp._31) + 
@@ -1151,7 +1151,7 @@ void CTNL::UpdateModelViewInvT33() {
   dirtyFlags_.NormalizeNormal = 1;
 }
 
-void CTNL::UpdateNormal() {
+void CTNL::updateNormal() {
   // Transform the normal to world space
   Math::Mul(&vNormNormal_, vNormal_, mModelViewInvT_);
 
@@ -1161,9 +1161,9 @@ void CTNL::UpdateNormal() {
   dirtyFlags_.NormalizeNormal = 0;
 }
 
-void CTNL::UpdateMaterial() {
-  auto &vMaterialAmbient = material_.GetColor(GL_AMBIENT);
-  auto &vMaterialDiffuse = material_.GetColor(GL_DIFFUSE);
+void CTNL::updateMaterial() {
+  auto &vMaterialAmbient = material_.getColor(GL_AMBIENT);
+  auto &vMaterialDiffuse = material_.getColor(GL_DIFFUSE);
 
   vScaledAmbient_.x = vMaterialAmbient.x * vLightModelAmbient_.x;
   vScaledAmbient_.y = vMaterialAmbient.y * vLightModelAmbient_.y;
@@ -1173,7 +1173,7 @@ void CTNL::UpdateMaterial() {
   dirtyFlags_.ScaledAmbient = 0;
 }
 
-void CTNL::SetupLights() {
+void CTNL::setupLights() {
   pActiveLights_ = nullptr;
   Light *pLight = nullptr;
 
@@ -1194,10 +1194,10 @@ void CTNL::SetupLights() {
   dirtyFlags_.Lights = 0;
 }
 
-void CTNL::UpdateLights() {
-  auto &vMaterialAmbient = material_.GetColor(GL_AMBIENT);
-  auto &vMaterialDiffuse = material_.GetColor(GL_DIFFUSE);
-  auto &vMaterialSpecular = material_.GetColor(GL_SPECULAR);
+void CTNL::updateLights() {
+  auto &vMaterialAmbient = material_.getColor(GL_AMBIENT);
+  auto &vMaterialDiffuse = material_.getColor(GL_DIFFUSE);
+  auto &vMaterialSpecular = material_.getColor(GL_SPECULAR);
 
   auto dirtyLights = dirtyLights_;
 
@@ -1205,21 +1205,21 @@ void CTNL::UpdateLights() {
     uint32_t mask = 1 << (pLight - lights_.data());
 
     if (dirtyLights.Ambient & mask) {
-      auto &vLightAmbient = pLight->GetColor(GL_AMBIENT);
+      auto &vLightAmbient = pLight->getColor(GL_AMBIENT);
       pLight->vScaledAmbient.x = vLightAmbient.x * vMaterialAmbient.x;
       pLight->vScaledAmbient.y = vLightAmbient.y * vMaterialAmbient.y;
       pLight->vScaledAmbient.z = vLightAmbient.z * vMaterialAmbient.z;
     }
 
     if (dirtyLights.Diffuse & mask) {
-      auto &vLightDiffuse = pLight->GetColor(GL_DIFFUSE);
+      auto &vLightDiffuse = pLight->getColor(GL_DIFFUSE);
       pLight->vScaledDiffuse.x = vMaterialDiffuse.x * vLightDiffuse.x;
       pLight->vScaledDiffuse.y = vMaterialDiffuse.y * vLightDiffuse.y;
       pLight->vScaledDiffuse.z = vMaterialDiffuse.z * vLightDiffuse.z;
     }
 
     if (dirtyLights.Specular & mask) {
-      auto &vLightSpecular = pLight->GetColor(GL_SPECULAR);
+      auto &vLightSpecular = pLight->getColor(GL_SPECULAR);
       pLight->vScaledSpecular.x = vMaterialSpecular.x * vLightSpecular.x;
       pLight->vScaledSpecular.y = vMaterialSpecular.y * vLightSpecular.y;
       pLight->vScaledSpecular.z = vMaterialSpecular.z * vLightSpecular.z;
@@ -1237,9 +1237,9 @@ void CTNL::UpdateLights() {
         // Normalize the halfway vector
         Math::Normalize(&pLight->vHalfway);
       } else {
-        if (Math::TIsZero(pLight->GetAttenuation(GL_CONSTANT_ATTENUATION) - fONE) &&
-            Math::TIsZero(pLight->GetAttenuation(GL_LINEAR_ATTENUATION)) &&
-            Math::TIsZero(pLight->GetAttenuation(GL_QUADRATIC_ATTENUATION))) {
+        if (Math::TIsZero(pLight->getAttenuation(GL_CONSTANT_ATTENUATION) - fONE) &&
+            Math::TIsZero(pLight->getAttenuation(GL_LINEAR_ATTENUATION)) &&
+            Math::TIsZero(pLight->getAttenuation(GL_QUADRATIC_ATTENUATION))) {
           pLight->Flags.Attenuation = 0;
         } else {
           pLight->Flags.Attenuation = 1;
@@ -1257,7 +1257,7 @@ void CTNL::UpdateLights() {
   dirtyLights_.Value = 0;
 }
 
-void CTNL::UpdateMatrixDirtyFlags() {
+void CTNL::updateMatrixDirtyFlags() {
   if (pMatrixStack_ == pMsModelView_) {
     dirtyFlags_.ModelViewInvT44 = 1;
     dirtyFlags_.ModelViewInvT33 = 1;

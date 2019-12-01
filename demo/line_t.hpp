@@ -13,7 +13,7 @@
 //
 #pragma once
 
-class CLine_Test : public CTestBase {
+class LineTest : public TestBase {
 public:
   bool OnInitialize(uint32_t width, uint32_t height) {
     /*

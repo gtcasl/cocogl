@@ -15,23 +15,23 @@
 #include "stdafx.h"
 #include <stdarg.h>
 
-CLogger::CLogger(const char *fileName, const char *mode)
+Logger::Logger(const char *fileName, const char *mode)
     : file_(nullptr), indent_(0) {
   if (fileName) {
-    auto hr = this->Open(fileName, mode);
+    auto hr = this->open(fileName, mode);
     if (FAILED(hr)) {
       fprintf(stderr, "error: couldn't open log file: %s", fileName);
     }
   }
 }
 
-CLogger::~CLogger() {
+Logger::~Logger() {
   if (file_) {
     fclose(file_);
   }
 }
 
-HRESULT CLogger::Open(const char *fileName, const char *mode) {
+HRESULT Logger::open(const char *fileName, const char *mode) {
   if ((nullptr == fileName) || (nullptr == mode))
     return E_INVALIDARG;
 
@@ -42,7 +42,7 @@ HRESULT CLogger::Open(const char *fileName, const char *mode) {
   return S_OK;
 }
 
-HRESULT CLogger::Write(const char *format, ...) {
+HRESULT Logger::write(const char *format, ...) {
   if (nullptr == file_)
     return E_FAIL;
 
@@ -64,7 +64,7 @@ HRESULT CLogger::Write(const char *format, ...) {
   return S_OK;
 }
 
-HRESULT CLogger::Write(const char *format, va_list arglist) {
+HRESULT Logger::write(const char *format, va_list arglist) {
   if (nullptr == file_)
     return E_FAIL;
 
@@ -83,15 +83,15 @@ HRESULT CLogger::Write(const char *format, va_list arglist) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CAutoLog::CAutoLog(CLogger &logger, const char *func, ...)
+AutoLog::AutoLog(Logger &logger, const char *func, ...)
     : logger_(logger) {
   va_list arglist;
   va_start(arglist, func);
-  logger.Write(func, arglist);
-  logger.IncrIndent();
+  logger.write(func, arglist);
+  logger.incrIndent();
   va_end(arglist);
 }
 
-CAutoLog::~CAutoLog() { 
-  logger_.DecrIndent(); 
+AutoLog::~AutoLog() { 
+  logger_.decrIndent(); 
 }

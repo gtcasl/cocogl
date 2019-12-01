@@ -13,7 +13,7 @@
 //
 #pragma once
 
-class CClearTest : public CTestBase {
+class ClearTest : public TestBase {
 public:
   bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) {
     glClearColor(0.0f, 0.0f, 1.0f, 0.0f);

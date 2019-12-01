@@ -15,7 +15,7 @@
 #pragma once
 
 template <>
-inline void CGLSurface::TColorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
+inline void GLSurface::colorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
                                              uint32_t value, uint32_t mask,
                                              const Rect &rect) {
   auto width = rect.right - rect.left;
@@ -79,7 +79,7 @@ inline void CGLSurface::TColorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
 }
 
 template <>
-inline void CGLSurface::TColorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
+inline void GLSurface::colorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
                                              uint32_t value, uint32_t mask,
                                              const Rect &rect) {
   auto height = rect.bottom - rect.top;

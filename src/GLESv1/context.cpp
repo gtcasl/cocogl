@@ -17,20 +17,20 @@
 #include "context_rast.inl"
 #include "context_tnl.inl"
 
-CGLContext::CGLContext(CHandleTable *pHandles, CRasterCache *pRasterCache,
-                       CGLContext *pCtxShared) {
+GLContext::GLContext(HandleTable *pHandles, CRasterCache *pRasterCache,
+                       GLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(pHandles);
-  pHandles->AddRef();
+  pHandles->addRef();
   handles_ = pHandles;
 
   assert(pRasterCache);
-  pRasterCache->AddRef();
+  pRasterCache->addRef();
   pRasterCache_ = pRasterCache;
 
   if (pCtxShared) {
-    pCtxShared->AddRef();
+    pCtxShared->addRef();
   }
 
   pCtxShared_ = pCtxShared;
@@ -52,7 +52,7 @@ CGLContext::CGLContext(CHandleTable *pHandles, CRasterCache *pRasterCache,
 #endif
 }
 
-CGLContext::~CGLContext() {
+GLContext::~GLContext() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   __safeRelease(pRasterCache_);
@@ -74,9 +74,9 @@ CGLContext::~CGLContext() {
   __safeRelease(pSurfDraw_);
   __safeRelease(pSurfRead_);
 
-  auto enumerator = handles_->GetEnumerator(this);
-  while (!enumerator.IsEnd()) {
-    reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
+  auto enumerator = handles_->getEnumerator(this);
+  while (!enumerator.isEnd()) {
+    reinterpret_cast<IObject *>(enumerator.removeNext())->release();
   }
 
   __safeRelease(handles_);
@@ -86,8 +86,8 @@ CGLContext::~CGLContext() {
 #endif
 }
 
-GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
-                          CRasterCache *pRasterCache, CGLContext *pCtxShared) {
+GLenum GLContext::Create(GLContext **ppContext, HandleTable *pHandles,
+                          CRasterCache *pRasterCache, GLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
@@ -95,19 +95,19 @@ GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
   assert(pHandles && ppContext);
 
   // Create a new context object
-  auto pContext = new CGLContext(pHandles, pRasterCache, pCtxShared);
+  auto pContext = new GLContext(pHandles, pRasterCache, pCtxShared);
   if (nullptr == pContext) {
-    __glLogError("CGLContext allocation failed, out of memory.\r\n");
+    __glLogError("GLContext allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
-  pContext->AddRef();
+  pContext->addRef();
 
   // Initialize the context
-  err = pContext->Initialize();
+  err = pContext->initialize();
   if (__glFailed(err)) {
     __safeRelease(pContext);
-    __glLogError("CGLContext::Initialize() failed, err = %d.\r\n", err);
+    __glLogError("GLContext::initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -116,7 +116,7 @@ GLenum CGLContext::Create(CGLContext **ppContext, CHandleTable *pHandles,
   return GL_NO_ERROR;
 }
 
-GLenum CGLContext::Initialize() {
+GLenum GLContext::initialize() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
@@ -124,20 +124,20 @@ GLenum CGLContext::Initialize() {
   // Initialize the matrix stacks
   err = CMatrixStack::Create(&pMsModelView_, MODELVIEW_STACK_SIZE);
   if (__glFailed(err)) {
-    __glLogError("CMatrixStack::Init() failed, err = %d.\r\n", err);
+    __glLogError("CMatrixStack::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
   err = CMatrixStack::Create(&pMsProjection_, PROJECTION_STACK_SIZE);
   if (__glFailed(err)) {
-    __glLogError("CMatrixStack::Init() failed, err = %d.\r\n", err);
+    __glLogError("CMatrixStack::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     err = CMatrixStack::Create(&pMsTexCoords_[i], TEXTURE_STACK_SIZE);
     if (__glFailed(err)) {
-      __glLogError("CMatrixStack::Init() failed, err = %d.\r\n", err);
+      __glLogError("CMatrixStack::Create() failed, err = %d.\r\n", err);
       return err;
     }
   }
@@ -148,9 +148,9 @@ GLenum CGLContext::Initialize() {
     return err;
   }
 
-  err = CBuffer::Create(&pBufDefault_);
+  err = GLBuffer::Create(&pBufDefault_);
   if (__glFailed(err)) {
-    __glLogError("CBuffer::Create() failed, err = %d.\r\n", err);
+    __glLogError("GLBuffer::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -170,223 +170,223 @@ GLenum CGLContext::Initialize() {
 #endif
 
   //--
-  this->ShadeModel(GL_SMOOTH);
+  this->setShadeModel(GL_SMOOTH);
 
-  this->ClearColor(fZERO, fZERO, fZERO, fZERO);
-  this->ColorMask(true, true, true, true);
+  this->clearColor(fZERO, fZERO, fZERO, fZERO);
+  this->setColorMask(true, true, true, true);
 
-  this->ClearDepth(fONE);
-  this->DepthMask(true);
+  this->clearDepth(fONE);
+  this->setDepthMask(true);
 
-  this->ClearStencil(0);
-  this->StencilMask(0xffffffff);
+  this->clearStencil(0);
+  this->setStencilMask(0xffffffff);
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
-    this->ActiveTexture(GL_TEXTURE0 + i);
-    this->MatrixMode(GL_TEXTURE);
-    this->LoadIdentity();
+    this->setActiveTexture(GL_TEXTURE0 + i);
+    this->setMatrixMode(GL_TEXTURE);
+    this->loadIdentity();
   }
 
-  this->MatrixMode(GL_PROJECTION);
-  this->LoadIdentity();
+  this->setMatrixMode(GL_PROJECTION);
+  this->loadIdentity();
 
-  this->MatrixMode(GL_MODELVIEW);
-  this->LoadIdentity();
+  this->setMatrixMode(GL_MODELVIEW);
+  this->loadIdentity();
 
-  this->BindBuffer(GL_ARRAY_BUFFER, 0);
-  this->BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  this->bindBuffer(GL_ARRAY_BUFFER, 0);
+  this->bindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  this->ClientState(GL_VERTEX_ARRAY, false);
-  this->VertexPointer(4, GL_FLOAT, 0, nullptr);
+  this->setClientState(GL_VERTEX_ARRAY, false);
+  this->setVertexPointer(4, GL_FLOAT, 0, nullptr);
 
-  this->ClientState(GL_NORMAL_ARRAY, false);
-  this->NormalPointer(GL_FLOAT, 0, nullptr);
+  this->setClientState(GL_NORMAL_ARRAY, false);
+  this->setNormalPointer(GL_FLOAT, 0, nullptr);
 
-  this->ClientState(GL_COLOR_ARRAY, false);
-  this->ColorPointer(4, GL_FLOAT, 0, nullptr);
+  this->setClientState(GL_COLOR_ARRAY, false);
+  this->setColorPointer(4, GL_FLOAT, 0, nullptr);
 
-  this->ClientState(GL_POINT_SIZE_ARRAY_OES, false);
-  this->PointSizePointerOES(GL_FLOAT, 0, nullptr);
+  this->setClientState(GL_POINT_SIZE_ARRAY_OES, false);
+  this->setPointSizePointerOES(GL_FLOAT, 0, nullptr);
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
-    this->ClientActiveTexture(GL_TEXTURE0 + i);
-    this->ClientState(GL_TEXTURE_COORD_ARRAY, false);
-    this->TexCoordPointer(4, GL_FLOAT, 0, nullptr);
+    this->setClientActiveTexture(GL_TEXTURE0 + i);
+    this->setClientState(GL_TEXTURE_COORD_ARRAY, false);
+    this->setTexCoordPointer(4, GL_FLOAT, 0, nullptr);
   }
 
-  this->Normal(fZERO, fZERO, fONE);
+  this->setNormal(fZERO, fZERO, fONE);
 
-  this->Color(fONE, fONE, fONE, fONE);
+  this->setColor(fONE, fONE, fONE, fONE);
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
-    this->MultiTexCoord(GL_TEXTURE0 + i, fZERO, fZERO, fZERO, fONE);
+    this->setMultiTexCoord(GL_TEXTURE0 + i, fZERO, fZERO, fZERO, fONE);
   }
 
   for (uint32_t i = 0; i < MAX_LIGHTS; ++i) {
     GLenum light = GL_LIGHT0 + i;
 
-    this->TLight<floatf>(light, GL_AMBIENT,
+    this->setLightParameter<floatf>(light, GL_AMBIENT,
                          VECTOR4(fZERO, fZERO, fZERO, fONE).m);
 
     if (GL_LIGHT0 == light) {
-      this->TLight<floatf>(light, GL_DIFFUSE,
+      this->setLightParameter<floatf>(light, GL_DIFFUSE,
                            VECTOR4(fONE, fONE, fONE, fONE).m);
-      this->TLight<floatf>(light, GL_SPECULAR,
+      this->setLightParameter<floatf>(light, GL_SPECULAR,
                            VECTOR4(fONE, fONE, fONE, fONE).m);
     } else {
-      this->TLight<floatf>(light, GL_DIFFUSE,
+      this->setLightParameter<floatf>(light, GL_DIFFUSE,
                            VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
-      this->TLight<floatf>(light, GL_SPECULAR,
+      this->setLightParameter<floatf>(light, GL_SPECULAR,
                            VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
     }
 
-    this->TLight<floatf>(light, GL_POSITION,
+    this->setLightParameter<floatf>(light, GL_POSITION,
                          VECTOR4(fZERO, fZERO, fONE, fZERO).m);
-    this->TLight<floatf>(light, GL_SPOT_DIRECTION,
+    this->setLightParameter<floatf>(light, GL_SPOT_DIRECTION,
                          VECTOR3(fZERO, fZERO, -fONE).m);
-    this->TLight<floatf>(light, GL_SPOT_EXPONENT, TAddressOf<floatf>(fZERO));
-    this->TLight<floatf>(light, GL_SPOT_CUTOFF, TAddressOf<floatf>(f180));
-    this->TLight<floatf>(light, GL_CONSTANT_ATTENUATION,
+    this->setLightParameter<floatf>(light, GL_SPOT_EXPONENT, TAddressOf<floatf>(fZERO));
+    this->setLightParameter<floatf>(light, GL_SPOT_CUTOFF, TAddressOf<floatf>(f180));
+    this->setLightParameter<floatf>(light, GL_CONSTANT_ATTENUATION,
                          TAddressOf<floatf>(fONE));
-    this->TLight<floatf>(light, GL_LINEAR_ATTENUATION,
+    this->setLightParameter<floatf>(light, GL_LINEAR_ATTENUATION,
                          TAddressOf<floatf>(fZERO));
-    this->TLight<floatf>(light, GL_QUADRATIC_ATTENUATION,
+    this->setLightParameter<floatf>(light, GL_QUADRATIC_ATTENUATION,
                          TAddressOf<floatf>(fZERO));
   }
 
-  this->TMaterial<floatf>(GL_FRONT_AND_BACK, GL_AMBIENT,
+  this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_AMBIENT,
                           VECTOR4(f02, f02, f02, fONE).m);
-  this->TMaterial<floatf>(GL_FRONT_AND_BACK, GL_DIFFUSE,
+  this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_DIFFUSE,
                           VECTOR4(f08, f08, f08, fONE).m);
-  this->TMaterial<floatf>(GL_FRONT_AND_BACK, GL_SPECULAR,
+  this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_SPECULAR,
                           VECTOR4(fZERO, fZERO, fZERO, fONE).m);
-  this->TMaterial<floatf>(GL_FRONT_AND_BACK, GL_EMISSION,
+  this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_EMISSION,
                           VECTOR4(fZERO, fZERO, fZERO, fONE).m);
-  this->TMaterial<floatf>(GL_FRONT_AND_BACK, GL_SHININESS,
+  this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_SHININESS,
                           TAddressOf<floatf>(fZERO));
 
-  this->TFog<fixed16>(GL_FOG_MODE, TAddressOf<fixed16>(fixed16::make(GL_EXP)));
-  this->TFog<floatf>(GL_FOG_DENSITY, TAddressOf<floatf>(fONE));
-  this->TFog<floatf>(GL_FOG_START, TAddressOf<floatf>(fZERO));
-  this->TFog<floatf>(GL_FOG_END, TAddressOf<floatf>(fONE));
-  this->TFog<floatf>(GL_FOG_COLOR, VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
+  this->setFog<fixed16>(GL_FOG_MODE, TAddressOf<fixed16>(fixed16::make(GL_EXP)));
+  this->setFog<floatf>(GL_FOG_DENSITY, TAddressOf<floatf>(fONE));
+  this->setFog<floatf>(GL_FOG_START, TAddressOf<floatf>(fZERO));
+  this->setFog<floatf>(GL_FOG_END, TAddressOf<floatf>(fONE));
+  this->setFog<floatf>(GL_FOG_COLOR, VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
 
-  this->TLightModel<floatf>(GL_LIGHT_MODEL_TWO_SIDE, TAddressOf<floatf>(fZERO));
-  this->TLightModel<floatf>(GL_LIGHT_MODEL_AMBIENT,
+  this->setLightParameterModel<floatf>(GL_LIGHT_MODEL_TWO_SIDE, TAddressOf<floatf>(fZERO));
+  this->setLightParameterModel<floatf>(GL_LIGHT_MODEL_AMBIENT,
                             VECTOR4(f02, f02, f02, fONE).m);
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
-    this->ClipPlane(GL_CLIP_PLANE0 + i, VECTOR4(fZERO, fZERO, fZERO, fZERO));
+    this->setClipPlane(GL_CLIP_PLANE0 + i, VECTOR4(fZERO, fZERO, fZERO, fZERO));
   }
 
-  this->DepthRange(fZERO, fONE);
+  this->setDepthRange(fZERO, fONE);
 
-  this->FrontFace(GL_CCW);
-  this->CullFace(GL_BACK);
+  this->setFrontFace(GL_CCW);
+  this->setCullFace(GL_BACK);
 
-  this->PixelStorei(GL_PACK_ALIGNMENT, 4);
-  this->PixelStorei(GL_UNPACK_ALIGNMENT, 4);
+  this->setPixelStorei(GL_PACK_ALIGNMENT, 4);
+  this->setPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
-    this->ActiveTexture(GL_TEXTURE0 + i);
+    this->setActiveTexture(GL_TEXTURE0 + i);
 
-    this->BindTexture(GL_TEXTURE_2D, 0);
+    this->bindTexture(GL_TEXTURE_2D, 0);
 
-    this->TTexEnv<fixed16>(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,
+    this->setTexEnv<fixed16>(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,
                            TAddressOf<fixed16>(fixed16::make(GL_MODULATE)));
 
-    this->TTexEnv<floatf>(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,
+    this->setTexEnv<floatf>(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,
                           VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
 
-    this->TTexEnv<fixed16>(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES,
+    this->setTexEnv<fixed16>(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES,
                            TAddressOf<fixed16>(fixed16::make(GL_FALSE)));
   }
 
-  this->AlphaFunc(GL_ALWAYS, fZERO);
-  this->StencilFunc(GL_ALWAYS, 0, 0xffffffff);
-  this->StencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-  this->DepthFunc(GL_LESS);
-  this->BlendFunc(GL_ONE, GL_ZERO);
-  this->LogicOp(GL_COPY);
+  this->setAlphaFunc(GL_ALWAYS, fZERO);
+  this->setStencilFunc(GL_ALWAYS, 0, 0xffffffff);
+  this->setStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+  this->setDepthFunc(GL_LESS);
+  this->setBlendFunc(GL_ONE, GL_ZERO);
+  this->setLogicOp(GL_COPY);
 
-  this->SampleCoverage(fONE, GL_FALSE);
+  this->setSampleCoverage(fONE, GL_FALSE);
 
-  this->Hint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
-  this->Hint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
-  this->Hint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-  this->Hint(GL_FOG_HINT, GL_DONT_CARE);
-  this->Hint(GL_GENERATE_MIPMAP_HINT, GL_DONT_CARE);
+  this->hint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
+  this->hint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+  this->hint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+  this->hint(GL_FOG_HINT, GL_DONT_CARE);
+  this->hint(GL_GENERATE_MIPMAP_HINT, GL_DONT_CARE);
 
-  this->PolygonOffset(fZERO, fZERO);
+  this->setPolygonOffset(fZERO, fZERO);
 
-  this->PointSize(fONE);
-  this->TPointParameter<floatf>(GL_POINT_SIZE_MIN, TAddressOf<floatf>(fZERO));
-  this->TPointParameter<floatf>(GL_POINT_SIZE_MAX, TAddressOf<floatf>(fONE));
-  this->TPointParameter<floatf>(GL_POINT_FADE_THRESHOLD_SIZE,
+  this->setPointSize(fONE);
+  this->setPointParameter<floatf>(GL_POINT_SIZE_MIN, TAddressOf<floatf>(fZERO));
+  this->setPointParameter<floatf>(GL_POINT_SIZE_MAX, TAddressOf<floatf>(fONE));
+  this->setPointParameter<floatf>(GL_POINT_FADE_THRESHOLD_SIZE,
                                 TAddressOf<floatf>(fONE));
-  this->TPointParameter<floatf>(GL_POINT_DISTANCE_ATTENUATION,
+  this->setPointParameter<floatf>(GL_POINT_DISTANCE_ATTENUATION,
                                 VECTOR3(fONE, fZERO, fZERO).m);
-  this->LineWidth(fONE);
+  this->setLineWidth(fONE);
 
   //--
-  this->Activate(GL_FOG, false);
-  this->Activate(GL_LIGHTING, false);
+  this->activate(GL_FOG, false);
+  this->activate(GL_LIGHTING, false);
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
-    this->ActiveTexture(GL_TEXTURE0 + i);
-    this->Activate(GL_TEXTURE_2D, false);
+    this->setActiveTexture(GL_TEXTURE0 + i);
+    this->activate(GL_TEXTURE_2D, false);
   }
 
-  this->Activate(GL_CULL_FACE, false);
-  this->Activate(GL_ALPHA_TEST, false);
-  this->Activate(GL_BLEND, false);
-  this->Activate(GL_COLOR_LOGIC_OP, false);
-  this->Activate(GL_DITHER, true);
-  this->Activate(GL_STENCIL_TEST, false);
-  this->Activate(GL_DEPTH_TEST, false);
-  this->Activate(GL_POINT_SMOOTH, false);
-  this->Activate(GL_POINT_SPRITE_OES, false);
-  this->Activate(GL_LINE_SMOOTH, false);
-  this->Activate(GL_SCISSOR_TEST, false);
-  this->Activate(GL_COLOR_MATERIAL, false);
-  this->Activate(GL_NORMALIZE, false);
+  this->activate(GL_CULL_FACE, false);
+  this->activate(GL_ALPHA_TEST, false);
+  this->activate(GL_BLEND, false);
+  this->activate(GL_COLOR_LOGIC_OP, false);
+  this->activate(GL_DITHER, true);
+  this->activate(GL_STENCIL_TEST, false);
+  this->activate(GL_DEPTH_TEST, false);
+  this->activate(GL_POINT_SMOOTH, false);
+  this->activate(GL_POINT_SPRITE_OES, false);
+  this->activate(GL_LINE_SMOOTH, false);
+  this->activate(GL_SCISSOR_TEST, false);
+  this->activate(GL_COLOR_MATERIAL, false);
+  this->activate(GL_NORMALIZE, false);
 
-  this->Activate(GL_CLIP_PLANE0, false);
-  this->Activate(GL_CLIP_PLANE1, false);
-  this->Activate(GL_CLIP_PLANE2, false);
-  this->Activate(GL_CLIP_PLANE3, false);
-  this->Activate(GL_CLIP_PLANE4, false);
-  this->Activate(GL_CLIP_PLANE5, false);
+  this->activate(GL_CLIP_PLANE0, false);
+  this->activate(GL_CLIP_PLANE1, false);
+  this->activate(GL_CLIP_PLANE2, false);
+  this->activate(GL_CLIP_PLANE3, false);
+  this->activate(GL_CLIP_PLANE4, false);
+  this->activate(GL_CLIP_PLANE5, false);
 
-  this->Activate(GL_LIGHT0, false);
-  this->Activate(GL_LIGHT1, false);
-  this->Activate(GL_LIGHT2, false);
-  this->Activate(GL_LIGHT3, false);
-  this->Activate(GL_LIGHT4, false);
-  this->Activate(GL_LIGHT5, false);
-  this->Activate(GL_LIGHT6, false);
-  this->Activate(GL_LIGHT7, false);
+  this->activate(GL_LIGHT0, false);
+  this->activate(GL_LIGHT1, false);
+  this->activate(GL_LIGHT2, false);
+  this->activate(GL_LIGHT3, false);
+  this->activate(GL_LIGHT4, false);
+  this->activate(GL_LIGHT5, false);
+  this->activate(GL_LIGHT6, false);
+  this->activate(GL_LIGHT7, false);
 
-  this->Activate(GL_RESCALE_NORMAL, false);
-  this->Activate(GL_POLYGON_OFFSET_FILL, false);
-  this->Activate(GL_MULTISAMPLE, true);
-  this->Activate(GL_SAMPLE_ALPHA_TO_COVERAGE, false);
-  this->Activate(GL_SAMPLE_ALPHA_TO_ONE, false);
-  this->Activate(GL_SAMPLE_COVERAGE, false);
+  this->activate(GL_RESCALE_NORMAL, false);
+  this->activate(GL_POLYGON_OFFSET_FILL, false);
+  this->activate(GL_MULTISAMPLE, true);
+  this->activate(GL_SAMPLE_ALPHA_TO_COVERAGE, false);
+  this->activate(GL_SAMPLE_ALPHA_TO_ONE, false);
+  this->activate(GL_SAMPLE_COVERAGE, false);
 
-  this->ActiveTexture(GL_TEXTURE0);
-  this->ClientActiveTexture(GL_TEXTURE0);
+  this->setActiveTexture(GL_TEXTURE0);
+  this->setClientActiveTexture(GL_TEXTURE0);
 
   return GL_NO_ERROR;
 }
 
-void CGLContext::SetDrawSurface(CGLSurface *pSurface) {
+void GLContext::setDrawSurface(GLSurface *pSurface) {
   if (pSurface) {
-    pSurface->AddRef();
+    pSurface->addRef();
   }
 
   if (pSurfDraw_) {
-    pSurfDraw_->Release();
+    pSurfDraw_->release();
   }
 
   pSurfDraw_ = pSurface;
@@ -397,17 +397,17 @@ void CGLContext::SetDrawSurface(CGLSurface *pSurface) {
   if (pSurface) {
     // Initialize surface specific states
     GLSurfaceDesc colorDesc;
-    pSurface->GetColorDesc(&colorDesc);
+    pSurface->getColorDesc(&colorDesc);
 
-    this->Viewport(0, 0, colorDesc.Width, colorDesc.Height);
-    this->Scissor(0, 0, colorDesc.Width, colorDesc.Height);
+    this->setViewport(0, 0, colorDesc.Width, colorDesc.Height);
+    this->setScissor(0, 0, colorDesc.Width, colorDesc.Height);
 
     rasterData_.pColorBits = reinterpret_cast<uint8_t *>(colorDesc.pBits);
     rasterData_.ColorFormat = colorDesc.Format;
     rasterData_.ColorPitch = colorDesc.Pitch;
 
     GLSurfaceDesc depthStencilDesc;
-    pSurface->GetDepthStencilDesc(&depthStencilDesc);
+    pSurface->getDepthStencilDesc(&depthStencilDesc);
 
     rasterData_.pDepthStencilBits =
         reinterpret_cast<uint8_t *>(depthStencilDesc.pBits);
@@ -424,13 +424,13 @@ void CGLContext::SetDrawSurface(CGLSurface *pSurface) {
   }
 }
 
-void CGLContext::SetReadSurface(CGLSurface *pSurface) {
+void GLContext::setReadSurface(GLSurface *pSurface) {
   if (pSurface) {
-    pSurface->AddRef();
+    pSurface->addRef();
   }
 
   if (pSurfRead_) {
-    pSurfRead_->Release();
+    pSurfRead_->release();
   }
 
   pSurfRead_ = pSurface;

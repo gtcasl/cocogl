@@ -13,11 +13,11 @@
 //
 #pragma once
 
-class CTriangleTest : public CTestBase {
+class TriangleTest : public TestBase {
 public:
-  CTriangleTest() {}
+  TriangleTest() {}
 
-  ~CTriangleTest() {}
+  ~TriangleTest() {}
 
   bool OnInitialize(uint32_t width, uint32_t height) {
     /*

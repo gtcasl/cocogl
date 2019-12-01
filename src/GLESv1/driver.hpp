@@ -14,51 +14,51 @@
 #pragma once
 #include "context.hpp"
 
-class CGLDriver {
+class GLDriver {
 public:
-  CGLDriver();
-  ~CGLDriver();
+  GLDriver();
+  ~GLDriver();
 
-  void MakeCurrent(CGLContext *pContext, CGLSurface *pSurfDraw,
-                   CGLSurface *pSurfRead);
+  void makeCurrent(GLContext *pContext, GLSurface *pSurfDraw,
+                   GLSurface *pSurfRead);
 
-  CGLContext *GetCurrentContext() const;
+  GLContext *getCurrentContext() const;
 
-  CHandleTable *GetHandles() const { return handles_; }
+  HandleTable *getHandles() const { return handles_; }
 
-  CRasterCache *GetRasterCache() const { return pRasterCache_; }
+  CRasterCache *getRasterCache() const { return pRasterCache_; }
 
   template <class T> 
-  inline T TGetObject(void *handle) const {
+  inline T getObject(void *handle) const {
     return reinterpret_cast<T>(
-        handles_->GetObject(reinterpret_cast<intptr_t>(handle), this));
+        handles_->getObject(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T> 
-  inline T UnregisterObject(void *handle) const {
+  inline T unregisterObject(void *handle) const {
     return reinterpret_cast<T>(
-        handles_->Delete(reinterpret_cast<intptr_t>(handle), this));
+        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
   }
 
   template <class T> 
-  inline T TGetObject(void *handle, void *pOwner) const {
+  inline T getObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        handles_->GetObject(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_->getObject(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
   template <class T>
-  inline T UnregisterObject(void *handle, void *pOwner) const {
+  inline T unregisterObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
-        handles_->Delete(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), pOwner));
   }
 
-  GLenum RegisterObject(void *pObject, uint8_t type, void *pOwner,
+  GLenum registerObject(void *pObject, uint8_t type, void *pOwner,
                         uint32_t *pdwHandle) {
     return GLERROR_FROM_HRESULT(
-        handles_->Insert(pdwHandle, pObject, type, pOwner));
+        handles_->insert(pdwHandle, pObject, type, pOwner));
   }
 
 private:
-  CHandleTable *handles_;
+  HandleTable *handles_;
   CRasterCache *pRasterCache_;
 };

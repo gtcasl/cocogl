@@ -17,71 +17,69 @@
 #include "display.hpp"
 #include "surface.hpp"
 
-thread_local CEGLContext *tls_eglctx = nullptr;
+thread_local _EGLContext *tls_eglctx = nullptr;
 thread_local EGLint tls_eglerror = EGL_SUCCESS;
 
-CEGLDriver::CEGLDriver() : handles_(nullptr) {
+_EGLDriver::_EGLDriver() : handles_(nullptr) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   // Create the handle table
-  auto err = EGLERROR_FROM_HRESULT(CHandleTable::Create(&handles_));
-  if (__eglFailed(err)) {
-    __eglLogError("CHandleTable::Create() failed, err = %x.\r\n", err);
-  }
+  handles_ = new HandleTable();
+  handles_->addRef();
 }
 
-CEGLDriver::~CEGLDriver() {
+_EGLDriver::~_EGLDriver() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   __safeRelease(tls_eglctx);
 
   if (handles_) {
     // Release all generated driver handles
-    auto enumerator = handles_->GetEnumerator(this);
-    while (!enumerator.IsEnd()) {
-      reinterpret_cast<IObject *>(enumerator.RemoveNext())->Release();
+    auto enumerator = handles_->getEnumerator(this);
+    while (!enumerator.isEnd()) {
+      reinterpret_cast<IObject *>(enumerator.removeNext())->release();
     }
 
     // The handle table should now be empty
-    assert(0 == handles_->GetNumHandles());
+    assert(0 == handles_->getNumHandles());
 
     // Release the handle table
-    handles_->Release();
+    handles_->release();
   }
 }
 
-void CEGLDriver::MakeCurrent(CEGLContext *pContext, std::thread::id dwThreadID,
-                             CEGLSurface *pSurfDraw, CEGLSurface *pSurfRead) {
+void _EGLDriver::makeCurrent(_EGLContext *pContext, std::thread::id dwThreadID,
+                             _EGLSurface *pSurfDraw, _EGLSurface *pSurfRead) {
 
   auto pCtxCurr = tls_eglctx;
   if (pCtxCurr != pContext) {
     if (pContext) {
-      pContext->AddRef();
+      pContext->addRef();
     }
 
     if (pCtxCurr) {
-      pCtxCurr->SetBindings(dwThreadID, nullptr, nullptr);
-      pCtxCurr->Release();
+      pCtxCurr->setBindings(dwThreadID, nullptr, nullptr);
+      pCtxCurr->release();
     }
     tls_eglctx = pContext;
   }
 
   if (pContext) {
-    pContext->SetBindings(dwThreadID, pSurfDraw, pSurfRead);
+    pContext->setBindings(dwThreadID, pSurfDraw, pSurfRead);
   }
 }
 
-CEGLContext *CEGLDriver::GetCurrentContext() const { return tls_eglctx; }
+_EGLContext *_EGLDriver::getCurrentContext() const { return tls_eglctx; }
 
-void CEGLDriver::SetError(EGLint error) { tls_eglerror = error; }
+void _EGLDriver::setError(EGLint error) { tls_eglerror = error; }
 
-EGLint CEGLDriver::GetError() const {
+EGLint _EGLDriver::getError() const {
   auto error = tls_eglerror;
   tls_eglerror = EGL_SUCCESS;
   return error;
 }
 
-EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
+EGLint _EGLDriver::getDisplay(uint32_t *pdwHandle,
                               EGLNativeDisplayType display_id) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
@@ -99,34 +97,34 @@ EGLint CEGLDriver::GetDisplay(uint32_t *pdwHandle,
   }
 
   // Look up for an existing display
-  auto enumerator = handles_->GetEnumerator(this);
-  while (!enumerator.IsEnd()) {
-    if (HANDLE_DISPLAY == enumerator.GetType()) {
-      auto pDisplay = reinterpret_cast<CDisplay *>(enumerator.GetObject());
-      if (display_id == pDisplay->GetNativeHandle()) {
-        *pdwHandle = enumerator.GetHandle();
+  auto enumerator = handles_->getEnumerator(this);
+  while (!enumerator.isEnd()) {
+    if (HANDLE_DISPLAY == enumerator.getType()) {
+      auto pDisplay = reinterpret_cast<_EGLDisplay *>(enumerator.getObject());
+      if (display_id == pDisplay->getNativeHandle()) {
+        *pdwHandle = enumerator.getHandle();
         return EGL_SUCCESS;
       }
     }
 
-    enumerator.MoveNext();
+    enumerator.moveNext();
   }
 
-  CDisplay *pDisplay;
+  _EGLDisplay *pDisplay;
 
   // Create a new display object
-  err = CDisplay::Create(&pDisplay, display_id, handles_);
+  err = _EGLDisplay::Create(&pDisplay, display_id, handles_);
   if (nullptr == pDisplay) {
-    __eglLogError("CDisplay::Create() failed, err = %d.\r\n", err);
+    __eglLogError("_EGLDisplay::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
   // Add the display to the handle table
   err = EGLERROR_FROM_HRESULT(
-      handles_->Insert(pdwHandle, pDisplay, HANDLE_DISPLAY, this));
+      handles_->insert(pdwHandle, pDisplay, HANDLE_DISPLAY, this));
   if (__eglFailed(err)) {
     __safeRelease(pDisplay);
-    __eglLogError("CHandleTable::InsertObject() failed, err = %x.\r\n",
+    __eglLogError("HandleTable::insert() failed, err = %x.\r\n",
                   err);
     return EGL_BAD_ALLOC;
   }

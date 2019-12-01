@@ -13,14 +13,14 @@
 //
 #pragma once
 
-class CSceneTest : public CTestBase {
+class SceneTest : public TestBase {
 private:
-  CMesh mesh_;
+  Mesh mesh_;
   int rotation_;
   float lightRotation_;
 
 public:
-  CSceneTest() : rotation_(0), lightRotation_(0) {}
+  SceneTest() : rotation_(0), lightRotation_(0) {}
 
   bool OnInitialize(uint32_t width, uint32_t height) {
     /*Remember: because we are programming for a mobile device, we cant

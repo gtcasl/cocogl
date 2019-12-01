@@ -13,13 +13,13 @@
 //
 #pragma once
 
-class CQuadTest : public CTestBase {
+class QuadTest : public TestBase {
 private:
   GLuint texture_;
   uint32_t testcase_;
 
 public:
-  CQuadTest() {
+  QuadTest() {
     texture_ = 0;
     testcase_ = 21;
   }
