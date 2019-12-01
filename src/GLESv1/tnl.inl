@@ -14,79 +14,110 @@
 //
 #pragma once
 
-template <eVertexFormat> struct TVertexData {};
+template <eVertexFormat> 
+struct TVertexData {};
 
-template <> struct TVertexData<VERTEX_UNKNOWN> {};
+template <> 
+struct TVertexData<VERTEX_UNKNOWN> {};
 
-template <> struct TVertexData<VERTEX_BYTE> {
+template <> 
+struct TVertexData<VERTEX_BYTE> {
   typedef TVector1<char> Input;
   typedef VECTOR1 Output;
 };
-template <> struct TVertexData<VERTEX_BYTE2> {
+
+template <> 
+struct TVertexData<VERTEX_BYTE2> {
   typedef TVector2<char> Input;
   typedef VECTOR2 Output;
 };
-template <> struct TVertexData<VERTEX_BYTE3> {
+
+template <> 
+struct TVertexData<VERTEX_BYTE3> {
   typedef TVector3<char> Input;
   typedef VECTOR3 Output;
 };
-template <> struct TVertexData<VERTEX_BYTE4> {
+
+template <> 
+struct TVertexData<VERTEX_BYTE4> {
   typedef TVector4<char> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct TVertexData<VERTEX_SHORT> {
+template <> 
+struct TVertexData<VERTEX_SHORT> {
   typedef TVector1<short> Input;
   typedef VECTOR1 Output;
 };
-template <> struct TVertexData<VERTEX_SHORT2> {
+
+template <> 
+struct TVertexData<VERTEX_SHORT2> {
   typedef TVector2<short> Input;
   typedef VECTOR2 Output;
 };
-template <> struct TVertexData<VERTEX_SHORT3> {
+
+template <> 
+struct TVertexData<VERTEX_SHORT3> {
   typedef TVector3<short> Input;
   typedef VECTOR3 Output;
 };
-template <> struct TVertexData<VERTEX_SHORT4> {
+
+template <> 
+struct TVertexData<VERTEX_SHORT4> {
   typedef TVector4<short> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct TVertexData<VERTEX_FIXED> {
+template <> 
+struct TVertexData<VERTEX_FIXED> {
   typedef TVector1<fixed16> Input;
   typedef VECTOR1 Output;
 };
-template <> struct TVertexData<VERTEX_FIXED2> {
+
+template <> 
+struct TVertexData<VERTEX_FIXED2> {
   typedef TVector2<fixed16> Input;
   typedef VECTOR2 Output;
 };
-template <> struct TVertexData<VERTEX_FIXED3> {
+
+template <> 
+struct TVertexData<VERTEX_FIXED3> {
   typedef TVector3<fixed16> Input;
   typedef VECTOR3 Output;
 };
-template <> struct TVertexData<VERTEX_FIXED4> {
+
+template <> 
+struct TVertexData<VERTEX_FIXED4> {
   typedef TVector4<fixed16> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct TVertexData<VERTEX_FLOAT> {
+template <> 
+struct TVertexData<VERTEX_FLOAT> {
   typedef TVector1<float> Input;
   typedef VECTOR1 Output;
 };
-template <> struct TVertexData<VERTEX_FLOAT2> {
+
+template <> 
+struct TVertexData<VERTEX_FLOAT2> {
   typedef TVector2<float> Input;
   typedef VECTOR2 Output;
 };
-template <> struct TVertexData<VERTEX_FLOAT3> {
+
+template <> 
+struct TVertexData<VERTEX_FLOAT3> {
   typedef TVector3<float> Input;
   typedef VECTOR3 Output;
 };
-template <> struct TVertexData<VERTEX_FLOAT4> {
+
+template <> 
+struct TVertexData<VERTEX_FLOAT4> {
   typedef TVector4<float> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct TVertexData<VERTEX_RGBA> {
+template <> 
+struct TVertexData<VERTEX_RGBA> {
   typedef TVector4<uint8_t> Input;
   typedef VECTOR4 Output;
 };
@@ -133,9 +164,10 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
 
 template <>
 inline void
-TDecodeVertex<VECTOR4, TVertexData<VERTEX_UNKNOWN>>(VECTOR4 * /*pOut*/,
-                                                    const uint8_t * /*pbIn*/) {
-  //--
+TDecodeVertex<VECTOR4, TVertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut, 
+                                                    const uint8_t *pbIn) {
+  __unreferenced(pOut);
+  __unreferenced(pbIn);
 }
 
 template <>
@@ -357,7 +389,6 @@ void CTNL::TProcessVertexColor(uint32_t count) {
 
   for (uint32_t i = 0; i < count; ++i) {
     VECTOR4 vColor;
-
     TDecodeVertex<VECTOR4, TVertexData<VertexFormat>>(&vColor, pbIn + i * stride);
 
     // Clamp the color
@@ -374,7 +405,8 @@ void CTNL::TProcessVertexColor(uint32_t count) {
   }
 }
 
-template <bool Transform, eVertexFormat VertexFormat>
+template <bool Transform, 
+          eVertexFormat VertexFormat>
 void CTNL::TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
                              uint32_t count) {
   auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
@@ -407,7 +439,8 @@ void CTNL::TProcessTexCoords(uint32_t dstIndex, uint32_t srcIndex,
   }
 }
 
-template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
+template <bool QuadraticAttenuation, 
+          eVertexFormat VertexFormat>
 void CTNL::TProcessPointSize(uint32_t count) {
   auto pfPointSizes = reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
   auto &vAttenuation = pointParams_.vAttenuation;

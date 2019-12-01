@@ -22,8 +22,7 @@ typedef void (*PfnDecodePosition)(VECTOR4 *pOut, const uint8_t *pbIn,
 class CTNL : public CInputAssembler {
 public:
   typedef void (CTNL::*PfnDecodeVertices)(uint32_t count);
-  typedef void (CTNL::*PfnDecodeTexCoord)(uint32_t dstIndex, uint32_t srcIndex,
-                                           uint32_t count);
+  typedef void (CTNL::*PfnDecodeTexCoord)(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
 
   template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
   void TProcessPointSize(uint32_t count);

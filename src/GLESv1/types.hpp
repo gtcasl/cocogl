@@ -728,8 +728,7 @@ struct RASTERFLAGS {
       __enum_bitfield(16, 17, INTERPOLATECOLOR, 1),
       __enum_bitfield(17, 18, INTERPOLATEALPHA, 1),
       __enum_bitfield(18, 19, INTERPOLATEMIPS, MAX_TEXTURES),
-      __enum_bitfield(19, 20, INTERPOLATEFOG, 1),
-      __enum_bitfield_end
+      __enum_bitfield(19, 20, INTERPOLATEFOG, 1), __enum_bitfield_end
 
       DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT union {
     uint32_t Value;
