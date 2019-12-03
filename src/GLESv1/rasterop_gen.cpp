@@ -438,7 +438,7 @@ static const PfnWriteColor s_pfnWriteColorTable[] = {
 
 //////////////////////////////////////////////////////////////////////////////
 
-CGenericRasterOp::CGenericRasterOp(const RASTERID &rasterID) {
+GenericRasterOp::GenericRasterOp(const RASTERID &rasterID) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   rasterID_ = rasterID;
@@ -452,11 +452,11 @@ CGenericRasterOp::CGenericRasterOp(const RASTERID &rasterID) {
   pfnScanline_ = nullptr;
 }
 
-CGenericRasterOp::~CGenericRasterOp() {
+GenericRasterOp::~GenericRasterOp() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 }
 
-GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
+GLenum GenericRasterOp::Create(IRasterOp **ppRasterOp,
                                 const RASTERID &rasterID) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
@@ -465,9 +465,9 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
   assert(ppRasterOp);
 
   // Create a new rasterOp object
-  auto pRasterOp = new CGenericRasterOp(rasterID);
+  auto pRasterOp = new GenericRasterOp(rasterID);
   if (nullptr == pRasterOp) {
-    __glLogError("CGenericRasterOp allocation failed, out of memory.\r\n");
+    __glLogError("GenericRasterOp allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -477,7 +477,7 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
   err = pRasterOp->initialize();
   if (__glFailed(err)) {
     pRasterOp->release();
-    __glLogError("CGenericRasterOp::initialize() failed, err = %d.\r\n", err);
+    __glLogError("GenericRasterOp::initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -486,7 +486,7 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
   return GL_NO_ERROR;
 }
 
-GLenum CGenericRasterOp::initialize() {
+GLenum GenericRasterOp::initialize() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   RASTERFLAGS rasterFlags = rasterID_.Flags;
@@ -538,7 +538,7 @@ GLenum CGenericRasterOp::initialize() {
   return GL_NO_ERROR;
 }
 
-void CGenericRasterOp::selectDepthStencilFunc() {
+void GenericRasterOp::selectDepthStencilFunc() {
   RASTERFLAGS rasterFlags = rasterID_.Flags;
   RASTERSTATES rasterStates = rasterID_.States;
 
@@ -560,7 +560,7 @@ void CGenericRasterOp::selectDepthStencilFunc() {
   }
 }
 
-void CGenericRasterOp::selectSamplerFunc() {
+void GenericRasterOp::selectSamplerFunc() {
   RASTERFLAGS rasterFlags = rasterID_.Flags;
   for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
     TEXTURESTATES texState = rasterID_.Textures[i];
@@ -580,7 +580,7 @@ void CGenericRasterOp::selectSamplerFunc() {
   }
 }
 
-void CGenericRasterOp::selectTexEnvFunc() {
+void GenericRasterOp::selectTexEnvFunc() {
   RASTERFLAGS rasterFlags = rasterID_.Flags;
   for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
     uint32_t index;
@@ -613,7 +613,7 @@ void CGenericRasterOp::selectTexEnvFunc() {
   }
 }
 
-void CGenericRasterOp::selectAlphaTestFunc() {
+void GenericRasterOp::selectAlphaTestFunc() {
   RASTERSTATES rasterStates = rasterID_.States;
 
   uint32_t index = rasterStates.AlphaFunc;
@@ -621,7 +621,7 @@ void CGenericRasterOp::selectAlphaTestFunc() {
   pfnAlphaTest_ = s_pfncompare[index];
 }
 
-void CGenericRasterOp::selectBlendFunc() {
+void GenericRasterOp::selectBlendFunc() {
   RASTERSTATES rasterStates = rasterID_.States;
   uint32_t index = rasterStates.BlendDst * BLEND_SIZE_ + rasterStates.BlendSrc;
 
@@ -629,7 +629,7 @@ void CGenericRasterOp::selectBlendFunc() {
   pfnBlend_ = s_pfnBlendTable[index];
 }
 
-void CGenericRasterOp::selectWriteColorFunc() {
+void GenericRasterOp::selectWriteColorFunc() {
   RASTERFLAGS rasterFlags = rasterID_.Flags;
   RASTERSTATES rasterStates = rasterID_.States;
 
@@ -643,13 +643,13 @@ void CGenericRasterOp::selectWriteColorFunc() {
   pfnWriteColor_ = s_pfnWriteColorTable[index];
 }
 
-bool CGenericRasterOp::doStencilTest(const RasterData &rasterData,
+bool GenericRasterOp::doStencilTest(const RasterData &rasterData,
                                      uint32_t depthValue,
                                      void *pDSBuffer) const {
   assert(pDSBuffer);
 
   auto pRasterOp =
-      reinterpret_cast<const CGenericRasterOp *>(rasterData.pRasterOp);
+      reinterpret_cast<const GenericRasterOp *>(rasterData.pRasterOp);
 
   const RASTERID &rasterID = pRasterOp->getRasterID();
   RASTERFLAGS rasterFlags = rasterID.Flags;
@@ -721,7 +721,7 @@ bool CGenericRasterOp::doStencilTest(const RasterData &rasterData,
   return bStencilTest;
 }
 
-void CGenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
+void GenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
                                        const RasterData &rasterData, fixedRX fU,
                                        fixedRX fV, fixedRX fM) const {
   const Sampler &sampler = rasterData.Samplers[unit];
@@ -787,7 +787,7 @@ void CGenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
   }
 }
 
-void CGenericRasterOp::applyFog(const RasterData &rasterData, Color4 *pInOut,
+void GenericRasterOp::applyFog(const RasterData &rasterData, Color4 *pInOut,
                                 fixedRX fFactor) {
   const Color4 &cFogColor = rasterData.cFogColor;
   int factor = fFactor.data();

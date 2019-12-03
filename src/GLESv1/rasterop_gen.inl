@@ -113,7 +113,7 @@ public:
   inline static void __Execute(const RasterData &rasterData, int y, int lx,
                                int rx) {
     auto pRasterOp =
-        reinterpret_cast<const CGenericRasterOp *>(rasterData.pRasterOp);
+        reinterpret_cast<const GenericRasterOp *>(rasterData.pRasterOp);
     RASTERFLAGS rasterFlags = pRasterOp->getRasterID().Flags;
 
     auto pColorBits = rasterData.pColorBits;
@@ -366,7 +366,7 @@ public:
   inline static void __Execute(const RasterData &rasterData, int y, int lx,
                                int rx) {
     auto pRasterOp =
-        reinterpret_cast<const CGenericRasterOp *>(rasterData.pRasterOp);
+        reinterpret_cast<const GenericRasterOp *>(rasterData.pRasterOp);
     RASTERFLAGS rasterFlags = pRasterOp->getRasterID().Flags;
 
     auto pColorBits = rasterData.pColorBits;

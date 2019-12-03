@@ -14,10 +14,10 @@
 //
 #pragma once
 
-class COptimizedRasterOp : public IRasterOp {
+class OptimizedRasterOp : public IRasterOp {
 public:
-  COptimizedRasterOp(PfnScanline pfnScanline);
-  ~COptimizedRasterOp();
+  OptimizedRasterOp(PfnScanline pfnScanline);
+  ~OptimizedRasterOp();
 
   PfnScanline getScanline() const { return pfnScanline_; }
 

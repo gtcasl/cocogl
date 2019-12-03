@@ -110,14 +110,14 @@ void GLContext::drawArrays(GLenum mode, GLint first, GLsizei count) {
   // Setup the raster states
   err = this->setupRasterStates(mode);
   if (__glFailed(err)) {
-    __glLogError("CRasterizers:SetupRasterStates() failed, err = %d.\r\n", err);
+    __glLogError("Rasterizers::setupRasterStates() failed, err = %d.\r\n", err);
     goto L_EXIT;
   }
 
   // Setup TNL states
   err = this->setupTNLStates(mode, first, count);
   if (__glFailed(err)) {
-    __glLogError("CTNL::setupTNLStates() failed, err = %d.\r\n", err);
+    __glLogError("TNL::setupTNLStates() failed, err = %d.\r\n", err);
     goto L_EXIT;
   }
 
@@ -127,7 +127,7 @@ void GLContext::drawArrays(GLenum mode, GLint first, GLsizei count) {
   // Render primitives
   err = this->renderPrimitive(mode, count);
   if (__glFailed(err)) {
-    __glError(err, "CRasterizer::renderPrimitive() failed, err = %d.\r\n", err);
+    __glError(err, "Rasterizer::renderPrimitive() failed, err = %d.\r\n", err);
     goto L_EXIT;
   }
 
@@ -153,7 +153,7 @@ void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
     // Setup the raster states
     err = this->setupRasterStates(mode);
     if (__glFailed(err)) {
-      __glLogError("CRasterizer::setupRasterStates() failed, err = %d.\r\n",
+      __glLogError("Rasterizer::setupRasterStates() failed, err = %d.\r\n",
                    err);
       goto L_EXIT;
     }
@@ -172,7 +172,7 @@ void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
     // Setup TNL states
     err = this->setupTNLStates(mode, vmin, vertexCount);
     if (__glFailed(err)) {
-      __glLogError("CTNL::setupTNLStates() failed, err = %d.\r\n", err);
+      __glLogError("TNL::setupTNLStates() failed, err = %d.\r\n", err);
       goto L_EXIT;
     }
 
@@ -186,7 +186,7 @@ void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
           mode, reinterpret_cast<const uint16_t *>(pIndices), count, vmin);
       if (__glFailed(err)) {
         __glError(err,
-                  "CRasterizer::renderIndexedPrimitive<uint16_t>() failed, "
+                  "Rasterizer::renderIndexedPrimitive<uint16_t>() failed, "
                   "err = %d.\r\n",
                   err);
       }
@@ -198,7 +198,7 @@ void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
           mode, reinterpret_cast<const uint8_t *>(pIndices), count, vmin);
       if (__glFailed(err)) {
         __glError(err,
-                  "CRasterizer::renderIndexedPrimitive<uint8_t>() failed, "
+                  "Rasterizer::renderIndexedPrimitive<uint8_t>() failed, "
                   "err = %d.\r\n",
                   err);
       }

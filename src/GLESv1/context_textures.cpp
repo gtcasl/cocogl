@@ -29,10 +29,10 @@ void GLContext::genTextures(GLsizei n, GLuint *phTextures) {
 
   for (GLuint *phTex = phTextures, *const phEnd = phTex + n; phTex != phEnd;
        ++phTex) {
-    CTexture *pTexture;
-    err = CTexture::Create(&pTexture);
+    Texture *pTexture;
+    err = Texture::Create(&pTexture);
     if (__glFailed(err)) {
-      __glError(err, "CTexture::Create() failed, err = %d.\r\n", err);
+      __glError(err, "Texture::Create() failed, err = %d.\r\n", err);
       return;
     }
 
@@ -60,13 +60,13 @@ void GLContext::bindTexture(GLenum target, GLuint texture) {
     return;
   }
 
-  CTexture *pTexture = nullptr;
+  Texture *pTexture = nullptr;
   if (texture) {
     // First lookup owned textures
-    pTexture = reinterpret_cast<CTexture *>(handles_->getObject(texture, this));
+    pTexture = reinterpret_cast<Texture *>(handles_->getObject(texture, this));
     if ((nullptr == pTexture) && pCtxShared_) {
       // Second lookup the shared context textures
-      pTexture = reinterpret_cast<CTexture *>(
+      pTexture = reinterpret_cast<Texture *>(
           handles_->getObject(texture, pCtxShared_));
     }
 
@@ -150,7 +150,7 @@ void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
   // Initialize the texture surface
   err = pTexture->InitializeSurface(level, width, height, dstFormat);
   if (__glFailed(err)) {
-    __glError(err, "CTexture::InitializeSurface() failed, err = %d.\r\n", err);
+    __glError(err, "Texture::InitializeSurface() failed, err = %d.\r\n", err);
     return;
   }
 
@@ -183,7 +183,7 @@ void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
   if ((0 == level) && pTexture->bGenMipMaps) {
     err = pTexture->generateMipmaps();
     if (__glFailed(err)) {
-      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n", err);
+      __glError(err, "Texture::generateMipmaps() failed, err = %d.\r\n", err);
       return;
     }
   }
@@ -222,7 +222,7 @@ void GLContext::setTexSubImage2D(GLenum target, GLint level, GLint xoffset,
     return;
   }
 
-  const CSurface2D &surface2D = pTexture->getSurface(level);
+  const Surface2D &surface2D = pTexture->getSurface(level);
 
   if ((xoffset < 0) || (yoffset < 0) ||
       (static_cast<uint32_t>(xoffset + width) > surface2D.getWidth()) ||
@@ -262,7 +262,7 @@ void GLContext::setTexSubImage2D(GLenum target, GLint level, GLint xoffset,
   if ((0 == level) && pTexture->bGenMipMaps) {
     err = pTexture->generateMipmaps();
     if (__glFailed(err)) {
-      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n", err);
+      __glError(err, "Texture::generateMipmaps() failed, err = %d.\r\n", err);
       return;
     }
   }
@@ -328,7 +328,7 @@ void GLContext::copyTexImage2D(GLenum target, GLint level,
   // Initialize the texture surface
   err = pTexture->InitializeSurface(level, width, height, dstFormat);
   if (__glFailed(err)) {
-    __glError(err, "CTexture::InitializeSurface() failed, err = %d.\r\n", err);
+    __glError(err, "Texture::InitializeSurface() failed, err = %d.\r\n", err);
     return;
   }
 
@@ -347,7 +347,7 @@ void GLContext::copyTexImage2D(GLenum target, GLint level,
   if ((0 == level) && pTexture->bGenMipMaps) {
     err = pTexture->generateMipmaps();
     if (__glFailed(err)) {
-      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n", err);
+      __glError(err, "Texture::generateMipmaps() failed, err = %d.\r\n", err);
       return;
     }
   }
@@ -385,7 +385,7 @@ void GLContext::copyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
     return;
   }
 
-  const CSurface2D &surface2D = pTexture->getSurface(level);
+  const Surface2D &surface2D = pTexture->getSurface(level);
 
   if ((xoffset < 0) || (yoffset < 0) ||
       (static_cast<uint32_t>(xoffset + width) > surface2D.getWidth()) ||
@@ -411,7 +411,7 @@ void GLContext::copyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
   if ((0 == level) && pTexture->bGenMipMaps) {
     err = pTexture->generateMipmaps();
     if (__glFailed(err)) {
-      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n", err);
+      __glError(err, "Texture::generateMipmaps() failed, err = %d.\r\n", err);
       return;
     }
   }
@@ -547,7 +547,7 @@ void GLContext::deleteTextures(GLsizei n, const GLuint *phTextures) {
     GLuint handle = *phTex;
     if (handle) {
       auto pTexture =
-          reinterpret_cast<CTexture *>(handles_->deleteHandle(handle, this));
+          reinterpret_cast<Texture *>(handles_->deleteHandle(handle, this));
       if (pTexture) {
         // Unbind the texture if bound.
         for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
@@ -572,7 +572,7 @@ GLenum GLContext::bindTexImage(GLSurface *pSurface, bool bGenMipMaps) {
 
   err = pTexture->bindSurface(pSurface, bGenMipMaps);
   if (__glFailed(err)) {
-    __glLogError("CTexture::bindTexImage() failed, err = %d.\r\n", err);
+    __glLogError("Texture::bindTexImage() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -587,7 +587,7 @@ GLenum GLContext::releaseTexImage(GLSurface *pSurface) {
 
   err = pTexture->releaseSurface(pSurface);
   if (__glFailed(err)) {
-    __glLogError("CTexture::releaseTexImage() failed, err = %d.\r\n", err);
+    __glLogError("Texture::releaseTexImage() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -737,13 +737,13 @@ void GLContext::compressedTexImage2D(GLenum target, GLint level,
     maxLevel = -level - 1;
   }
 
-  CSurface2D surface;
+  Surface2D surface;
 
   for (GLint i = minLevel; i <= maxLevel; ++i) {
     // Initialize the texture surface
     err = surface.initialize(width, height, pixelformat, pData);
     if (__glFailed(err)) {
-      __glError(err, "CSurface2D::initialize() failed, err = %d.\r\n", err);
+      __glError(err, "Surface2D::initialize() failed, err = %d.\r\n", err);
       return;
     }
 
@@ -896,13 +896,13 @@ void GLContext::compressedTexSubImage2D(GLenum target, GLint level,
     maxLevel = -level - 1;
   }
 
-  CSurface2D surface;
+  Surface2D surface;
 
   for (GLint i = minLevel; i <= maxLevel; ++i) {
     // Initialize the texture surface
     err = surface.initialize(width, height, pixelformat, pData);
     if (__glFailed(err)) {
-      __glError(err, "CSurface2D::initialize() failed, err = %d.\r\n", err);
+      __glError(err, "Surface2D::initialize() failed, err = %d.\r\n", err);
       return;
     }
 

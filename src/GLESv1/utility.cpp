@@ -14,14 +14,14 @@
 //
 #include "stdafx.h"
 
-class CBlitTable {
+class BlitTable {
 public:
   typedef GLenum (*PfnCopy)(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
                             uint32_t dstOffsetY, uint32_t copyWidth,
                             uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
                             uint32_t srcOffsetX, uint32_t srcOffsetY);
 
-  CBlitTable() {
+  BlitTable() {
     for (uint32_t s = 0; s < FORMAT_COLOR_SIZE_; ++s) {
       for (uint32_t d = 0; d < FORMAT_COLOR_SIZE_; ++d) {
         copyFuncs_[s][d] = CopyNC;
@@ -268,7 +268,7 @@ GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, int32_t dstOffsetX,
                    int32_t dstOffsetY, int32_t copyWidth, int32_t copyHeight,
                    const GLSurfaceDesc &srcDesc, int32_t srcOffsetX,
                    int32_t srcOffsetY) {
-  static const CBlitTable s_blitTable;
+  static const BlitTable s_blitTable;
 
   if ((srcOffsetX >= srcDesc.Width) || (srcOffsetY >= srcDesc.Height) ||
       (dstOffsetX >= dstDesc.Width) || (dstOffsetY >= dstDesc.Height)) {

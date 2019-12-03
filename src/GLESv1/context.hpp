@@ -16,11 +16,11 @@
 
 #include "raster.hpp"
 
-class GLContext : public CRasterizer {
+class GLContext : public Rasterizer {
 public:
   //--
   static GLenum Create(GLContext **ppContext, HandleTable *pHandles,
-                       CRasterCache *pRasterCache, GLContext *pCtxShared);
+                       RasterCache *pRasterCache, GLContext *pCtxShared);
 
   //--
   void setDrawSurface(GLSurface *pSurface);
@@ -212,7 +212,7 @@ public:
   void finish();
 
 private:
-  GLContext(HandleTable *pHandles, CRasterCache *pRasterCache,
+  GLContext(HandleTable *pHandles, RasterCache *pRasterCache,
             GLContext *pSharedCtx);
 
   ~GLContext();

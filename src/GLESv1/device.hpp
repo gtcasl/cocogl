@@ -22,7 +22,7 @@
 #include "vertarray.hpp"
 #include "rastdata.hpp"
 
-class CDevice : public Object {
+class Device : public Object {
 protected:
   enum {
     BUFFER_OBJECTS_FIRST = GL_ARRAY_BUFFER,
@@ -35,8 +35,8 @@ protected:
     CLIP_BUFFER_SIZE = CLIP_PLANES + 3,
   };
 
-  CDevice() {}
-  ~CDevice() {}
+  Device() {}
+  ~Device() {}
 
   GLBuffer *getBufferObject(GLenum target) const {
     assert((target >= BUFFER_OBJECTS_FIRST) && (target <= BUFFER_OBJECTS_LAST));
@@ -69,27 +69,27 @@ protected:
     return pTexture->getHandle();
   }
 
-  CTexture *getTexture(uint32_t unit) const {
+  Texture *getTexture(uint32_t unit) const {
     assert(unit < MAX_TEXTURES);
     return texUnits_[unit].getTexture();
   }
 
-  void setTexture(uint32_t unit, CTexture *pTexture) {
+  void setTexture(uint32_t unit, Texture *pTexture) {
     assert(unit < MAX_TEXTURES);
     texUnits_[unit].setTexture(pTexture);
   }
 
   mutable GLenum error_;
 
-  const CDevice *pCtxShared_;
+  const Device *pCtxShared_;
   GLSurface *pSurfDraw_;
   GLSurface *pSurfRead_;
   HandleTable *handles_;
 
   GLBuffer *bufferObjects_[BUFFER_OBJECTS_SIZE];
-  CTexture *pTexDefault_;
+  Texture *pTexDefault_;
   GLBuffer *pBufDefault_;
-  CRasterCache *pRasterCache_;
+  RasterCache *pRasterCache_;
 
 #ifdef GL_COCOJIT
   CG::CAssembler *pCGAssembler_;

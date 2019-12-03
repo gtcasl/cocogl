@@ -179,7 +179,7 @@ void TDecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, uint32_t stride,
 
 template <bool ColorMaterial, eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
-inline void CTNL::processLightingOneSided(uint32_t count) {
+inline void TNL::processLightingOneSided(uint32_t count) {
 
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   auto pcFrontColors =
@@ -266,7 +266,7 @@ inline void CTNL::processLightingOneSided(uint32_t count) {
 
 template <bool ColorMaterial, eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
-inline void CTNL::processLightingTwoSided(uint32_t count) {
+inline void TNL::processLightingTwoSided(uint32_t count) {
 
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   auto pcFrontColors =
@@ -368,7 +368,7 @@ inline void CTNL::processLightingTwoSided(uint32_t count) {
 }
 
 template <eVertexFormat VertexFormat>
-void CTNL::processVertexColor(uint32_t count) {
+void TNL::processVertexColor(uint32_t count) {
   auto pcFrontColors =
       reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
   auto pbIn = colorDecode_.pBits;
@@ -394,7 +394,7 @@ void CTNL::processVertexColor(uint32_t count) {
 }
 
 template <bool Transform, eVertexFormat VertexFormat>
-void CTNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
+void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
                             uint32_t count) {
   auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
       pbVertexData_[VERTEXDATA_TEXCOORD0 + dstIndex]);
@@ -427,7 +427,7 @@ void CTNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
 }
 
 template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
-void CTNL::processPointSize(uint32_t count) {
+void TNL::processPointSize(uint32_t count) {
   auto pfPointSizes =
       reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
   auto &vAttenuation = pointParams_.vAttenuation;
@@ -467,7 +467,7 @@ void CTNL::processPointSize(uint32_t count) {
   }
 }
 
-template <eFogMode FogMode> void CTNL::processFog(uint32_t count) {
+template <eFogMode FogMode> void TNL::processFog(uint32_t count) {
 
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);

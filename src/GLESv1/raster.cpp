@@ -48,9 +48,9 @@ void IRasterOp::logProfile(const RASTERID &rasterID) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-GLenum CRasterizer::setupRasterStates(GLenum mode) {
+GLenum Rasterizer::setupRasterStates(GLenum mode) {
   if (nullptr == rasterData_.pColorBits) {
-    __glLogError("CRasterizer::setupRasterStates() failed, missing color "
+    __glLogError("Rasterizer::setupRasterStates() failed, missing color "
                  "buffer.\r\n");
     return GL_INVALID_OPERATION;
   }
@@ -191,7 +191,7 @@ GLenum CRasterizer::setupRasterStates(GLenum mode) {
   return GL_NO_ERROR;
 }
 
-void CRasterizer::updateScissorRect() {
+void Rasterizer::updateScissorRect() {
   if (caps_.ScissorTest) {
     Rect rect;
     pSurfDraw_->getRect(&rect);
@@ -203,7 +203,7 @@ void CRasterizer::updateScissorRect() {
   dirtyFlags_.ScissorRECT = 0;
 }
 
-bool CRasterizer::generateRasterOp() {
+bool Rasterizer::generateRasterOp() {
   GLenum err;
 
   IRasterOp *pRasterOp = nullptr;
@@ -213,19 +213,19 @@ bool CRasterizer::generateRasterOp() {
               rasterID_.States.Value, rasterID_.Textures[0].Value,
               rasterID_.Textures[1].Value);
 #endif
-    err = COptimizedRasterOp::Create(&pRasterOp, rasterID_);
+    err = OptimizedRasterOp::Create(&pRasterOp, rasterID_);
     if (__glFailed(err)) {
       if (__GL_NO_DATA == err) {
 #ifdef GL_COCOJIT
-        err = CJITRasterOp::Create(&pRasterOp, pCGAssembler_, rasterID_);
+        err = JITRasterOp::Create(&pRasterOp, pCGAssembler_, rasterID_);
         if (__glFailed(err)) {
-          __glLogError("CJITRasterOp::Create() failed, err = %d.\r\n", err);
+          __glLogError("JITRasterOp::Create() failed, err = %d.\r\n", err);
           return false;
         }
 #else
-        err = CGenericRasterOp::Create(&pRasterOp, rasterID_);
+        err = GenericRasterOp::Create(&pRasterOp, rasterID_);
         if (__glFailed(err)) {
-          __glLogError("CGenericRasterOp::Create() failed, err = %d.\r\n", err);
+          __glLogError("GenericRasterOp::Create() failed, err = %d.\r\n", err);
           return false;
         }
 #endif
@@ -234,7 +234,7 @@ bool CRasterizer::generateRasterOp() {
         pRasterCache_->trackSlowRasterID(rasterID_);
 #endif
       } else {
-        __glLogError("COptimizedRasterOp::Create() failed, err = %d.\r\n", err);
+        __glLogError("OptimizedRasterOp::Create() failed, err = %d.\r\n", err);
         return false;
       }
     }
@@ -250,12 +250,12 @@ bool CRasterizer::generateRasterOp() {
   return true;
 }
 
-void CRasterizer::postRender() {
+void Rasterizer::postRender() {
   // Free the rasterop
   __safeRelease(rasterData_.pRasterOp);
 }
 
-GLenum CRasterizer::renderPrimitive(GLenum mode, uint32_t count) {
+GLenum Rasterizer::renderPrimitive(GLenum mode, uint32_t count) {
   switch (mode) {
   case GL_TRIANGLES:
     for (uint32_t i = 2; i < count; i += 3) {

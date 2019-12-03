@@ -16,7 +16,7 @@
 #pragma once
 
 class GLSurface;
-class CSurface2D;
+class Surface2D;
 
 class SurfaceDesc {
 public:
@@ -45,12 +45,10 @@ protected:
     };
   };
   DISABLE_WARNING_POP
-
-  friend class CGSurface;
 };
 
 struct Sampler {
-  const CSurface2D *pMipLevels;
+  const Surface2D *pMipLevels;
 
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
@@ -66,11 +64,11 @@ struct Sampler {
   DISABLE_WARNING_POP
 };
 
-class CSurface2D : public SurfaceDesc {
+class Surface2D : public SurfaceDesc {
 public:
-  CSurface2D() { this->clear(); }
+  Surface2D() { this->clear(); }
 
-  ~CSurface2D() { this->destroy(); }
+  ~Surface2D() { this->destroy(); }
 
   GLenum initialize(uint32_t width, uint32_t height, ePixelFormat format);
 
@@ -103,19 +101,19 @@ private:
   bool bOwnedBuffer_;
 };
 
-class CTexture : public Object {
+class Texture : public Object {
 public:
   TexParams Params;
   bool bGenMipMaps;
 
-  static GLenum Create(CTexture **ppTexture);
+  static GLenum Create(Texture **ppTexture);
 
-  const CSurface2D &getSurface(uint32_t level) const {
+  const Surface2D &getSurface(uint32_t level) const {
     assert(level < MAX_TEXTURE_LEVELS);
     return surfaces_[level];
   }
 
-  const CSurface2D *getSurfaces() const { return surfaces_; }
+  const Surface2D *getSurfaces() const { return surfaces_; }
 
   ePixelFormat getFormat() const { return surfaces_[0].getFormat(); }
 
@@ -153,11 +151,11 @@ public:
   void freeSurfaces();
 
 private:
-  CTexture();
+  Texture();
 
-  ~CTexture();
+  ~Texture();
 
-  CSurface2D surfaces_[MAX_TEXTURE_LEVELS];
+  Surface2D surfaces_[MAX_TEXTURE_LEVELS];
   uint8_t *pbMipBuffer_;
   GLSurface *pBoundSurface_;
   uint32_t handle_;
@@ -175,9 +173,9 @@ public:
 
   ~TexUnit() { __safeRelease(pTexture_); }
 
-  CTexture *getTexture() const { return pTexture_; }
+  Texture *getTexture() const { return pTexture_; }
 
-  void setTexture(CTexture *pTexture) {
+  void setTexture(Texture *pTexture) {
     if (pTexture) {
       pTexture->addRef();
     }
@@ -202,5 +200,5 @@ public:
   bool prepare(Sampler *pSampler, TEXTURESTATES *pStates);
 
 private:
-  CTexture *pTexture_;
+  Texture *pTexture_;
 };

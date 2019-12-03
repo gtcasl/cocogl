@@ -16,7 +16,7 @@
 
 #include "tnl.hpp"
 
-class CRasterizer : public CTNL {
+class Rasterizer : public TNL {
 public:
   GLenum renderPrimitive(GLenum mode, uint32_t count);
 
@@ -134,9 +134,9 @@ protected:
     }
   };
 
-  CRasterizer() {}
+  Rasterizer() {}
 
-  ~CRasterizer() {}
+  ~Rasterizer() {}
 
   GLenum setupRasterStates(GLenum mode);
 

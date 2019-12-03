@@ -19,10 +19,10 @@
 typedef void (*PfnDecodePosition)(VECTOR4 *pOut, const uint8_t *pbIn,
                                   uint32_t stride, uint32_t count);
 
-class CTNL : public CInputAssembler {
+class TNL : public InputAssembler {
 public:
-  typedef void (CTNL::*PfnDecodeVertices)(uint32_t count);
-  typedef void (CTNL::*PfnDecodeTexCoord)(uint32_t dstIndex, uint32_t srcIndex,
+  typedef void (TNL::*PfnDecodeVertices)(uint32_t count);
+  typedef void (TNL::*PfnDecodeTexCoord)(uint32_t dstIndex, uint32_t srcIndex,
                                           uint32_t count);
 
   template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
@@ -44,9 +44,9 @@ public:
   template <eFogMode FogMode> void processFog(uint32_t count);
 
 protected:
-  CTNL() {}
+  TNL() {}
 
-  ~CTNL() {}
+  ~TNL() {}
 
   struct Lighting {
     Light lights[MAX_LIGHTS];
@@ -133,10 +133,10 @@ protected:
 
   std::vector<uint8_t> vertexBuffer_;
 
-  CMatrixStack *pMsModelView_;
-  CMatrixStack *pMsProjection_;
-  CMatrixStack *pMsTexCoords_[MAX_TEXTURES];
-  CMatrixStack *pMatrixStack_;
+  MatrixStack *pMsModelView_;
+  MatrixStack *pMsProjection_;
+  MatrixStack *pMsTexCoords_[MAX_TEXTURES];
+  MatrixStack *pMatrixStack_;
   GLenum matrixMode_;
 
   std::vector<VECTOR4> vClipPlanesES_;

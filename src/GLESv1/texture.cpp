@@ -16,19 +16,19 @@
 #include "texture.hpp"
 #include "surface.hpp"
 
-GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
+GLenum Surface2D::initialize(uint32_t width, uint32_t height,
                               ePixelFormat format) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
     __glLogError(
-        "CSurface2D::initialize() failed, invalid width parameter: %d.\r\n",
+        "Surface2D::initialize() failed, invalid width parameter: %d.\r\n",
         width);
     return GL_INVALID_VALUE;
   }
 
   if (height > MAX_TEXTURE_SIZE) {
-    __glLogError("CSurface2D::initialize() failed, invalid height "
+    __glLogError("Surface2D::initialize() failed, invalid height "
                  "parameter: %d.\r\n",
                  height);
     return GL_INVALID_VALUE;
@@ -37,7 +37,7 @@ GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
   uint8_t nBPP = Format::GetInfo(format).BytePerPixel;
   auto pbBits = new uint8_t[nBPP * width * height];
   if (nullptr == pbBits) {
-    __glLogError("CSurface2D::initialize() failed, out of memory.\r\n");
+    __glLogError("Surface2D::initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -55,19 +55,19 @@ GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
   return GL_NO_ERROR;
 }
 
-GLenum CSurface2D::initialize(uint32_t width, uint32_t height, int32_t pitch,
+GLenum Surface2D::initialize(uint32_t width, uint32_t height, int32_t pitch,
                               ePixelFormat format, GLvoid *pPixels) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
     __glLogError(
-        "CSurface2D::initialize() failed, invalid width parameter: %d.\r\n",
+        "Surface2D::initialize() failed, invalid width parameter: %d.\r\n",
         width);
     return GL_INVALID_VALUE;
   }
 
   if (height > MAX_TEXTURE_SIZE) {
-    __glLogError("CSurface2D::initialize() failed, invalid height "
+    __glLogError("Surface2D::initialize() failed, invalid height "
                  "parameter: %d.\r\n",
                  height);
     return GL_INVALID_VALUE;
@@ -87,19 +87,19 @@ GLenum CSurface2D::initialize(uint32_t width, uint32_t height, int32_t pitch,
   return GL_NO_ERROR;
 }
 
-GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
+GLenum Surface2D::initialize(uint32_t width, uint32_t height,
                               ePixelFormat format, const GLvoid *pPixels) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
     __glLogError(
-        "CSurface2D::initialize() failed, invalid width parameter: %d.\r\n",
+        "Surface2D::initialize() failed, invalid width parameter: %d.\r\n",
         width);
     return GL_INVALID_VALUE;
   }
 
   if (height > MAX_TEXTURE_SIZE) {
-    __glLogError("CSurface2D::initialize() failed, invalid height "
+    __glLogError("Surface2D::initialize() failed, invalid height "
                  "parameter: %d.\r\n",
                  height);
     return GL_INVALID_VALUE;
@@ -114,7 +114,7 @@ GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
 
   auto pColorTable = new Color4[paletteSize];
   if (nullptr == pColorTable) {
-    __glLogError("CSurface2D::initialize() failed, out of memory.\r\n");
+    __glLogError("Surface2D::initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -129,7 +129,7 @@ GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
   auto pbBits = new uint8_t[nBPP * surfaceSize];
   if (nullptr == pbBits) {
     delete[] pColorTable;
-    __glLogError("CSurface2D::initialize() failed, out of memory.\r\n");
+    __glLogError("Surface2D::initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -151,7 +151,7 @@ GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
   } else {
     delete[] pbBits;
     delete[] pColorTable;
-    __glLogError("CSurface2D::initialize() failed, invalid texture palette "
+    __glLogError("Surface2D::initialize() failed, invalid texture palette "
                  "size: %d.\r\n",
                  paletteSize);
     return GL_INVALID_VALUE;
@@ -173,7 +173,7 @@ GLenum CSurface2D::initialize(uint32_t width, uint32_t height,
   return GL_NO_ERROR;
 }
 
-void CSurface2D::destroy() {
+void Surface2D::destroy() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (bOwnedBuffer_) {
@@ -183,7 +183,7 @@ void CSurface2D::destroy() {
   this->clear();
 }
 
-void CSurface2D::clear() {
+void Surface2D::clear() {
   pbBits_ = nullptr;
   logWidth_ = 0;
   logHeight_ = 0;
@@ -194,7 +194,7 @@ void CSurface2D::clear() {
 
 //////////////////////////////////////////////////////////////////////////////
 
-CTexture::CTexture() {
+Texture::Texture() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   pbMipBuffer_ = nullptr;
@@ -210,20 +210,20 @@ CTexture::CTexture() {
   this->bGenMipMaps = false;
 }
 
-CTexture::~CTexture() {
+Texture::~Texture() {
   __profileAPI(" - %s()\n", __FUNCTION__);
   this->freeSurfaces();
 }
 
-GLenum CTexture::Create(CTexture **ppTexture) {
+GLenum Texture::Create(Texture **ppTexture) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(ppTexture);
 
   // Create a new texture object
-  auto pTexture = new CTexture();
+  auto pTexture = new Texture();
   if (nullptr == pTexture) {
-    __glLogError("CTexture allocation failed, out of memory.\r\n");
+    __glLogError("Texture allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -233,7 +233,7 @@ GLenum CTexture::Create(CTexture **ppTexture) {
   return GL_NO_ERROR;
 }
 
-GLenum CTexture::bindSurface(GLSurface *pSurface, bool bGenMipMaps) {
+GLenum Texture::bindSurface(GLSurface *pSurface, bool bGenMipMaps) {
   GLenum err;
 
   if (pBoundSurface_) {
@@ -248,7 +248,7 @@ GLenum CTexture::bindSurface(GLSurface *pSurface, bool bGenMipMaps) {
       colorDesc.Width, colorDesc.Height, colorDesc.Pitch,
       static_cast<ePixelFormat>(colorDesc.Format), colorDesc.pBits);
   if (__glFailed(err)) {
-    __glLogError("CSurface2D::initialize() failed, err = %d.\r\n", err);
+    __glLogError("Surface2D::initialize() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -258,7 +258,7 @@ GLenum CTexture::bindSurface(GLSurface *pSurface, bool bGenMipMaps) {
   if (bGenMipMaps && this->bGenMipMaps) {
     err = this->generateMipmaps();
     if (__glFailed(err)) {
-      __glLogError("CTexture::generateMipmaps() failed, err = %d.\r\n", err);
+      __glLogError("Texture::generateMipmaps() failed, err = %d.\r\n", err);
       return err;
     }
   }
@@ -266,7 +266,7 @@ GLenum CTexture::bindSurface(GLSurface *pSurface, bool bGenMipMaps) {
   return GL_NO_ERROR;
 }
 
-GLenum CTexture::releaseSurface(GLSurface *pSurface) {
+GLenum Texture::releaseSurface(GLSurface *pSurface) {
   if (pBoundSurface_ != pSurface) {
     return GL_INVALID_VALUE;
   }
@@ -276,7 +276,7 @@ GLenum CTexture::releaseSurface(GLSurface *pSurface) {
   return GL_NO_ERROR;
 }
 
-void CTexture::freeSurfaces() {
+void Texture::freeSurfaces() {
   for (uint32_t i = 0; i < MAX_TEXTURE_LEVELS; ++i) {
     surfaces_[i].destroy();
   }
@@ -285,10 +285,10 @@ void CTexture::freeSurfaces() {
   __safeRelease(pBoundSurface_);
 }
 
-GLenum CTexture::generateMipmaps() {
+GLenum Texture::generateMipmaps() {
   GLenum err;
 
-  CSurface2D &surface = surfaces_[0];
+  Surface2D &surface = surfaces_[0];
 
   ePixelFormat format = surface.getFormat();
   uint32_t bpp = Format::GetInfo(format).BytePerPixel;
@@ -331,8 +331,8 @@ GLenum CTexture::generateMipmaps() {
   uint8_t *pbMipBuffer = pbMipBuffer_;
 
   for (uint32_t i = 1; ((width > 1) || (height > 1)); ++i) {
-    CSurface2D &surfaceSrc = surfaces_[i - 1];
-    CSurface2D &surfaceDst = surfaces_[i];
+    Surface2D &surfaceSrc = surfaces_[i - 1];
+    Surface2D &surfaceDst = surfaces_[i];
 
     if (width > 1) {
       width >>= 1;
@@ -345,7 +345,7 @@ GLenum CTexture::generateMipmaps() {
     err =
         surfaceDst.initialize(width, height, width * bpp, format, pbMipBuffer);
     if (__glFailed(err)) {
-      __glLogError("CSurface2D::initialize() failed, err = %d.\r\n", err);
+      __glLogError("Surface2D::initialize() failed, err = %d.\r\n", err);
       return err;
     }
 
@@ -560,8 +560,8 @@ GLenum CTexture::generateMipmaps() {
   return GL_NO_ERROR;
 }
 
-bool CTexture::validate() {
-  const CSurface2D &surface0 = this->getSurface(0);
+bool Texture::validate() {
+  const Surface2D &surface0 = this->getSurface(0);
 
   ePixelFormat format = surface0.getFormat();
   if (FORMAT_UNKNOWN == format) {
@@ -581,7 +581,7 @@ bool CTexture::validate() {
       height >>= 1;
     }
 
-    const CSurface2D &surfaceN = this->getSurface(level + 1);
+    const Surface2D &surfaceN = this->getSurface(level + 1);
 
     if ((surfaceN.getFormat() != format) || (surfaceN.getWidth() != width) ||
         (surfaceN.getHeight() != height)) {

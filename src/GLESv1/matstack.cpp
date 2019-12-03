@@ -15,18 +15,18 @@
 #include "stdafx.h"
 #include "matstack.hpp"
 
-CMatrixStack::CMatrixStack()
+MatrixStack::MatrixStack()
     : pMatrices_(nullptr), identityMask_(0), curIndex_(0), size_(0) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 }
 
-CMatrixStack::~CMatrixStack() {
+MatrixStack::~MatrixStack() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   __safeDeleteArray(pMatrices_);
 }
 
-GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
+GLenum MatrixStack::Create(MatrixStack **ppMatrixStack, uint8_t size) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
@@ -34,9 +34,9 @@ GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
   assert(ppMatrixStack);
 
   // Create a new object
-  auto pMatrixStack = new CMatrixStack();
+  auto pMatrixStack = new MatrixStack();
   if (nullptr == pMatrixStack) {
-    __glLogError("CMatrixStack() allocation failed, out of memory.\r\n");
+    __glLogError("MatrixStack() allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
   }
 
@@ -45,7 +45,7 @@ GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
   // Initialize the object
   err = pMatrixStack->initialize(size);
   if (__glFailed(err)) {
-    __glLogError("CMatrixStack::initialize() failed, err = %d.\r\n", err);
+    __glLogError("MatrixStack::initialize() failed, err = %d.\r\n", err);
     __safeRelease(pMatrixStack);
     return err;
   }
@@ -55,7 +55,7 @@ GLenum CMatrixStack::Create(CMatrixStack **ppMatrixStack, uint8_t size) {
   return GL_NO_ERROR;
 }
 
-GLenum CMatrixStack::initialize(uint8_t size) {
+GLenum MatrixStack::initialize(uint8_t size) {
   assert(size <= 16);
 
   __profileAPI(" - %s()\n", __FUNCTION__);

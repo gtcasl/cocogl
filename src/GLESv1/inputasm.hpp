@@ -15,14 +15,14 @@
 #pragma once
 #include "device.hpp"
 
-class CInputAssembler : public CDevice {
+class InputAssembler : public Device {
 public:
   GLenum prepareIndices(GLenum type, const GLvoid **ppvIndices, uint32_t count,
                         uint32_t *pMin, uint32_t *pMax);
 
 protected:
-  CInputAssembler() {}
-  ~CInputAssembler() {}
+  InputAssembler() {}
+  ~InputAssembler() {}
 
   VertexArray positionArray_;
   VertexArray normalArray_;

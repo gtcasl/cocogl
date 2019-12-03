@@ -17,7 +17,7 @@
 #include "context_rast.inl"
 #include "context_tnl.inl"
 
-GLContext::GLContext(HandleTable *pHandles, CRasterCache *pRasterCache,
+GLContext::GLContext(HandleTable *pHandles, RasterCache *pRasterCache,
                      GLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
@@ -87,7 +87,7 @@ GLContext::~GLContext() {
 }
 
 GLenum GLContext::Create(GLContext **ppContext, HandleTable *pHandles,
-                         CRasterCache *pRasterCache, GLContext *pCtxShared) {
+                         RasterCache *pRasterCache, GLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
@@ -122,29 +122,29 @@ GLenum GLContext::initialize() {
   GLenum err;
 
   // Initialize the matrix stacks
-  err = CMatrixStack::Create(&pMsModelView_, MODELVIEW_STACK_SIZE);
+  err = MatrixStack::Create(&pMsModelView_, MODELVIEW_STACK_SIZE);
   if (__glFailed(err)) {
-    __glLogError("CMatrixStack::Create() failed, err = %d.\r\n", err);
+    __glLogError("MatrixStack::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
-  err = CMatrixStack::Create(&pMsProjection_, PROJECTION_STACK_SIZE);
+  err = MatrixStack::Create(&pMsProjection_, PROJECTION_STACK_SIZE);
   if (__glFailed(err)) {
-    __glLogError("CMatrixStack::Create() failed, err = %d.\r\n", err);
+    __glLogError("MatrixStack::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
-    err = CMatrixStack::Create(&pMsTexCoords_[i], TEXTURE_STACK_SIZE);
+    err = MatrixStack::Create(&pMsTexCoords_[i], TEXTURE_STACK_SIZE);
     if (__glFailed(err)) {
-      __glLogError("CMatrixStack::Create() failed, err = %d.\r\n", err);
+      __glLogError("MatrixStack::Create() failed, err = %d.\r\n", err);
       return err;
     }
   }
 
-  err = CTexture::Create(&pTexDefault_);
+  err = Texture::Create(&pTexDefault_);
   if (__glFailed(err)) {
-    __glLogError("CTexture::Create() failed, err = %d.\r\n", err);
+    __glLogError("Texture::Create() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -162,9 +162,9 @@ GLenum GLContext::initialize() {
 
 #ifdef GL_COCOJIT
   // Create the CG assembler
-  err = GLERROR_FROM_HRESULT(CG::CAssembler::Create(&pCGAssembler_));
+  err = GLERROR_FROM_HRESULT(CG::Assembler::Create(&pCGAssembler_));
   if (__glFailed(err)) {
-    __glLogError("CG::CAssembler::Create() failed, err = %d.\r\n", err);
+    __glLogError("CG::Assembler::Create() failed, err = %d.\r\n", err);
     return err;
   }
 #endif

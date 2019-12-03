@@ -16,7 +16,7 @@
 #include "raster.hpp"
 #include "raster.inl"
 
-void CRasterizer::drawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
+void Rasterizer::drawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   uint32_t flags0 = pwFlags[i0];
   uint32_t flags1 = pwFlags[i1];
@@ -43,7 +43,7 @@ void CRasterizer::drawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   }
 }
 
-bool CRasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
+bool Rasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
                                           uint32_t i2) {
   auto pvScreenPos =
       reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
@@ -85,7 +85,7 @@ bool CRasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
   return true;
 }
 
-void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
+void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pvScreenPos =
@@ -204,7 +204,7 @@ void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 #endif
 }
 
-bool CRasterizer::setupTriangleAttributes(const TriangleGradient &g,
+bool Rasterizer::setupTriangleAttributes(const TriangleGradient &g,
                                           uint32_t i0, uint32_t i1,
                                           uint32_t i2) {
   // Backup the rasterID
@@ -248,7 +248,7 @@ bool CRasterizer::setupTriangleAttributes(const TriangleGradient &g,
   // Generate the rasterization routine
   if (!this->generateRasterOp()) {
     error_ = GL_INVALID_OPERATION;
-    __glLogError("CRasterizer::generateRasterOp() failed.\r\n");
+    __glLogError("Rasterizer::generateRasterOp() failed.\r\n");
     return false;
   }
 
@@ -258,7 +258,7 @@ bool CRasterizer::setupTriangleAttributes(const TriangleGradient &g,
   return true;
 }
 
-Register *CRasterizer::applyDepthGradient(Register *pRegister,
+Register *Rasterizer::applyDepthGradient(Register *pRegister,
                                           const TriangleGradient &gradient,
                                           const RDVECTOR &v0,
                                           const RDVECTOR &v1,
@@ -286,7 +286,7 @@ Register *CRasterizer::applyDepthGradient(Register *pRegister,
   return pRegister + 1;
 }
 
-void CRasterizer::applyPolygonOffset(Register *pRegister) {
+void Rasterizer::applyPolygonOffset(Register *pRegister) {
   assert(pRegister);
 
   auto fSlope = static_cast<float20>(
@@ -299,7 +299,7 @@ void CRasterizer::applyPolygonOffset(Register *pRegister) {
       Math::TSat(static_cast<floatf>(pRegister->m[2]) + fOffset));
 }
 
-Register *CRasterizer::applyColorGradient(Register *pRegister,
+Register *Rasterizer::applyColorGradient(Register *pRegister,
                                           const TriangleGradient &gradient,
                                           uint32_t i0, uint32_t i1,
                                           uint32_t i2) {
@@ -336,7 +336,7 @@ Register *CRasterizer::applyColorGradient(Register *pRegister,
 }
 
 Register *
-CRasterizer::applyAffineTextureGradient(Register *pRegister,
+Rasterizer::applyAffineTextureGradient(Register *pRegister,
                                         const TriangleGradient &gradient,
                                         uint32_t i0, uint32_t i1, uint32_t i2) {
   assert(pRegister);
@@ -372,7 +372,7 @@ CRasterizer::applyAffineTextureGradient(Register *pRegister,
   return pRegister;
 }
 
-Register *CRasterizer::applyPerspectiveTextureGradient(
+Register *Rasterizer::applyPerspectiveTextureGradient(
     Register *pRegister, const TriangleGradient &gradient, uint32_t i0,
     uint32_t i1, uint32_t i2) {
   assert(pRegister);
@@ -436,7 +436,7 @@ Register *CRasterizer::applyPerspectiveTextureGradient(
   return pRegister;
 }
 
-Register *CRasterizer::applyAffineTextureMipmapGradient(Register *pRegister) {
+Register *Rasterizer::applyAffineTextureMipmapGradient(Register *pRegister) {
   auto rasterFlags = rasterID_.Flags;
   auto numTextures = rasterFlags.NumTextures;
   auto textureMips = rasterFlags.TextureMips;
@@ -493,7 +493,7 @@ Register *CRasterizer::applyAffineTextureMipmapGradient(Register *pRegister) {
   return pRegister;
 }
 
-Register *CRasterizer::applyPerspectiveTextureMipmapGradient(
+Register *Rasterizer::applyPerspectiveTextureMipmapGradient(
     Register *pRegister, const TriangleGradient &gradient, const RDVECTOR &v0,
     const RDVECTOR &v1, const RDVECTOR &v2, floatRW rhws[3]) {
   assert(pRegister);
@@ -632,7 +632,7 @@ Register *CRasterizer::applyPerspectiveTextureMipmapGradient(
   return pRegister;
 }
 
-Register *CRasterizer::applyFogGradient(Register *pRegister,
+Register *Rasterizer::applyFogGradient(Register *pRegister,
                                         const TriangleGradient &gradient,
                                         uint32_t i0, uint32_t i1, uint32_t i2) {
   assert(pRegister);

@@ -39,9 +39,9 @@ private:
 #endif
 };
 
-class CRasterCache : public Object {
+class RasterCache : public Object {
 public:
-  ~CRasterCache() {
+  ~RasterCache() {
 #ifndef NDEBUG
     if (slowRasterIDs_.size() != 0) {
       __glLog("BEGIN MAKE_SCANLINE().\r\n");
@@ -105,15 +105,15 @@ public:
     map_.insert(std::make_pair(rasterID, pRasterOp));
   }
 
-  static GLenum Create(CRasterCache **ppRasterCache) {
+  static GLenum Create(RasterCache **ppRasterCache) {
     __profileAPI(" - %s()\n", __FUNCTION__);
 
     assert(ppRasterCache);
 
     // Create a new raster cache
-    CRasterCache *pRasterCache = new CRasterCache();
+    RasterCache *pRasterCache = new RasterCache();
     if (nullptr == pRasterCache) {
-      __glLogError("CRasterCache allocation failed, out of memory.\r\n");
+      __glLogError("RasterCache allocation failed, out of memory.\r\n");
       return GL_OUT_OF_MEMORY;
     }
 
@@ -147,7 +147,7 @@ private:
     COMPACT_RATIO = 4,
   };
 
-  CRasterCache() { cbTotalSize_ = 0; }
+  RasterCache() { cbTotalSize_ = 0; }
 
   std::map<RASTERID, IRasterOp *> map_;
 

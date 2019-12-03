@@ -27,9 +27,9 @@ GLDriver::GLDriver() : handles_(nullptr), pRasterCache_(nullptr) {
   handles_->addRef();
 
   // Create the raster cache
-  err = CRasterCache::Create(&pRasterCache_);
+  err = RasterCache::Create(&pRasterCache_);
   if (__glFailed(err)) {
-    __glLogError("CRasterCache::Create() failed, err = %x.\r\n", err);
+    __glLogError("RasterCache::Create() failed, err = %x.\r\n", err);
     return;
   }
 }

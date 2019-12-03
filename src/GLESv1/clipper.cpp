@@ -66,7 +66,7 @@ inline int CullSign(float x0, float y0, float w0, float x1, float y1, float w1,
   return 0;
 }
 
-bool CRasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
+bool Rasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   bool bIsCulled;
 
   CullStates cullStates = cullStates_;
@@ -113,7 +113,7 @@ bool CRasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   return true;
 }
 
-void CRasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
+void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
                                     uint32_t clipUnion) {
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
@@ -207,7 +207,7 @@ void CRasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
   this->rasterLine(iFrom, iTo);
 }
 
-void CRasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
+void Rasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
                                         uint32_t clipUnion) {
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
@@ -301,7 +301,7 @@ void CRasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
   }
 }
 
-uint32_t CRasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
+uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
                                    uint32_t *pSrc, uint32_t *pDst,
                                    uint32_t *pTmp) {
   auto pvClipPos =
@@ -347,7 +347,7 @@ uint32_t CRasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
   return nClipVertices;
 }
 
-void CRasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
+void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
                                     floatf fDistB, uint32_t i2) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   auto pvClipPos =

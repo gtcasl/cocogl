@@ -14,11 +14,11 @@
 //
 #pragma once
 
-class CMatrixStack : public Object {
+class MatrixStack : public Object {
 public:
-  ~CMatrixStack();
+  ~MatrixStack();
 
-  static GLenum Create(CMatrixStack **ppMatrixStack, uint8_t size);
+  static GLenum Create(MatrixStack **ppMatrixStack, uint8_t size);
 
   void toIdentity() {
     pMatrices_[curIndex_].toIdentity();
@@ -69,7 +69,7 @@ public:
 private:
   GLenum initialize(uint8_t size);
 
-  CMatrixStack();
+  MatrixStack();
 
   void setIdentity(bool bValue) {
     if (bValue) {

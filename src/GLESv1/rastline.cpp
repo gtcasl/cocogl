@@ -16,7 +16,7 @@
 #include "raster.hpp"
 #include "raster.inl"
 
-void CRasterizer::drawLine(uint32_t i0, uint32_t i1) {
+void Rasterizer::drawLine(uint32_t i0, uint32_t i1) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   uint32_t flags0 = pwFlags[i0];
   uint32_t flags1 = pwFlags[i1];
@@ -36,7 +36,7 @@ void CRasterizer::drawLine(uint32_t i0, uint32_t i1) {
   }
 }
 
-void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
+void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
   LineGradient gradient;
 
   // Setup the line attributes
@@ -148,7 +148,7 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
 #endif
 }
 
-bool CRasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
+bool Rasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
                                       uint32_t i1) {
   auto rasterFlags = rasterID_.Flags;
   auto pRegister = rasterData_.Registers;
@@ -272,7 +272,7 @@ bool CRasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
 
   // Generate the rasterization routine
   if (!this->generateRasterOp()) {
-    __glLogError("CRasterizer::generateRasterOp() failed.\r\n");
+    __glLogError("Rasterizer::generateRasterOp() failed.\r\n");
     return false;
   }
 

@@ -26,7 +26,7 @@ public:
 
   HandleTable *getHandles() const { return handles_; }
 
-  CRasterCache *getRasterCache() const { return pRasterCache_; }
+  RasterCache *getRasterCache() const { return pRasterCache_; }
 
   template <typename T> inline T getObject(void *handle) const {
     return reinterpret_cast<T>(
@@ -61,5 +61,5 @@ public:
 
 private:
   HandleTable *handles_;
-  CRasterCache *pRasterCache_;
+  RasterCache *pRasterCache_;
 };

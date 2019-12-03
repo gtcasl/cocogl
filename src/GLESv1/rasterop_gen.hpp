@@ -33,10 +33,10 @@ typedef void (*PfnBlend)(Color4 *pInOut, const uint8_t *pCB);
 typedef void (*PfnWriteColor)(const RasterData &rasterData,
                               const Color4 &cSrcColor, uint8_t *pCB);
 
-class CGenericRasterOp : public IRasterOp {
+class GenericRasterOp : public IRasterOp {
 public:
-  CGenericRasterOp(const RASTERID &rasterID);
-  ~CGenericRasterOp();
+  GenericRasterOp(const RASTERID &rasterID);
+  ~GenericRasterOp();
 
   PfnScanline getScanline() const { return pfnScanline_; }
 
