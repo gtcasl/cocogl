@@ -130,7 +130,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
   auto pIn = reinterpret_cast<const typename T::Input *>(pbIn);
 
   if constexpr (T::Input::DIM >= 1) {
-    pOut->x = Math::TCast<floatf>(pIn->x);
+    pOut->x = static_cast<floatf>(pIn->x);
   } else {
     if constexpr (D::DIM >= 1) {
       pOut->x = fZERO;
@@ -138,7 +138,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
   }
 
   if constexpr (T::Input::DIM >= 2) {
-    pOut->y = Math::TCast<floatf>(pIn->y);
+    pOut->y = static_cast<floatf>(pIn->y);
   } else {
     if constexpr (D::DIM >= 2) {
       pOut->y = fZERO;
@@ -146,7 +146,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
   }
 
   if constexpr (T::Input::DIM >= 3) {
-    pOut->z = Math::TCast<floatf>(pIn->z);
+    pOut->z = static_cast<floatf>(pIn->z);
   } else {
     if constexpr (D::DIM >= 3) {
       pOut->z = fZERO;
@@ -154,7 +154,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
   }
 
   if constexpr (T::Input::DIM >= 4) {
-    pOut->w = Math::TCast<floatf>(pIn->w);
+    pOut->w = static_cast<floatf>(pIn->w);
   } else {
     if constexpr (D::DIM >= 4) {
       pOut->w = fONE;
@@ -434,8 +434,8 @@ void CTNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
       }
     }
 
-    pvTexCoords[i].m[0] = Math::TCast<float20>(vIn.x);
-    pvTexCoords[i].m[1] = Math::TCast<float20>(vIn.y);
+    pvTexCoords[i].m[0] = static_cast<float20>(vIn.x);
+    pvTexCoords[i].m[1] = static_cast<float20>(vIn.y);
   }
 }
 

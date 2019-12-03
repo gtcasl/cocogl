@@ -72,15 +72,15 @@ public:
   template <uint32_t F2, typename T2> explicit TFixed(TFixed<F2, T2> rhs) {
     if constexpr (sizeof(T) > sizeof(T2)) {
       if constexpr (F2 > F) {
-        data_ = static_cast<T>(rhs) >> (F2 - F);
+        data_ = static_cast<T>(rhs.data()) >> (F2 - F);
       } else {
-        data_ = static_cast<T>(rhs) << (F - F2);
+        data_ = static_cast<T>(rhs.data()) << (F - F2);
       }
     } else {
       if constexpr (F2 > F) {
-        data_ = static_cast<T>(rhs >> (F2 - F));
+        data_ = static_cast<T>(rhs.data() >> (F2 - F));
       } else {
-        data_ = static_cast<T>(rhs << (F - F2));
+        data_ = static_cast<T>(rhs.data() << (F - F2));
       }
     }
   }
@@ -177,8 +177,7 @@ public:
 
   template <uint32_t F2, typename T2>
   friend auto operator*(TFixed lhs, TFixed<F2, T2> rhs) {
-    return TFixed::make((static_cast<int64_t>(lhs.data()) * rhs.data()) >>
-                        FRAC);
+    return TFixed::make((static_cast<int64_t>(lhs.data_) * rhs.data()) >> F2);
   }
 
   friend auto operator/(TFixed lhs, TFixed rhs) {
@@ -189,8 +188,7 @@ public:
   template <uint32_t F2, typename T2>
   friend auto operator/(TFixed lhs, TFixed<F2, T2> rhs) {
     assert(rhs.data() != 0);
-    return TFixed::make((static_cast<int64_t>(lhs.data()) << FRAC) /
-                        rhs.data());
+    return TFixed::make((static_cast<int64_t>(lhs.data_) << F2) / rhs.data());
   }
 
   friend auto operator*(TFixed lhs, float rhs) {
@@ -328,7 +326,6 @@ public:
   auto data() const { return data_; }
 
 private:
-  template <uint32_t F2, typename T2> friend class TFixed;
 
   T data_;
 };

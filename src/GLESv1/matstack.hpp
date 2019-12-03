@@ -62,7 +62,7 @@ public:
 
     auto pSrc = pMatrices_[curIndex_]._m;
     for (uint32_t i = 0; i < 16; ++i) {
-      pDst[i] = Math::TCast<T>(pSrc[i]);
+      pDst[i] = static_cast<T>(pSrc[i]);
     }
   }
 

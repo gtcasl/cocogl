@@ -834,8 +834,8 @@ void CTNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
   }
 
   for (uint32_t k = 0; k < count; ++k) {
-    pvTexCoords[k].m[0] = Math::TCast<float20>(vIn.x);
-    pvTexCoords[k].m[1] = Math::TCast<float20>(vIn.y);
+    pvTexCoords[k].m[0] = static_cast<float20>(vIn.x);
+    pvTexCoords[k].m[1] = static_cast<float20>(vIn.y);
   }
 }
 

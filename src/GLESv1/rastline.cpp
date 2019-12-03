@@ -49,7 +49,7 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
 
   auto pfnScanline = rasterData_.pRasterOp->getScanline();
 
-  auto fLineWidth = Math::TCast<fixedDDA>(fLineWidth_);
+  auto fLineWidth = static_cast<fixedDDA>(fLineWidth_);
   auto fRndCeil = fixedDDA::make(fixedDDA::MASK) - TConst<fixedDDA>::Half();
 
   auto i4dx = v1.x - v0.x;
@@ -57,7 +57,7 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
 
 #ifdef COCOGL_RASTER_PROFILE
   auto start_time = std::chrono::high_resolution_clock::now();
-  rasterData_.pRasterOp->StartProfile(Math::TCast<int>(Math::TAbs(i4dx) + Math::TAbs(i4dy)));
+  rasterData_.pRasterOp->StartProfile(static_cast<int>(Math::TAbs(i4dx) + Math::TAbs(i4dy)));
 #endif
 
   if (Math::TAbs(i4dx) > Math::TAbs(i4dy)) {
@@ -87,8 +87,8 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     auto fby = fty + fLineWidth;
 
     for (int x = x0; x < x1; ++x) {
-      auto y0 = Math::TMax<int>(Math::TCast<int>(fty), scissorRect_.top);
-      auto y1 = Math::TMin<int>(Math::TCast<int>(fby), scissorRect_.bottom);
+      auto y0 = Math::TMax<int>(static_cast<int>(fty), scissorRect_.top);
+      auto y1 = Math::TMin<int>(static_cast<int>(fby), scissorRect_.bottom);
 
       for (int y = y0; y < y1; ++y) {
         (pfnScanline)(rasterData_, y, x, x + 1);
@@ -124,8 +124,8 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     auto frx = flx + fLineWidth;
 
     for (int y = y0; y < y1; ++y) {
-      auto x0 = Math::TMax<int>(Math::TCast<int>(flx), scissorRect_.left);
-      auto x1 = Math::TMin<int>(Math::TCast<int>(frx), scissorRect_.right);
+      auto x0 = Math::TMax<int>(static_cast<int>(flx), scissorRect_.left);
+      auto x1 = Math::TMin<int>(static_cast<int>(frx), scissorRect_.right);
 
       (pfnScanline)(rasterData_, y, x0, x1);
 

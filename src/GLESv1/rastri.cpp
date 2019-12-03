@@ -141,7 +141,7 @@ void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 
 #ifdef COCOGL_RASTER_PROFILE
   auto start_time = std::chrono::high_resolution_clock::now();
-  rasterData_.pRasterOp->StartProfile(Math::TCast<int>(Math::TAbs(i8Area)));
+  rasterData_.pRasterOp->StartProfile(static_cast<int>(Math::TAbs(i8Area)));
 #endif
 
   fixedDDA fx0, fx1;
@@ -160,15 +160,14 @@ void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
     fx1 = fixedDDA(i4x0) + fdx1 * i4Y0Diff + fRndCeil;
 
     for (; y < y1; ++y, fx0 += fdx0, fx1 += fdx1) {
-      auto x0 = Math::TMax<int>(Math::TCast<int>(fx0), scissorRect_.left);
-      auto x1 = Math::TMin<int>(Math::TCast<int>(fx1), scissorRect_.right);
+      auto x0 = Math::TMax<int>(static_cast<int>(fx0), scissorRect_.left);
+      auto x1 = Math::TMin<int>(static_cast<int>(fx1), scissorRect_.right);
 
       if (x0 < x1) {
         (pfnScanline)(rasterData_, y, x0, x1);
       }
     }
   } else {
-
     fixedDDA fdx2 = fixedDDA(i4dx13) / i4dy13;
     fixedDDA fx2 = fixedDDA(i4x0) + fdx2 * i4Y0Diff + fRndCeil;
 
@@ -196,8 +195,8 @@ void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
     }
 
     for (; y < y2; ++y, fx0 += fdx0, fx1 += fdx1) {
-      auto x0 = Math::TMax<int>(Math::TCast<int>(fx0), scissorRect_.left);
-      auto x1 = Math::TMin<int>(Math::TCast<int>(fx1), scissorRect_.right);
+      auto x0 = Math::TMax<int>(static_cast<int>(fx0), scissorRect_.left);
+      auto x1 = Math::TMin<int>(static_cast<int>(fx1), scissorRect_.right);
 
       if (x0 < x1) {
         (pfnScanline)(rasterData_, y, x0, x1);
@@ -313,14 +312,14 @@ Register *CRasterizer::applyDepthGradient(Register *pRegister,
 void CRasterizer::applyPolygonOffset(Register *pRegister) {
   assert(pRegister);
 
-  auto fSlope = Math::TCast<float20>(
+  auto fSlope = static_cast<float20>(
       Math::TMax(Math::TAbs(pRegister->m[0]), Math::TAbs(pRegister->m[1])));
 
   auto fOffset = static_cast<floatf>((polygonOffset_.fFactor * fSlope) +
                                      polygonOffset_.fUnits * fEPS);
 
   pRegister->m[2] = static_cast<fixedRX>(
-      Math::TSat(Math::TCast<floatf>(pRegister->m[2]) + fOffset));
+      Math::TSat(static_cast<floatf>(pRegister->m[2]) + fOffset));
 }
 
 Register *CRasterizer::applyColorGradient(Register *pRegister,
@@ -340,10 +339,10 @@ Register *CRasterizer::applyColorGradient(Register *pRegister,
                              (rasterFlags.InterpolateAlpha << 3);
   if (interpolateMask) {
     for (uint32_t i = 0; i < 4; ++i) {
-      const int delta[2] = {c1.m[i] - c0.m[i], c2.m[i] - c0.m[i]};
+      int delta[2] = {c1.m[i] - c0.m[i], c2.m[i] - c0.m[i]};
       pRegister[i].m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
       pRegister[i].m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
-      pRegister[i].m[2] = static_cast<fixedRX>(c0.m[i]) >> fixed8::FRAC;
+      pRegister[i].m[2] = static_cast<fixedRX>(c0.m[i]) >> 8;
     }
     rasterID_.Flags.InterpolateColor = (interpolateMask & 0x7) ? 1 : 0;
     rasterID_.Flags.InterpolateAlpha = interpolateMask >> 3;
@@ -351,7 +350,7 @@ Register *CRasterizer::applyColorGradient(Register *pRegister,
     for (uint32_t i = 0; i < 4; ++i) {
       pRegister[i].m[0] = TConst<fixedRX>::Zero();
       pRegister[i].m[1] = TConst<fixedRX>::Zero();
-      pRegister[i].m[2] = static_cast<fixedRX>(c2.m[i]) >> fixed8::FRAC;
+      pRegister[i].m[2] = static_cast<fixedRX>(c2.m[i]) >> 8;
     }
   }
 
@@ -377,7 +376,6 @@ Register *CRasterizer::applyAffineTextureGradient(Register *pRegister,
 
     for (uint32_t i = 0; i < 2; ++i) {
       float20 delta[2] = {uv1.m[i] - uv0.m[i], uv2.m[i] - uv0.m[i]};
-
       pRegister[i].m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
       pRegister[i].m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
       pRegister[i].m[2] = static_cast<fixedRX>(uv0.m[i]);
@@ -440,7 +438,6 @@ CRasterizer::applyPerspectiveTextureGradient(Register *pRegister,
       auto uvw2 = uv2.m[i] * rhws[2];
 
       float20 delta[2] = {uvw1 - uvw0, uvw2 - uvw0};
-
       pRegister[i].m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
       pRegister[i].m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
       pRegister[i].m[2] = static_cast<fixedRX>(uvw0);
@@ -472,7 +469,7 @@ Register *CRasterizer::applyAffineTextureMipmapGradient(Register *pRegister) {
       float20 fMaxDm[2];
 
       for (uint32_t i = 0; i < 2; ++i) {
-        fMaxDm[i] = Math::TCast<float20>(
+        fMaxDm[i] = static_cast<float20>(
             Math::TMax(Math::TAbs(pCur[i].m[0]), Math::TAbs(pCur[i].m[1])));
       }
 
@@ -532,9 +529,9 @@ Register *CRasterizer::applyPerspectiveTextureMipmapGradient(
   }
 
   auto pCur = pRegister - 2 * numTextures - 1;
-  auto fRhwdA = Math::TCast<float20>(pCur->m[0]);
-  auto fRhwdB = Math::TCast<float20>(pCur->m[1]);
-  auto fRhwdC = Math::TCast<float20>(pCur->m[2]);
+  auto fRhwdA = static_cast<float20>(pCur->m[0]);
+  auto fRhwdB = static_cast<float20>(pCur->m[1]);
+  auto fRhwdC = static_cast<float20>(pCur->m[2]);
 
   ++pCur;
 
@@ -545,9 +542,9 @@ Register *CRasterizer::applyPerspectiveTextureMipmapGradient(
       float20 fMaxDms[3][2];
 
       for (uint32_t i = 0; i < 2; ++i) {
-        auto fA = Math::TCast<float20>(pCur[i].m[0]);
-        auto fB = Math::TCast<float20>(pCur[i].m[1]);
-        auto fC = Math::TCast<float20>(pCur[i].m[2]);
+        auto fA = static_cast<float20>(pCur[i].m[0]);
+        auto fB = static_cast<float20>(pCur[i].m[1]);
+        auto fC = static_cast<float20>(pCur[i].m[2]);
 
         auto fK1 = Math::TMulSub<float24>(fA, fRhwdB, fB, fRhwdA);
         auto fK2 = Math::TMulSub<float20>(fA, fRhwdC, fRhwdA, fC);

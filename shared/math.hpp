@@ -359,24 +359,6 @@ int Lerp8(int lhs, int rhs, int frac);
 
 int Inverse32(int value);
 
-template <class R> R TCast(float rhs);
-
-template <class R> R TCast(int rhs);
-
-template <class R> R TCast(uint32_t rhs);
-
-template <class R> R TCast(short rhs);
-
-template <class R> R TCast(uint16_t rhs);
-
-template <class R> R TCast(char rhs);
-
-template <class R> R TCast(uint8_t rhs);
-
-template <class R> R TCast(bool rhs);
-
-template <class R, uint32_t F, typename T> R TCast(TFixed<F, T> rhs);
-
 template <class R> R TFromUNORM8(int rhs);
 
 template <class T> int TToUNORM8(T rhs);
@@ -672,49 +654,6 @@ inline TFixed<F, T> MulSub(TFixed<F, T> a0, TFixed<F, T> b0, TFixed<F, T> a1,
                             TFixed<F, T>::FRAC);
 }
 
-template <typename R> 
-inline R TCast(float rhs) { 
-  return static_cast<R>(rhs); 
-}
-
-template <typename R> 
-inline R TCast(int rhs) { 
-  return static_cast<R>(rhs); 
-}
-
-template <typename R>
-inline R TCast(uint32_t rhs) {
-  return static_cast<R>(rhs);
-}
-
-template <typename R> 
-inline R TCast(short rhs) { 
-  return static_cast<R>(rhs); 
-}
-
-template <typename R> 
-inline R TCast(uint16_t rhs) {
-  return static_cast<R>(rhs);
-}
-
-template <typename R> 
-inline R TCast(char rhs) { 
-  return static_cast<R>(rhs); 
-}
-
-template <typename R> 
-inline R TCast(uint8_t rhs) {
-  return static_cast<R>(rhs);
-}
-
-template <typename R> 
-inline R TCast(bool rhs) { return static_cast<R>(rhs); }
-
-template <typename R, uint32_t F, typename T> 
-inline R TCast(TFixed<F, T> rhs) {
-  return static_cast<R>(rhs);
-}
-
 template <> 
 inline float TFromUNORM8<float>(int rhs) {
   return rhs * (1.0f / 255);
@@ -981,7 +920,7 @@ inline R TShiftRight(float lhs, int rhs) {
 
 template <uint32_t F, typename T> 
 inline TFixed<F, T> TExp(TFixed<F, T> rhs) {
-  return static_cast<TFixed<F, T>>((float)exp(Math::TCast<float>(rhs)));
+  return TFixed<F, T>(std::exp(static_cast<float>(rhs)));
 }
 
 template <typename R, uint32_t F, typename T>
@@ -1060,7 +999,7 @@ public:
 template <uint32_t F, typename T> class TInvSelect<float, F, T> {
 public:
   inline static float Invert(TFixed<F, T> rhs) {
-    return 1.0f / Math::TCast<float>(rhs);
+    return 1.0f / static_cast<float>(rhs);
   }
 };
 

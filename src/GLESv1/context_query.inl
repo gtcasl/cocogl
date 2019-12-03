@@ -32,10 +32,10 @@ inline void GLContext::getClipPlane(GLenum plane, T eqn[4]) {
 
   uint32_t index = plane - GL_CLIP_PLANE0;
 
-  eqn[0] = Math::TCast<T>(vClipPlanesES_[index].x);
-  eqn[1] = Math::TCast<T>(vClipPlanesES_[index].y);
-  eqn[2] = Math::TCast<T>(vClipPlanesES_[index].z);
-  eqn[3] = Math::TCast<T>(vClipPlanesES_[index].w);
+  eqn[0] = static_cast<T>(vClipPlanesES_[index].x);
+  eqn[1] = static_cast<T>(vClipPlanesES_[index].y);
+  eqn[2] = static_cast<T>(vClipPlanesES_[index].z);
+  eqn[3] = static_cast<T>(vClipPlanesES_[index].w);
 }
 
 template <class T>
@@ -57,37 +57,37 @@ inline void GLContext::getLight(GLenum light, GLenum pname, T *pParams) {
   case GL_AMBIENT:
   case GL_DIFFUSE:
   case GL_SPECULAR:
-    pParams[0] = Math::TCast<T>(_light.getColor(pname).x);
-    pParams[1] = Math::TCast<T>(_light.getColor(pname).y);
-    pParams[2] = Math::TCast<T>(_light.getColor(pname).z);
-    pParams[3] = Math::TCast<T>(_light.getColor(pname).w);
+    pParams[0] = static_cast<T>(_light.getColor(pname).x);
+    pParams[1] = static_cast<T>(_light.getColor(pname).y);
+    pParams[2] = static_cast<T>(_light.getColor(pname).z);
+    pParams[3] = static_cast<T>(_light.getColor(pname).w);
     break;
 
   case GL_POSITION:
-    pParams[0] = Math::TCast<T>(_light.vPosition.x);
-    pParams[1] = Math::TCast<T>(_light.vPosition.y);
-    pParams[2] = Math::TCast<T>(_light.vPosition.z);
-    pParams[3] = Math::TCast<T>(_light.vPosition.w);
+    pParams[0] = static_cast<T>(_light.vPosition.x);
+    pParams[1] = static_cast<T>(_light.vPosition.y);
+    pParams[2] = static_cast<T>(_light.vPosition.z);
+    pParams[3] = static_cast<T>(_light.vPosition.w);
     break;
 
   case GL_SPOT_DIRECTION:
-    pParams[0] = Math::TCast<T>(_light.vSpotDirection.x);
-    pParams[1] = Math::TCast<T>(_light.vSpotDirection.y);
-    pParams[2] = Math::TCast<T>(_light.vSpotDirection.z);
+    pParams[0] = static_cast<T>(_light.vSpotDirection.x);
+    pParams[1] = static_cast<T>(_light.vSpotDirection.y);
+    pParams[2] = static_cast<T>(_light.vSpotDirection.z);
     break;
 
   case GL_SPOT_EXPONENT:
-    pParams[0] = Math::TCast<T>(_light.fSpotExponent);
+    pParams[0] = static_cast<T>(_light.fSpotExponent);
     break;
 
   case GL_SPOT_CUTOFF:
-    pParams[0] = Math::TCast<T>(_light.fSpotCutOff);
+    pParams[0] = static_cast<T>(_light.fSpotCutOff);
     break;
 
   case GL_CONSTANT_ATTENUATION:
   case GL_LINEAR_ATTENUATION:
   case GL_QUADRATIC_ATTENUATION:
-    pParams[0] = Math::TCast<T>(_light.getAttenuation(pname));
+    pParams[0] = static_cast<T>(_light.getAttenuation(pname));
     break;
 
   default:
@@ -115,21 +115,21 @@ inline void GLContext::getMaterial(GLenum face, GLenum pname, T *pParams) {
   case GL_AMBIENT:
   case GL_DIFFUSE:
   case GL_SPECULAR:
-    pParams[0] = Math::TCast<T>(material_.getColor(pname).x);
-    pParams[1] = Math::TCast<T>(material_.getColor(pname).y);
-    pParams[2] = Math::TCast<T>(material_.getColor(pname).z);
-    pParams[3] = Math::TCast<T>(material_.getColor(pname).w);
+    pParams[0] = static_cast<T>(material_.getColor(pname).x);
+    pParams[1] = static_cast<T>(material_.getColor(pname).y);
+    pParams[2] = static_cast<T>(material_.getColor(pname).z);
+    pParams[3] = static_cast<T>(material_.getColor(pname).w);
     break;
 
   case GL_EMISSION:
-    pParams[0] = Math::TCast<T>(vMatEmissive_.x);
-    pParams[1] = Math::TCast<T>(vMatEmissive_.y);
-    pParams[2] = Math::TCast<T>(vMatEmissive_.z);
-    pParams[3] = Math::TCast<T>(vMatEmissive_.w);
+    pParams[0] = static_cast<T>(vMatEmissive_.x);
+    pParams[1] = static_cast<T>(vMatEmissive_.y);
+    pParams[2] = static_cast<T>(vMatEmissive_.z);
+    pParams[3] = static_cast<T>(vMatEmissive_.w);
     break;
 
   case GL_SHININESS:
-    pParams[0] = Math::TCast<T>(fMatShininess_);
+    pParams[0] = static_cast<T>(fMatShininess_);
     break;
 
   default:
@@ -151,7 +151,7 @@ inline void GLContext::getTexEnv(GLenum env, GLenum pname, T *pParams) {
   case GL_TEXTURE_ENV:
     switch (pname) {
     case GL_TEXTURE_ENV_MODE:
-      pParams[0] = Math::TCast<T>(EnumFromTexEnv(texUnit.EnvMode));
+      pParams[0] = static_cast<T>(EnumFromTexEnv(texUnit.EnvMode));
       break;
 
     case GL_TEXTURE_ENV_COLOR:
@@ -198,23 +198,23 @@ inline void GLContext::getTexParameter(GLenum target, GLenum pname,
 
   switch (pname) {
   case GL_TEXTURE_MIN_FILTER:
-    pParams[0] = Math::TCast<T>(EnumFromTexFilter(pTexture->Params.MinFilter));
+    pParams[0] = static_cast<T>(EnumFromTexFilter(pTexture->Params.MinFilter));
     break;
 
   case GL_TEXTURE_MAG_FILTER:
-    pParams[0] = Math::TCast<T>(EnumFromTexFilter(pTexture->Params.MagFilter));
+    pParams[0] = static_cast<T>(EnumFromTexFilter(pTexture->Params.MagFilter));
     break;
 
   case GL_TEXTURE_WRAP_S:
-    pParams[0] = Math::TCast<T>(EnumFromTexAddress(pTexture->Params.AddressU));
+    pParams[0] = static_cast<T>(EnumFromTexAddress(pTexture->Params.AddressU));
     break;
 
   case GL_TEXTURE_WRAP_T:
-    pParams[0] = Math::TCast<T>(EnumFromTexAddress(pTexture->Params.AddressV));
+    pParams[0] = static_cast<T>(EnumFromTexAddress(pTexture->Params.AddressV));
     break;
 
   case GL_GENERATE_MIPMAP:
-    pParams[0] = Math::TCast<T>(pTexture->bGenMipMaps);
+    pParams[0] = static_cast<T>(pTexture->bGenMipMaps);
     break;
 
   default:
@@ -579,27 +579,27 @@ inline void GLContext::get(GLenum pname, T *pParams) {
 
   switch (pname) {
   case GL_CURRENT_COLOR:
-    pParams[0] = Math::TCast<T>(vColor_.x);
-    pParams[1] = Math::TCast<T>(vColor_.y);
-    pParams[2] = Math::TCast<T>(vColor_.z);
-    pParams[3] = Math::TCast<T>(vColor_.w);
+    pParams[0] = static_cast<T>(vColor_.x);
+    pParams[1] = static_cast<T>(vColor_.y);
+    pParams[2] = static_cast<T>(vColor_.z);
+    pParams[3] = static_cast<T>(vColor_.w);
     break;
 
   case GL_DEPTH_CLEAR_VALUE:
-    pParams[0] = Math::TCast<T>(fClearDepth_);
+    pParams[0] = static_cast<T>(fClearDepth_);
     break;
 
   case GL_CURRENT_TEXTURE_COORDS:
-    pParams[0] = Math::TCast<T>(vTexCoords_[activeTexture_].x);
-    pParams[1] = Math::TCast<T>(vTexCoords_[activeTexture_].y);
-    pParams[2] = Math::TCast<T>(fZERO);
-    pParams[3] = Math::TCast<T>(fONE);
+    pParams[0] = static_cast<T>(vTexCoords_[activeTexture_].x);
+    pParams[1] = static_cast<T>(vTexCoords_[activeTexture_].y);
+    pParams[2] = static_cast<T>(fZERO);
+    pParams[3] = static_cast<T>(fONE);
     break;
 
   case GL_CURRENT_NORMAL:
-    pParams[0] = Math::TCast<T>(vNormal_.x);
-    pParams[1] = Math::TCast<T>(vNormal_.y);
-    pParams[2] = Math::TCast<T>(vNormal_.z);
+    pParams[0] = static_cast<T>(vNormal_.x);
+    pParams[1] = static_cast<T>(vNormal_.y);
+    pParams[2] = static_cast<T>(vNormal_.z);
     break;
 
   case GL_MODELVIEW_MATRIX:
@@ -615,22 +615,22 @@ inline void GLContext::get(GLenum pname, T *pParams) {
     break;
 
   case GL_FOG_COLOR:
-    pParams[0] = Math::TCast<T>(vFogColor_.x);
-    pParams[1] = Math::TCast<T>(vFogColor_.y);
-    pParams[2] = Math::TCast<T>(vFogColor_.z);
-    pParams[3] = Math::TCast<T>(vFogColor_.w);
+    pParams[0] = static_cast<T>(vFogColor_.x);
+    pParams[1] = static_cast<T>(vFogColor_.y);
+    pParams[2] = static_cast<T>(vFogColor_.z);
+    pParams[3] = static_cast<T>(vFogColor_.w);
     break;
 
   case GL_FOG_DENSITY:
-    pParams[0] = Math::TCast<T>(fog_.getFactor(GL_FOG_DENSITY));
+    pParams[0] = static_cast<T>(fog_.getFactor(GL_FOG_DENSITY));
     break;
 
   case GL_FOG_START:
-    pParams[0] = Math::TCast<T>(fog_.getFactor(GL_FOG_START));
+    pParams[0] = static_cast<T>(fog_.getFactor(GL_FOG_START));
     break;
 
   case GL_FOG_END:
-    pParams[0] = Math::TCast<T>(fog_.getFactor(GL_FOG_END));
+    pParams[0] = static_cast<T>(fog_.getFactor(GL_FOG_END));
     break;
 
   case GL_ALPHA_TEST_REF:
@@ -638,60 +638,60 @@ inline void GLContext::get(GLenum pname, T *pParams) {
     break;
 
   case GL_LIGHT_MODEL_AMBIENT:
-    pParams[0] = Math::TCast<T>(vLightModelAmbient_.x);
-    pParams[1] = Math::TCast<T>(vLightModelAmbient_.y);
-    pParams[2] = Math::TCast<T>(vLightModelAmbient_.z);
-    pParams[3] = Math::TCast<T>(vLightModelAmbient_.w);
+    pParams[0] = static_cast<T>(vLightModelAmbient_.x);
+    pParams[1] = static_cast<T>(vLightModelAmbient_.y);
+    pParams[2] = static_cast<T>(vLightModelAmbient_.z);
+    pParams[3] = static_cast<T>(vLightModelAmbient_.w);
     break;
 
   case GL_COLOR_CLEAR_VALUE:
-    pParams[0] = Math::TCast<T>(vClearColor_.x);
-    pParams[1] = Math::TCast<T>(vClearColor_.y);
-    pParams[2] = Math::TCast<T>(vClearColor_.z);
-    pParams[3] = Math::TCast<T>(vClearColor_.w);
+    pParams[0] = static_cast<T>(vClearColor_.x);
+    pParams[1] = static_cast<T>(vClearColor_.y);
+    pParams[2] = static_cast<T>(vClearColor_.z);
+    pParams[3] = static_cast<T>(vClearColor_.w);
     break;
 
   case GL_POLYGON_OFFSET_UNITS:
-    pParams[0] = Math::TCast<T>(polygonOffset_.fUnits);
+    pParams[0] = static_cast<T>(polygonOffset_.fUnits);
     break;
 
   case GL_POLYGON_OFFSET_FACTOR:
-    pParams[0] = Math::TCast<T>(polygonOffset_.fFactor);
+    pParams[0] = static_cast<T>(polygonOffset_.fFactor);
     break;
 
   case GL_SAMPLE_COVERAGE_VALUE:
-    pParams[0] = Math::TCast<T>(sampleCoverage_.fValue);
+    pParams[0] = static_cast<T>(sampleCoverage_.fValue);
     break;
 
   case GL_POINT_SIZE_MIN:
-    pParams[0] = Math::TCast<T>(pointParams_.get(GL_POINT_SIZE_MIN));
+    pParams[0] = static_cast<T>(pointParams_.get(GL_POINT_SIZE_MIN));
     break;
 
   case GL_POINT_SIZE_MAX:
-    pParams[0] = Math::TCast<T>(pointParams_.get(GL_POINT_SIZE_MAX));
+    pParams[0] = static_cast<T>(pointParams_.get(GL_POINT_SIZE_MAX));
     break;
 
   case GL_POINT_FADE_THRESHOLD_SIZE:
-    pParams[0] = Math::TCast<T>(pointParams_.get(GL_POINT_FADE_THRESHOLD_SIZE));
+    pParams[0] = static_cast<T>(pointParams_.get(GL_POINT_FADE_THRESHOLD_SIZE));
     break;
 
   case GL_POINT_DISTANCE_ATTENUATION:
-    pParams[0] = Math::TCast<T>(pointParams_.vAttenuation.x);
-    pParams[1] = Math::TCast<T>(pointParams_.vAttenuation.y);
-    pParams[2] = Math::TCast<T>(pointParams_.vAttenuation.z);
+    pParams[0] = static_cast<T>(pointParams_.vAttenuation.x);
+    pParams[1] = static_cast<T>(pointParams_.vAttenuation.y);
+    pParams[2] = static_cast<T>(pointParams_.vAttenuation.z);
     break;
 
   case GL_DEPTH_RANGE:
-    pParams[0] = Math::TCast<T>(depthRange_.fNear);
-    pParams[1] = Math::TCast<T>(depthRange_.fFar);
+    pParams[0] = static_cast<T>(depthRange_.fNear);
+    pParams[1] = static_cast<T>(depthRange_.fFar);
     break;
 
   case GL_POINT_SIZE:
-    pParams[0] = Math::TCast<T>(fPointSize_);
+    pParams[0] = static_cast<T>(fPointSize_);
     break;
 
   case GL_LINE_WIDTH:
-    pParams[0] = Math::TCast<T>(fLineWidth_);
+    pParams[0] = static_cast<T>(fLineWidth_);
     break;
 
   default:

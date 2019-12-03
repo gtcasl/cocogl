@@ -36,10 +36,10 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pP
   case GL_DIFFUSE:
   case GL_SPECULAR:
   case GL_POSITION: {
-    vParam.x = Math::TCast<floatf>(pParams[0]);
-    vParam.y = Math::TCast<floatf>(pParams[1]);
-    vParam.z = Math::TCast<floatf>(pParams[2]);
-    vParam.w = Math::TCast<floatf>(pParams[3]);
+    vParam.x = static_cast<floatf>(pParams[0]);
+    vParam.y = static_cast<floatf>(pParams[1]);
+    vParam.z = static_cast<floatf>(pParams[2]);
+    vParam.w = static_cast<floatf>(pParams[3]);
 
     if (GL_POSITION == pname) {
       _light.Flags.DirectionalLight = Math::TIsZero(vParam.w) ? 1 : 0;
@@ -54,9 +54,9 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pP
   break;
 
   case GL_SPOT_DIRECTION: {
-    vParam.x = Math::TCast<floatf>(pParams[0]);
-    vParam.y = Math::TCast<floatf>(pParams[1]);
-    vParam.z = Math::TCast<floatf>(pParams[2]);
+    vParam.x = static_cast<floatf>(pParams[0]);
+    vParam.y = static_cast<floatf>(pParams[1]);
+    vParam.z = static_cast<floatf>(pParams[2]);
 
     if (dirtyFlags_.ModelViewInvT33) {
       this->updateModelViewInvT33();
@@ -69,7 +69,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pP
   break;
 
   case GL_SPOT_EXPONENT: {
-    vParam.x = Math::TCast<floatf>(pParams[0]);
+    vParam.x = static_cast<floatf>(pParams[0]);
     if ((vParam.x < fZERO) || (vParam.x > f128)) {
       __glError(
           GL_INVALID_VALUE,
@@ -84,7 +84,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pP
   break;
 
   case GL_SPOT_CUTOFF: {
-    vParam.x = Math::TCast<floatf>(pParams[0]);
+    vParam.x = static_cast<floatf>(pParams[0]);
     if (((vParam.x < fZERO) || (vParam.x > f90)) && (vParam.x != f180)) {
       __glError(
           GL_INVALID_VALUE,
@@ -102,7 +102,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pP
   case GL_CONSTANT_ATTENUATION:
   case GL_LINEAR_ATTENUATION:
   case GL_QUADRATIC_ATTENUATION: {
-    vParam.x = Math::TCast<floatf>(pParams[0]);
+    vParam.x = static_cast<floatf>(pParams[0]);
     if (vParam.x < fZERO) {
       __glError(
           GL_INVALID_VALUE,
@@ -131,14 +131,14 @@ inline void GLContext::setLightParameterModel(GLenum pname, const T *pParams) {
 
   switch (pname) {
   case GL_LIGHT_MODEL_TWO_SIDE:
-    caps_.TwoSidedLighting = (Math::TCast<floatf>(pParams[0]) != fZERO);
+    caps_.TwoSidedLighting = (static_cast<floatf>(pParams[0]) != fZERO);
     break;
 
   case GL_LIGHT_MODEL_AMBIENT:
-    vLightModelAmbient_.x = Math::TCast<floatf>(pParams[0]);
-    vLightModelAmbient_.y = Math::TCast<floatf>(pParams[1]);
-    vLightModelAmbient_.z = Math::TCast<floatf>(pParams[2]);
-    vLightModelAmbient_.w = Math::TCast<floatf>(pParams[3]);
+    vLightModelAmbient_.x = static_cast<floatf>(pParams[0]);
+    vLightModelAmbient_.y = static_cast<floatf>(pParams[1]);
+    vLightModelAmbient_.z = static_cast<floatf>(pParams[2]);
+    vLightModelAmbient_.w = static_cast<floatf>(pParams[3]);
     dirtyFlags_.ScaledAmbient = 1;
     break;
 
@@ -173,10 +173,10 @@ inline void GLContext::setMaterial(GLenum face, GLenum pname, const T *pParams) 
     [[fallthrough]];
   case GL_SPECULAR:
   case GL_EMISSION: {
-    vParam.x = Math::TCast<floatf>(pParams[0]);
-    vParam.y = Math::TCast<floatf>(pParams[1]);
-    vParam.z = Math::TCast<floatf>(pParams[2]);
-    vParam.w = Math::TCast<floatf>(pParams[3]);
+    vParam.x = static_cast<floatf>(pParams[0]);
+    vParam.y = static_cast<floatf>(pParams[1]);
+    vParam.z = static_cast<floatf>(pParams[2]);
+    vParam.w = static_cast<floatf>(pParams[3]);
 
     if (GL_EMISSION == pname) {
       vMatEmissive_ = vParam;
@@ -195,7 +195,7 @@ inline void GLContext::setMaterial(GLenum face, GLenum pname, const T *pParams) 
   break;
 
   case GL_SHININESS: {
-    vParam.x = Math::TCast<floatf>(pParams[0]);
+    vParam.x = static_cast<floatf>(pParams[0]);
     if ((vParam.x < fZERO) || (vParam.x > f128)) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setMaterial() failed, invalid "
@@ -248,14 +248,14 @@ inline void GLContext::setFog(GLenum pname, const T *pParams) {
     dirtyFlags_.FogRatio = 1;
     [[fallthrough]];
   case GL_FOG_DENSITY:
-    fog_.setFactor(pname, Math::TCast<floatf>(pParams[0]));
+    fog_.setFactor(pname, static_cast<floatf>(pParams[0]));
     break;
 
   case GL_FOG_COLOR:
-    vFogColor_.x = Math::TCast<floatf>(pParams[0]);
-    vFogColor_.y = Math::TCast<floatf>(pParams[1]);
-    vFogColor_.z = Math::TCast<floatf>(pParams[2]);
-    vFogColor_.w = Math::TCast<floatf>(pParams[3]);
+    vFogColor_.x = static_cast<floatf>(pParams[0]);
+    vFogColor_.y = static_cast<floatf>(pParams[1]);
+    vFogColor_.z = static_cast<floatf>(pParams[2]);
+    vFogColor_.w = static_cast<floatf>(pParams[3]);
     dirtyFlags_.FogColor = 1;
     break;
 

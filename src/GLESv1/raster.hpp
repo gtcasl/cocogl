@@ -34,8 +34,7 @@ protected:
     fixed4 fdY1;
     floatQ fRatio;
 
-    TriangleGradient(fixed4 fdX0_, fixed4 fdY0_, fixed4 fdX1_, fixed4 fdY1_,
-                     floatQ fRatio_)
+    TriangleGradient(fixed4 fdX0_, fixed4 fdY0_, fixed4 fdX1_, fixed4 fdY1_, floatQ fRatio_)
         : fdX0(fdX0_), fdY0(fdY0_), fdX1(fdX1_), fdY1(fdY1_), fRatio(fRatio_) {}
 
     template <class T, class D> T calcDeltaX(D delta0, D delta1) const {
@@ -46,8 +45,7 @@ protected:
       int64_t uv1 = static_cast<int64_t>(delta1.data()) * this->fdY0.data();
       return T::make(((uv0 - uv1) * this->fRatio.data() + half) >> FRAC);
 #else
-      return static_cast<T>((delta0 * this->fdY1 - delta1 * this->fdY0) *
-                            this->fRatio);
+      return static_cast<T>((delta0 * this->fdY1 - delta1 * this->fdY0) * this->fRatio);
 #endif
     }
 
@@ -59,8 +57,7 @@ protected:
       int64_t uv1 = static_cast<int64_t>(delta0.data()) * this->fdX1.data();
       return T::make(((uv0 - uv1) * this->fRatio.data() + half) >> FRAC);
 #else
-      return static_cast<T>((delta1 * this->fdX0 - delta0 * this->fdX1) *
-                            this->fRatio);
+      return static_cast<T>((delta1 * this->fdX0 - delta0 * this->fdX1) * this->fRatio);
 #endif
     }
 
