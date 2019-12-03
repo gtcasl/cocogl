@@ -47,8 +47,6 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
 
-  auto pfnScanline = rasterData_.pRasterOp->getScanline();
-
   auto fLineWidth = static_cast<fixedDDA>(fLineWidth_);
   auto fRndCeil = fixedDDA::make(fixedDDA::MASK) - TConst<fixedDDA>::Half();
 
@@ -59,6 +57,8 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
   auto start_time = std::chrono::high_resolution_clock::now();
   rasterData_.pRasterOp->StartProfile(static_cast<int>(Math::TAbs(i4dx) + Math::TAbs(i4dy)));
 #endif
+
+  auto pfnScanline = rasterData_.pRasterOp->getScanline();
 
   if (Math::TAbs(i4dx) > Math::TAbs(i4dy)) {
     // Set the reference offset

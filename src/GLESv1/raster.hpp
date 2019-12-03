@@ -27,25 +27,47 @@ public:
   void postRender();
 
 protected:
+
   struct TriangleGradient {
-    fixed4 fdX0;
-    fixed4 fdY0;
-    fixed4 fdX1;
-    fixed4 fdY1;
+    fixed4 i4dx12;
+    fixed4 i4dy12;
+    fixed4 i4dx13;
+    fixed4 i4dy13;
+    fixed4 i4dx23;
+    fixed4 i4dy23;
     floatQ fRatio;
 
-    TriangleGradient(fixed4 fdX0_, fixed4 fdY0_, fixed4 fdX1_, fixed4 fdY1_, floatQ fRatio_)
-        : fdX0(fdX0_), fdY0(fdY0_), fdX1(fdX1_), fdY1(fdY1_), fRatio(fRatio_) {}
+    bool init(fixed4 i4x0, fixed4 i4y0, fixed4 i4x1, fixed4 i4y1, fixed4 i4x2, fixed4 i4y2) {
+      this->i4dx12 = (i4x1 - i4x0);
+      this->i4dy12 = (i4y1 - i4y0);
+      this->i4dx13 = (i4x2 - i4x0);
+
+      this->i4dy13 = (i4y2 - i4y0);
+      this->i4dx23 = (i4x2 - i4x1);
+      this->i4dy23 = (i4y2 - i4y1);
+
+      // Calculate the edge direction
+      auto i8Area = Math::TFastMul<fixed8>(this->i4dx12, this->i4dy13) -
+                    Math::TFastMul<fixed8>(this->i4dx13, this->i4dy12);
+
+      // Reject small areas (1/4 x 1/4 = 1/16)
+      auto u8Area = Math::TAbs(i8Area);
+      if (u8Area.data() < 16)
+        return false;
+
+      fRatio = Math::TInv<floatQ>(i8Area);
+      return true;
+    }
 
     template <class T, class D> T calcDeltaX(D delta0, D delta1) const {
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       auto half = static_cast<int64_t>(1) << (FRAC - 1);
-      int64_t uv0 = static_cast<int64_t>(delta0.data()) * this->fdY1.data();
-      int64_t uv1 = static_cast<int64_t>(delta1.data()) * this->fdY0.data();
+      int64_t uv0 = static_cast<int64_t>(delta0.data()) * this->i4dy13.data();
+      int64_t uv1 = static_cast<int64_t>(delta1.data()) * this->i4dy12.data();
       return T::make(((uv0 - uv1) * this->fRatio.data() + half) >> FRAC);
 #else
-      return static_cast<T>((delta0 * this->fdY1 - delta1 * this->fdY0) * this->fRatio);
+      return static_cast<T>((delta0 * this->i4dy13 - delta1 * this->i4dy12) * this->fRatio);
 #endif
     }
 
@@ -53,16 +75,16 @@ protected:
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       auto half = static_cast<int64_t>(1) << (FRAC - 1);
-      int64_t uv0 = static_cast<int64_t>(delta1.data()) * this->fdX0.data();
-      int64_t uv1 = static_cast<int64_t>(delta0.data()) * this->fdX1.data();
+      int64_t uv0 = static_cast<int64_t>(delta1.data()) * this->i4dx12.data();
+      int64_t uv1 = static_cast<int64_t>(delta0.data()) * this->i4dx13.data();
       return T::make(((uv0 - uv1) * this->fRatio.data() + half) >> FRAC);
 #else
-      return static_cast<T>((delta1 * this->fdX0 - delta0 * this->fdX1) * this->fRatio);
+      return static_cast<T>((delta1 * this->i4dx12 - delta0 * this->i4dx13) * this->fRatio);
 #endif
     }
 
     template <class T> T calcDeltaX(int delta0, int delta1) const {
-      auto diff = this->fdY1 * delta0 - this->fdY0 * delta1;
+      auto diff = this->i4dy13 * delta0 - this->i4dy12 * delta1;
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
@@ -73,7 +95,7 @@ protected:
     }
 
     template <class T> T calcDeltaY(int delta0, int delta1) const {
-      auto diff = this->fdX0 * delta1 - this->fdX1 * delta0;
+      auto diff = this->i4dx12 * delta1 - this->i4dx13 * delta0;
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
@@ -153,7 +175,7 @@ protected:
 
   bool setupLineAttributes(LineGradient *pGradient, uint32_t i0, uint32_t i1);
 
-  bool setupTriangleAttributes(uint32_t i0, uint32_t i1, uint32_t i2);
+  bool setupTriangleAttributes(const TriangleGradient& gradient, uint32_t i0, uint32_t i1, uint32_t i2);
 
   Register *applyDepthGradient(Register *pRegister, const TriangleGradient &gradient,
                           const RDVECTOR &v0, const RDVECTOR &v1,

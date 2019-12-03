@@ -85,55 +85,38 @@ bool CRasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
 void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
-  // Setup the triangle attributes
-  if (!this->setupTriangleAttributes(i0, i1, i2))
-    return;
-
-  auto pfnScanline = rasterData_.pRasterOp->getScanline();
-
-  // Lookup screenspace positions
   auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
-  auto &v0 = pvScreenPos[i0];
-  auto &v1 = pvScreenPos[i1];
-  auto &v2 = pvScreenPos[i2];
+  auto i4y0 = pvScreenPos[i0].y;
+  auto i4y1 = pvScreenPos[i1].y;
+  auto i4y2 = pvScreenPos[i2].y;
 
   // Sort vertices by y-coordinate
-  const RDVECTOR *vertices[3] = {&v0, &v1, &v2};
-  if (v1.y < vertices[0]->y) {
-    vertices[1] = vertices[0];
-    vertices[0] = &v1;
+  if (i4y0 > i4y1) {
+    std::swap(i4y0, i4y1);
+    std::swap(i0, i1);
   }
+  if (i4y0 > i4y2) {
+    i4y0 = std::exchange(i4y2, std::exchange(i4y1, i4y0));
+    i0 = std::exchange(i2, std::exchange(i1, i0));
+  } else if (i4y1 > i4y2) {
+    std::swap(i4y1, i4y2);
+    std::swap(i1, i2);
+  } 
 
-  if (v2.y < vertices[0]->y) {
-    vertices[2] = vertices[1];
-    vertices[1] = vertices[0];
-    vertices[0] = &v2;
-  } else if (v2.y < vertices[1]->y) {
-    vertices[2] = vertices[1];
-    vertices[1] = &v2;
-  }
+  auto i4x0 = pvScreenPos[i0].x;
+  auto i4x1 = pvScreenPos[i1].x;
+  auto i4x2 = pvScreenPos[i2].x;
 
-  // Setup triangle coordinates
-  auto i4x0 = vertices[0]->x;
-  auto i4x1 = vertices[1]->x;
-  auto i4x2 = vertices[2]->x;
+  // Setup triangle gradient
+  TriangleGradient g;
+  if (!g.init(i4x0, i4y0, i4x1, i4y1, i4x2, i4y2))
+    return;
 
-  auto i4y0 = vertices[0]->y;
-  auto i4y1 = vertices[1]->y;
-  auto i4y2 = vertices[2]->y;
+  // Setup the triangle attributes
+  if (!this->setupTriangleAttributes(g, i0, i1, i2))
+    return;
 
-  auto i4dx12 = (i4x1 - i4x0);
-  auto i4dy12 = (i4y1 - i4y0);
-  auto i4dx13 = (i4x2 - i4x0);
-
-  auto i4dy13 = (i4y2 - i4y0);
-  auto i4dx23 = (i4x2 - i4x1);
-  auto i4dy23 = (i4y2 - i4y1);
-
-  // Calculate the edge direction
-  auto i8Area = Math::TFastMul<fixed8>(i4dx12, i4dy13) -
-                Math::TFastMul<fixed8>(i4dx13, i4dy12);
-  bool bMiddleIsRight = (i8Area >= TConst<fixed8>::Zero());
+  bool bMiddleIsRight = (g.fRatio >= TConst<fixed8>::Zero());
   auto fRndCeil = fixedDDA::make(fixedDDA::MASK) - TConst<fixedDDA>::Half();
 
   int y = Math::TMax<int>(Math::TCeili<int>(i4y0 - TConst<fixed4>::Half()), scissorRect_.top);
@@ -147,10 +130,12 @@ void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   fixedDDA fx0, fx1;
   fixedDDA fdx0, fdx1;
 
-  if (i4dy12.data()) {
+  auto pfnScanline = rasterData_.pRasterOp->getScanline();
+
+  if (g.i4dy12.data()) {
     int y1 = Math::TMin<int>(Math::TCeili<int>(i4y1 - TConst<fixed4>::Half()), scissorRect_.bottom);
-    fdx0 = fixedDDA(i4dx12) / i4dy12;
-    fdx1 = fixedDDA(i4dx13) / i4dy13;
+    fdx0 = fixedDDA(g.i4dx12) / g.i4dy12;
+    fdx1 = fixedDDA(g.i4dx13) / g.i4dy13;
 
     if (bMiddleIsRight) {
       __swap(fdx0, fdx1);
@@ -168,7 +153,7 @@ void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
       }
     }
   } else {
-    fixedDDA fdx2 = fixedDDA(i4dx13) / i4dy13;
+    fixedDDA fdx2 = fixedDDA(g.i4dx13) / g.i4dy13;
     fixedDDA fx2 = fixedDDA(i4x0) + fdx2 * i4Y0Diff + fRndCeil;
 
     if (bMiddleIsRight) {
@@ -180,10 +165,10 @@ void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
     }
   }
 
-  if (i4dy23.data()) {
+  if (g.i4dy23.data()) {
     auto y2 = Math::TMin<int>(Math::TCeili<int>(i4y2 - TConst<fixed4>::Half()),  scissorRect_.bottom);
     auto i4Y1Diff = fixed4(y) - (i4y1 - TConst<fixed4>::Half());
-    auto fdx2 = fixedDDA(i4dx23) / i4dy23;
+    auto fdx2 = fixedDDA(g.i4dx23) / g.i4dy23;
     auto fx2 = fixedDDA(i4x1) + fdx2 * i4Y1Diff + fRndCeil;
 
     if (bMiddleIsRight) {
@@ -211,58 +196,38 @@ void CRasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 #endif
 }
 
-bool CRasterizer::setupTriangleAttributes(uint32_t i0, uint32_t i1,
-                                          uint32_t i2) {
-  // Lookup vertex screen positions
+bool CRasterizer::setupTriangleAttributes(const TriangleGradient& g,
+                                          uint32_t i0, uint32_t i1, uint32_t i2) {
+  // Backup the rasterID
+  auto rasterID = rasterID_;
+
   auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
   auto &v2 = pvScreenPos[i2];
 
-  auto i4dx12 = v1.x - v0.x;
-  auto i4dy12 = v1.y - v0.y;
-  auto i4dx13 = v2.x - v0.x;
-  auto i4dy13 = v2.y - v0.y;
-
-  auto i8Area = Math::TFastMul<fixed8>(i4dx12, i4dy13) -
-                Math::TFastMul<fixed8>(i4dx13, i4dy12);
-
-  // Reject small areas (1/4 x 1/4 = 1/16)
-  auto u8Area = Math::TAbs(i8Area);
-  if (u8Area.data() < 16) {
-    return false;
-  }
-
-  auto fRatio = Math::TInv<floatQ>(i8Area);
-  TriangleGradient gradient(i4dx12, i4dy12, i4dx13, i4dy13, fRatio);
-
-  // Backup the rasterID
-  auto rasterID = rasterID_;
-
   auto rasterFlags = rasterID.Flags;
   auto pRegister = rasterData_.Registers;
 
   if (rasterFlags.DepthTest) {
-    pRegister = this->applyDepthGradient(pRegister, gradient, v0, v1, v2);
+    pRegister = this->applyDepthGradient(pRegister, g, v0, v1, v2);
   }
 
   if (rasterFlags.Color) {
-    pRegister = this->applyColorGradient(pRegister, gradient, i0, i1, i2);
+    pRegister = this->applyColorGradient(pRegister, g, i0, i1, i2);
   }
 
   if (rasterFlags.NumTextures) {
-    if ((u8Area > TConst<fixed8>::Half()) &&
-        ((fixedRX(Math::TAbs(v1.rhw - v0.rhw)) > TConst<fixedRX>::Epsilon()) ||
-         (fixedRX(Math::TAbs(v2.rhw - v0.rhw)) > TConst<fixedRX>::Epsilon()))) {
-      pRegister =
-          this->applyPerspectiveTextureGradient(pRegister, gradient, i0, i1, i2);
+    if ((fixedRX(Math::TAbs(v1.rhw - v0.rhw)) > TConst<fixedRX>::Epsilon()) ||
+        (fixedRX(Math::TAbs(v2.rhw - v0.rhw)) > TConst<fixedRX>::Epsilon())) {
+      pRegister = this->applyPerspectiveTextureGradient(pRegister, g, i0, i1, i2);
     } else {
-      pRegister = this->applyAffineTextureGradient(pRegister, gradient, i0, i1, i2);
+      pRegister = this->applyAffineTextureGradient(pRegister, g, i0, i1, i2);
     }
   }
 
   if (rasterFlags.Fog) {
-    pRegister = this->applyFogGradient(pRegister, gradient, i0, i1, i2);
+    pRegister = this->applyFogGradient(pRegister, g, i0, i1, i2);
   }
 
   // Set the reference offset
