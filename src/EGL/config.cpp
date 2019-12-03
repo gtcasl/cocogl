@@ -52,9 +52,7 @@ _EGLConfig::_EGLConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
   this->setAttribute(EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT);
 }
 
-_EGLConfig::~_EGLConfig() { 
-  __profileAPI(" - %s()\n", __FUNCTION__); 
-}
+_EGLConfig::~_EGLConfig() { __profileAPI(" - %s()\n", __FUNCTION__); }
 
 EGLint _EGLConfig::Create(_EGLConfig **ppConfig, EGLint red, EGLint green,
                           EGLint blue, EGLint alpha, EGLint depth,
@@ -105,8 +103,7 @@ EGLint _EGLConfig::matches(const EGLint *pAttrib_list, bool *pbResult) const {
       EGLint curValue;
       err = this->getAtttribute(name, &curValue);
       if (__eglFailed(err)) {
-        __eglLogError("Config::getAtttribute() failed, err = %d.\r\n",
-                      err);
+        __eglLogError("Config::getAtttribute() failed, err = %d.\r\n", err);
         return err;
       }
 
@@ -254,7 +251,8 @@ EGLint _EGLConfig::matches(const EGLint *pAttrib_list, bool *pbResult) const {
   return EGL_SUCCESS;
 }
 
-int _EGLConfig::compare(const _EGLConfig *pConfigA, const _EGLConfig *pConfigB) {
+int _EGLConfig::compare(const _EGLConfig *pConfigA,
+                        const _EGLConfig *pConfigB) {
   assert(pConfigA && pConfigB);
 
   static const EGLint sortedList[] = {

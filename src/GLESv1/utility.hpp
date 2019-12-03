@@ -14,9 +14,9 @@
 //
 #pragma once
 
-template <class T> GLenum TToGLenum(T param);
+template <typename T> GLenum TToGLenum(T param);
 
-template <class T> class TAddressOf {
+template <typename T> class TAddressOf {
 public:
   TAddressOf(const T &value) : value_(value) {}
 
@@ -116,22 +116,19 @@ GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, int32_t dstOffsetX,
                    const GLSurfaceDesc &srcDesc, int32_t srcOffsetX,
                    int32_t srcOffsetY);
 
-template <> 
-inline GLenum TToGLenum<float>(float param) {
+template <> inline GLenum TToGLenum<float>(float param) {
   return static_cast<GLenum>(param);
 }
 
-template <> 
-inline GLenum TToGLenum<fixed16>(fixed16 param) {
+template <> inline GLenum TToGLenum<fixed16>(fixed16 param) {
   return *reinterpret_cast<const GLenum *>(&param);
 }
 
-template <> 
-inline GLenum TToGLenum<int>(int param) {
+template <> inline GLenum TToGLenum<int>(int param) {
   return static_cast<GLenum>(param);
 }
 
-template <class T, uint32_t BITS> class TBitPtr {
+template <typename T, uint32_t BITS> class TBitPtr {
 public:
   enum {
     MASK = (1 << BITS) - 1,

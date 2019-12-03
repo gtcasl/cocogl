@@ -25,14 +25,12 @@ public:
   void setError(EGLint error);
   EGLint getError() const;
 
-  template <class T> 
-  inline T getObject(void *handle) const {
+  template <typename T> inline T getObject(void *handle) const {
     return reinterpret_cast<T>(
         handles_->getObject(reinterpret_cast<intptr_t>(handle), this));
   }
 
-  template <class T> 
-  inline T getObject(void *handle, void *pOwner) const {
+  template <typename T> inline T getObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
         handles_->getObject(reinterpret_cast<intptr_t>(handle), pOwner));
   }
@@ -40,20 +38,20 @@ public:
   EGLint registerObject(uint32_t *phandle, void *pObject, uint8_t type) {
     return EGLERROR_FROM_HRESULT(
         handles_->insert(phandle, pObject, type, this));
-  }  
+  }
 
-  EGLint registerObject(uint32_t *phandle, void *pObject, uint8_t type, void *pOwner) {
+  EGLint registerObject(uint32_t *phandle, void *pObject, uint8_t type,
+                        void *pOwner) {
     return EGLERROR_FROM_HRESULT(
         handles_->insert(phandle, pObject, type, pOwner));
   }
 
-  template <class T> 
-  inline T unregisterObject(void *handle) const {
+  template <typename T> inline T unregisterObject(void *handle) const {
     return reinterpret_cast<T>(
         handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
   }
 
-  template <class T>
+  template <typename T>
   inline T unregisterObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
         handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), pOwner));
@@ -67,10 +65,8 @@ public:
     return handles_->findHandle(pObject, pOwner);
   }
 
-  void makeCurrent(_EGLContext *pContext, 
-                   std::thread::id threadID,
-                   _EGLSurface *pSurfDraw, 
-                   _EGLSurface *pSurfRead);
+  void makeCurrent(_EGLContext *pContext, std::thread::id threadID,
+                   _EGLSurface *pSurfDraw, _EGLSurface *pSurfRead);
 
   _EGLContext *getCurrentContext() const;
 

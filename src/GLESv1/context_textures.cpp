@@ -21,10 +21,9 @@ void GLContext::genTextures(GLsizei n, GLuint *phTextures) {
   assert(phTextures);
 
   if (n < 0) {
-    __glError(
-        GL_INVALID_VALUE,
-        "GLContext::genTextures() failed, invalid n parameter: %d.\r\n",
-        n);
+    __glError(GL_INVALID_VALUE,
+              "GLContext::genTextures() failed, invalid n parameter: %d.\r\n",
+              n);
     return;
   }
 
@@ -86,8 +85,9 @@ void GLContext::bindTexture(GLenum target, GLuint texture) {
 }
 
 void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
-                            GLsizei width, GLsizei height, GLint border,
-                            GLenum format, GLenum type, const GLvoid *pPixels) {
+                              GLsizei width, GLsizei height, GLint border,
+                              GLenum format, GLenum type,
+                              const GLvoid *pPixels) {
   GLenum err;
 
   if (target != GL_TEXTURE_2D) {
@@ -150,8 +150,7 @@ void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
   // Initialize the texture surface
   err = pTexture->InitializeSurface(level, width, height, dstFormat);
   if (__glFailed(err)) {
-    __glError(err, "CTexture::InitializeSurface() failed, err = %d.\r\n",
-              err);
+    __glError(err, "CTexture::InitializeSurface() failed, err = %d.\r\n", err);
     return;
   }
 
@@ -184,8 +183,7 @@ void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
   if ((0 == level) && pTexture->bGenMipMaps) {
     err = pTexture->generateMipmaps();
     if (__glFailed(err)) {
-      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n",
-                err);
+      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n", err);
       return;
     }
   }
@@ -194,9 +192,9 @@ void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
 }
 
 void GLContext::setTexSubImage2D(GLenum target, GLint level, GLint xoffset,
-                               GLint yoffset, GLsizei width, GLsizei height,
-                               GLenum format, GLenum type,
-                               const GLvoid *pPixels) {
+                                 GLint yoffset, GLsizei width, GLsizei height,
+                                 GLenum format, GLenum type,
+                                 const GLvoid *pPixels) {
   GLenum err;
 
   if (target != GL_TEXTURE_2D) {
@@ -264,8 +262,7 @@ void GLContext::setTexSubImage2D(GLenum target, GLint level, GLint xoffset,
   if ((0 == level) && pTexture->bGenMipMaps) {
     err = pTexture->generateMipmaps();
     if (__glFailed(err)) {
-      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n",
-                err);
+      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n", err);
       return;
     }
   }
@@ -274,8 +271,8 @@ void GLContext::setTexSubImage2D(GLenum target, GLint level, GLint xoffset,
 }
 
 void GLContext::copyTexImage2D(GLenum target, GLint level,
-                                GLenum internalformat, GLint x, GLint y,
-                                GLsizei width, GLsizei height, GLint border) {
+                               GLenum internalformat, GLint x, GLint y,
+                               GLsizei width, GLsizei height, GLint border) {
   GLenum err;
 
   if (target != GL_TEXTURE_2D) {
@@ -331,8 +328,7 @@ void GLContext::copyTexImage2D(GLenum target, GLint level,
   // Initialize the texture surface
   err = pTexture->InitializeSurface(level, width, height, dstFormat);
   if (__glFailed(err)) {
-    __glError(err, "CTexture::InitializeSurface() failed, err = %d.\r\n",
-              err);
+    __glError(err, "CTexture::InitializeSurface() failed, err = %d.\r\n", err);
     return;
   }
 
@@ -351,8 +347,7 @@ void GLContext::copyTexImage2D(GLenum target, GLint level,
   if ((0 == level) && pTexture->bGenMipMaps) {
     err = pTexture->generateMipmaps();
     if (__glFailed(err)) {
-      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n",
-                err);
+      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n", err);
       return;
     }
   }
@@ -361,8 +356,8 @@ void GLContext::copyTexImage2D(GLenum target, GLint level,
 }
 
 void GLContext::copyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
-                                   GLint yoffset, GLint x, GLint y,
-                                   GLsizei width, GLsizei height) {
+                                  GLint yoffset, GLint x, GLint y,
+                                  GLsizei width, GLsizei height) {
   GLenum err;
 
   if (target != GL_TEXTURE_2D) {
@@ -416,8 +411,7 @@ void GLContext::copyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
   if ((0 == level) && pTexture->bGenMipMaps) {
     err = pTexture->generateMipmaps();
     if (__glFailed(err)) {
-      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n",
-                err);
+      __glError(err, "CTexture::generateMipmaps() failed, err = %d.\r\n", err);
       return;
     }
   }
@@ -426,7 +420,7 @@ void GLContext::copyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
 }
 
 void GLContext::readPixels(GLint x, GLint y, GLsizei width, GLsizei height,
-                            GLenum format, GLenum type, GLvoid *pPixels) {
+                           GLenum format, GLenum type, GLvoid *pPixels) {
   GLenum err;
 
   assert(pPixels);
@@ -441,10 +435,9 @@ void GLContext::readPixels(GLint x, GLint y, GLsizei width, GLsizei height,
 
   if ((type != GL_UNSIGNED_BYTE) &&
       (type != IMPLEMENTATION_COLOR_READ_TYPE_OES)) {
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::readPixels() failed, invalid type parameter: %d.\r\n",
-        type);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::readPixels() failed, invalid type parameter: %d.\r\n",
+              type);
     return;
   }
 
@@ -545,8 +538,7 @@ void GLContext::deleteTextures(GLsizei n, const GLuint *phTextures) {
   if (n < 0) {
     __glError(
         GL_INVALID_VALUE,
-        "GLContext::deleteTextures() failed, invalid n parameter: %d.\r\n",
-        n);
+        "GLContext::deleteTextures() failed, invalid n parameter: %d.\r\n", n);
     return;
   }
 
@@ -603,9 +595,9 @@ GLenum GLContext::releaseTexImage(GLSurface *pSurface) {
 }
 
 void GLContext::compressedTexImage2D(GLenum target, GLint level,
-                                      GLenum internalformat, GLsizei width,
-                                      GLsizei height, GLint border,
-                                      GLsizei imageSize, const GLvoid *pData) {
+                                     GLenum internalformat, GLsizei width,
+                                     GLsizei height, GLint border,
+                                     GLsizei imageSize, const GLvoid *pData) {
   GLenum err;
 
   assert(pData);
@@ -757,7 +749,7 @@ void GLContext::compressedTexImage2D(GLenum target, GLint level,
 
     // Copy the texture surface
     this->setTexImage2D(target, i, format, width, height, border, format, type,
-                     surface.getBits());
+                        surface.getBits());
 
     if (width > 1) {
       width >>= 1;
@@ -770,10 +762,10 @@ void GLContext::compressedTexImage2D(GLenum target, GLint level,
 }
 
 void GLContext::compressedTexSubImage2D(GLenum target, GLint level,
-                                         GLint xoffset, GLint yoffset,
-                                         GLsizei width, GLsizei height,
-                                         GLenum format, GLsizei imageSize,
-                                         const GLvoid *pData) {
+                                        GLint xoffset, GLint yoffset,
+                                        GLsizei width, GLsizei height,
+                                        GLenum format, GLsizei imageSize,
+                                        const GLvoid *pData) {
   GLenum err;
 
   assert(pData);
@@ -916,7 +908,7 @@ void GLContext::compressedTexSubImage2D(GLenum target, GLint level,
 
     // Copy the texture sub surface
     this->setTexSubImage2D(target, i, xoffset, yoffset, width, height, _format,
-                        type, surface.getBits());
+                           type, surface.getBits());
 
     if (width > 1) {
       width >>= 1;

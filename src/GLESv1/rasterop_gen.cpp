@@ -159,22 +159,16 @@ static const Pfncompare s_pfncompare[] = {
 };
 
 static const PfnGetTexEnvColor s_pfnGetTexEnvColorTable[] = {
-    GetTexEnvColorA<ENVMODE_ADD>,        
-    GetTexEnvColorA<ENVMODE_BLEND>,
-    GetTexEnvColorA<ENVMODE_REPLACE>,    
-    GetTexEnvColorA<ENVMODE_MODULATE>,
+    GetTexEnvColorA<ENVMODE_ADD>,        GetTexEnvColorA<ENVMODE_BLEND>,
+    GetTexEnvColorA<ENVMODE_REPLACE>,    GetTexEnvColorA<ENVMODE_MODULATE>,
     GetTexEnvColorA<ENVMODE_DECAL>,
 
-    GetTexEnvColorRGB<ENVMODE_ADD>,      
-    GetTexEnvColorRGB<ENVMODE_BLEND>,
-    GetTexEnvColorRGB<ENVMODE_REPLACE>,  
-    GetTexEnvColorRGB<ENVMODE_MODULATE>,
+    GetTexEnvColorRGB<ENVMODE_ADD>,      GetTexEnvColorRGB<ENVMODE_BLEND>,
+    GetTexEnvColorRGB<ENVMODE_REPLACE>,  GetTexEnvColorRGB<ENVMODE_MODULATE>,
     GetTexEnvColorRGB<ENVMODE_DECAL>,
 
-    GetTexEnvColorARGB<ENVMODE_ADD>,     
-    GetTexEnvColorARGB<ENVMODE_BLEND>,
-    GetTexEnvColorARGB<ENVMODE_REPLACE>, 
-    GetTexEnvColorARGB<ENVMODE_MODULATE>,
+    GetTexEnvColorARGB<ENVMODE_ADD>,     GetTexEnvColorARGB<ENVMODE_BLEND>,
+    GetTexEnvColorARGB<ENVMODE_REPLACE>, GetTexEnvColorARGB<ENVMODE_MODULATE>,
     GetTexEnvColorARGB<ENVMODE_DECAL>,
 };
 
@@ -483,8 +477,7 @@ GLenum CGenericRasterOp::Create(IRasterOp **ppRasterOp,
   err = pRasterOp->initialize();
   if (__glFailed(err)) {
     pRasterOp->release();
-    __glLogError("CGenericRasterOp::initialize() failed, err = %d.\r\n",
-                 err);
+    __glLogError("CGenericRasterOp::initialize() failed, err = %d.\r\n", err);
     return err;
   }
 

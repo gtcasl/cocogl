@@ -16,14 +16,14 @@
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 void GetTexelColorPt(Color4 *pOut, const SurfaceDesc &surface, fixedRX fU,
-                      fixedRX fV) {
+                     fixedRX fV) {
   Format::ConvertFrom<Format, false>(
       pOut, GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
 }
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 void GetTexelColorLn(Color4 *pOut, const SurfaceDesc &surface, fixedRX fU,
-                      fixedRX fV) {
+                     fixedRX fV) {
   Format::ConvertFrom<Format, false>(
       pOut, GetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV));
 }
@@ -49,7 +49,7 @@ void TBlend(Color4 *pInOut, const uint8_t *pCB) {
 
 template <ePixelFormat Format, bool bWriteMask, eLogicOp LogicOp>
 void DoWriteColor(const RasterData &rasterData, const Color4 &cColor,
-                 uint8_t *pCB) {
+                  uint8_t *pCB) {
   uint32_t dstColor =
       *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB);
   uint32_t result = Format::ConvertTo<Format>(cColor);

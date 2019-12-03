@@ -18,14 +18,13 @@
 #include <SDL2/SDL_syswm.h>
 
 // Tests
-#include "test.hpp"
 #include "clear_t.hpp"
 #include "cube_t.hpp"
 #include "debug_t.hpp"
 #include "fog_t.hpp"
-#include "scene_t.hpp"
 #include "line_t.hpp"
 #include "quad_t.hpp"
+#include "scene_t.hpp"
 #include "stencil_t.hpp"
 #include "texture_t.hpp"
 #include "triangle_t.hpp"
@@ -48,8 +47,8 @@ static void init_GLES(void) {
       EGL_NONE};
 
   EGLint numConfigs, majorVersion, minorVersion;
-  glesWindow = SDL_CreateWindow("CocoGL Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height,
-                                0);
+  glesWindow = SDL_CreateWindow("CocoGL Demo", SDL_WINDOWPOS_CENTERED,
+                                SDL_WINDOWPOS_CENTERED, width, height, 0);
   glDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
   eglInitialize(glDisplay, &majorVersion, &minorVersion);
   eglChooseConfig(glDisplay, egl_config_attr, &glConfig, 1, &numConfigs);
@@ -58,8 +57,7 @@ static void init_GLES(void) {
   SDL_GetWindowWMInfo(glesWindow, &sysInfo);
   glContext = eglCreateContext(glDisplay, glConfig, EGL_NO_CONTEXT, nullptr);
   glSurface = eglCreateWindowSurface(
-      glDisplay, glConfig, (EGLNativeWindowType)sysInfo.info.x11.window,
-      0); 
+      glDisplay, glConfig, (EGLNativeWindowType)sysInfo.info.x11.window, 0);
   eglMakeCurrent(glDisplay, glSurface, glSurface, glContext);
 }
 
@@ -182,7 +180,7 @@ int main(int argc, char **argv) {
 
   // Cleaning
   test->OnDestroy();
-  delete test;  
+  delete test;
   cleanup();
 
   return 0;

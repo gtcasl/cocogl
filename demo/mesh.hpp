@@ -19,9 +19,10 @@ public:
   Mesh();
   ~Mesh();
 
-  bool OnInitialize(const char *fileName); 
+  bool OnInitialize(const char *fileName);
 
   void OnRender();
+
 private:
   char name_[128];
   char parentName_[128];

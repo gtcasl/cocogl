@@ -53,7 +53,6 @@ public:
   void present();
 
 private:
-
   enum {
     MAX_WIDTH = 480,
     MAX_HEIGHT = 480,
@@ -74,9 +73,9 @@ private:
                           GLSurfaceDesc *pSurfaceDesc);
 
   void getPBufferDesc(GLSurfaceDesc *pSurfaceDesc);
-  
+
   static uint8_t getColorFormat(uint32_t cBitsPerPixel);
-  
+
   _EGLDisplay *pDisplay_;
   _EGLConfig *pConfig_;
   EGLint surfaceType_;

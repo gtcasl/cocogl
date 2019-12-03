@@ -19,14 +19,9 @@ struct GSDHeader {
   int num_sub_objs;
 };
 
-Mesh::Mesh() 
-: num__indices(0)
-, num__vertices(0)
-, pIndices_(nullptr)
-, pGeometry_(nullptr)
-, pNormals_(nullptr)
-, pTexCoords_(nullptr)
-{}
+Mesh::Mesh()
+    : num__indices(0), num__vertices(0), pIndices_(nullptr),
+      pGeometry_(nullptr), pNormals_(nullptr), pTexCoords_(nullptr) {}
 
 Mesh::~Mesh() {
   delete[] pIndices_;
@@ -36,10 +31,10 @@ Mesh::~Mesh() {
 }
 
 bool Mesh::OnInitialize(const char *fileName) {
-  FILE* file = nullptr;
+  FILE *file = nullptr;
   uint32_t num_indices = 0;
   uint32_t num_vertices = 0;
-  uint32_t* indices = nullptr;
+  uint32_t *indices = nullptr;
   size_t size = 0;
   bool status = false;
 
@@ -57,23 +52,23 @@ bool Mesh::OnInitialize(const char *fileName) {
     if (header.num_sub_objs < 1)
       break;
 
-    // read the object name  
-    size = fread(name_, 1, sizeof(char) * 128, file); 
+    // read the object name
+    size = fread(name_, 1, sizeof(char) * 128, file);
     if (size != sizeof(char) * 128)
       break;
 
     // Read the name of the parent object
-    size = fread(parentName_, 1, sizeof(char) * 128, file); 
+    size = fread(parentName_, 1, sizeof(char) * 128, file);
     if (size != sizeof(char) * 128)
       break;
 
     // read the number of vertex indices
-    size = fread(&num_indices, 1, sizeof(uint32_t),  file); 
+    size = fread(&num_indices, 1, sizeof(uint32_t), file);
     if (size != sizeof(uint32_t))
       break;
 
     // read the number of vertices
-    size = fread(&num_vertices, 1, sizeof(uint32_t), file); 
+    size = fread(&num_vertices, 1, sizeof(uint32_t), file);
     if (size != sizeof(uint32_t))
       break;
 
@@ -114,7 +109,7 @@ bool Mesh::OnInitialize(const char *fileName) {
   }
 
   if (file) {
-    fclose(file); 
+    fclose(file);
   }
 
   // release temp allocations

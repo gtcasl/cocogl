@@ -13,6 +13,7 @@
 // INDEMNITIES.
 //
 #include "stdafx.h"
+#include "handle.hpp"
 
 void *HandleTable::getObject(uint32_t handle, const void *pOwner) {
   std::lock_guard<std::mutex> lock(cs_);
@@ -38,9 +39,7 @@ uint8_t HandleTable::getType(uint32_t handle, const void *pOwner) {
   return 0;
 }
 
-HRESULT HandleTable::insert(uint32_t *phandle, 
-                            void *pObject, 
-                            uint8_t type,
+HRESULT HandleTable::insert(uint32_t *phandle, void *pObject, uint8_t type,
                             void *pOwner) {
   std::lock_guard<std::mutex> lock(cs_);
 
@@ -66,8 +65,8 @@ HRESULT HandleTable::insert(uint32_t *phandle,
       return E_FAIL;
 
     // Reallocate the table's buffer
-    auto pEntries = reinterpret_cast<Entry *>(
-        realloc(entries_, newSize * sizeof(Entry)));
+    auto pEntries =
+        reinterpret_cast<Entry *>(realloc(entries_, newSize * sizeof(Entry)));
     if (nullptr == pEntries) {
       return E_OUTOFMEMORY;
     }
@@ -189,8 +188,7 @@ void HandleTable::optimize() {
   }
 }
 
-HandleTable::Entry*
-HandleTable::deleteEntry(HandleTable::Entry *pEntry) {
+HandleTable::Entry *HandleTable::deleteEntry(HandleTable::Entry *pEntry) {
   assert(pEntry);
 
   // Save the next entry

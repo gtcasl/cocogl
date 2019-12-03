@@ -35,8 +35,7 @@ GLenum VertexArray::prepare(VertexDecoder *pDecoder, int first,
     if (bufSize <= this->pBuffer->getSize()) {
       pDecoder->pBits = pBits;
     } else {
-      __glLogError(
-          "VertexArray::prepare() failed, index out of range.\r\n");
+      __glLogError("VertexArray::prepare() failed, index out of range.\r\n");
       return GL_INVALID_OPERATION;
     }
   } else {

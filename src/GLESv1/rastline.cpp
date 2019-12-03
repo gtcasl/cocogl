@@ -43,7 +43,8 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
   if (!this->setupLineAttributes(&gradient, i0, i1))
     return;
 
-  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+  auto pvScreenPos =
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
 
@@ -55,7 +56,8 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
 
 #ifdef COCOGL_RASTER_PROFILE
   auto start_time = std::chrono::high_resolution_clock::now();
-  rasterData_.pRasterOp->StartProfile(static_cast<int>(Math::TAbs(i4dx) + Math::TAbs(i4dy)));
+  rasterData_.pRasterOp->StartProfile(
+      static_cast<int>(Math::TAbs(i4dx) + Math::TAbs(i4dy)));
 #endif
 
   auto pfnScanline = rasterData_.pRasterOp->getScanline();
@@ -79,8 +81,10 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     auto i4y1 = vertices[1]->y;
 
     auto fddy = Math::TMul<fixedDDA>(i4y1 - i4y0, gradient.fRatio);
-    auto x0 = Math::TMax<int>(Math::TCeili<int>(i4x0 - TConst<fixed4>::Half()), scissorRect_.left);
-    auto x1 = Math::TMin<int>(Math::TCeili<int>(i4x1 - TConst<fixed4>::Half()), scissorRect_.right);
+    auto x0 = Math::TMax<int>(Math::TCeili<int>(i4x0 - TConst<fixed4>::Half()),
+                              scissorRect_.left);
+    auto x1 = Math::TMin<int>(Math::TCeili<int>(i4x1 - TConst<fixed4>::Half()),
+                              scissorRect_.right);
 
     auto i4X0Diff = fixed4(x0) - (i4x0 - TConst<fixed4>::Half());
     auto fty = fixedDDA(i4y0) + fddy * i4X0Diff - (fLineWidth / 2) + fRndCeil;
@@ -116,8 +120,10 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     auto i4y1 = vertices[1]->y;
 
     auto fddx = Math::TMul<fixedDDA>(i4x1 - i4x0, gradient.fRatio);
-    auto y0 = Math::TMax<int>(Math::TCeili<int>(i4y0 - TConst<fixed4>::Half()), scissorRect_.top);
-    auto y1 = Math::TMin<int>(Math::TCeili<int>(i4y1 - TConst<fixed4>::Half()), scissorRect_.bottom);
+    auto y0 = Math::TMax<int>(Math::TCeili<int>(i4y0 - TConst<fixed4>::Half()),
+                              scissorRect_.top);
+    auto y1 = Math::TMin<int>(Math::TCeili<int>(i4y1 - TConst<fixed4>::Half()),
+                              scissorRect_.bottom);
 
     auto i4Y0Diff = fixed4(y0) - (i4y0 - TConst<fixed4>::Half());
     auto flx = fixedDDA(i4x0) + fddx * i4Y0Diff - (fLineWidth / 2) + fRndCeil;
@@ -136,7 +142,8 @@ void CRasterizer::rasterLine(uint32_t i0, uint32_t i1) {
 
 #ifdef COCOGL_RASTER_PROFILE
   auto end_time = std::chrono::high_resolution_clock::now();
-  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(end_time - start_time);
+  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(
+      end_time - start_time);
   rasterData_.pRasterOp->EndProfile(elapsed_time.count());
 #endif
 }
@@ -145,7 +152,8 @@ bool CRasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
                                       uint32_t i1) {
   auto rasterFlags = rasterID_.Flags;
   auto pRegister = rasterData_.Registers;
-  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+  auto pvScreenPos =
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
 
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
@@ -225,15 +233,18 @@ bool CRasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
     for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
       assert(i < MAX_TEXTURES);
 
-      auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
+      auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(
+          pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
       auto &uv0 = vTexCoords[i0];
       auto &uv1 = vTexCoords[i1];
 
-      pRegister[0].m[attribIdx] = pGradient->calcDelta<fixedRX>(uv1.m[0] - uv0.m[0]);
+      pRegister[0].m[attribIdx] =
+          pGradient->calcDelta<fixedRX>(uv1.m[0] - uv0.m[0]);
       pRegister[0].m[attribIdx ^ 0x1] = TConst<fixedRX>::Zero();
       pRegister[0].m[2] = static_cast<fixedRX>(uv0.m[0]);
 
-      pRegister[1].m[attribIdx] = pGradient->calcDelta<fixedRX>(uv1.m[1] - uv0.m[1]);
+      pRegister[1].m[attribIdx] =
+          pGradient->calcDelta<fixedRX>(uv1.m[1] - uv0.m[1]);
       pRegister[1].m[attribIdx ^ 0x1] = TConst<fixedRX>::Zero();
       pRegister[1].m[2] = static_cast<fixedRX>(uv0.m[1]);
 

@@ -96,7 +96,6 @@ public:
   void destroy();
 
 private:
-
   void clear();
 
   int32_t pitch_;
@@ -154,9 +153,8 @@ public:
   void freeSurfaces();
 
 private:
-
   CTexture();
-  
+
   ~CTexture();
 
   CSurface2D surfaces_[MAX_TEXTURE_LEVELS];
@@ -175,9 +173,7 @@ public:
 
   TexUnit() : pTexture_(nullptr) {}
 
-  ~TexUnit() { 
-    __safeRelease(pTexture_); 
-  }
+  ~TexUnit() { __safeRelease(pTexture_); }
 
   CTexture *getTexture() const { return pTexture_; }
 

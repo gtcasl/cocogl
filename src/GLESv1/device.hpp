@@ -19,8 +19,8 @@
 #include "matstack.hpp"
 #include "surface.hpp"
 #include "texture.hpp"
-#include "rastdata.hpp"
 #include "vertarray.hpp"
+#include "rastdata.hpp"
 
 class CDevice : public Object {
 protected:

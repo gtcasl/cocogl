@@ -122,7 +122,7 @@ EGLint _EGLDriver::getDisplay(uint32_t *phandle,
   // Add the display to the handle table
   err = EGLERROR_FROM_HRESULT(
       handles_->insert(phandle, pDisplay, HANDLE_DISPLAY, this));
-  if (__eglFailed(err)) {    
+  if (__eglFailed(err)) {
     __eglLogError("HandleTable::insert() failed, err = %x.\r\n", err);
     __safeRelease(pDisplay);
     return EGL_BAD_ALLOC;

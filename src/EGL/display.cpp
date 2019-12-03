@@ -45,8 +45,7 @@ _EGLDisplay::~_EGLDisplay() {
   __safeRelease(handles_);
 }
 
-EGLint _EGLDisplay::Create(_EGLDisplay **ppDisplay,
-                           EGLNativeDisplayType hDC,
+EGLint _EGLDisplay::Create(_EGLDisplay **ppDisplay, EGLNativeDisplayType hDC,
                            HandleTable *pHandles) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
@@ -155,7 +154,7 @@ EGLint _EGLDisplay::createConfig(EGLint red, EGLint green, EGLint blue,
   // Add the config object into handle table
   err = EGLERROR_FROM_HRESULT(
       handles_->insert(&handle, pConfig, HANDLE_CONFIG, this));
-  if (__eglFailed(err)) {    
+  if (__eglFailed(err)) {
     __eglLogError("HandleTable::insert() failed, err = %d.\r\n", err);
     __safeRelease(pConfig);
     return err;
@@ -197,9 +196,8 @@ EGLint _EGLDisplay::queryString(const char **plpValue, EGLint name) {
   return EGL_SUCCESS;
 }
 
-EGLint _EGLDisplay::chooseConfig(const EGLint *pAttrib_list, 
-                                 EGLConfig *pConfigs,
-                                 EGLint config_size, 
+EGLint _EGLDisplay::chooseConfig(const EGLint *pAttrib_list,
+                                 EGLConfig *pConfigs, EGLint config_size,
                                  EGLint *pNum_config) {
   EGLint err;
 

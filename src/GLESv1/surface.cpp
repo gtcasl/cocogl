@@ -33,9 +33,8 @@ GLSurface::GLSurface() {
 
 GLSurface::~GLSurface() { __profileAPI(" - %s()\n", __FUNCTION__); }
 
-GLenum GLSurface::Create(GLSurface **ppSurface,
-                          const GLSurfaceDesc *pColorDesc,
-                          const GLSurfaceDesc *pDepthStencilDesc) {
+GLenum GLSurface::Create(GLSurface **ppSurface, const GLSurfaceDesc *pColorDesc,
+                         const GLSurfaceDesc *pDepthStencilDesc) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
@@ -53,7 +52,7 @@ GLenum GLSurface::Create(GLSurface **ppSurface,
 
   // Initialize the surface
   err = pSurface->initialize(pColorDesc, pDepthStencilDesc);
-  if (__glFailed(err)) {    
+  if (__glFailed(err)) {
     __glLogError("GLSurface::initialize() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
     return err;
@@ -65,7 +64,7 @@ GLenum GLSurface::Create(GLSurface **ppSurface,
 }
 
 GLenum GLSurface::initialize(const GLSurfaceDesc *pColorDesc,
-                              const GLSurfaceDesc *pDepthStencilDesc) {
+                             const GLSurfaceDesc *pDepthStencilDesc) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (pColorDesc && pColorDesc->pBits) {

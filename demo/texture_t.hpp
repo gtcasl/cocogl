@@ -13,6 +13,8 @@
 //
 #pragma once
 
+#include "test.hpp"
+
 class TextureTest : public TestBase {
 private:
   // Texture handles
@@ -53,7 +55,7 @@ public:
     // Set perspective
     float ratio = (float)width / height;
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();    
+    glLoadIdentity();
     Perspective(45.0f, ratio, 1.0f, 40.0f);
     glMatrixMode(GL_MODELVIEW);
 

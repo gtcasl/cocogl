@@ -17,9 +17,9 @@
 class CBlitTable {
 public:
   typedef GLenum (*PfnCopy)(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
-                             uint32_t dstOffsetY, uint32_t copyWidth,
-                             uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
-                             uint32_t srcOffsetX, uint32_t srcOffsetY);
+                            uint32_t dstOffsetY, uint32_t copyWidth,
+                            uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
+                            uint32_t srcOffsetX, uint32_t srcOffsetY);
 
   CBlitTable() {
     for (uint32_t s = 0; s < FORMAT_COLOR_SIZE_; ++s) {
@@ -158,8 +158,7 @@ public:
 
       case FORMAT_B8G8R8:
         copyFuncs_[FORMAT_B8G8R8][FORMAT_L8] = Copy<FORMAT_B8G8R8, FORMAT_L8>;
-        copyFuncs_[FORMAT_B8G8R8][FORMAT_RGB] =
-            Copy<FORMAT_B8G8R8, FORMAT_RGB>;
+        copyFuncs_[FORMAT_B8G8R8][FORMAT_RGB] = Copy<FORMAT_B8G8R8, FORMAT_RGB>;
         break;
 
       case FORMAT_A8B8G8R8:
@@ -222,7 +221,7 @@ private:
     return GL_NO_ERROR;
   }
 
-  template <class Type>
+  template <typename Type>
   static GLenum CopyFast(const GLSurfaceDesc &dstDesc, uint32_t dstOffsetX,
                          uint32_t dstOffsetY, uint32_t copyWidth,
                          uint32_t copyHeight, const GLSurfaceDesc &srcDesc,
@@ -253,9 +252,9 @@ private:
 
   static GLenum CopyNC(const GLSurfaceDesc & /*dstDesc*/,
                        uint32_t /*dstOffsetX*/, uint32_t /*dstOffsetY*/,
-                        uint32_t /*copyWidth*/, uint32_t /*copyHeight*/,
-                        const GLSurfaceDesc & /*srcDesc*/,
-                        uint32_t /*srcOffsetX*/, uint32_t /*srcOffsetY*/
+                       uint32_t /*copyWidth*/, uint32_t /*copyHeight*/,
+                       const GLSurfaceDesc & /*srcDesc*/,
+                       uint32_t /*srcOffsetX*/, uint32_t /*srcOffsetY*/
   ) {
     __glLogError("Copy() failed, the source and destination "
                  "formats are not compatible.");
@@ -546,9 +545,8 @@ GLenum ToPixelFormat(ePixelFormat *pOut, GLint format) {
     break;
 
   default:
-    __glLogError(
-        "ToPixelFormat() failed, invalid format parameter: %d.\r\n",
-        format);
+    __glLogError("ToPixelFormat() failed, invalid format parameter: %d.\r\n",
+                 format);
     return GL_INVALID_VALUE;
   }
 

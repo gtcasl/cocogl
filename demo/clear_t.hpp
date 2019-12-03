@@ -13,6 +13,8 @@
 //
 #pragma once
 
+#include "test.hpp"
+
 class ClearTest : public TestBase {
 public:
   bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) {
@@ -21,5 +23,4 @@ public:
   }
 
   void OnRender() { glClear(GL_COLOR_BUFFER_BIT); }
-  
 };

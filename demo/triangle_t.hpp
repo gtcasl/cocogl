@@ -13,6 +13,8 @@
 //
 #pragma once
 
+#include "test.hpp"
+
 class TriangleTest : public TestBase {
 public:
   TriangleTest() {}

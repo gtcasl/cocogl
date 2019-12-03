@@ -17,12 +17,13 @@
 #include "inputasm.hpp"
 
 typedef void (*PfnDecodePosition)(VECTOR4 *pOut, const uint8_t *pbIn,
-                                   uint32_t stride, uint32_t count);
+                                  uint32_t stride, uint32_t count);
 
 class CTNL : public CInputAssembler {
 public:
   typedef void (CTNL::*PfnDecodeVertices)(uint32_t count);
-  typedef void (CTNL::*PfnDecodeTexCoord)(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
+  typedef void (CTNL::*PfnDecodeTexCoord)(uint32_t dstIndex, uint32_t srcIndex,
+                                          uint32_t count);
 
   template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
   void processPointSize(uint32_t count);
@@ -35,8 +36,7 @@ public:
             eVertexFormat NormalFormat>
   void processLightingTwoSided(uint32_t count);
 
-  template <eVertexFormat VertexFormat>
-  void processVertexColor(uint32_t count);
+  template <eVertexFormat VertexFormat> void processVertexColor(uint32_t count);
 
   template <bool Transform, eVertexFormat VertexFormat>
   void processTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
@@ -44,9 +44,8 @@ public:
   template <eFogMode FogMode> void processFog(uint32_t count);
 
 protected:
-
   CTNL() {}
-  
+
   ~CTNL() {}
 
   struct Lighting {
@@ -106,7 +105,7 @@ protected:
   uint32_t calcUserClipFlags(uint32_t count);
 
   void transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
-                        uint32_t count);
+                            uint32_t count);
 
   void transformEyeSpace(uint32_t count);
 
@@ -115,18 +114,18 @@ protected:
   void processColor(uint32_t count);
 
   void processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                              const VECTOR3 &vNormal,
-                              const VECTOR4 &vVertexColor);
+                             const VECTOR3 &vNormal,
+                             const VECTOR4 &vVertexColor);
 
   void processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                              const VECTOR3 &vNormal);
+                             const VECTOR3 &vNormal);
 
   void processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                              const VECTOR3 &vNormal,
-                              const VECTOR4 &vVertexColor);
+                             const VECTOR3 &vNormal,
+                             const VECTOR4 &vVertexColor);
 
   void processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                              const VECTOR3 &vNormal);
+                             const VECTOR3 &vNormal);
 
   void processTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
 

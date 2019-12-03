@@ -14,6 +14,7 @@
 //
 #include "stdafx.h"
 #include <stdarg.h>
+#include "logger.hpp"
 
 Logger::Logger(const char *fileName, const char *mode)
     : file_(nullptr), indent_(0) {
@@ -83,8 +84,7 @@ HRESULT Logger::write(const char *format, va_list arglist) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-AutoLog::AutoLog(Logger &logger, const char *func, ...)
-    : logger_(logger) {
+AutoLog::AutoLog(Logger &logger, const char *func, ...) : logger_(logger) {
   va_list arglist;
   va_start(arglist, func);
   logger.write(func, arglist);
@@ -92,6 +92,4 @@ AutoLog::AutoLog(Logger &logger, const char *func, ...)
   va_end(arglist);
 }
 
-AutoLog::~AutoLog() { 
-  logger_.decrIndent(); 
-}
+AutoLog::~AutoLog() { logger_.decrIndent(); }

@@ -18,7 +18,7 @@
 #include "context_tnl.inl"
 
 GLContext::GLContext(HandleTable *pHandles, CRasterCache *pRasterCache,
-                       GLContext *pCtxShared) {
+                     GLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(pHandles);
@@ -87,7 +87,7 @@ GLContext::~GLContext() {
 }
 
 GLenum GLContext::Create(GLContext **ppContext, HandleTable *pHandles,
-                          CRasterCache *pRasterCache, GLContext *pCtxShared) {
+                         CRasterCache *pRasterCache, GLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
@@ -105,7 +105,7 @@ GLenum GLContext::Create(GLContext **ppContext, HandleTable *pHandles,
 
   // Initialize the context
   err = pContext->initialize();
-  if (__glFailed(err)) {    
+  if (__glFailed(err)) {
     __glLogError("GLContext::initialize() failed, err = %d.\r\n", err);
     __safeRelease(pContext);
     return err;
@@ -226,54 +226,58 @@ GLenum GLContext::initialize() {
     GLenum light = GL_LIGHT0 + i;
 
     this->setLightParameter<floatf>(light, GL_AMBIENT,
-                         VECTOR4(fZERO, fZERO, fZERO, fONE).m);
+                                    VECTOR4(fZERO, fZERO, fZERO, fONE).m);
 
     if (GL_LIGHT0 == light) {
       this->setLightParameter<floatf>(light, GL_DIFFUSE,
-                           VECTOR4(fONE, fONE, fONE, fONE).m);
+                                      VECTOR4(fONE, fONE, fONE, fONE).m);
       this->setLightParameter<floatf>(light, GL_SPECULAR,
-                           VECTOR4(fONE, fONE, fONE, fONE).m);
+                                      VECTOR4(fONE, fONE, fONE, fONE).m);
     } else {
       this->setLightParameter<floatf>(light, GL_DIFFUSE,
-                           VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
+                                      VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
       this->setLightParameter<floatf>(light, GL_SPECULAR,
-                           VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
+                                      VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
     }
 
     this->setLightParameter<floatf>(light, GL_POSITION,
-                         VECTOR4(fZERO, fZERO, fONE, fZERO).m);
+                                    VECTOR4(fZERO, fZERO, fONE, fZERO).m);
     this->setLightParameter<floatf>(light, GL_SPOT_DIRECTION,
-                         VECTOR3(fZERO, fZERO, -fONE).m);
-    this->setLightParameter<floatf>(light, GL_SPOT_EXPONENT, TAddressOf<floatf>(fZERO));
-    this->setLightParameter<floatf>(light, GL_SPOT_CUTOFF, TAddressOf<floatf>(f180));
+                                    VECTOR3(fZERO, fZERO, -fONE).m);
+    this->setLightParameter<floatf>(light, GL_SPOT_EXPONENT,
+                                    TAddressOf<floatf>(fZERO));
+    this->setLightParameter<floatf>(light, GL_SPOT_CUTOFF,
+                                    TAddressOf<floatf>(f180));
     this->setLightParameter<floatf>(light, GL_CONSTANT_ATTENUATION,
-                         TAddressOf<floatf>(fONE));
+                                    TAddressOf<floatf>(fONE));
     this->setLightParameter<floatf>(light, GL_LINEAR_ATTENUATION,
-                         TAddressOf<floatf>(fZERO));
+                                    TAddressOf<floatf>(fZERO));
     this->setLightParameter<floatf>(light, GL_QUADRATIC_ATTENUATION,
-                         TAddressOf<floatf>(fZERO));
+                                    TAddressOf<floatf>(fZERO));
   }
 
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_AMBIENT,
-                          VECTOR4(f02, f02, f02, fONE).m);
+                            VECTOR4(f02, f02, f02, fONE).m);
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_DIFFUSE,
-                          VECTOR4(f08, f08, f08, fONE).m);
+                            VECTOR4(f08, f08, f08, fONE).m);
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_SPECULAR,
-                          VECTOR4(fZERO, fZERO, fZERO, fONE).m);
+                            VECTOR4(fZERO, fZERO, fZERO, fONE).m);
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_EMISSION,
-                          VECTOR4(fZERO, fZERO, fZERO, fONE).m);
+                            VECTOR4(fZERO, fZERO, fZERO, fONE).m);
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_SHININESS,
-                          TAddressOf<floatf>(fZERO));
+                            TAddressOf<floatf>(fZERO));
 
-  this->setFog<fixed16>(GL_FOG_MODE, TAddressOf<fixed16>(fixed16::make(GL_EXP)));
+  this->setFog<fixed16>(GL_FOG_MODE,
+                        TAddressOf<fixed16>(fixed16::make(GL_EXP)));
   this->setFog<floatf>(GL_FOG_DENSITY, TAddressOf<floatf>(fONE));
   this->setFog<floatf>(GL_FOG_START, TAddressOf<floatf>(fZERO));
   this->setFog<floatf>(GL_FOG_END, TAddressOf<floatf>(fONE));
   this->setFog<floatf>(GL_FOG_COLOR, VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
 
-  this->setLightParameterModel<floatf>(GL_LIGHT_MODEL_TWO_SIDE, TAddressOf<floatf>(fZERO));
+  this->setLightParameterModel<floatf>(GL_LIGHT_MODEL_TWO_SIDE,
+                                       TAddressOf<floatf>(fZERO));
   this->setLightParameterModel<floatf>(GL_LIGHT_MODEL_AMBIENT,
-                            VECTOR4(f02, f02, f02, fONE).m);
+                                       VECTOR4(f02, f02, f02, fONE).m);
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
     this->setClipPlane(GL_CLIP_PLANE0 + i, VECTOR4(fZERO, fZERO, fZERO, fZERO));
@@ -293,13 +297,13 @@ GLenum GLContext::initialize() {
     this->bindTexture(GL_TEXTURE_2D, 0);
 
     this->setTexEnv<fixed16>(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,
-                           TAddressOf<fixed16>(fixed16::make(GL_MODULATE)));
+                             TAddressOf<fixed16>(fixed16::make(GL_MODULATE)));
 
     this->setTexEnv<floatf>(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,
-                          VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
+                            VECTOR4(fZERO, fZERO, fZERO, fZERO).m);
 
     this->setTexEnv<fixed16>(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES,
-                           TAddressOf<fixed16>(fixed16::make(GL_FALSE)));
+                             TAddressOf<fixed16>(fixed16::make(GL_FALSE)));
   }
 
   this->setAlphaFunc(GL_ALWAYS, fZERO);
@@ -323,9 +327,9 @@ GLenum GLContext::initialize() {
   this->setPointParameter<floatf>(GL_POINT_SIZE_MIN, TAddressOf<floatf>(fZERO));
   this->setPointParameter<floatf>(GL_POINT_SIZE_MAX, TAddressOf<floatf>(fONE));
   this->setPointParameter<floatf>(GL_POINT_FADE_THRESHOLD_SIZE,
-                                TAddressOf<floatf>(fONE));
+                                  TAddressOf<floatf>(fONE));
   this->setPointParameter<floatf>(GL_POINT_DISTANCE_ATTENUATION,
-                                VECTOR3(fONE, fZERO, fZERO).m);
+                                  VECTOR3(fONE, fZERO, fZERO).m);
   this->setLineWidth(fONE);
 
   //--

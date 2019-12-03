@@ -75,18 +75,16 @@ void GLContext::loadMatrix(const MATRIX44 &matrix) {
 }
 
 void GLContext::frustum(floatf left, floatf right, floatf bottom, floatf top,
-                         floatf zNear, floatf zFar) {
+                        floatf zNear, floatf zFar) {
   if (zNear < fZERO) {
-    __glError(
-        GL_INVALID_VALUE,
-        "GLContext::frustum() failed, zNear should not be negative.\r\n");
+    __glError(GL_INVALID_VALUE,
+              "GLContext::frustum() failed, zNear should not be negative.\r\n");
     return;
   }
 
   if (zFar < fZERO) {
-    __glError(
-        GL_INVALID_VALUE,
-        "GLContext::frustum() failed, zFar should not be negative.\r\n");
+    __glError(GL_INVALID_VALUE,
+              "GLContext::frustum() failed, zFar should not be negative.\r\n");
     return;
   }
 
@@ -109,7 +107,7 @@ void GLContext::frustum(floatf left, floatf right, floatf bottom, floatf top,
 }
 
 void GLContext::ortho(floatf left, floatf right, floatf bottom, floatf top,
-                       floatf zNear, floatf zFar) {
+                      floatf zNear, floatf zFar) {
   MATRIX44 matTmp;
   Math::Ortho(&matTmp, left, right, bottom, top, zNear, zFar);
   this->multiply(matTmp);

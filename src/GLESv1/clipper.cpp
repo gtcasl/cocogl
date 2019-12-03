@@ -16,14 +16,12 @@
 #include "raster.hpp"
 #include "raster.inl"
 
-template <class R> 
-inline float TScalar(float lhs, float rhs) {
+template <typename R> inline float TScalar(float lhs, float rhs) {
   assert(lhs != rhs);
   return static_cast<R>(lhs / (lhs - rhs));
 }
 
-template <class R, uint32_t T> 
-inline R TScalar(TFixed<T> lhs, TFixed<T> rhs) {
+template <typename R, uint32_t T> inline R TScalar(TFixed<T> lhs, TFixed<T> rhs) {
   assert(lhs.data() != rhs.data());
   int diff = lhs.data() - rhs.data();
   return R::make((static_cast<int64_t>(lhs.data()) << R::FRAC) / diff);
@@ -238,32 +236,32 @@ void CRasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
 
       case CLIP_LEFT:
         nNumVertices = this->clipTriangle<CLIP_LEFT>(nNumVertices, pSrc, pDst,
-                                                      &iTmpVertices);
+                                                     &iTmpVertices);
         break;
 
       case CLIP_RIGHT:
         nNumVertices = this->clipTriangle<CLIP_RIGHT>(nNumVertices, pSrc, pDst,
-                                                       &iTmpVertices);
+                                                      &iTmpVertices);
         break;
 
       case CLIP_TOP:
         nNumVertices = this->clipTriangle<CLIP_TOP>(nNumVertices, pSrc, pDst,
-                                                     &iTmpVertices);
+                                                    &iTmpVertices);
         break;
 
       case CLIP_BOTTOM:
-        nNumVertices = this->clipTriangle<CLIP_BOTTOM>(nNumVertices, pSrc,
-                                                        pDst, &iTmpVertices);
+        nNumVertices = this->clipTriangle<CLIP_BOTTOM>(nNumVertices, pSrc, pDst,
+                                                       &iTmpVertices);
         break;
 
       case CLIP_FRONT:
         nNumVertices = this->clipTriangle<CLIP_FRONT>(nNumVertices, pSrc, pDst,
-                                                       &iTmpVertices);
+                                                      &iTmpVertices);
         break;
 
       case CLIP_BACK:
         nNumVertices = this->clipTriangle<CLIP_BACK>(nNumVertices, pSrc, pDst,
-                                                      &iTmpVertices);
+                                                     &iTmpVertices);
         break;
 
       case CLIP_PLANE0:
@@ -272,7 +270,8 @@ void CRasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
       case CLIP_PLANE3:
       case CLIP_PLANE4:
       case CLIP_PLANE5:
-        nNumVertices = this->clipTriangle(plane, nNumVertices, pSrc, pDst, &iTmpVertices);
+        nNumVertices =
+            this->clipTriangle(plane, nNumVertices, pSrc, pDst, &iTmpVertices);
         break;
       }
 
@@ -303,8 +302,8 @@ void CRasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
 }
 
 uint32_t CRasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
-                                       uint32_t *pSrc, uint32_t *pDst,
-                                       uint32_t *pTmp) {
+                                   uint32_t *pSrc, uint32_t *pDst,
+                                   uint32_t *pTmp) {
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
 

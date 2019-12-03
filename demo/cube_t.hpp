@@ -13,6 +13,8 @@
 //
 #pragma once
 
+#include "test.hpp"
+
 class CubeTest : public TestBase {
 private:
   int rotation_;
@@ -44,9 +46,9 @@ public:
     WinCE call GetWindowRect, using our window handle*/
     glViewport(0, 0, width, height);
 
-     /*
-    Setup of the orthographic matrix.
-    We use an ortho cube centered at ( 0, 0, 0 ) with 40 units of edge*/
+    /*
+   Setup of the orthographic matrix.
+   We use an ortho cube centered at ( 0, 0, 0 ) with 40 units of edge*/
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrthof(-20, 20, -20, 20, -20, 20);

@@ -90,15 +90,17 @@ EGLAPI void (*EGLAPIENTRY eglGetProcAddress(const char *procName))() {
   __profileAPI(" - %s( procName=%s )\n", __FUNCTION__, procName);
 
   typedef void (*PfnProcAddress)();
-  
+
   struct t_procedure {
     const char *name;
     PfnProcAddress pfn;
   };
 
   static const t_procedure procedures[] = {
-      {"glQueryMatrixxOES", reinterpret_cast<PfnProcAddress>(glQueryMatrixxOES)},
-      {"glPointSizePointerOES", reinterpret_cast<PfnProcAddress>(glPointSizePointerOES)},
+      {"glQueryMatrixxOES",
+       reinterpret_cast<PfnProcAddress>(glQueryMatrixxOES)},
+      {"glPointSizePointerOES",
+       reinterpret_cast<PfnProcAddress>(glPointSizePointerOES)},
   };
 
   if (procName) {
@@ -129,8 +131,8 @@ EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(EGLNativeDisplayType display_id) {
 
 EGLAPI EGLBoolean EGLAPIENTRY eglInitialize(EGLDisplay display, EGLint *pMajor,
                                             EGLint *pMinor) {
-  __profileAPI(" - %s( display=%d, pMajor=0x%p, pMinor=0x%p )\n",
-               __FUNCTION__, display, pMajor, pMinor);
+  __profileAPI(" - %s( display=%d, pMajor=0x%p, pMinor=0x%p )\n", __FUNCTION__,
+               display, pMajor, pMinor);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.getObject<_EGLDisplay *>(display);
@@ -166,8 +168,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglTerminate(EGLDisplay display) {
 }
 
 EGLAPI const char *EGLAPIENTRY eglQueryString(EGLDisplay display, EGLint name) {
-  __profileAPI(" - %s( display=%d, name=%d )\n", __FUNCTION__, display,
-               name);
+  __profileAPI(" - %s( display=%d, name=%d )\n", __FUNCTION__, display, name);
 
   EGLint err;
 
@@ -241,9 +242,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglGetConfigAttrib(EGLDisplay display,
                                                  EGLConfig config,
                                                  EGLint attribute,
                                                  EGLint *pValue) {
-  __profileAPI(
-      " - %s( display=%d, config=%d, attribute=%d, pValue=0x%p )\n",
-      __FUNCTION__, display, config, attribute, pValue);
+  __profileAPI(" - %s( display=%d, config=%d, attribute=%d, pValue=0x%p )\n",
+               __FUNCTION__, display, config, attribute, pValue);
 
   EGLint err;
 
@@ -286,9 +286,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglGetConfigAttrib(EGLDisplay display,
 EGLAPI EGLSurface EGLAPIENTRY
 eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
                        EGLNativeWindowType hWnd, const EGLint *pAttrib_list) {
-  __profileAPI(
-      " - %s( display=%d, config=%d, hWnd=0x%p, pAttrib_list=0x%p )\n",
-      __FUNCTION__, display, config, hWnd, pAttrib_list);
+  __profileAPI(" - %s( display=%d, config=%d, hWnd=0x%p, pAttrib_list=0x%p )\n",
+               __FUNCTION__, display, config, hWnd, pAttrib_list);
 
   EGLint err;
 
@@ -338,7 +337,7 @@ eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
   // Create the new surface handle
   uint32_t handle;
   err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE, pDisplay);
-  if (__eglFailed(err)) {    
+  if (__eglFailed(err)) {
     __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
     return EGL_NO_SURFACE;
@@ -402,7 +401,7 @@ eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
   // Create the new surface handle
   uint32_t handle;
   err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE, pDisplay);
-  if (__eglFailed(err)) {    
+  if (__eglFailed(err)) {
     __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
     return EGL_NO_SURFACE;
@@ -483,8 +482,8 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
         break;
 
       default:
-        __eglError(EGL_BAD_ATTRIBUTE,
-                   "Invalid pixel buffer attribute: %d\r\n", name);
+        __eglError(EGL_BAD_ATTRIBUTE, "Invalid pixel buffer attribute: %d\r\n",
+                   name);
         return EGL_NO_SURFACE;
       }
     }
@@ -503,7 +502,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
   // Create the new surface handle
   uint32_t handle;
   err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE, pDisplay);
-  if (__eglFailed(err)) {    
+  if (__eglFailed(err)) {
     __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
     return EGL_NO_SURFACE;
@@ -514,8 +513,8 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
 
 EGLAPI EGLBoolean EGLAPIENTRY eglDestroySurface(EGLDisplay display,
                                                 EGLSurface surface) {
-  __profileAPI(" - %s( display=%d, surface=%d )\n", __FUNCTION__,
-               display, surface);
+  __profileAPI(" - %s( display=%d, surface=%d )\n", __FUNCTION__, display,
+               surface);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.getObject<_EGLDisplay *>(display);
@@ -547,10 +546,9 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQuerySurface(EGLDisplay display,
                                               EGLSurface surface,
                                               EGLint attribute,
                                               EGLint *pValue) {
-  __profileAPI(
-      " - %s( display=%d, surface=%d, attribute=%s, pValue=0x%p )\n",
-      __FUNCTION__, display, surface, SurfaceAttributeToString(attribute),
-      pValue);
+  __profileAPI(" - %s( display=%d, surface=%d, attribute=%s, pValue=0x%p )\n",
+               __FUNCTION__, display, surface,
+               SurfaceAttributeToString(attribute), pValue);
 
   EGLint err;
 
@@ -577,8 +575,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQuerySurface(EGLDisplay display,
   // Query the surface attributes
   err = pSurface->getAttribute(pValue, attribute);
   if (__eglFailed(err)) {
-    __eglError(err, "Surface::getAttribute() failed, err = %d.\r\n",
-               err);
+    __eglError(err, "Surface::getAttribute() failed, err = %d.\r\n", err);
     return EGL_FALSE;
   }
 
@@ -620,8 +617,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay display,
 
   err = pSurface->setAttribute(attribute, value);
   if (__eglFailed(err)) {
-    __eglError(err, "Surface::setAttribute() failed, err = %d.\r\n",
-               err);
+    __eglError(err, "Surface::setAttribute() failed, err = %d.\r\n", err);
     return EGL_FALSE;
   }
 
@@ -631,17 +627,16 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay display,
 EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
                                               EGLSurface surface,
                                               EGLint buffer) {
-  __profileAPI(" - %s( display=%d, surface=%d, buffer=%s )\n",
-               __FUNCTION__, display, surface, BufferToString(buffer));
+  __profileAPI(" - %s( display=%d, surface=%d, buffer=%s )\n", __FUNCTION__,
+               display, surface, BufferToString(buffer));
 
   EGLint err;
 
   // Validate the buffer
   if (EGL_BACK_BUFFER != buffer) {
-    __eglError(
-        EGL_BAD_PARAMETER,
-        "eglBindTexImage() failed, invalid buffer parameter: %d.\r\n",
-        buffer);
+    __eglError(EGL_BAD_PARAMETER,
+               "eglBindTexImage() failed, invalid buffer parameter: %d.\r\n",
+               buffer);
     return EGL_FALSE;
   }
 
@@ -687,17 +682,16 @@ EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
 EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay display,
                                                  EGLSurface surface,
                                                  EGLint buffer) {
-  __profileAPI(" - %s( display=%d, surface=%d, buffer=%s )\n",
-               __FUNCTION__, display, surface, BufferToString(buffer));
+  __profileAPI(" - %s( display=%d, surface=%d, buffer=%s )\n", __FUNCTION__,
+               display, surface, BufferToString(buffer));
 
   EGLint err;
 
   // Validate the buffer
   if (EGL_BACK_BUFFER != buffer) {
-    __eglError(
-        EGL_BAD_PARAMETER,
-        "eglBindTexImage() failed, invalid buffer parameter: %d.\r\n",
-        buffer);
+    __eglError(EGL_BAD_PARAMETER,
+               "eglBindTexImage() failed, invalid buffer parameter: %d.\r\n",
+               buffer);
     return EGL_FALSE;
   }
 
@@ -724,8 +718,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay display,
   // Release the bound texture
   err = pSurface->releaseTexBound();
   if (__eglFailed(err)) {
-    __eglError(err, "Surface::releaseTexBound() failed, err = %d.\r\n",
-               err);
+    __eglError(err, "Surface::releaseTexBound() failed, err = %d.\r\n", err);
     return EGL_FALSE;
   }
 
@@ -734,8 +727,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay display,
 
 EGLAPI EGLBoolean EGLAPIENTRY eglSwapInterval(EGLDisplay display,
                                               EGLint interval) {
-  __profileAPI(" - %s( display=%d, interval=%d )\n", __FUNCTION__,
-               display, interval);
+  __profileAPI(" - %s( display=%d, interval=%d )\n", __FUNCTION__, display,
+               interval);
   __unreferenced(interval);
 
   // Find the display object from the handle table
@@ -831,7 +824,7 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
 
   uint32_t handle;
   err = g_driver.registerObject(&handle, pContext, HANDLE_CONTEXT, pDisplay);
-  if (__eglFailed(err)) {    
+  if (__eglFailed(err)) {
     __eglError(err, "_EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pContext);
     return EGL_NO_CONTEXT;
@@ -842,8 +835,8 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
 
 EGLAPI EGLBoolean EGLAPIENTRY eglDestroyContext(EGLDisplay display,
                                                 EGLContext context) {
-  __profileAPI(" - %s( display=%d, context=%d )\n", __FUNCTION__,
-               display, context);
+  __profileAPI(" - %s( display=%d, context=%d )\n", __FUNCTION__, display,
+               context);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.getObject<_EGLDisplay *>(display);
@@ -923,7 +916,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
   }
 
   auto curThreadID = std::this_thread::get_id();
-  
+
   if (pContext) {
     if (pContext->hasBindings() && pContext->getThreadID() != curThreadID) {
       __eglError(EGL_BAD_ACCESS,
@@ -1024,9 +1017,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQueryContext(EGLDisplay display,
                                               EGLContext context,
                                               EGLint attribute,
                                               EGLint *pValue) {
-  __profileAPI(
-      " - %s( display=%d, context=%d, attribute=%d, pValue=0x%p )\n",
-      __FUNCTION__, context, attribute, pValue);
+  __profileAPI(" - %s( display=%d, context=%d, attribute=%d, pValue=0x%p )\n",
+               __FUNCTION__, context, attribute, pValue);
 
   EGLint err;
 
@@ -1053,8 +1045,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQueryContext(EGLDisplay display,
   // Query the context attributes
   err = pContext->getAttribute(attribute, pValue);
   if (__eglFailed(err)) {
-    __eglError(err, "Context::getAttribute() failed, err = %d.\r\n",
-               err);
+    __eglError(err, "Context::getAttribute() failed, err = %d.\r\n", err);
     return EGL_FALSE;
   }
 
@@ -1070,8 +1061,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitGL() {
 }
 
 EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative(EGLint engine) {
-  __profileAPI(" - %s( engine=%s )\n", __FUNCTION__,
-               EngineToString(engine));
+  __profileAPI(" - %s( engine=%s )\n", __FUNCTION__, EngineToString(engine));
 
   if (EGL_CORE_NATIVE_ENGINE != engine) {
     __eglError(EGL_BAD_PARAMETER,
@@ -1096,8 +1086,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative(EGLint engine) {
 
 EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
                                              EGLSurface surface) {
-  __profileAPI(" - %s( display=%d, surface=%d )\n", __FUNCTION__,
-               display, surface);
+  __profileAPI(" - %s( display=%d, surface=%d )\n", __FUNCTION__, display,
+               surface);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.getObject<_EGLDisplay *>(display);
@@ -1146,8 +1136,8 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
 EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers(EGLDisplay display,
                                              EGLSurface surface,
                                              EGLNativePixmapType target) {
-  __profileAPI(" - %s( display=%d, surface=%d, target=0x%x )\n",
-               __FUNCTION__, display, surface, target);
+  __profileAPI(" - %s( display=%d, surface=%d, target=0x%x )\n", __FUNCTION__,
+               display, surface, target);
 
   EGLint err;
 
@@ -1174,8 +1164,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers(EGLDisplay display,
   // Copy the surface bits
   err = pSurface->copyBuffer(target);
   if (__eglFailed(err)) {
-    __eglError(err, "Context::getAttribute() failed, err = %d.\r\n",
-               err);
+    __eglError(err, "Context::getAttribute() failed, err = %d.\r\n", err);
     return EGL_FALSE;
   }
 

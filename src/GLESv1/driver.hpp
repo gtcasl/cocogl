@@ -28,33 +28,32 @@ public:
 
   CRasterCache *getRasterCache() const { return pRasterCache_; }
 
-  template <class T> 
-  inline T getObject(void *handle) const {
+  template <typename T> inline T getObject(void *handle) const {
     return reinterpret_cast<T>(
         handles_->getObject(reinterpret_cast<intptr_t>(handle), this));
   }
 
-  template <class T> 
-  inline T getObject(void *handle, void *pOwner) const {
+  template <typename T> inline T getObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
         handles_->getObject(reinterpret_cast<intptr_t>(handle), pOwner));
-  }  
+  }
 
   GLenum registerObject(uint32_t *phandle, void *pObject, uint8_t type) {
     return GLERROR_FROM_HRESULT(handles_->insert(phandle, pObject, type, this));
-  }  
-
-  GLenum registerObject(uint32_t *phandle, void *pObject, uint8_t type, void *pOwner) {
-    return GLERROR_FROM_HRESULT(handles_->insert(phandle, pObject, type, pOwner));
   }
 
-  template <class T> 
-  inline T unregisterObject(void *handle) const {
+  GLenum registerObject(uint32_t *phandle, void *pObject, uint8_t type,
+                        void *pOwner) {
+    return GLERROR_FROM_HRESULT(
+        handles_->insert(phandle, pObject, type, pOwner));
+  }
+
+  template <typename T> inline T unregisterObject(void *handle) const {
     return reinterpret_cast<T>(
         handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
   }
 
-  template <class T>
+  template <typename T>
   inline T unregisterObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
         handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), pOwner));

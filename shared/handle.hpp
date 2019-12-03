@@ -14,8 +14,8 @@
 //
 #pragma once
 
-#include <mutex>
 #include "object.hpp"
+#include <mutex>
 
 class HandleTable : public Object {
 private:
@@ -87,13 +87,9 @@ public:
 
     friend class HandleTable;
   };
-  
-  HandleTable() 
-    : size_(0)
-    , entries_(nullptr)
-    , activelist_(nullptr)
-    , count_(0) 
-  {}
+
+  HandleTable()
+      : size_(0), entries_(nullptr), activelist_(nullptr), count_(0) {}
 
   void *getObject(uint32_t handle, const void *pOwner = nullptr);
 
@@ -124,7 +120,6 @@ public:
   }
 
 private:
-
   ~HandleTable() {
     if (entries_) {
       free(entries_);

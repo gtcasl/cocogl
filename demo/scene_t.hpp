@@ -13,6 +13,8 @@
 //
 #pragma once
 
+#include "test.hpp"
+
 class SceneTest : public TestBase {
 private:
   Mesh mesh_;

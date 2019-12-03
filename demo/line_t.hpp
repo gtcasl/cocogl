@@ -13,6 +13,8 @@
 //
 #pragma once
 
+#include "test.hpp"
+
 class LineTest : public TestBase {
 public:
   bool OnInitialize(uint32_t width, uint32_t height) {

@@ -14,8 +14,7 @@
 //
 #pragma once
 
-template <uint32_t Format> 
-struct TColorNative {
+template <uint32_t Format> struct TColorNative {
   uint32_t Low;
   uint32_t High;
 
@@ -143,8 +142,7 @@ struct TColorNative {
   }
 };
 
-template <uint32_t compare> 
-inline bool DoCompare(uint32_t a, uint32_t b) {
+template <uint32_t compare> inline bool DoCompare(uint32_t a, uint32_t b) {
 
   if constexpr (compare == COMPARE_NEVER) {
     __unreferenced(a);
@@ -222,8 +220,7 @@ inline uint32_t TStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <uint32_t Address> 
-inline int TAddress(int x) {
+template <uint32_t Address> inline int TAddress(int x) {
   if constexpr (Address == ADDRESS_WRAP) {
     return x & fixedRX::MASK;
   }
@@ -236,7 +233,7 @@ inline int TAddress(int x) {
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
-                                  fixedRX fV) {
+                                 fixedRX fV) {
   auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(
       surface.getBits());
   uint32_t logWidth = surface.getLogWidth();
@@ -254,7 +251,7 @@ inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline TColorNative<Format> GetTexelColorLnX(const SurfaceDesc &surface,
-                                              fixedRX fU, fixedRX fV) {
+                                             fixedRX fU, fixedRX fV) {
   int lerpBits = TFormatInfo<Format>::LERP;
   int lerpMask = (1 << lerpBits) - 1;
 
@@ -303,7 +300,7 @@ inline TColorNative<Format> GetTexelColorLnX(const SurfaceDesc &surface,
 template <uint32_t Filter, uint32_t Format, uint32_t AddressU,
           uint32_t AddressV>
 inline uint32_t GetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
-                               fixedRX fV) {
+                              fixedRX fV) {
   if constexpr (Filter == FILTER_NEAREST) {
     return GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV);
   }
@@ -316,7 +313,7 @@ inline uint32_t GetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
 template <uint32_t Filter, uint32_t Format, uint32_t AddressU,
           uint32_t AddressV>
 inline TColorNative<Format> GetMinFilterX(const SurfaceDesc &surface,
-                                           fixedRX fU, fixedRX fV) {
+                                          fixedRX fU, fixedRX fV) {
   if constexpr (Filter == FILTER_NEAREST) {
     return TColorNative<Format>(
         GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
@@ -330,7 +327,7 @@ inline TColorNative<Format> GetMinFilterX(const SurfaceDesc &surface,
 template <uint32_t MipFilter, uint32_t MinFilter, uint32_t MagFilter,
           uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
-                               fixedRX fM) {
+                              fixedRX fM) {
   if constexpr (MipFilter == FILTER_NONE) {
     if constexpr (MinFilter == MagFilter) {
       return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
@@ -427,7 +424,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
 
 template <uint32_t EnvMode>
 void GetTexEnvColorA(Color4 *pInOut, const Color4 &cTexture,
-                      ColorARGB cEnvColor) {
+                     ColorARGB cEnvColor) {
 
   __unreferenced(cEnvColor);
 
@@ -454,7 +451,7 @@ void GetTexEnvColorA(Color4 *pInOut, const Color4 &cTexture,
 
 template <uint32_t EnvMode>
 void GetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
-                        ColorARGB cEnvColor) {
+                       ColorARGB cEnvColor) {
 
   if constexpr (EnvMode == ENVMODE_ADD) {
     __unreferenced(cEnvColor);
@@ -493,7 +490,7 @@ void GetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
 
 template <uint32_t EnvMode>
 void GetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
-                         ColorARGB cEnvColor) {
+                        ColorARGB cEnvColor) {
 
   if constexpr (EnvMode == ENVMODE_ADD) {
     __unreferenced(cEnvColor);

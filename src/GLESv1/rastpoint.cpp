@@ -29,17 +29,23 @@ void CRasterizer::drawPoint(uint32_t index) {
 }
 
 void CRasterizer::rasterPoint(uint32_t index) {
-  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
-  auto pfPointSize = reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
+  auto pvScreenPos =
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+  auto pfPointSize =
+      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
 
   auto &vertex = pvScreenPos[index];
   auto fPointSize = pfPointSize[index];
   auto fHalfSize = fPointSize >> 1;
 
-  auto ymin = Math::TMax<int>(Math::TRoundi<int>(vertex.y - fHalfSize), scissorRect_.top);
-  auto ymax = Math::TMin<int>(Math::TRoundi<int>(vertex.y + fHalfSize), scissorRect_.bottom);
-  auto xmin = Math::TMax<int>(Math::TRoundi<int>(vertex.x - fHalfSize), scissorRect_.left);
-  auto xmax = Math::TMin<int>(Math::TRoundi<int>(vertex.x + fHalfSize), scissorRect_.right);
+  auto ymin = Math::TMax<int>(Math::TRoundi<int>(vertex.y - fHalfSize),
+                              scissorRect_.top);
+  auto ymax = Math::TMin<int>(Math::TRoundi<int>(vertex.y + fHalfSize),
+                              scissorRect_.bottom);
+  auto xmin = Math::TMax<int>(Math::TRoundi<int>(vertex.x - fHalfSize),
+                              scissorRect_.left);
+  auto xmax = Math::TMin<int>(Math::TRoundi<int>(vertex.x + fHalfSize),
+                              scissorRect_.right);
 
   // Early out if the point has no size
   if ((xmin >= xmax) || (ymin >= ymax)) {
@@ -106,7 +112,7 @@ void CRasterizer::rasterPoint(uint32_t index) {
         pRegisters[1].m[2] = (fDelta >> 1) - fDelta * ymin;
       } else {
         auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(
-                              pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
+            pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
         const TEXCOORD2 &vTexCoord = vTexCoords[index];
 
         pRegisters[0].m[0] = TConst<fixedRX>::Zero();
@@ -148,7 +154,8 @@ void CRasterizer::rasterPoint(uint32_t index) {
 
 #ifdef COCOGL_RASTER_PROFILE
   auto end_time = std::chrono::high_resolution_clock::now();
-  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(end_time - start_time);
+  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(
+      end_time - start_time);
   rasterData_.pRasterOp->EndProfile(elapsed_time.count());
 #endif
 }

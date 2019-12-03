@@ -57,7 +57,7 @@ public:
 
   uint32_t getSize() const { return size_; }
 
-  template <class T> void getTop(T *pDst) const {
+  template <typename T> void getTop(T *pDst) const {
     assert(pDst);
 
     auto pSrc = pMatrices_[curIndex_]._m;

@@ -17,18 +17,11 @@
 
 void Perspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar);
 
-void LookAtf(
-        GLfloat eyex,
-        GLfloat eyey,
-        GLfloat eyez,
-        GLfloat centerx,
-        GLfloat centery,
-        GLfloat centerz,
-        GLfloat upx,
-        GLfloat upy,
-        GLfloat upz);
+void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
+             GLfloat centery, GLfloat centerz, GLfloat upx, GLfloat upy,
+             GLfloat upz);
 
-bool LoadTGA(const char *fileName, GLuint* id);
+bool LoadTGA(const char *fileName, GLuint *id);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +30,9 @@ public:
   TestBase() {}
   virtual ~TestBase() {}
 
-  virtual bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) { return true; };
+  virtual bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) {
+    return true;
+  };
 
   virtual void OnRender(){};
 

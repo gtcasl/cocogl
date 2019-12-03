@@ -25,14 +25,14 @@ struct nonesuch {
   void operator=(nonesuch const &) = delete;
 };
 
-template <class Default, class Void, template <class...> class Op,
+template <typename Default, typename Void, template <class...> class Op,
           class... Args>
 struct detector {
   using value_t = std::false_type;
   using type = Default;
 };
 
-template <class Default, template <class...> class Op, class... Args>
+template <typename Default, template <class...> class Op, class... Args>
 struct detector<Default, std::void_t<Op<Args...>>, Op, Args...> {
   using value_t = std::true_type;
   using type = Op<Args...>;
@@ -43,7 +43,7 @@ template <template <class...> class Op, class... Args>
 using detected_t =
     typename detail::detector<detail::nonesuch, void, Op, Args...>::type;
 
-template <class Default, template <class...> class Op, class... Args>
+template <typename Default, template <class...> class Op, class... Args>
 using detected_or_t =
     typename detail::detector<Default, void, Op, Args...>::type;
 
@@ -67,52 +67,45 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class T> 
-inline size_t __countof(const T &a) {
+template <typename T> inline size_t __countof(const T &a) {
   return (sizeof(a) / sizeof(a[0]));
 }
 
-template <class T> 
-inline void __safeAcquire(T *p) {
+template <typename T> inline void __safeAcquire(T *p) {
   if (p) {
     p->addRef();
   }
 }
 
-template <class T> 
-inline void __safeRelease(T *&p) {
+template <typename T> inline void __safeRelease(T *&p) {
   if (p) {
     p->release();
     p = nullptr;
   }
 }
 
-template <class T> 
-inline void __safeDelete(T *&p) {
+template <typename T> inline void __safeDelete(T *&p) {
   if (p) {
     delete p;
     p = nullptr;
   }
 }
 
-template <class T> 
-inline void __safeDeleteArray(T *&p) {
+template <typename T> inline void __safeDeleteArray(T *&p) {
   if (p) {
     delete[] p;
     p = nullptr;
   }
 }
 
-template <class T> 
-inline void __safeFree(T *&p) {
+template <typename T> inline void __safeFree(T *&p) {
   if (p) {
     free(p);
     p = nullptr;
   }
 }
 
-template <class T> 
-inline bool __isAligned32(T *ptr) {
+template <typename T> inline bool __isAligned32(T *ptr) {
   size_t offset = ptr - (T *)(nullptr);
   return (0 == (offset & 3));
 }
@@ -121,14 +114,12 @@ inline size_t __align(size_t offset, size_t alignment) {
   return (offset + alignment - 1) & ~(alignment - 1);
 }
 
-template <class T> 
-inline T *__alignPtr(T *ptr, size_t alignment) {
+template <typename T> inline T *__alignPtr(T *ptr, size_t alignment) {
   size_t offset = ptr - (T *)(nullptr);
   return (T *)(nullptr) + ((offset + alignment - 1) & ~(alignment - 1));
 }
 
-template <class T> 
-inline void __swap(T &a, T &b) {
+template <typename T> inline void __swap(T &a, T &b) {
   T c(a);
   a = b;
   b = c;

@@ -23,7 +23,7 @@ public:
   };
 
   typedef void (*PfnColorFill)(const GLSurfaceDesc &surfDesc, uint32_t value,
-                                uint32_t mask, const Rect &rect);
+                               uint32_t mask, const Rect &rect);
 
   static GLenum Create(GLSurface **ppSurface, const GLSurfaceDesc *pColorDesc,
                        const GLSurfaceDesc *pDepthStencilDesc);
@@ -68,9 +68,7 @@ public:
 
   const GLSurfaceDesc &getColorDesc() const { return colorDesc_; }
 
-  const GLSurfaceDesc &getDepthStencilDesc() const {
-    return depthStencilDesc_;
-  }
+  const GLSurfaceDesc &getDepthStencilDesc() const { return depthStencilDesc_; }
 
   GLenum update(const GLSurfaceDesc *pColorDesc,
                 const GLSurfaceDesc *pDepthStencilDesc) {
@@ -112,15 +110,15 @@ private:
   };
 
   GLSurface();
-  
+
   ~GLSurface();
 
   GLenum initialize(const GLSurfaceDesc *pColorDesc,
                     const GLSurfaceDesc *pDepthStencilDesc);
 
-  template <class T>
+  template <typename T>
   static void colorFill(const GLSurfaceDesc &surfDesc, uint32_t value,
-                         uint32_t mask, const Rect &rect);
+                        uint32_t mask, const Rect &rect);
 
   static void colorFillNoop(const GLSurfaceDesc &surfDesc, uint32_t value,
                             uint32_t mask, const Rect &rect) {

@@ -225,8 +225,7 @@ bool CRasterizer::generateRasterOp() {
 #else
         err = CGenericRasterOp::Create(&pRasterOp, rasterID_);
         if (__glFailed(err)) {
-          __glLogError("CGenericRasterOp::Create() failed, err = %d.\r\n",
-                       err);
+          __glLogError("CGenericRasterOp::Create() failed, err = %d.\r\n", err);
           return false;
         }
 #endif
@@ -235,8 +234,7 @@ bool CRasterizer::generateRasterOp() {
         pRasterCache_->trackSlowRasterID(rasterID_);
 #endif
       } else {
-        __glLogError("COptimizedRasterOp::Create() failed, err = %d.\r\n",
-                     err);
+        __glLogError("COptimizedRasterOp::Create() failed, err = %d.\r\n", err);
         return false;
       }
     }

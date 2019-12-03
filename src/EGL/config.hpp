@@ -41,7 +41,8 @@ public:
   static int compare(const _EGLConfig *pConfigA, const _EGLConfig *pConfigB);
 
 private:
-  _EGLConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha, EGLint depth, EGLint stencil);
+  _EGLConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha, EGLint depth,
+             EGLint stencil);
   ~_EGLConfig();
 
   EGLint attributes_[ATTRIBUTES_SIZE];

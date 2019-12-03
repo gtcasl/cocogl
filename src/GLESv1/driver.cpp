@@ -68,7 +68,7 @@ GLDriver::~GLDriver() {
 GLContext *GLDriver::getCurrentContext() const { return tls_glctx; }
 
 void GLDriver::makeCurrent(GLContext *pContext, GLSurface *pSurfDraw,
-                            GLSurface *pSurfRead) {
+                           GLSurface *pSurfRead) {
   GLContext *pCtxCurr = this->getCurrentContext();
   if (pCtxCurr != pContext) {
     if (pContext) {

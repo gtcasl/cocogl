@@ -16,7 +16,8 @@
 #include "config.hpp"
 #include "display.hpp"
 
-_EGLSurface::_EGLSurface(_EGLDisplay *pDisplay, EGLint surfaceType, _EGLConfig *pConfig) {
+_EGLSurface::_EGLSurface(_EGLDisplay *pDisplay, EGLint surfaceType,
+                         _EGLConfig *pConfig) {
   __profileAPI(" - %s()\n", __FUNCTION__);
   assert(pDisplay);
   assert(pConfig);
@@ -110,7 +111,7 @@ EGLint _EGLSurface::CreateWND(_EGLSurface **ppSurface, _EGLDisplay *display,
 
   // Initialize the surface
   err = pSurface->InitializeWND(hWnd);
-  if (__eglFailed(err)) {    
+  if (__eglFailed(err)) {
     __eglLogError("Surface::initialize() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
     return err;
@@ -141,7 +142,7 @@ EGLint _EGLSurface::CreatePXM(_EGLSurface **ppSurface, _EGLDisplay *display,
 
   // Initialize the surface
   err = pSurface->InitializePXM(hPixmap);
-  if (__eglFailed(err)) {    
+  if (__eglFailed(err)) {
     __eglLogError("Surface::initialize() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
     return err;
@@ -175,7 +176,7 @@ EGLint _EGLSurface::CreatePBF(_EGLSurface **ppSurface, _EGLDisplay *display,
   // Initialize the surface
   err = pSurface->InitializePBF(width, height, largestPBuffer, texTarget,
                                 texFormat, bGenMipMaps);
-  if (__eglFailed(err)) {    
+  if (__eglFailed(err)) {
     __eglLogError("Surface::initialize() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
     return err;
@@ -314,8 +315,7 @@ EGLint _EGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   err = this->InitDepthStencil(colorDesc.Width, colorDesc.Height,
                                &depthStencilDesc);
   if (__eglFailed(err)) {
-    __eglLogError("_EGLSurface::InitDepthStencil() failed, err = %d.\r\n",
-                  err);
+    __eglLogError("_EGLSurface::InitDepthStencil() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -412,8 +412,7 @@ EGLint _EGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   err = this->InitDepthStencil(colorDesc.Width, colorDesc.Height,
                                &depthStencilDesc);
   if (__eglFailed(err)) {
-    __eglLogError("_EGLSurface::InitDepthStencil() failed, err = %d.\r\n",
-                  err);
+    __eglLogError("_EGLSurface::InitDepthStencil() failed, err = %d.\r\n", err);
     return err;
   }
 
@@ -481,8 +480,7 @@ EGLint _EGLSurface::InitializePBF(EGLint width, EGLint height,
       // Allocate mipmap level
       ppBuffers_[i] = new uint8_t[_width * _height * (nBPP / 8)];
       if (nullptr == ppBuffers_[i]) {
-        __eglLogError(
-            "Surface::initialize() failed, out of memory.\r\n");
+        __eglLogError("Surface::initialize() failed, out of memory.\r\n");
         return EGL_BAD_ALLOC;
       }
 
@@ -550,9 +548,8 @@ EGLint _EGLSurface::bindTexture() {
   }
 
   if (EGL_NO_TEXTURE == texFormat_) {
-    __eglLogError(
-        "Surface::bindTexture() failed, the surface attribute "
-        "EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n");
+    __eglLogError("Surface::bindTexture() failed, the surface attribute "
+                  "EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n");
     return EGL_BAD_MATCH;
   }
 
@@ -580,9 +577,8 @@ EGLint _EGLSurface::releaseTexBound() {
 
   // Verify the texture format
   if (EGL_NO_TEXTURE == texFormat_) {
-    __eglLogError(
-        "Surface::releaseTexBound() failed, the surface attribute "
-        "EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n");
+    __eglLogError("Surface::releaseTexBound() failed, the surface attribute "
+                  "EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n");
     return EGL_BAD_MATCH;
   }
 
@@ -627,9 +623,8 @@ EGLint _EGLSurface::getAttribute(EGLint *pValue, EGLint attribute) const {
     break;
 
   default:
-    __eglLogError(
-        "Surface::getAttribute() failed, invalid attribute: %d.\r\n",
-        attribute);
+    __eglLogError("Surface::getAttribute() failed, invalid attribute: %d.\r\n",
+                  attribute);
     return EGL_BAD_ATTRIBUTE;
   }
 
@@ -664,9 +659,8 @@ EGLint _EGLSurface::setAttribute(EGLint attribute, EGLint value) {
   break;
 
   default:
-    __eglLogError(
-        "Surface::setAttribute() failed, invalid attribute: %d.\r\n",
-        attribute);
+    __eglLogError("Surface::setAttribute() failed, invalid attribute: %d.\r\n",
+                  attribute);
     return EGL_BAD_ATTRIBUTE;
   }
 

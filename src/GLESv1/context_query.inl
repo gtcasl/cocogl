@@ -20,8 +20,7 @@ extern const GLint g_compressedFormats[] = {
     GL_PALETTE8_RGBA8_OES,  GL_PALETTE8_R5_G6_B5_OES, GL_PALETTE8_RGBA4_OES,
     GL_PALETTE8_RGB5_A1_OES};
 
-template <class T>
-inline void GLContext::getClipPlane(GLenum plane, T eqn[4]) {
+template <typename T> inline void GLContext::getClipPlane(GLenum plane, T eqn[4]) {
   if ((plane - GL_CLIP_PLANE0) >= MAX_CLIPPLANES) {
     __glError(GL_INVALID_ENUM,
               "GLContext::getClipPlane() failed, "
@@ -38,15 +37,14 @@ inline void GLContext::getClipPlane(GLenum plane, T eqn[4]) {
   eqn[3] = static_cast<T>(vClipPlanesES_[index].w);
 }
 
-template <class T>
+template <typename T>
 inline void GLContext::getLight(GLenum light, GLenum pname, T *pParams) {
   assert(pParams);
 
   if ((light - GL_LIGHT0) >= MAX_LIGHTS) {
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::getLight() failed, invalid light parameter: %d.\r\n",
-        light);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::getLight() failed, invalid light parameter: %d.\r\n",
+              light);
     return;
   }
 
@@ -91,15 +89,14 @@ inline void GLContext::getLight(GLenum light, GLenum pname, T *pParams) {
     break;
 
   default:
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::getLight() failed, invalid pname parameter: %d.\r\n",
-        pname);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::getLight() failed, invalid pname parameter: %d.\r\n",
+              pname);
     return;
   }
 }
 
-template <class T>
+template <typename T>
 inline void GLContext::getMaterial(GLenum face, GLenum pname, T *pParams) {
   assert(pParams);
 
@@ -141,7 +138,7 @@ inline void GLContext::getMaterial(GLenum face, GLenum pname, T *pParams) {
   }
 }
 
-template <class T>
+template <typename T>
 inline void GLContext::getTexEnv(GLenum env, GLenum pname, T *pParams) {
   assert(pParams);
 
@@ -172,17 +169,16 @@ inline void GLContext::getTexEnv(GLenum env, GLenum pname, T *pParams) {
     break;
 
   default:
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::getTexEnv() failed, invalid env parameter: %d.\r\n",
-        env);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::getTexEnv() failed, invalid env parameter: %d.\r\n",
+              env);
     return;
   }
 }
 
-template <class T>
+template <typename T>
 inline void GLContext::getTexParameter(GLenum target, GLenum pname,
-                                         T *pParams) {
+                                       T *pParams) {
   assert(pParams);
 
   if (target != GL_TEXTURE_2D) {
@@ -226,8 +222,7 @@ inline void GLContext::getTexParameter(GLenum target, GLenum pname,
   }
 }
 
-template <> 
-inline void GLContext::get<bool>(GLenum pname, bool *pParams) {
+template <> inline void GLContext::get<bool>(GLenum pname, bool *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -262,8 +257,7 @@ inline void GLContext::get<bool>(GLenum pname, bool *pParams) {
   }
 }
 
-template <> 
-inline void GLContext::get<int>(GLenum pname, int *pParams) {
+template <> inline void GLContext::get<int>(GLenum pname, int *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -573,8 +567,7 @@ inline void GLContext::get<int>(GLenum pname, int *pParams) {
   }
 }
 
-template <class T> 
-inline void GLContext::get(GLenum pname, T *pParams) {
+template <typename T> inline void GLContext::get(GLenum pname, T *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -695,12 +688,14 @@ inline void GLContext::get(GLenum pname, T *pParams) {
     break;
 
   default:
-    __glError(GL_INVALID_ENUM, "GLContext::get() failed, invalid pname parameter: %d.\r\n", pname);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::get() failed, invalid pname parameter: %d.\r\n",
+              pname);
     return;
   }
 }
 
-template <class T>
+template <typename T>
 inline GLbitfield GLContext::queryMatrix(T *pMantissa, GLint exponent[16]) {
   const MATRIX44 &matrix = pMatrixStack_->getMatrix();
 

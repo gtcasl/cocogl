@@ -24,10 +24,10 @@
 #include <vector>
 
 #include <platform.hpp>
+#include <utils.hpp>
 #include <GLES/gl.h>
 #include <GLES/glext.h>
 #include <glcommon.hpp>
-#include <utils.hpp>
 #include <bitmap.hpp>
 #include <color.hpp>
 #include <fixed.hpp>

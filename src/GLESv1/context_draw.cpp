@@ -17,7 +17,7 @@
 #include "raster.inl"
 
 void GLContext::clearColor(floatf red, floatf green, floatf blue,
-                            floatf alpha) {
+                           floatf alpha) {
   vClearColor_.x = blue;
   vClearColor_.y = green;
   vClearColor_.z = red;
@@ -35,7 +35,7 @@ void GLContext::clearDepth(floatf depth) {
 void GLContext::clearStencil(GLint stencil) { clearStencil_ = stencil; }
 
 void GLContext::setColorMask(GLboolean red, GLboolean green, GLboolean blue,
-                           GLboolean alpha) {
+                             GLboolean alpha) {
   cColorWriteMask_.r = red ? 0xff : 0x0;
   cColorWriteMask_.g = green ? 0xff : 0x0;
   cColorWriteMask_.b = blue ? 0xff : 0x0;
@@ -110,8 +110,7 @@ void GLContext::drawArrays(GLenum mode, GLint first, GLsizei count) {
   // Setup the raster states
   err = this->setupRasterStates(mode);
   if (__glFailed(err)) {
-    __glLogError("CRasterizers:SetupRasterStates() failed, err = %d.\r\n",
-                 err);
+    __glLogError("CRasterizers:SetupRasterStates() failed, err = %d.\r\n", err);
     goto L_EXIT;
   }
 
@@ -128,8 +127,7 @@ void GLContext::drawArrays(GLenum mode, GLint first, GLsizei count) {
   // Render primitives
   err = this->renderPrimitive(mode, count);
   if (__glFailed(err)) {
-    __glError(err, "CRasterizer::renderPrimitive() failed, err = %d.\r\n",
-              err);
+    __glError(err, "CRasterizer::renderPrimitive() failed, err = %d.\r\n", err);
     goto L_EXIT;
   }
 
@@ -140,7 +138,7 @@ L_EXIT:
 }
 
 void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
-                              const GLvoid *pIndices) {
+                             const GLvoid *pIndices) {
   {
     GLenum err;
 
@@ -165,8 +163,7 @@ void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
     // Prepare index buffer
     err = this->prepareIndices(type, &pIndices, count, &vmin, &vmax);
     if (__glFailed(err)) {
-      __glError(err, "GLContext::prepareIndices() failed, err = %d.\r\n",
-                err);
+      __glError(err, "GLContext::prepareIndices() failed, err = %d.\r\n", err);
       goto L_EXIT;
     }
 
@@ -188,11 +185,10 @@ void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
       err = this->renderIndexedPrimitive<uint16_t>(
           mode, reinterpret_cast<const uint16_t *>(pIndices), count, vmin);
       if (__glFailed(err)) {
-        __glError(
-            err,
-            "CRasterizer::renderIndexedPrimitive<uint16_t>() failed, "
-            "err = %d.\r\n",
-            err);
+        __glError(err,
+                  "CRasterizer::renderIndexedPrimitive<uint16_t>() failed, "
+                  "err = %d.\r\n",
+                  err);
       }
       break;
 

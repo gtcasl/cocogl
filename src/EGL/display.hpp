@@ -21,8 +21,7 @@ class _EGConfig;
 
 class _EGLDisplay : public Object {
 public:
-  static EGLint Create(_EGLDisplay **ppDisplay, 
-                       EGLNativeDisplayType hNative,
+  static EGLint Create(_EGLDisplay **ppDisplay, EGLNativeDisplayType hNative,
                        HandleTable *pHandles);
 
   EGLint initialize(EGLint *pMajor, EGLint *pMinor);

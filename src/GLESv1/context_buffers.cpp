@@ -21,9 +21,9 @@ void GLContext::genBuffers(GLsizei n, GLuint *phBuffers) {
   assert(phBuffers);
 
   if (n < 0) {
-    __glError(
-        GL_INVALID_VALUE,
-        "GLContext::genBuffers() failed, invalid n parameter: %d.\r\n", n);
+    __glError(GL_INVALID_VALUE,
+              "GLContext::genBuffers() failed, invalid n parameter: %d.\r\n",
+              n);
     return;
   }
 
@@ -39,7 +39,7 @@ void GLContext::genBuffers(GLsizei n, GLuint *phBuffers) {
     uint32_t handle;
     err = GLERROR_FROM_HRESULT(
         handles_->insert(&handle, pBuffer, HANDLE_BUFFER, this));
-    if (__glFailed(err)) {      
+    if (__glFailed(err)) {
       __glError(err, "HandleTable::insert() failed, err = %d.\r\n", err);
       __safeRelease(pBuffer);
       return;
@@ -86,8 +86,8 @@ void GLContext::bindBuffer(GLenum target, GLuint buffer) {
   this->setBufferObject(target, pBuffer);
 }
 
-void GLContext::setBufferData(GLenum target, GLsizeiptr size, const GLvoid *pData,
-                            GLenum usage) {
+void GLContext::setBufferData(GLenum target, GLsizeiptr size,
+                              const GLvoid *pData, GLenum usage) {
   GLenum err;
 
   if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER)) {
@@ -124,8 +124,8 @@ void GLContext::setBufferData(GLenum target, GLsizeiptr size, const GLvoid *pDat
   }
 }
 
-void GLContext::setBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size,
-                               const GLvoid *pData) {
+void GLContext::setBufferSubData(GLenum target, GLintptr offset,
+                                 GLsizeiptr size, const GLvoid *pData) {
   assert(pData);
 
   if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER)) {
@@ -160,7 +160,7 @@ void GLContext::setBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size
 }
 
 void GLContext::getBufferParameter(GLenum target, GLenum pname,
-                                    GLint *pParams) {
+                                   GLint *pParams) {
   GLenum err;
 
   assert(pParams);
@@ -187,10 +187,9 @@ void GLContext::deleteBuffers(GLsizei n, const GLuint *phBuffers) {
   assert(phBuffers);
 
   if (n < 0) {
-    __glError(
-        GL_INVALID_VALUE,
-        "GLContext::deleteBuffers() failed, invalid n parameter: %d.\r\n",
-        n);
+    __glError(GL_INVALID_VALUE,
+              "GLContext::deleteBuffers() failed, invalid n parameter: %d.\r\n",
+              n);
     return;
   }
 

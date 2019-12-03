@@ -32,11 +32,6 @@ public:
 
   TFixed() {}
 
-  explicit TFixed(float rhs)
-      : data_(static_cast<T>(rhs * (static_cast<T>(1) << F))) {
-    assert(data_ == static_cast<T>(rhs * ONE));
-  }
-
   explicit TFixed(int64_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
@@ -83,6 +78,11 @@ public:
         data_ = static_cast<T>(rhs.data() << (F - F2));
       }
     }
+  }
+
+  explicit TFixed(float rhs)
+      : data_(static_cast<T>(rhs * (static_cast<T>(1) << F))) {
+    assert(data_ == static_cast<T>(rhs * ONE));
   }
 
   auto operator==(TFixed rhs) const { return (data_ == rhs.data_); }
@@ -315,17 +315,49 @@ public:
     return ret;
   }
 
-  operator float() const {
-    return static_cast<float>(data_) / (static_cast<T>(1) << F);
+  explicit operator int64_t() const {
+    return static_cast<int64_t>(data_ >> F);
   }
 
-  template <uint32_t F2, typename T2> operator TFixed<F2, T2>() const {
+  explicit operator uint64_t() const {
+    return static_cast<uint64_t>(data_ >> F);
+  }
+
+  explicit operator int32_t() const {
+    return static_cast<int32_t>(data_ >> F);
+  }
+
+  explicit operator uint32_t() const {
+    return static_cast<uint32_t>(data_ >> F);
+  }
+
+  explicit operator int16_t() const {
+    return static_cast<int16_t>(data_ >> F);
+  }
+
+  explicit operator uint16_t() const {
+    return static_cast<uint16_t>(data_ >> F);
+  }
+
+  explicit operator int8_t() const {
+    return static_cast<int8_t>(data_ >> F);
+  }
+
+  explicit operator uint8_t() const {
+    return static_cast<uint8_t>(data_ >> F);
+  }
+
+  template <uint32_t F2, typename T2> 
+  explicit operator TFixed<F2, T2>() const {
     return TFixed<F2, T2>(*this);
+  }
+
+  explicit operator float() const {
+    return static_cast<float>(data_) / (static_cast<T>(1) << F);
   }
 
   auto data() const { return data_; }
 
 private:
-
   T data_;
 };

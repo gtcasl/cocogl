@@ -15,9 +15,8 @@
 #pragma once
 
 template <eClipFlags ClipPlane>
-inline uint32_t CRasterizer::clipTriangle(uint32_t nNumVertices,
-                                           uint32_t *pSrc, uint32_t *pDst,
-                                           uint32_t *pTmp) {
+inline uint32_t CRasterizer::clipTriangle(uint32_t nNumVertices, uint32_t *pSrc,
+                                          uint32_t *pDst, uint32_t *pTmp) {
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
 
@@ -85,10 +84,10 @@ inline uint32_t CRasterizer::clipTriangle(uint32_t nNumVertices,
   return nClipVertices;
 }
 
-template <class T>
+template <typename T>
 inline GLenum
 CRasterizer::renderIndexedPrimitive(GLenum mode, const T *pIndices,
-                                     uint32_t count, uint32_t startVertex) {
+                                    uint32_t count, uint32_t startVertex) {
   assert(pIndices);
 
   switch (mode) {

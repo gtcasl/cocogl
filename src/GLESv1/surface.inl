@@ -16,12 +16,13 @@
 
 template <>
 inline void GLSurface::colorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
-                                             uint32_t value, uint32_t mask,
-                                             const Rect &rect) {
+                                           uint32_t value, uint32_t mask,
+                                           const Rect &rect) {
   auto width = rect.right - rect.left;
   auto height = rect.bottom - rect.top;
   auto pitch = surfDesc.Pitch;
-  auto pbBits = surfDesc.pBits + rect.left * sizeof(uint16_t) + rect.top * pitch;
+  auto pbBits =
+      surfDesc.pBits + rect.left * sizeof(uint16_t) + rect.top * pitch;
 
   auto wValue = static_cast<uint16_t>(value);
   auto wMask = static_cast<uint16_t>(mask);
@@ -80,12 +81,13 @@ inline void GLSurface::colorFill<uint16_t>(const GLSurfaceDesc &surfDesc,
 
 template <>
 inline void GLSurface::colorFill<uint32_t>(const GLSurfaceDesc &surfDesc,
-                                             uint32_t value, uint32_t mask,
-                                             const Rect &rect) {
+                                           uint32_t value, uint32_t mask,
+                                           const Rect &rect) {
   auto height = rect.bottom - rect.top;
   auto width = rect.right - rect.left;
   auto pitch = surfDesc.Pitch;
-  auto pbBits = surfDesc.pBits + rect.left * sizeof(uint32_t) + rect.top * pitch;
+  auto pbBits =
+      surfDesc.pBits + rect.left * sizeof(uint32_t) + rect.top * pitch;
 
   if (int32_t(width * sizeof(uint32_t)) == pitch) {
     if (0xffffffff == mask) {

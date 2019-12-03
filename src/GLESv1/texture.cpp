@@ -258,8 +258,7 @@ GLenum CTexture::bindSurface(GLSurface *pSurface, bool bGenMipMaps) {
   if (bGenMipMaps && this->bGenMipMaps) {
     err = this->generateMipmaps();
     if (__glFailed(err)) {
-      __glLogError("CTexture::generateMipmaps() failed, err = %d.\r\n",
-                   err);
+      __glLogError("CTexture::generateMipmaps() failed, err = %d.\r\n", err);
       return err;
     }
   }

@@ -1149,7 +1149,7 @@ GL_API GLenum GL_APIENTRY __glCreateSurface(
 
   uint32_t handle;
   err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE);
-  if (__glFailed(err)) {    
+  if (__glFailed(err)) {
     __glLogError("GLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
     return err;
@@ -1220,7 +1220,7 @@ GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
 
   GLContext *pContext;
   err = GLContext::Create(&pContext, g_driver.getHandles(),
-                           g_driver.getRasterCache(), pCtxShared);
+                          g_driver.getRasterCache(), pCtxShared);
   if (__glFailed(err)) {
     __glLogError("GLContext::Create() failed, err = %d.\r\n", err);
     return err;
@@ -1228,7 +1228,7 @@ GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
 
   uint32_t handle;
   err = g_driver.registerObject(&handle, pContext, HANDLE_CONTEXT);
-  if (__glFailed(err)) {    
+  if (__glFailed(err)) {
     __glLogError("GLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pContext);
     return err;
@@ -1358,8 +1358,8 @@ GLenum __glSaveBitmap(__GLSurface surface, const char *filename) {
 //////////////////////////////////////////////////////////////////////////////
 
 GL_API void GL_APIENTRY glAlphaFunc(GLenum func, GLclampf ref) {
-  __profileAPI(" - %s( func=%s, ref=%f )\n", __FUNCTION__,
-               FuncToString(func), ref);
+  __profileAPI(" - %s( func=%s, ref=%f )\n", __FUNCTION__, FuncToString(func),
+               ref);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1369,8 +1369,8 @@ GL_API void GL_APIENTRY glAlphaFunc(GLenum func, GLclampf ref) {
 
 GL_API void GL_APIENTRY glClearColor(GLclampf red, GLclampf green,
                                      GLclampf blue, GLclampf alpha) {
-  __profileAPI(" - %s( red=%f, green=%f, blue=%f, alpha%f )\n",
-               __FUNCTION__, red, green, blue, alpha);
+  __profileAPI(" - %s( red=%f, green=%f, blue=%f, alpha%f )\n", __FUNCTION__,
+               red, green, blue, alpha);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1400,17 +1400,18 @@ GL_API void GL_APIENTRY glClipPlanef(GLenum plane, const GLfloat *pEquation) {
 #ifdef COCOGL_PIXEDPOINT
     pContext->setClipPlane(plane,
                            VECTOR4(floatf(pEquation[0]), floatf(pEquation[1]),
-                                floatf(pEquation[2]), floatf(pEquation[3])));
+                                   floatf(pEquation[2]), floatf(pEquation[3])));
 #else
-    pContext->setClipPlane(plane, *reinterpret_cast<const VECTOR4 *>(pEquation));
+    pContext->setClipPlane(plane,
+                           *reinterpret_cast<const VECTOR4 *>(pEquation));
 #endif
   }
 }
 
 GL_API void GL_APIENTRY glColor4f(GLfloat red, GLfloat green, GLfloat blue,
                                   GLfloat alpha) {
-  __profileAPI(" - %s( red=%f, green=%f, blue=%f, alpha=%f )\n",
-               __FUNCTION__, red, green, blue, alpha);
+  __profileAPI(" - %s( red=%f, green=%f, blue=%f, alpha=%f )\n", __FUNCTION__,
+               red, green, blue, alpha);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1419,8 +1420,7 @@ GL_API void GL_APIENTRY glColor4f(GLfloat red, GLfloat green, GLfloat blue,
 }
 
 GL_API void GL_APIENTRY glDepthRangef(GLclampf zNear, GLclampf zFar) {
-  __profileAPI(" - %s( zNear=%f, zFar=%f )\n", __FUNCTION__, zNear,
-               zFar);
+  __profileAPI(" - %s( zNear=%f, zFar=%f )\n", __FUNCTION__, zNear, zFar);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1489,9 +1489,8 @@ GL_API void GL_APIENTRY glGetFloatv(GLenum pname, GLfloat *pParams) {
 
 GL_API void GL_APIENTRY glGetLightfv(GLenum light, GLenum pname,
                                      GLfloat *pParams) {
-  __profileAPI(" - %s( light=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, LightToString(light),
-               LightParamToString(pname), pParams);
+  __profileAPI(" - %s( light=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               LightToString(light), LightParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -1504,9 +1503,9 @@ GL_API void GL_APIENTRY glGetLightfv(GLenum light, GLenum pname,
 
 GL_API void GL_APIENTRY glGetMaterialfv(GLenum face, GLenum pname,
                                         GLfloat *pParams) {
-  __profileAPI(" - %s( face=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, MaterialFaceToString(face),
-               MaterialParamToString(pname), pParams);
+  __profileAPI(" - %s( face=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               MaterialFaceToString(face), MaterialParamToString(pname),
+               pParams);
 
   if (nullptr == pParams)
     return;
@@ -1519,9 +1518,8 @@ GL_API void GL_APIENTRY glGetMaterialfv(GLenum face, GLenum pname,
 
 GL_API void GL_APIENTRY glGetTexEnvfv(GLenum env, GLenum pname,
                                       GLfloat *pParams) {
-  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TexEnvToString(env),
-               TexEnvParamToString(pname), pParams);
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TexEnvToString(env), TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -1534,9 +1532,8 @@ GL_API void GL_APIENTRY glGetTexEnvfv(GLenum env, GLenum pname,
 
 GL_API void GL_APIENTRY glGetTexParameterfv(GLenum target, GLenum pname,
                                             GLfloat *pParams) {
-  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TextureTypeToString(target),
-               TexParamToString(pname), pParams);
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TextureTypeToString(target), TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -1558,9 +1555,9 @@ GL_API void GL_APIENTRY glLightModelf(GLenum pname, GLfloat param) {
 }
 
 GL_API void GL_APIENTRY glLightModelfv(GLenum pname, const GLfloat *pParams) {
-  __profileAPI(" - %s( pname=%s, pParams=(%f, %f, %f, %f) )\n",
-               __FUNCTION__, LightModelToString(pname), pParams[0],
-               pParams[1], pParams[2], pParams[3]);
+  __profileAPI(" - %s( pname=%s, pParams=(%f, %f, %f, %f) )\n", __FUNCTION__,
+               LightModelToString(pname), pParams[0], pParams[1], pParams[2],
+               pParams[3]);
 
   if (nullptr == pParams)
     return;
@@ -1584,9 +1581,8 @@ GL_API void GL_APIENTRY glLightf(GLenum light, GLenum pname, GLfloat param) {
 GL_API void GL_APIENTRY glLightfv(GLenum light, GLenum pname,
                                   const GLfloat *pParams) {
   __profileAPI(" - %s( light=%s, pname=%s, pParams=(%f, %f, %f, %f) )\n",
-               __FUNCTION__, LightToString(light),
-               LightParamToString(pname), pParams[0], pParams[1], pParams[2],
-               pParams[3]);
+               __FUNCTION__, LightToString(light), LightParamToString(pname),
+               pParams[0], pParams[1], pParams[2], pParams[3]);
 
   if (nullptr == pParams)
     return;
@@ -1609,9 +1605,9 @@ GL_API void GL_APIENTRY glLineWidth(GLfloat width) {
 GL_API void GL_APIENTRY glLoadMatrixf(const GLfloat *pM) {
   __profileAPI(" - %s( pM=(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, "
                "%f, %f, %f, %f) )\n",
-               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
-               pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
-               pM[14], pM[15]);
+               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5], pM[6],
+               pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13], pM[14],
+               pM[15]);
 
   if (nullptr == pM)
     return;
@@ -1659,9 +1655,9 @@ GL_API void GL_APIENTRY glMaterialfv(GLenum face, GLenum pname,
 GL_API void GL_APIENTRY glMultMatrixf(const GLfloat *pM) {
   __profileAPI(" - %s( pM=(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, "
                "%f, %f, %f, %f) )\n",
-               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
-               pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
-               pM[14], pM[15]);
+               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5], pM[6],
+               pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13], pM[14],
+               pM[15]);
 
   if (nullptr == pM)
     return;
@@ -1682,18 +1678,18 @@ GL_API void GL_APIENTRY glMultMatrixf(const GLfloat *pM) {
 
 GL_API void GL_APIENTRY glMultiTexCoord4f(GLenum target, GLfloat s, GLfloat t,
                                           GLfloat r, GLfloat q) {
-  __profileAPI(" - %s( target=%s, s=%f, t=%f, r=%f, q=%f )\n",
-               __FUNCTION__, TextureToString(target), s, t, r, q);
+  __profileAPI(" - %s( target=%s, s=%f, t=%f, r=%f, q=%f )\n", __FUNCTION__,
+               TextureToString(target), s, t, r, q);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    pContext->setMultiTexCoord(target, floatf(s), floatf(t), floatf(r), floatf(q));
+    pContext->setMultiTexCoord(target, floatf(s), floatf(t), floatf(r),
+                               floatf(q));
   }
 }
 
 GL_API void GL_APIENTRY glNormal3f(GLfloat nx, GLfloat ny, GLfloat nz) {
-  __profileAPI(" - %s( nx=%f, ny=%f, nz=%f )\n", __FUNCTION__, nx, ny,
-               nz);
+  __profileAPI(" - %s( nx=%f, ny=%f, nz=%f )\n", __FUNCTION__, nx, ny, nz);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1748,8 +1744,7 @@ GL_API void GL_APIENTRY glPointSize(GLfloat size) {
 }
 
 GL_API void GL_APIENTRY glPolygonOffset(GLfloat factor, GLfloat units) {
-  __profileAPI(" - %s( factor=%f, units=%f )\n", __FUNCTION__, factor,
-               units);
+  __profileAPI(" - %s( factor=%f, units=%f )\n", __FUNCTION__, factor, units);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1759,8 +1754,8 @@ GL_API void GL_APIENTRY glPolygonOffset(GLfloat factor, GLfloat units) {
 
 GL_API void GL_APIENTRY glRotatef(GLfloat angle, GLfloat x, GLfloat y,
                                   GLfloat z) {
-  __profileAPI(" - %s( angle=%f, x=%f, y=%f, z=%f )\n", __FUNCTION__,
-               angle, x, y, z);
+  __profileAPI(" - %s( angle=%f, x=%f, y=%f, z=%f )\n", __FUNCTION__, angle, x,
+               y, z);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1790,9 +1785,8 @@ GL_API void GL_APIENTRY glTexEnvf(GLenum env, GLenum pname, GLfloat param) {
 
 GL_API void GL_APIENTRY glTexEnvfv(GLenum env, GLenum pname,
                                    const GLfloat *pParams) {
-  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TexEnvToString(env),
-               TexEnvParamToString(pname), pParams);
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TexEnvToString(env), TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -1817,9 +1811,8 @@ GL_API void GL_APIENTRY glTexParameterf(GLenum target, GLenum pname,
 
 GL_API void GL_APIENTRY glTexParameterfv(GLenum target, GLenum pname,
                                          const GLfloat *pParams) {
-  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TextureTypeToString(target),
-               TexParamToString(pname), pParams);
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TextureTypeToString(target), TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -1842,8 +1835,7 @@ GL_API void GL_APIENTRY glTranslatef(GLfloat x, GLfloat y, GLfloat z) {
 /* Available in both Common and Common-Lite profiles */
 
 GL_API void GL_APIENTRY glActiveTexture(GLenum texture) {
-  __profileAPI(" - %s( texture=%s )\n", __FUNCTION__,
-               TextureToString(texture));
+  __profileAPI(" - %s( texture=%s )\n", __FUNCTION__, TextureToString(texture));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1852,8 +1844,8 @@ GL_API void GL_APIENTRY glActiveTexture(GLenum texture) {
 }
 
 GL_API void GL_APIENTRY glAlphaFuncx(GLenum func, GLclampx ref) {
-  __profileAPI(" - %s( func=%s, ref=%f )\n", __FUNCTION__,
-               FuncToString(func), ref);
+  __profileAPI(" - %s( func=%s, ref=%f )\n", __FUNCTION__, FuncToString(func),
+               ref);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1928,8 +1920,8 @@ GL_API void GL_APIENTRY glClear(GLbitfield mask) {
 
 GL_API void GL_APIENTRY glClearColorx(GLclampx red, GLclampx green,
                                       GLclampx blue, GLclampx alpha) {
-  __profileAPI(" - %s( red=%f, green=%f, blue=%f, alpha=%f )\n",
-               __FUNCTION__, red, green, blue, alpha);
+  __profileAPI(" - %s( red=%f, green=%f, blue=%f, alpha=%f )\n", __FUNCTION__,
+               red, green, blue, alpha);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1959,8 +1951,7 @@ GL_API void GL_APIENTRY glClearStencil(GLint s) {
 }
 
 GL_API void GL_APIENTRY glClientActiveTexture(GLenum texture) {
-  __profileAPI(" - %s( texture=%s )\n", __FUNCTION__,
-               TextureToString(texture));
+  __profileAPI(" - %s( texture=%s )\n", __FUNCTION__, TextureToString(texture));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1969,8 +1960,8 @@ GL_API void GL_APIENTRY glClientActiveTexture(GLenum texture) {
 }
 
 GL_API void GL_APIENTRY glClipPlanex(GLenum plane, const GLfixed *pEquation) {
-  __profileAPI(" - %s( plane=%d, pEquation=0x%p )\n", __FUNCTION__,
-               plane, pEquation);
+  __profileAPI(" - %s( plane=%d, pEquation=0x%p )\n", __FUNCTION__, plane,
+               pEquation);
 
   if (nullptr == pEquation)
     return;
@@ -1978,7 +1969,8 @@ GL_API void GL_APIENTRY glClipPlanex(GLenum plane, const GLfixed *pEquation) {
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
 #ifdef COCOGL_PIXEDPOINT
-    pContext->setClipPlane(plane, *reinterpret_cast<const VECTOR4 *>(pEquation));
+    pContext->setClipPlane(plane,
+                           *reinterpret_cast<const VECTOR4 *>(pEquation));
 #else
     pContext->setClipPlane(
         plane, VECTOR4(static_cast<floatf>(fixed16::make(pEquation[0])),
@@ -1991,8 +1983,8 @@ GL_API void GL_APIENTRY glClipPlanex(GLenum plane, const GLfixed *pEquation) {
 
 GL_API void GL_APIENTRY glColor4ub(GLubyte red, GLubyte green, GLubyte blue,
                                    GLubyte alpha) {
-  __profileAPI(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n",
-               __FUNCTION__, red, green, blue, alpha);
+  __profileAPI(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n", __FUNCTION__,
+               red, green, blue, alpha);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2004,22 +1996,22 @@ GL_API void GL_APIENTRY glColor4ub(GLubyte red, GLubyte green, GLubyte blue,
 
 GL_API void GL_APIENTRY glColor4x(GLfixed red, GLfixed green, GLfixed blue,
                                   GLfixed alpha) {
-  __profileAPI(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n",
-               __FUNCTION__, red, green, blue, alpha);
+  __profileAPI(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n", __FUNCTION__,
+               red, green, blue, alpha);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setColor(static_cast<floatf>(fixed16::make(red)),
-                    static_cast<floatf>(fixed16::make(green)),
-                    static_cast<floatf>(fixed16::make(blue)),
-                    static_cast<floatf>(fixed16::make(alpha)));
+                       static_cast<floatf>(fixed16::make(green)),
+                       static_cast<floatf>(fixed16::make(blue)),
+                       static_cast<floatf>(fixed16::make(alpha)));
   }
 }
 
 GL_API void GL_APIENTRY glColorMask(GLboolean red, GLboolean green,
                                     GLboolean blue, GLboolean alpha) {
-  __profileAPI(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n",
-               __FUNCTION__, red, green, blue, alpha);
+  __profileAPI(" - %s( red=%d, green=%d, blue=%d, alpha=%d )\n", __FUNCTION__,
+               red, green, blue, alpha);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2062,11 +2054,11 @@ GL_API void GL_APIENTRY glCompressedTexImage2D(GLenum target, GLint level,
 GL_API void GL_APIENTRY glCompressedTexSubImage2D(
     GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width,
     GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *pData) {
-  __profileAPI(
-      " - %s( target=%s, level=%d, xoffset=%d, yoffset=%d, width=%d, "
-      "height=%d, format=%s, imageSize=%d, pData=0x%p )\n",
-      __FUNCTION__, TextureTypeToString(target), level, xoffset, yoffset,
-      width, height, FormatToString(format), imageSize, pData);
+  __profileAPI(" - %s( target=%s, level=%d, xoffset=%d, yoffset=%d, width=%d, "
+               "height=%d, format=%s, imageSize=%d, pData=0x%p )\n",
+               __FUNCTION__, TextureTypeToString(target), level, xoffset,
+               yoffset, width, height, FormatToString(format), imageSize,
+               pData);
 
   if (nullptr == pData)
     return;
@@ -2111,8 +2103,7 @@ GL_API void GL_APIENTRY glCopyTexSubImage2D(GLenum target, GLint level,
 }
 
 GL_API void GL_APIENTRY glCullFace(GLenum mode) {
-  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__,
-               CullFaceToString(mode));
+  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__, CullFaceToString(mode));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2121,8 +2112,7 @@ GL_API void GL_APIENTRY glCullFace(GLenum mode) {
 }
 
 GL_API void GL_APIENTRY glDeleteBuffers(GLsizei n, const GLuint *pBuffers) {
-  __profileAPI(" - %s( n=%d, pBuffers=0x%p )\n", __FUNCTION__, n,
-               pBuffers);
+  __profileAPI(" - %s( n=%d, pBuffers=0x%p )\n", __FUNCTION__, n, pBuffers);
 
   if (nullptr == pBuffers)
     return;
@@ -2134,8 +2124,7 @@ GL_API void GL_APIENTRY glDeleteBuffers(GLsizei n, const GLuint *pBuffers) {
 }
 
 GL_API void GL_APIENTRY glDeleteTextures(GLsizei n, const GLuint *pTextures) {
-  __profileAPI(" - %s( n=%d, pTextures=0x%p )\n", __FUNCTION__, n,
-               pTextures);
+  __profileAPI(" - %s( n=%d, pTextures=0x%p )\n", __FUNCTION__, n, pTextures);
 
   if (nullptr == pTextures)
     return;
@@ -2165,13 +2154,12 @@ GL_API void GL_APIENTRY glDepthMask(GLboolean flag) {
 }
 
 GL_API void GL_APIENTRY glDepthRangex(GLclampx zNear, GLclampx zFar) {
-  __profileAPI(" - %s( zNear=%f, zfar=%f )\n", __FUNCTION__, zNear,
-               zFar);
+  __profileAPI(" - %s( zNear=%f, zfar=%f )\n", __FUNCTION__, zNear, zFar);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setDepthRange(static_cast<floatf>(fixed16::make(zNear)),
-                         static_cast<floatf>(fixed16::make(zFar)));
+                            static_cast<floatf>(fixed16::make(zFar)));
   }
 }
 
@@ -2185,8 +2173,7 @@ GL_API void GL_APIENTRY glDisable(GLenum cap) {
 }
 
 GL_API void GL_APIENTRY glDisableClientState(GLenum array) {
-  __profileAPI(" - %s( array=%s )\n", __FUNCTION__,
-               ClientStateToString(array));
+  __profileAPI(" - %s( array=%s )\n", __FUNCTION__, ClientStateToString(array));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2226,8 +2213,7 @@ GL_API void GL_APIENTRY glEnable(GLenum cap) {
 }
 
 GL_API void GL_APIENTRY glEnableClientState(GLenum array) {
-  __profileAPI(" - %s( array=%s )\n", __FUNCTION__,
-               ClientStateToString(array));
+  __profileAPI(" - %s( array=%s )\n", __FUNCTION__, ClientStateToString(array));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2272,13 +2258,13 @@ GL_API void GL_APIENTRY glFogxv(GLenum pname, const GLfixed *pParams) {
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    pContext->setFog<fixed16>(pname, reinterpret_cast<const fixed16 *>(pParams));
+    pContext->setFog<fixed16>(pname,
+                              reinterpret_cast<const fixed16 *>(pParams));
   }
 }
 
 GL_API void GL_APIENTRY glFrontFace(GLenum mode) {
-  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__,
-               FrontFaceToString(mode));
+  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__, FrontFaceToString(mode));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2318,9 +2304,8 @@ GL_API void GL_APIENTRY glGetBooleanv(GLenum pname, GLboolean *pParams) {
 
 GL_API void GL_APIENTRY glGetBufferParameteriv(GLenum target, GLenum pname,
                                                GLint *pParams) {
-  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, BufferToString(target),
-               BufferParamToString(pname), pParams);
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               BufferToString(target), BufferParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -2342,8 +2327,7 @@ GL_API void GL_APIENTRY glGetClipPlanex(GLenum plane, GLfixed eqn[4]) {
 }
 
 GL_API void GL_APIENTRY glGenBuffers(GLsizei n, GLuint *pBuffers) {
-  __profileAPI(" - %s( n=%d, pBuffers=0x%p )\n", __FUNCTION__, n,
-               pBuffers);
+  __profileAPI(" - %s( n=%d, pBuffers=0x%p )\n", __FUNCTION__, n, pBuffers);
 
   if (nullptr == pBuffers)
     return;
@@ -2355,8 +2339,7 @@ GL_API void GL_APIENTRY glGenBuffers(GLsizei n, GLuint *pBuffers) {
 }
 
 GL_API void GL_APIENTRY glGenTextures(GLsizei n, GLuint *pTextures) {
-  __profileAPI(" - %s( n=%d, pTextures=0x%p )\n", __FUNCTION__, n,
-               pTextures);
+  __profileAPI(" - %s( n=%d, pTextures=0x%p )\n", __FUNCTION__, n, pTextures);
 
   if (nullptr == pTextures)
     return;
@@ -2410,9 +2393,8 @@ GL_API void GL_APIENTRY glGetIntegerv(GLenum pname, GLint *pParams) {
 
 GL_API void GL_APIENTRY glGetLightxv(GLenum light, GLenum pname,
                                      GLfixed *pParams) {
-  __profileAPI(" - %s( light=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, LightToString(light),
-               LightParamToString(pname), pParams);
+  __profileAPI(" - %s( light=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               LightToString(light), LightParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -2420,15 +2402,15 @@ GL_API void GL_APIENTRY glGetLightxv(GLenum light, GLenum pname,
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->getLight<fixed16>(light, pname,
-                                 reinterpret_cast<fixed16 *>(pParams));
+                                reinterpret_cast<fixed16 *>(pParams));
   }
 }
 
 GL_API void GL_APIENTRY glGetMaterialxv(GLenum face, GLenum pname,
                                         GLfixed *pParams) {
-  __profileAPI(" - %s( face=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, MaterialFaceToString(face),
-               MaterialParamToString(pname), pParams);
+  __profileAPI(" - %s( face=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               MaterialFaceToString(face), MaterialParamToString(pname),
+               pParams);
 
   if (nullptr == pParams)
     return;
@@ -2436,7 +2418,7 @@ GL_API void GL_APIENTRY glGetMaterialxv(GLenum face, GLenum pname,
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->getMaterial<fixed16>(face, pname,
-                                    reinterpret_cast<fixed16 *>(pParams));
+                                   reinterpret_cast<fixed16 *>(pParams));
   }
 }
 
@@ -2454,8 +2436,7 @@ GL_API void GL_APIENTRY glGetPointerv(GLenum pname, GLvoid **ppParams) {
 }
 
 GL_API const GLubyte *GL_APIENTRY glGetString(GLenum name) {
-  __profileAPI(" - %s( name=%s )\n", __FUNCTION__,
-               StringToString(name));
+  __profileAPI(" - %s( name=%s )\n", __FUNCTION__, StringToString(name));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2467,9 +2448,8 @@ GL_API const GLubyte *GL_APIENTRY glGetString(GLenum name) {
 
 GL_API void GL_APIENTRY glGetTexEnviv(GLenum env, GLenum pname,
                                       GLint *pParams) {
-  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TexEnvToString(env),
-               TexEnvParamToString(pname), pParams);
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TexEnvToString(env), TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -2482,9 +2462,8 @@ GL_API void GL_APIENTRY glGetTexEnviv(GLenum env, GLenum pname,
 
 GL_API void GL_APIENTRY glGetTexEnvxv(GLenum env, GLenum pname,
                                       GLfixed *pParams) {
-  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TexEnvToString(env),
-               TexEnvParamToString(pname), pParams);
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TexEnvToString(env), TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -2492,15 +2471,14 @@ GL_API void GL_APIENTRY glGetTexEnvxv(GLenum env, GLenum pname,
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->getTexEnv<fixed16>(env, pname,
-                                  reinterpret_cast<fixed16 *>(pParams));
+                                 reinterpret_cast<fixed16 *>(pParams));
   }
 }
 
 GL_API void GL_APIENTRY glGetTexParameteriv(GLenum target, GLenum pname,
                                             GLint *pParams) {
-  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TextureTypeToString(target),
-               TexParamToString(pname), pParams);
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TextureTypeToString(target), TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -2513,9 +2491,8 @@ GL_API void GL_APIENTRY glGetTexParameteriv(GLenum target, GLenum pname,
 
 GL_API void GL_APIENTRY glGetTexParameterxv(GLenum target, GLenum pname,
                                             GLfixed *pParams) {
-  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TextureTypeToString(target),
-               TexParamToString(pname), pParams);
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TextureTypeToString(target), TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -2523,7 +2500,7 @@ GL_API void GL_APIENTRY glGetTexParameterxv(GLenum target, GLenum pname,
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->getTexParameter<fixed16>(target, pname,
-                                        reinterpret_cast<fixed16 *>(pParams));
+                                       reinterpret_cast<fixed16 *>(pParams));
   }
 }
 
@@ -2588,23 +2565,23 @@ GL_API void GL_APIENTRY glLightModelx(GLenum pname, GLfixed param) {
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    pContext->setLightParameterModel<fixed16>(pname,
-                                   reinterpret_cast<const fixed16 *>(&param));
+    pContext->setLightParameterModel<fixed16>(
+        pname, reinterpret_cast<const fixed16 *>(&param));
   }
 }
 
 GL_API void GL_APIENTRY glLightModelxv(GLenum pname, const GLfixed *pParams) {
   __profileAPI(" - %s( pname=%s, pParams=(0x%x ,0x%x, 0x%x, 0x%x) )\n",
-               __FUNCTION__, LightModelToString(pname), pParams[0],
-               pParams[1], pParams[2], pParams[3]);
+               __FUNCTION__, LightModelToString(pname), pParams[0], pParams[1],
+               pParams[2], pParams[3]);
 
   if (nullptr == pParams)
     return;
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    pContext->setLightParameterModel<fixed16>(pname,
-                                   reinterpret_cast<const fixed16 *>(pParams));
+    pContext->setLightParameterModel<fixed16>(
+        pname, reinterpret_cast<const fixed16 *>(pParams));
   }
 }
 
@@ -2614,8 +2591,8 @@ GL_API void GL_APIENTRY glLightx(GLenum light, GLenum pname, GLfixed param) {
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    pContext->setLightParameter<fixed16>(light, pname,
-                              reinterpret_cast<const fixed16 *>(&param));
+    pContext->setLightParameter<fixed16>(
+        light, pname, reinterpret_cast<const fixed16 *>(&param));
   }
 }
 
@@ -2623,16 +2600,16 @@ GL_API void GL_APIENTRY glLightxv(GLenum light, GLenum pname,
                                   const GLfixed *pParams) {
   __profileAPI(
       " - %s( light=%s, pname=%s, pParams=(0x%x, 0x%x, 0x%x, 0x%x) )\n",
-      __FUNCTION__, LightToString(light), LightParamToString(pname),
-      pParams[0], pParams[1], pParams[2], pParams[3]);
+      __FUNCTION__, LightToString(light), LightParamToString(pname), pParams[0],
+      pParams[1], pParams[2], pParams[3]);
 
   if (nullptr == pParams)
     return;
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    pContext->setLightParameter<fixed16>(light, pname,
-                              reinterpret_cast<const fixed16 *>(pParams));
+    pContext->setLightParameter<fixed16>(
+        light, pname, reinterpret_cast<const fixed16 *>(pParams));
   }
 }
 
@@ -2657,9 +2634,9 @@ GL_API void GL_APIENTRY glLoadIdentity() {
 GL_API void GL_APIENTRY glLoadMatrixx(const GLfixed *pM) {
   __profileAPI(" - %s( pM=(0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, "
                "0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x) )\n",
-               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
-               pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
-               pM[14], pM[15]);
+               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5], pM[6],
+               pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13], pM[14],
+               pM[15]);
 
   if (nullptr == pM)
     return;
@@ -2690,8 +2667,7 @@ GL_API void GL_APIENTRY glLoadMatrixx(const GLfixed *pM) {
 }
 
 GL_API void GL_APIENTRY glLogicOp(GLenum opcode) {
-  __profileAPI(" - %s( opcode=%s )\n", __FUNCTION__,
-               LogicOpToString(opcode));
+  __profileAPI(" - %s( opcode=%s )\n", __FUNCTION__, LogicOpToString(opcode));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2706,17 +2682,16 @@ GL_API void GL_APIENTRY glMaterialx(GLenum face, GLenum pname, GLfixed param) {
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setMaterial<fixed16>(face, pname,
-                                 reinterpret_cast<const fixed16 *>(&param));
+                                   reinterpret_cast<const fixed16 *>(&param));
   }
 }
 
 GL_API void GL_APIENTRY glMaterialxv(GLenum face, GLenum pname,
                                      const GLfixed *pParams) {
-  __profileAPI(
-      " - %s( face=%s, pname=%s, pParams=(0x%x, 0x%x, 0x%x, 0x%x) )\n",
-      __FUNCTION__, MaterialFaceToString(face),
-      MaterialParamToString(pname), pParams[0], pParams[1], pParams[2],
-      pParams[3]);
+  __profileAPI(" - %s( face=%s, pname=%s, pParams=(0x%x, 0x%x, 0x%x, 0x%x) )\n",
+               __FUNCTION__, MaterialFaceToString(face),
+               MaterialParamToString(pname), pParams[0], pParams[1], pParams[2],
+               pParams[3]);
 
   if (nullptr == pParams)
     return;
@@ -2724,13 +2699,12 @@ GL_API void GL_APIENTRY glMaterialxv(GLenum face, GLenum pname,
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setMaterial<fixed16>(face, pname,
-                                 reinterpret_cast<const fixed16 *>(pParams));
+                                   reinterpret_cast<const fixed16 *>(pParams));
   }
 }
 
 GL_API void GL_APIENTRY glMatrixMode(GLenum mode) {
-  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__,
-               MatrixModeToString(mode));
+  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__, MatrixModeToString(mode));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2743,9 +2717,9 @@ GL_API void GL_APIENTRY glMatrixMode(GLenum mode) {
 GL_API void GL_APIENTRY glMultMatrixx(const GLfixed *pM) {
   __profileAPI(" - %s( pM=(0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, "
                "0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x) )\n",
-               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5],
-               pM[6], pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13],
-               pM[14], pM[15]);
+               __FUNCTION__, pM[0], pM[1], pM[2], pM[3], pM[4], pM[5], pM[6],
+               pM[7], pM[8], pM[9], pM[10], pM[11], pM[12], pM[13], pM[14],
+               pM[15]);
 
   if (nullptr == pM)
     return;
@@ -2777,34 +2751,33 @@ GL_API void GL_APIENTRY glMultMatrixx(const GLfixed *pM) {
 
 GL_API void GL_APIENTRY glMultiTexCoord4x(GLenum target, GLfixed s, GLfixed t,
                                           GLfixed r, GLfixed q) {
-  __profileAPI(" - %s( target=%s, s=%d, t=%d, r=%d, q=%d )\n",
-               __FUNCTION__, TextureToString(target), s, t, r, q);
+  __profileAPI(" - %s( target=%s, s=%d, t=%d, r=%d, q=%d )\n", __FUNCTION__,
+               TextureToString(target), s, t, r, q);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setMultiTexCoord(target, static_cast<floatf>(fixed16::make(s)),
-                            static_cast<floatf>(fixed16::make(t)),
-                            static_cast<floatf>(fixed16::make(r)),
-                            static_cast<floatf>(fixed16::make(q)));
+                               static_cast<floatf>(fixed16::make(t)),
+                               static_cast<floatf>(fixed16::make(r)),
+                               static_cast<floatf>(fixed16::make(q)));
   }
 }
 
 GL_API void GL_APIENTRY glNormal3x(GLfixed nx, GLfixed ny, GLfixed nz) {
-  __profileAPI(" - %s( nx=%d, ny=%d, nz=%d )\n", __FUNCTION__, nx, ny,
-               nz);
+  __profileAPI(" - %s( nx=%d, ny=%d, nz=%d )\n", __FUNCTION__, nx, ny, nz);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setNormal(static_cast<floatf>(fixed16::make(nx)),
-                     static_cast<floatf>(fixed16::make(ny)),
-                     static_cast<floatf>(fixed16::make(nz)));
+                        static_cast<floatf>(fixed16::make(ny)),
+                        static_cast<floatf>(fixed16::make(nz)));
   }
 }
 
 GL_API void GL_APIENTRY glNormalPointer(GLenum type, GLsizei stride,
                                         const GLvoid *pPointer) {
-  __profileAPI(" - %s( type=%s, stride=%d, pPointer=0x%p )\n",
-               __FUNCTION__, TypeToString(type), stride, pPointer);
+  __profileAPI(" - %s( type=%s, stride=%d, pPointer=0x%p )\n", __FUNCTION__,
+               TypeToString(type), stride, pPointer);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2875,13 +2848,12 @@ GL_API void GL_APIENTRY glPointSizex(GLfixed size) {
 }
 
 GL_API void GL_APIENTRY glPolygonOffsetx(GLfixed factor, GLfixed units) {
-  __profileAPI(" - %s( factor=%d, units=%d )\n", __FUNCTION__, factor,
-               units);
+  __profileAPI(" - %s( factor=%d, units=%d )\n", __FUNCTION__, factor, units);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setPolygonOffset(static_cast<floatf>(fixed16::make(factor)),
-                            static_cast<floatf>(fixed16::make(units)));
+                               static_cast<floatf>(fixed16::make(units)));
   }
 }
 
@@ -2922,8 +2894,8 @@ GL_API void GL_APIENTRY glReadPixels(GLint x, GLint y, GLsizei width,
 
 GL_API void GL_APIENTRY glRotatex(GLfixed angle, GLfixed x, GLfixed y,
                                   GLfixed z) {
-  __profileAPI(" - %s( angle=%d, x=%d, y=%d, z=%d )\n", __FUNCTION__,
-               angle, x, y, z);
+  __profileAPI(" - %s( angle=%d, x=%d, y=%d, z=%d )\n", __FUNCTION__, angle, x,
+               y, z);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2935,8 +2907,7 @@ GL_API void GL_APIENTRY glRotatex(GLfixed angle, GLfixed x, GLfixed y,
 }
 
 GL_API void GL_APIENTRY glSampleCoverage(GLclampf value, GLboolean invert) {
-  __profileAPI(" - %s( value=%f, invert=%d )\n", __FUNCTION__, value,
-               invert);
+  __profileAPI(" - %s( value=%f, invert=%d )\n", __FUNCTION__, value, invert);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2945,12 +2916,12 @@ GL_API void GL_APIENTRY glSampleCoverage(GLclampf value, GLboolean invert) {
 }
 
 GL_API void GL_APIENTRY glSampleCoveragex(GLclampx value, GLboolean invert) {
-  __profileAPI(" - %s( value=%f, invert=%d )\n", __FUNCTION__, value,
-               invert);
+  __profileAPI(" - %s( value=%f, invert=%d )\n", __FUNCTION__, value, invert);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    pContext->setSampleCoverage(static_cast<floatf>(fixed16::make(value)), invert);
+    pContext->setSampleCoverage(static_cast<floatf>(fixed16::make(value)),
+                                invert);
   }
 }
 
@@ -2967,8 +2938,8 @@ GL_API void GL_APIENTRY glScalex(GLfixed x, GLfixed y, GLfixed z) {
 
 GL_API void GL_APIENTRY glScissor(GLint x, GLint y, GLsizei width,
                                   GLsizei height) {
-  __profileAPI(" - %s( x=%d, y=%d, width=%d, height=%d )\n",
-               __FUNCTION__, x, y, width, height);
+  __profileAPI(" - %s( x=%d, y=%d, width=%d, height=%d )\n", __FUNCTION__, x, y,
+               width, height);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -2977,8 +2948,7 @@ GL_API void GL_APIENTRY glScissor(GLint x, GLint y, GLsizei width,
 }
 
 GL_API void GL_APIENTRY glShadeModel(GLenum mode) {
-  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__,
-               ShadeModelToString(mode));
+  __profileAPI(" - %s( mode=%s )\n", __FUNCTION__, ShadeModelToString(mode));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -3047,15 +3017,14 @@ GL_API void GL_APIENTRY glTexEnvx(GLenum env, GLenum pname, GLfixed param) {
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setTexEnv<fixed16>(env, pname,
-                               reinterpret_cast<const fixed16 *>(&param));
+                                 reinterpret_cast<const fixed16 *>(&param));
   }
 }
 
 GL_API void GL_APIENTRY glTexEnviv(GLenum env, GLenum pname,
                                    const GLint *pParams) {
-  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TexEnvToString(env),
-               TexEnvParamToString(pname), pParams);
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TexEnvToString(env), TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -3068,9 +3037,8 @@ GL_API void GL_APIENTRY glTexEnviv(GLenum env, GLenum pname,
 
 GL_API void GL_APIENTRY glTexEnvxv(GLenum env, GLenum pname,
                                    const GLfixed *pParams) {
-  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TexEnvToString(env),
-               TexEnvParamToString(pname), pParams);
+  __profileAPI(" - %s( env=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TexEnvToString(env), TexEnvParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -3078,7 +3046,7 @@ GL_API void GL_APIENTRY glTexEnvxv(GLenum env, GLenum pname,
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setTexEnv<fixed16>(env, pname,
-                               reinterpret_cast<const fixed16 *>(pParams));
+                                 reinterpret_cast<const fixed16 *>(pParams));
   }
 }
 
@@ -3095,8 +3063,8 @@ GL_API void GL_APIENTRY glTexImage2D(GLenum target, GLint level,
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    pContext->setTexImage2D(target, level, internalformat, width, height, border,
-                         format, type, pPixels);
+    pContext->setTexImage2D(target, level, internalformat, width, height,
+                            border, format, type, pPixels);
   }
 }
 
@@ -3120,16 +3088,15 @@ GL_API void GL_APIENTRY glTexParameterx(GLenum target, GLenum pname,
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    pContext->setTexParameter<fixed16>(target, pname,
-                                     reinterpret_cast<const fixed16 *>(&param));
+    pContext->setTexParameter<fixed16>(
+        target, pname, reinterpret_cast<const fixed16 *>(&param));
   }
 }
 
 GL_API void GL_APIENTRY glTexParameteriv(GLenum target, GLenum pname,
                                          const GLint *pParams) {
-  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TextureTypeToString(target),
-               TexParamToString(pname), pParams);
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TextureTypeToString(target), TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -3142,9 +3109,8 @@ GL_API void GL_APIENTRY glTexParameteriv(GLenum target, GLenum pname,
 
 GL_API void GL_APIENTRY glTexParameterxv(GLenum target, GLenum pname,
                                          const GLfixed *pParams) {
-  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n",
-               __FUNCTION__, TextureTypeToString(target),
-               TexParamToString(pname), pParams);
+  __profileAPI(" - %s( target=%s, pname=%s, pParams=0x%p )\n", __FUNCTION__,
+               TextureTypeToString(target), TexParamToString(pname), pParams);
 
   if (nullptr == pParams)
     return;
@@ -3170,7 +3136,7 @@ GL_API void GL_APIENTRY glTexSubImage2D(GLenum target, GLint level,
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setTexSubImage2D(target, level, xoffset, yoffset, width, height,
-                            format, type, pPixels);
+                               format, type, pPixels);
   }
 }
 
@@ -3198,8 +3164,8 @@ GL_API void GL_APIENTRY glVertexPointer(GLint size, GLenum type, GLsizei stride,
 
 GL_API void GL_APIENTRY glViewport(GLint x, GLint y, GLsizei width,
                                    GLsizei height) {
-  __profileAPI(" - %s( x=%d, y=%d, width=%d, height=%d )\n",
-               __FUNCTION__, x, y, width, height);
+  __profileAPI(" - %s( x=%d, y=%d, width=%d, height=%d )\n", __FUNCTION__, x, y,
+               width, height);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -3209,8 +3175,8 @@ GL_API void GL_APIENTRY glViewport(GLint x, GLint y, GLsizei width,
 
 GL_API void GL_APIENTRY glPointSizePointerOES(GLenum type, GLsizei stride,
                                               const GLvoid *pPointer) {
-  __profileAPI(" - %s( type=%s, stride=%d, pPointer=0x%p )\n",
-               __FUNCTION__, TypeToString(type), stride, pPointer);
+  __profileAPI(" - %s( type=%s, stride=%d, pPointer=0x%p )\n", __FUNCTION__,
+               TypeToString(type), stride, pPointer);
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -3228,5 +3194,5 @@ GL_API GLbitfield GL_APIENTRY glQueryMatrixxOES(GLfixed mantissa[16],
     return GL_INVALID_OPERATION;
 
   return pContext->queryMatrix<fixed16>(reinterpret_cast<fixed16 *>(mantissa),
-                                         exponent);
+                                        exponent);
 }

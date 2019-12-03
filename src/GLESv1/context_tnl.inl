@@ -14,15 +14,16 @@
 //
 #pragma once
 
-template <class T>
-inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pParams) {
+template <typename T>
+inline void GLContext::setLightParameter(GLenum light, GLenum pname,
+                                         const T *pParams) {
   assert(pParams);
 
   if ((light - GL_LIGHT0) >= MAX_LIGHTS) {
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::setLightParameter() failed, invalid light parameter: %d.\r\n",
-        light);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::setLightParameter() failed, invalid light parameter: "
+              "%d.\r\n",
+              light);
     return;
   }
 
@@ -71,10 +72,10 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pP
   case GL_SPOT_EXPONENT: {
     vParam.x = static_cast<floatf>(pParams[0]);
     if ((vParam.x < fZERO) || (vParam.x > f128)) {
-      __glError(
-          GL_INVALID_VALUE,
-          "GLContext::setLightParameter() failed, invalid param parameter: %d.\r\n",
-          vParam.x);
+      __glError(GL_INVALID_VALUE,
+                "GLContext::setLightParameter() failed, invalid param "
+                "parameter: %d.\r\n",
+                vParam.x);
       return;
     }
 
@@ -86,10 +87,10 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pP
   case GL_SPOT_CUTOFF: {
     vParam.x = static_cast<floatf>(pParams[0]);
     if (((vParam.x < fZERO) || (vParam.x > f90)) && (vParam.x != f180)) {
-      __glError(
-          GL_INVALID_VALUE,
-          "GLContext::setLightParameter() failed, invalid param parameter: %d.\r\n",
-          vParam.x);
+      __glError(GL_INVALID_VALUE,
+                "GLContext::setLightParameter() failed, invalid param "
+                "parameter: %d.\r\n",
+                vParam.x);
       return;
     }
 
@@ -104,10 +105,10 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pP
   case GL_QUADRATIC_ATTENUATION: {
     vParam.x = static_cast<floatf>(pParams[0]);
     if (vParam.x < fZERO) {
-      __glError(
-          GL_INVALID_VALUE,
-          "GLContext::setLightParameter() failed, invalid param parameter: %d.\r\n",
-          vParam.x);
+      __glError(GL_INVALID_VALUE,
+                "GLContext::setLightParameter() failed, invalid param "
+                "parameter: %d.\r\n",
+                vParam.x);
       return;
     }
 
@@ -117,15 +118,15 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname, const T *pP
   break;
 
   default:
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::setLightParameter() failed, invalid pname parameter: %d.\r\n",
-        pname);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::setLightParameter() failed, invalid pname parameter: "
+              "%d.\r\n",
+              pname);
     return;
   }
 }
 
-template <class T>
+template <typename T>
 inline void GLContext::setLightParameterModel(GLenum pname, const T *pParams) {
   assert(pParams);
 
@@ -151,8 +152,9 @@ inline void GLContext::setLightParameterModel(GLenum pname, const T *pParams) {
   }
 }
 
-template <class T>
-inline void GLContext::setMaterial(GLenum face, GLenum pname, const T *pParams) {
+template <typename T>
+inline void GLContext::setMaterial(GLenum face, GLenum pname,
+                                   const T *pParams) {
   assert(pParams);
 
   if (face != GL_FRONT_AND_BACK) {
@@ -218,7 +220,7 @@ inline void GLContext::setMaterial(GLenum face, GLenum pname, const T *pParams) 
   }
 }
 
-template <class T>
+template <typename T>
 inline void GLContext::setFog(GLenum pname, const T *pParams) {
   assert(pParams);
 
@@ -233,10 +235,9 @@ inline void GLContext::setFog(GLenum pname, const T *pParams) {
       break;
 
     default:
-      __glError(
-          GL_INVALID_ENUM,
-          "GLContext::setFog() failed, invalid param parameter: %d.\r\n",
-          param);
+      __glError(GL_INVALID_ENUM,
+                "GLContext::setFog() failed, invalid param parameter: %d.\r\n",
+                param);
       return;
     }
   }

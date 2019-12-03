@@ -19,7 +19,7 @@ struct RasterData;
 struct Register;
 
 typedef void (*PfnScanline)(const RasterData &rasterData, int y, int lx,
-                             int rx);
+                            int rx);
 
 class IRasterOp : public Object {
 public:

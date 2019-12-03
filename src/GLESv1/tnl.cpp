@@ -228,9 +228,12 @@ void CTNL::processVertices(uint32_t count) {
   auto flags = TNLFlags_;
 
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
-  auto pvWorldPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_WORLDPOS]);
-  auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
-  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+  auto pvWorldPos =
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_WORLDPOS]);
+  auto pvClipPos =
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
+  auto pvScreenPos =
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
 
   // Decode vertices
   (pfnDecodePosition_)(pvWorldPos, positionDecode_.pBits,
@@ -318,7 +321,8 @@ uint32_t CTNL::calcUserClipFlags(uint32_t count) {
   uint32_t clipUnion = 0;
 
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
-  auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
+  auto pvClipPos =
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
 
   for (uint32_t i = 0; i < count; ++i) {
     uint32_t clipFlags = 0;
@@ -342,7 +346,7 @@ uint32_t CTNL::calcUserClipFlags(uint32_t count) {
 }
 
 void CTNL::transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
-                            uint32_t count) {
+                                uint32_t count) {
   assert(pRDVertex);
   assert(pvClipPos);
 
@@ -358,9 +362,12 @@ void CTNL::transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
     if (!Math::TIsZero(pvClipPos[i].w - fONE)) {
       // Perspective screen space transform
       auto fRhw = Math::TInv<floatRW>(pvClipPos[i].w);
-      pRDVertex[i].x = fMinX + Math::TMulRnd<fixed4>(pvClipPos[i].x, fRhw, iScaleX);
-      pRDVertex[i].y = fMinY + Math::TMulRnd<fixed4>(pvClipPos[i].y, fRhw, iScaleY);
-      pRDVertex[i].z = fMinZ + Math::TMulRnd<float20>(pvClipPos[i].z, fRhw, fScaleZ);
+      pRDVertex[i].x =
+          fMinX + Math::TMulRnd<fixed4>(pvClipPos[i].x, fRhw, iScaleX);
+      pRDVertex[i].y =
+          fMinY + Math::TMulRnd<fixed4>(pvClipPos[i].y, fRhw, iScaleY);
+      pRDVertex[i].z =
+          fMinZ + Math::TMulRnd<float20>(pvClipPos[i].z, fRhw, fScaleZ);
       pRDVertex[i].rhw = fRhw;
     } else {
       // Affine screen space transform
@@ -439,8 +446,8 @@ void CTNL::processColor(uint32_t count) {
 }
 
 void CTNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                                  const VECTOR3 &vNormal,
-                                  const VECTOR4 &vVertexColor) {
+                                 const VECTOR3 &vNormal,
+                                 const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
     auto fAtt = fONE; // Attenuation distance
@@ -527,7 +534,7 @@ void CTNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 }
 
 void CTNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                                  const VECTOR3 &vNormal) {
+                                 const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
     auto fAtt = fONE; // Attenuation distance
@@ -613,8 +620,8 @@ void CTNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 }
 
 void CTNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                                  const VECTOR3 &vNormal,
-                                  const VECTOR4 &vVertexColor) {
+                                 const VECTOR3 &vNormal,
+                                 const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
     VECTOR3 vH;       // Halfway vector
@@ -719,7 +726,7 @@ void CTNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 }
 
 void CTNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                                  const VECTOR3 &vNormal) {
+                                 const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
     VECTOR3 vH;       // Halfway vector
@@ -895,7 +902,8 @@ GLenum CTNL::updateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
 
   pbVertexData_[VERTEXDATA_FRONTCOLOR] = *ppbVertexData;
   pbVertexColor_ = *ppbVertexData;
-  *ppbVertexData = __alignPtr(*ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
+  *ppbVertexData = __alignPtr(
+      *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
 
   cullStates_.bTwoSidedLighting = false;
 
@@ -982,7 +990,8 @@ GLenum CTNL::updateLighting(uint8_t **ppbVertexData, int first,
     cullStates_.bTwoSidedLighting = true;
 
     pbVertexData_[VERTEXDATA_BACKCOLOR] = *ppbVertexData;
-    *ppbVertexData = __alignPtr(*ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
+    *ppbVertexData = __alignPtr(
+        *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
 
     uiFunc += 5 * 5;
   }
@@ -1010,7 +1019,8 @@ GLenum CTNL::updateTexcoords(uint8_t **ppbVertexData, int first,
       }
 
       pbVertexData_[VERTEXDATA_TEXCOORD0 + j++] = *ppbVertexData;
-      *ppbVertexData = __alignPtr(*ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(TEXCOORD2), 4);
+      *ppbVertexData = __alignPtr(
+          *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(TEXCOORD2), 4);
 
       if (texCoordDecodes_[i].pBits) {
         uint32_t uiFormatType = (texCoordArrays_[i].Format - VERTEX_BYTE2) / 4;
@@ -1053,7 +1063,8 @@ void CTNL::updateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
   }
 
   pbVertexData_[VERTEXDATA_FOG] = *ppbVertexData;
-  *ppbVertexData = __alignPtr(*ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(float20), 4);
+  *ppbVertexData = __alignPtr(
+      *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(float20), 4);
 
   uint32_t uiFunc = fog_.Mode;
   assert(uiFunc < __countof(g_processFog));
@@ -1073,18 +1084,22 @@ void CTNL::updateModelViewInvT44() {
 }
 
 void CTNL::updateModelViewProj() {
-  Math::Mul(&mModelViewProj_, pMsProjection_->getMatrix(), pMsModelView_->getMatrix());
+  Math::Mul(&mModelViewProj_, pMsProjection_->getMatrix(),
+            pMsModelView_->getMatrix());
   dirtyFlags_.ModelViewProj = 0;
 }
 
 void CTNL::updateScreenXform() {
-  screenXform_.fMinX = static_cast<fixed4>((viewport_.left + viewport_.right) / 2);
+  screenXform_.fMinX =
+      static_cast<fixed4>((viewport_.left + viewport_.right) / 2);
   screenXform_.iScaleX = (viewport_.right - viewport_.left) / 2;
 
-  screenXform_.fMinY = static_cast<fixed4>((viewport_.top + viewport_.bottom) / 2);
+  screenXform_.fMinY =
+      static_cast<fixed4>((viewport_.top + viewport_.bottom) / 2);
   screenXform_.iScaleY = (viewport_.bottom - viewport_.top) / 2;
 
-  screenXform_.fMinZ = static_cast<float20>((depthRange_.fNear + depthRange_.fFar) / 2);
+  screenXform_.fMinZ =
+      static_cast<float20>((depthRange_.fNear + depthRange_.fFar) / 2);
   screenXform_.fScaleZ = (depthRange_.fFar - depthRange_.fNear) / 2;
 
   dirtyFlags_.ScreenXform = 0;
@@ -1124,8 +1139,7 @@ void CTNL::updateModelViewInvT33() {
   Math::Inverse33(&matTmp, pMsModelView_->getMatrix());
 
   if (caps_.RescaleNormal) {
-    auto fSum = (matTmp._31 * matTmp._31) + 
-                (matTmp._32 * matTmp._32) +
+    auto fSum = (matTmp._31 * matTmp._31) + (matTmp._32 * matTmp._32) +
                 (matTmp._33 * matTmp._33);
 
     if (!Math::TIsZero(fSum - fONE)) {
@@ -1232,12 +1246,14 @@ void CTNL::updateLights() {
 
         // Compute the halfway vector
         VECTOR3 vDir(fZERO, fZERO, fONE);
-        Math::Add(&pLight->vHalfway, reinterpret_cast<const VECTOR3 &>(pLight->vPosition), vDir);
+        Math::Add(&pLight->vHalfway,
+                  reinterpret_cast<const VECTOR3 &>(pLight->vPosition), vDir);
 
         // Normalize the halfway vector
         Math::Normalize(&pLight->vHalfway);
       } else {
-        if (Math::TIsZero(pLight->getAttenuation(GL_CONSTANT_ATTENUATION) - fONE) &&
+        if (Math::TIsZero(pLight->getAttenuation(GL_CONSTANT_ATTENUATION) -
+                          fONE) &&
             Math::TIsZero(pLight->getAttenuation(GL_LINEAR_ATTENUATION)) &&
             Math::TIsZero(pLight->getAttenuation(GL_QUADRATIC_ATTENUATION))) {
           pLight->Flags.Attenuation = 0;

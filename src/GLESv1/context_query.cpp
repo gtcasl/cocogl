@@ -34,10 +34,9 @@ const GLubyte *GLContext::getString(GLenum name) {
   case GL_EXTENSIONS:
     return reinterpret_cast<const GLubyte *>(EGL_CONFIG_EXTENSIONS);
   default:
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::getString() failed, invalid name parameter: %d.\r\n",
-        name);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::getString() failed, invalid name parameter: %d.\r\n",
+              name);
     return nullptr;
   }
 }
@@ -175,10 +174,9 @@ bool GLContext::isEnabled(GLenum cap) {
     return caps_.SampleCoverage;
 
   default:
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::isEnabled() failed, invalid cap parameter: %d.\r\n",
-        cap);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::isEnabled() failed, invalid cap parameter: %d.\r\n",
+              cap);
     return false;
   }
 }

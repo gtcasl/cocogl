@@ -47,10 +47,9 @@ void GLContext::hint(GLenum target, GLenum mode) {
     break;
 
   default:
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::hint() failed, invalid target parameter: %d.\r\n",
-        target);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::hint() failed, invalid target parameter: %d.\r\n",
+              target);
     return;
   }
 }
@@ -196,10 +195,9 @@ void GLContext::activate(GLenum cap, bool bValue) {
     break;
 
   default:
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::activate() failed, invalid cap parameter: %d.\r\n",
-        cap);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::activate() failed, invalid cap parameter: %d.\r\n",
+              cap);
     return;
   }
 }

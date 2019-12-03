@@ -83,7 +83,7 @@ void GLContext::setActiveTexture(GLenum texture) {
 }
 
 void GLContext::setVertexPointer(GLint size, GLenum type, GLsizei stride,
-                               const GLvoid *pPointer) {
+                                 const GLvoid *pPointer) {
   if ((size < 2) || (size > 4)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::setVertexPointer() failed, "
@@ -120,7 +120,7 @@ void GLContext::setVertexPointer(GLint size, GLenum type, GLsizei stride,
 }
 
 void GLContext::setNormalPointer(GLenum type, GLsizei stride,
-                               const GLvoid *pPointer) {
+                                 const GLvoid *pPointer) {
   GLint size = 3;
 
   if ((type != GL_BYTE) && (type != GL_SHORT) && (type != GL_FIXED) &&
@@ -151,7 +151,7 @@ void GLContext::setNormalPointer(GLenum type, GLsizei stride,
 }
 
 void GLContext::setColorPointer(GLint size, GLenum type, GLsizei stride,
-                              const GLvoid *pPointer) {
+                                const GLvoid *pPointer) {
   if (size != 4) {
     __glError(GL_INVALID_VALUE,
               "GLContext::setColorPointer() failed, "
@@ -187,7 +187,7 @@ void GLContext::setColorPointer(GLint size, GLenum type, GLsizei stride,
 }
 
 void GLContext::setTexCoordPointer(GLint size, GLenum type, GLsizei stride,
-                                 const GLvoid *pPointer) {
+                                   const GLvoid *pPointer) {
   if ((size < 2) || (size > 4)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::setTexCoordPointer() failed, "
@@ -226,7 +226,7 @@ void GLContext::setTexCoordPointer(GLint size, GLenum type, GLsizei stride,
 }
 
 void GLContext::setPointSizePointerOES(GLenum type, GLsizei stride,
-                                     const GLvoid *pPointer) {
+                                       const GLvoid *pPointer) {
   GLint size = 1;
 
   if ((type != GL_FIXED) && (type != GL_FLOAT)) {
@@ -274,8 +274,8 @@ void GLContext::setNormal(floatf nx, floatf ny, floatf nz) {
   dirtyFlags_.NormalizeNormal = 1;
 }
 
-void GLContext::setMultiTexCoord(GLenum target, floatf s, floatf t, floatf /*r*/,
-                               floatf q) {
+void GLContext::setMultiTexCoord(GLenum target, floatf s, floatf t,
+                                 floatf /*r*/, floatf q) {
   uint32_t index = (target - GL_TEXTURE0);
   if (index >= MAX_TEXTURES) {
     __glError(GL_INVALID_ENUM,

@@ -13,6 +13,8 @@
 //
 #pragma once
 
+#include "test.hpp"
+
 class QuadTest : public TestBase {
 private:
   GLuint texture_;

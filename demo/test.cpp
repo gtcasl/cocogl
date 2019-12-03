@@ -12,9 +12,9 @@
 // INDEMNITIES.
 //
 #include "stdafx.h"
+#include "test.hpp"
 #include <math.h>
 #include <string.h>
-#include "test.hpp"
 
 void Ortho2D(int width, int height) {
   glMatrixMode(GL_PROJECTION);
@@ -117,7 +117,7 @@ bool LoadTGA(const char *fileName, GLuint *id) {
   // skip information we don't care about
   fseek(f, 9, SEEK_CUR);
 
-  // read the width, height and bits per pixel 
+  // read the width, height and bits per pixel
   fread(&width, sizeof(uint16_t), 1, f);
   fread(&height, sizeof(uint16_t), 1, f);
   fread(&bits, sizeof(uint8_t), 1, f);
@@ -130,7 +130,7 @@ bool LoadTGA(const char *fileName, GLuint *id) {
     switch (bits) {
     case 24:
     case 32: {
-      format = bits >> 3; 
+      format = bits >> 3;
       lineWidth = format * width;
       pixels = new GLubyte[lineWidth * height];
 
@@ -140,7 +140,7 @@ bool LoadTGA(const char *fileName, GLuint *id) {
         GLubyte *line = &pixels[lineWidth * y];
         fread(line, lineWidth, 1, f);
 
-        //Because the TGA is BGR instead of RGB, we must swap RG components
+        // Because the TGA is BGR instead of RGB, we must swap RG components
         for (int i = 0; i < lineWidth; i += format) {
           GLubyte temp = line[i];
           line[i] = line[i + 2];

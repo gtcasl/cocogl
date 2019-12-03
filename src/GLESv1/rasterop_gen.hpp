@@ -17,21 +17,21 @@
 typedef bool (*Pfncompare)(uint32_t a, uint32_t b);
 
 typedef void (*PfnGetTexelColor)(Color4 *pOut, const SurfaceDesc &surface,
-                                  fixedRX fU, fixedRX fV);
+                                 fixedRX fU, fixedRX fV);
 
 typedef void (*PfnGetSamplerColor)(Color4 *pOut,
-                                    PfnGetTexelColor pfnGetTexelColorMin,
-                                    PfnGetTexelColor pfnGetTexelColorMag,
-                                    const Sampler &sampler, fixedRX fU,
-                                    fixedRX fV, fixedRX fM);
+                                   PfnGetTexelColor pfnGetTexelColorMin,
+                                   PfnGetTexelColor pfnGetTexelColorMag,
+                                   const Sampler &sampler, fixedRX fU,
+                                   fixedRX fV, fixedRX fM);
 
 typedef void (*PfnGetTexEnvColor)(Color4 *pInOut, const Color4 &cTexture,
-                                   ColorARGB cEnvColor);
+                                  ColorARGB cEnvColor);
 
 typedef void (*PfnBlend)(Color4 *pInOut, const uint8_t *pCB);
 
 typedef void (*PfnWriteColor)(const RasterData &rasterData,
-                               const Color4 &cSrcColor, uint8_t *pCB);
+                              const Color4 &cSrcColor, uint8_t *pCB);
 
 class CGenericRasterOp : public IRasterOp {
 public:

@@ -14,9 +14,9 @@
 //
 #pragma once
 
-template <class T>
+template <typename T>
 inline void GLContext::setTexParameter(GLenum target, GLenum pname,
-                                      const T *pParams) {
+                                       const T *pParams) {
   assert(pParams);
 
   if (target != GL_TEXTURE_2D) {
@@ -120,7 +120,7 @@ inline void GLContext::setTexParameter(GLenum target, GLenum pname,
   }
 }
 
-template <class T>
+template <typename T>
 inline void GLContext::setTexEnv(GLenum env, GLenum pname, const T *pParams) {
   assert(pParams);
 
@@ -182,15 +182,14 @@ inline void GLContext::setTexEnv(GLenum env, GLenum pname, const T *pParams) {
     break;
 
   default:
-    __glError(
-        GL_INVALID_ENUM,
-        "GLContext::setTexEnv() failed, invalid env parameter: %d.\r\n",
-        env);
+    __glError(GL_INVALID_ENUM,
+              "GLContext::setTexEnv() failed, invalid env parameter: %d.\r\n",
+              env);
     return;
   }
 }
 
-template <class T>
+template <typename T>
 inline void GLContext::setPointParameter(GLenum pname, const T *pParams) {
   assert(pParams);
 
