@@ -478,7 +478,7 @@ public:
       fFog = fFogdA * fOffsetX + fFogdB * fOffsetY + fFogdC;
     }
 
-    fixedW fW = Math::TInv<fixedW>(fRhw);
+    fixedW fW = Math::Inverse<fixedW>(fRhw);
     fixedW fW2;
 
     if constexpr ((2 == Texture0) || (2 == Texture1)) {
@@ -534,7 +534,7 @@ public:
 
       if (log2width) {
         fRhw += fRhwdA << log2width;
-        fixedW fWr = Math::TInv<fixedW>(fRhw);
+        fixedW fWr = Math::Inverse<fixedW>(fRhw);
         fixedW fWr2;
 
         if constexpr ((2 == Texture0) || (2 == Texture1)) {

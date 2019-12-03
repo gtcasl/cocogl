@@ -484,9 +484,9 @@ template <typename R> R ShiftRight(float lhs, int rhs);
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <typename R, uint32_t F, typename T> R TInv(Fixed<F, T> rhs);
+template <typename R, uint32_t F, typename T> R Inverse(Fixed<F, T> rhs);
 
-template <typename R> R TInv(float rhs);
+template <typename R> R Inverse(float rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R FastMul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
@@ -584,9 +584,9 @@ void Rotate(MATRIX44 *pmatOut, floatf angle, floatf x, floatf y, floatf z);
 void Frustum(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
              floatf top, floatf zNear, floatf zFar);
 
-template <typename T> T TDot(const TVector3<T> &lhs, const TVector3<T> &rhs);
+template <typename T> T Dot(const TVector3<T> &lhs, const TVector3<T> &rhs);
 
-template <typename T> T TDot(const TVector4<T> &lhs, const TVector4<T> &rhs);
+template <typename T> T Dot(const TVector4<T> &lhs, const TVector4<T> &rhs);
 
 bool IsPowerOf2(int value);
 
@@ -840,7 +840,7 @@ template <uint32_t F, typename T> inline int ToUNORM16(Fixed<F, T> rhs) {
   return (0xffff * rhs.data()) >> Fixed<F, T>::FRAC;
 }
 
-template <typename R, uint32_t F, typename T> class TInvSelect {
+template <typename R, uint32_t F, typename T> class InverseSelect {
 public:
   inline static R Invert(Fixed<F, T> rhs) {
     return R::make(
@@ -849,18 +849,18 @@ public:
   }
 };
 
-template <uint32_t F, typename T> class TInvSelect<float, F, T> {
+template <uint32_t F, typename T> class InverseSelect<float, F, T> {
 public:
   inline static float Invert(Fixed<F, T> rhs) {
     return 1.0f / static_cast<float>(rhs);
   }
 };
 
-template <typename R, uint32_t F, typename T> inline R TInv(Fixed<F, T> rhs) {
-  return TInvSelect<R, F, T>::Invert(rhs);
+template <typename R, uint32_t F, typename T> inline R Inverse(Fixed<F, T> rhs) {
+  return InverseSelect<R, F, T>::Invert(rhs);
 }
 
-template <typename R> inline R TInv(float rhs) {
+template <typename R> inline R Inverse(float rhs) {
   assert(rhs != 0.0f);
   return static_cast<R>(1.0f / rhs);
 }
@@ -1001,7 +1001,7 @@ inline R ShiftRight(Fixed<F, T> lhs, int rhs) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <>
-inline fixed16 TDot<fixed16>(const TVector3<fixed16> &lhs,
+inline fixed16 Dot<fixed16>(const TVector3<fixed16> &lhs,
                              const TVector3<fixed16> &rhs) {
   auto xx = static_cast<int64_t>(lhs.x.data()) * rhs.x.data();
   auto yy = static_cast<int64_t>(lhs.y.data()) * rhs.y.data();
@@ -1010,7 +1010,7 @@ inline fixed16 TDot<fixed16>(const TVector3<fixed16> &lhs,
 }
 
 template <>
-inline fixed16 TDot<fixed16>(const TVector4<fixed16> &lhs,
+inline fixed16 Dot<fixed16>(const TVector4<fixed16> &lhs,
                              const TVector4<fixed16> &rhs) {
   auto xx = static_cast<int64_t>(lhs.x.data()) * rhs.x.data();
   auto yy = static_cast<int64_t>(lhs.y.data()) * rhs.y.data();
@@ -1020,13 +1020,13 @@ inline fixed16 TDot<fixed16>(const TVector4<fixed16> &lhs,
 }
 
 template <>
-inline float TDot<float>(const TVector3<float> &lhs,
+inline float Dot<float>(const TVector3<float> &lhs,
                          const TVector3<float> &rhs) {
   return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 }
 
 template <>
-inline float TDot<float>(const TVector4<float> &lhs,
+inline float Dot<float>(const TVector4<float> &lhs,
                          const TVector4<float> &rhs) {
   return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 }
@@ -1118,7 +1118,7 @@ inline void Mul(VECTOR2 *pvOut, const VECTOR2 &vIn, const MATRIX44 &mat) {
 }
 
 inline floatf Length(const VECTOR3 &vIn) {
-  auto fDot = Math::TDot<floatf>(vIn, vIn);
+  auto fDot = Math::Dot<floatf>(vIn, vIn);
   if (!Math::IsAlmostZero(fDot - fONE)) {
     return std::sqrt(fDot);
   }
@@ -1127,7 +1127,7 @@ inline floatf Length(const VECTOR3 &vIn) {
 
 inline void Normalize(VECTOR3 *pvOut) {
   assert(pvOut);
-  auto fDot = Math::TDot<floatf>(*pvOut, *pvOut);
+  auto fDot = Math::Dot<floatf>(*pvOut, *pvOut);
   if (!Math::IsAlmostZero(fDot - fONE) && !Math::IsAlmostZero(fDot)) {
     auto fInvLen = Math::RSqrt(fDot);
     pvOut->x = pvOut->x * fInvLen;
@@ -1275,7 +1275,7 @@ inline void Inverse33(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
                      matIn._31, pmatOut->_31);
 
   if (!Math::IsAlmostZero(fDet - fONE)) {
-    auto fDetInv = Math::TInv<floatf>(fDet);
+    auto fDetInv = Math::Inverse<floatf>(fDet);
 
     pmatOut->_11 *= fDetInv;
     pmatOut->_12 *= fDetInv;
@@ -1332,7 +1332,7 @@ inline void Inverse(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
               MulAdd(fA1, fB4, fA4, fB1);
 
   if (!Math::IsAlmostZero(fDet - fONE)) {
-    auto fDetInv = Math::TInv<floatf>(fDet);
+    auto fDetInv = Math::Inverse<floatf>(fDet);
 
     pmatOut->_11 *= fDetInv;
     pmatOut->_12 *= fDetInv;
@@ -1364,9 +1364,9 @@ inline void Ortho(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
   auto fHeight = top - bottom;
   auto fDepth = zFar - zNear;
 
-  auto fInvWidth = (fWidth != fZERO) ? Math::TInv<floatf>(fWidth) : fZERO;
-  auto fInvHeight = (fHeight != fZERO) ? Math::TInv<floatf>(fHeight) : fZERO;
-  auto fInvDepth = (fDepth != fZERO) ? Math::TInv<floatf>(fDepth) : fZERO;
+  auto fInvWidth = (fWidth != fZERO) ? Math::Inverse<floatf>(fWidth) : fZERO;
+  auto fInvHeight = (fHeight != fZERO) ? Math::Inverse<floatf>(fHeight) : fZERO;
+  auto fInvDepth = (fDepth != fZERO) ? Math::Inverse<floatf>(fDepth) : fZERO;
 
   pmatOut->_11 = fTWO * fInvWidth;
   pmatOut->_12 = fZERO;
@@ -1397,9 +1397,9 @@ inline void Frustum(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
   auto fHeight = top - bottom;
   auto fDepth = zFar - zNear;
 
-  auto fInvWidth = (fWidth != fZERO) ? Math::TInv<floatf>(fWidth) : fZERO;
-  auto fInvHeight = (fHeight != fZERO) ? Math::TInv<floatf>(fHeight) : fZERO;
-  auto fInvDepth = (fDepth != fZERO) ? Math::TInv<floatf>(fDepth) : fZERO;
+  auto fInvWidth = (fWidth != fZERO) ? Math::Inverse<floatf>(fWidth) : fZERO;
+  auto fInvHeight = (fHeight != fZERO) ? Math::Inverse<floatf>(fHeight) : fZERO;
+  auto fInvDepth = (fDepth != fZERO) ? Math::Inverse<floatf>(fDepth) : fZERO;
 
   auto fTwoNear = fTWO * zNear;
 

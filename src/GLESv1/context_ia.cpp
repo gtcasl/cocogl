@@ -290,7 +290,7 @@ void GLContext::setMultiTexCoord(GLenum target, floatf s, floatf t,
   vTexCoords.y = t;
 
   if (!Math::IsAlmostZero(q - fONE)) {
-    auto fInvQ = Math::TInv<floatf>(q);
+    auto fInvQ = Math::Inverse<floatf>(q);
     vTexCoords.x *= fInvQ;
     vTexCoords.y *= fInvQ;
   }

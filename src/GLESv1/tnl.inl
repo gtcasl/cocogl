@@ -415,7 +415,7 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
 
     if constexpr (TVertexData<VertexFormat>::Output::DIM >= 4) {
       if (!Math::IsAlmostZero(vIn.w - fONE) && !Math::IsAlmostZero(vIn.w)) {
-        auto fInvW = Math::TInv<floatf>(vIn.w);
+        auto fInvW = Math::Inverse<floatf>(vIn.w);
         vIn.x *= fInvW;
         vIn.y *= fInvW;
       }

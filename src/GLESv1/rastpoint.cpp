@@ -96,7 +96,7 @@ void Rasterizer::rasterPoint(uint32_t index) {
     fixedRX fDelta;
 
     if (caps_.PointSprite) {
-      fDelta = Math::TInv<fixedRX>(fPointSize);
+      fDelta = Math::Inverse<fixedRX>(fPointSize);
     }
 
     for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {

@@ -55,7 +55,7 @@ protected:
       if (u8Area.data() < 16)
         return false;
 
-      fRatio = Math::TInv<floatQ>(i8Area);
+      fRatio = Math::Inverse<floatQ>(i8Area);
       return true;
     }
 

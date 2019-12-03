@@ -174,8 +174,8 @@ void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
       case CLIP_PLANE4:
       case CLIP_PLANE5:
         assert(plane < __countof(vClipPlanesCS_));
-        fDistA = Math::TDot<floatf>(vFrom, vClipPlanesCS_[plane]);
-        fDistB = Math::TDot<floatf>(vTo, vClipPlanesCS_[plane]);
+        fDistA = Math::Dot<floatf>(vFrom, vClipPlanesCS_[plane]);
+        fDistB = Math::Dot<floatf>(vTo, vClipPlanesCS_[plane]);
         break;
       }
 
@@ -319,10 +319,10 @@ uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
   plane -= CLIP_PLANE0;
   assert(plane < vClipPlanesCS_.size());
 
-  for (fDistB = Math::TDot<floatf>(pvClipPos[iVB], vClipPlanesCS_[plane]);
+  for (fDistB = Math::Dot<floatf>(pvClipPos[iVB], vClipPlanesCS_[plane]);
        nNumVertices--; iVB = iVA, fDistB = fDistA) {
     iVA = *pSrc++;
-    fDistA = Math::TDot<floatf>(pvClipPos[iVA], vClipPlanesCS_[plane]);
+    fDistA = Math::Dot<floatf>(pvClipPos[iVA], vClipPlanesCS_[plane]);
 
     if (fDistB >= fZERO) {
       // Add vertex to the current list

@@ -953,7 +953,7 @@ public:
       }
     }
 
-    fixedW fW = Math::TInv<fixedW>(fRhw);
+    fixedW fW = Math::Inverse<fixedW>(fRhw);
     fixedW fW2;
 
     if constexpr (Mip0 || Mip1) {
@@ -1018,7 +1018,7 @@ public:
 
       if (log2width) {
         fRhw += fRhwdA << log2width;
-        fixedW fWr = Math::TInv<fixedW>(fRhw);
+        fixedW fWr = Math::Inverse<fixedW>(fRhw);
 
         if constexpr (InterpolateMips) {
           fWr2 = fWr * fWr;
@@ -2035,7 +2035,7 @@ public:
 
       fRhw += fRhwdA * offset;
 
-      fixedW fW = Math::TInv<fixedW>(fRhw);
+      fixedW fW = Math::Inverse<fixedW>(fRhw);
       fixedW fW2;
 
       if constexpr (Mip0 || Mip1) {
@@ -2091,7 +2091,7 @@ public:
         auto pCBEnd = pCB + blockWidth * ColorStride;
 
         fRhw += fRhwdA << log2width;
-        fixedW fWr = Math::TInv<fixedW>(fRhw);
+        fixedW fWr = Math::Inverse<fixedW>(fRhw);
         fixedW fWr2;
 
         if constexpr (InterpolateMips) {
