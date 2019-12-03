@@ -43,7 +43,7 @@ OptimizedRasterOp::~OptimizedRasterOp() {
 }
 
 GLenum OptimizedRasterOp::Create(IRasterOp **ppRasterOp,
-                                  const RASTERID &rasterID) {
+                                 const RASTERID &rasterID) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(ppRasterOp);
@@ -55,8 +55,7 @@ GLenum OptimizedRasterOp::Create(IRasterOp **ppRasterOp,
       auto pRasterOp =
           new OptimizedRasterOp(l_optimizedScanlines[i].pfnScanline);
       if (nullptr == pRasterOp) {
-        __glLogError(
-            "OptimizedRasterOp allocation failed, out of memory.\r\n");
+        __glLogError("OptimizedRasterOp allocation failed, out of memory.\r\n");
         return GL_OUT_OF_MEMORY;
       }
 

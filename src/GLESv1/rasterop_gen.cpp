@@ -18,8 +18,6 @@
 #include "rasterop_gen.hpp"
 #include "rasterop_gen.inl"
 
-#ifndef GL_COCOJIT
-
 #define MAKE_SCANLINE(fog, texture1, texture0, color, depth)                   \
   {                                                                            \
     TGenericScanlineA<depth, color, texture0, texture1, fog>::Execute,         \
@@ -452,12 +450,10 @@ GenericRasterOp::GenericRasterOp(const RASTERID &rasterID) {
   pfnScanline_ = nullptr;
 }
 
-GenericRasterOp::~GenericRasterOp() {
-  __profileAPI(" - %s()\n", __FUNCTION__);
-}
+GenericRasterOp::~GenericRasterOp() { __profileAPI(" - %s()\n", __FUNCTION__); }
 
 GLenum GenericRasterOp::Create(IRasterOp **ppRasterOp,
-                                const RASTERID &rasterID) {
+                               const RASTERID &rasterID) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
@@ -644,8 +640,8 @@ void GenericRasterOp::selectWriteColorFunc() {
 }
 
 bool GenericRasterOp::doStencilTest(const RasterData &rasterData,
-                                     uint32_t depthValue,
-                                     void *pDSBuffer) const {
+                                    uint32_t depthValue,
+                                    void *pDSBuffer) const {
   assert(pDSBuffer);
 
   auto pRasterOp =
@@ -722,8 +718,8 @@ bool GenericRasterOp::doStencilTest(const RasterData &rasterData,
 }
 
 void GenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
-                                       const RasterData &rasterData, fixedRX fU,
-                                       fixedRX fV, fixedRX fM) const {
+                                      const RasterData &rasterData, fixedRX fU,
+                                      fixedRX fV, fixedRX fM) const {
   const Sampler &sampler = rasterData.Samplers[unit];
 
   switch (rasterID_.Textures[unit].MipFilter) {
@@ -744,7 +740,7 @@ void GenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
   case FILTER_NEAREST: {
     auto fJ = fixed16::make(fM.data());
     if (fJ > TConst<fixed16>::One()) {
-      int mipLevel = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+      int mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                      sampler.MaxMipLevel);
 
       (samplers_[unit].pfnGetTexelColorMin)(pOut, sampler.pMipLevels[mipLevel],
@@ -762,10 +758,10 @@ void GenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
     if (fJ > TConst<fixed16>::One()) {
       Color4 tmp;
 
-      int mipLevel0 = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+      int mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                       sampler.MaxMipLevel);
 
-      int mipLevel1 = Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
+      int mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
       int mipLerp = (fJ.data() >> (mipLevel0 + 8)) - fixed8::ONE;
 
       (samplers_[unit].pfnGetTexelColorMin)(pOut, sampler.pMipLevels[mipLevel0],
@@ -788,7 +784,7 @@ void GenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
 }
 
 void GenericRasterOp::applyFog(const RasterData &rasterData, Color4 *pInOut,
-                                fixedRX fFactor) {
+                               fixedRX fFactor) {
   const Color4 &cFogColor = rasterData.cFogColor;
   int factor = fFactor.data();
 
@@ -799,5 +795,3 @@ void GenericRasterOp::applyFog(const RasterData &rasterData, Color4 *pInOut,
   pInOut->b =
       cFogColor.b + ((factor * (pInOut->b - cFogColor.b)) >> fixedRX::FRAC);
 }
-
-#endif

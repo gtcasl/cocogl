@@ -17,7 +17,7 @@
 #include "surface.hpp"
 
 GLenum Surface2D::initialize(uint32_t width, uint32_t height,
-                              ePixelFormat format) {
+                             ePixelFormat format) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
@@ -56,7 +56,7 @@ GLenum Surface2D::initialize(uint32_t width, uint32_t height,
 }
 
 GLenum Surface2D::initialize(uint32_t width, uint32_t height, int32_t pitch,
-                              ePixelFormat format, GLvoid *pPixels) {
+                             ePixelFormat format, GLvoid *pPixels) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {
@@ -88,7 +88,7 @@ GLenum Surface2D::initialize(uint32_t width, uint32_t height, int32_t pitch,
 }
 
 GLenum Surface2D::initialize(uint32_t width, uint32_t height,
-                              ePixelFormat format, const GLvoid *pPixels) {
+                             ePixelFormat format, const GLvoid *pPixels) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (width > MAX_TEXTURE_SIZE) {

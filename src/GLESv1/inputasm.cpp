@@ -18,8 +18,8 @@
 #include "vertarray.hpp"
 
 GLenum InputAssembler::prepareIndices(GLenum type, const GLvoid **ppvIndices,
-                                       uint32_t count, uint32_t *pMin,
-                                       uint32_t *pMax) {
+                                      uint32_t count, uint32_t *pMin,
+                                      uint32_t *pMax) {
   assert(ppvIndices);
 
   const GLvoid *pvIndices = *ppvIndices;

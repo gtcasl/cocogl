@@ -46,10 +46,6 @@ GLContext::GLContext(HandleTable *pHandles, RasterCache *pRasterCache,
   for (uint32_t i = 0; i < BUFFER_OBJECTS_SIZE; ++i) {
     bufferObjects_[i] = nullptr;
   }
-
-#ifdef GL_COCOJIT
-  pCGAssembler_ = nullptr;
-#endif
 }
 
 GLContext::~GLContext() {
@@ -80,10 +76,6 @@ GLContext::~GLContext() {
   }
 
   __safeRelease(handles_);
-
-#ifdef GL_COCOJIT
-  __safeRelease(pCGAssembler_);
-#endif
 }
 
 GLenum GLContext::Create(GLContext **ppContext, HandleTable *pHandles,
@@ -159,15 +151,6 @@ GLenum GLContext::initialize() {
   vClipPlanesCS_.resize(MAX_CLIPPLANES);
 
   lights_.resize(MAX_LIGHTS);
-
-#ifdef GL_COCOJIT
-  // Create the CG assembler
-  err = GLERROR_FROM_HRESULT(CG::Assembler::Create(&pCGAssembler_));
-  if (__glFailed(err)) {
-    __glLogError("CG::Assembler::Create() failed, err = %d.\r\n", err);
-    return err;
-  }
-#endif
 
   //--
   this->setShadeModel(GL_SMOOTH);

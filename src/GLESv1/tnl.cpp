@@ -346,7 +346,7 @@ uint32_t TNL::calcUserClipFlags(uint32_t count) {
 }
 
 void TNL::transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
-                                uint32_t count) {
+                               uint32_t count) {
   assert(pRDVertex);
   assert(pvClipPos);
 
@@ -418,7 +418,7 @@ void TNL::processPointSize(uint32_t count) {
 
   for (uint32_t i = 0; i < count; ++i) {
     if (TNLFlags_.PointSizeQAttn) {
-      auto fEyeDist = Math::TAbs(pvEyePos[i].z);
+      auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
                      vAttenuation.y * fEyeDist + vAttenuation.x;
       if (!Math::TIsZero(fInvAtt - fONE)) {
@@ -426,7 +426,7 @@ void TNL::processPointSize(uint32_t count) {
       }
     }
 
-    pfPointSizes[i] = static_cast<fixed4>(Math::TMax<floatf>(fPointSize, fONE));
+    pfPointSizes[i] = static_cast<fixed4>(std::max<floatf>(fPointSize, fONE));
   }
 }
 
@@ -446,8 +446,8 @@ void TNL::processColor(uint32_t count) {
 }
 
 void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                                 const VECTOR3 &vNormal,
-                                 const VECTOR4 &vVertexColor) {
+                                const VECTOR3 &vNormal,
+                                const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
     auto fAtt = fONE; // Attenuation distance
@@ -534,7 +534,7 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 }
 
 void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                                 const VECTOR3 &vNormal) {
+                                const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
     auto fAtt = fONE; // Attenuation distance
@@ -620,8 +620,8 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 }
 
 void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                                 const VECTOR3 &vNormal,
-                                 const VECTOR4 &vVertexColor) {
+                                const VECTOR3 &vNormal,
+                                const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
     VECTOR3 vH;       // Halfway vector
@@ -726,7 +726,7 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 }
 
 void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                                 const VECTOR3 &vNormal) {
+                                const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;       // Light vector
     VECTOR3 vH;       // Halfway vector
@@ -830,7 +830,7 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 }
 
 void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
-                            uint32_t count) {
+                           uint32_t count) {
   auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
       pbVertexData_[VERTEXDATA_TEXCOORD0 + dstIndex]);
 
@@ -928,8 +928,7 @@ GLenum TNL::updateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
   return GL_NO_ERROR;
 }
 
-GLenum TNL::updateLighting(uint8_t **ppbVertexData, int first,
-                            uint32_t count) {
+GLenum TNL::updateLighting(uint8_t **ppbVertexData, int first, uint32_t count) {
   GLenum err;
 
   if (dirtyFlags_.ModelViewInvT33) {
@@ -1003,7 +1002,7 @@ GLenum TNL::updateLighting(uint8_t **ppbVertexData, int first,
 }
 
 GLenum TNL::updateTexcoords(uint8_t **ppbVertexData, int first,
-                             uint32_t count) {
+                            uint32_t count) {
   GLenum err;
 
   for (uint32_t i = 0, j = 0, mask = caps_.Texture2D; mask; mask >>= 1, ++i) {

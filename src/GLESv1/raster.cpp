@@ -216,19 +216,11 @@ bool Rasterizer::generateRasterOp() {
     err = OptimizedRasterOp::Create(&pRasterOp, rasterID_);
     if (__glFailed(err)) {
       if (__GL_NO_DATA == err) {
-#ifdef GL_COCOJIT
-        err = JITRasterOp::Create(&pRasterOp, pCGAssembler_, rasterID_);
-        if (__glFailed(err)) {
-          __glLogError("JITRasterOp::Create() failed, err = %d.\r\n", err);
-          return false;
-        }
-#else
         err = GenericRasterOp::Create(&pRasterOp, rasterID_);
         if (__glFailed(err)) {
           __glLogError("GenericRasterOp::Create() failed, err = %d.\r\n", err);
           return false;
         }
-#endif
 #ifndef NDEBUG
         // Add the unoptimized scanline to the tracking list
         pRasterCache_->trackSlowRasterID(rasterID_);

@@ -20,7 +20,8 @@ extern const GLint g_compressedFormats[] = {
     GL_PALETTE8_RGBA8_OES,  GL_PALETTE8_R5_G6_B5_OES, GL_PALETTE8_RGBA4_OES,
     GL_PALETTE8_RGB5_A1_OES};
 
-template <typename T> inline void GLContext::getClipPlane(GLenum plane, T eqn[4]) {
+template <typename T>
+inline void GLContext::getClipPlane(GLenum plane, T eqn[4]) {
   if ((plane - GL_CLIP_PLANE0) >= MAX_CLIPPLANES) {
     __glError(GL_INVALID_ENUM,
               "GLContext::getClipPlane() failed, "

@@ -83,7 +83,7 @@ uint32_t GetSamplerColor(const Sampler &sampler, fixedRX fU, fixedRX fV,
 
 template <uint32_t EnvMode, uint32_t Format, bool NativeColor>
 void GetTexEnvColor(Color4 *pInOut, uint32_t texture, ColorARGB cEnvColor) {
-  typedef TFormatSize<TFormatInfo<Format>> FormatSize;
+  typedef FormatSize<TFormatInfo<Format>> FormatSize;
 
   if constexpr (NativeColor) {
     if constexpr (EnvMode == ENVMODE_REPLACE) {
@@ -1006,7 +1006,7 @@ public:
     Color4 cColor(0xff, 0xff, 0xff, 0xff);
 
     do {
-      uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
+      uint32_t blockWidth1 = std::min(width, MAX_BLOCK_SIZE);
       uint32_t log2width = Math::iLog2(blockWidth1);
       uint32_t blockWidth = 1 << log2width;
       width -= blockWidth;
@@ -2084,7 +2084,7 @@ public:
       }
 
       do {
-        uint32_t blockWidth1 = Math::TMin(width, MAX_BLOCK_SIZE);
+        uint32_t blockWidth1 = std::min(width, MAX_BLOCK_SIZE);
         uint32_t log2width = Math::iLog2(blockWidth1);
         uint32_t blockWidth = 1 << log2width;
         width -= blockWidth;

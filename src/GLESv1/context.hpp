@@ -127,7 +127,8 @@ public:
   void frustum(floatf left, floatf right, floatf bottom, floatf top,
                floatf zNear, floatf zFar);
 
-  template <typename T> GLbitfield queryMatrix(T *pMantissa, GLint exponent[16]);
+  template <typename T>
+  GLbitfield queryMatrix(T *pMantissa, GLint exponent[16]);
 
   void setDepthRange(floatf zNear, floatf zFar);
   void setClipPlane(GLenum plane, const VECTOR4 &equation);

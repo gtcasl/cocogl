@@ -34,12 +34,11 @@
 #define fixedRX fixed20
 #define fixedRF float20
 #define fixedW fixed12
-#define fixedRC TFixed<fixed20::FRAC - fixed8::FRAC>
 #define fixedDDA fixed16
 
 #ifdef COCOGL_PIXEDPOINT
-#define floatRW TFixed<28, int64_t>
-#define floatQ TFixed<30, int64_t>
+#define floatRW Fixed<28, int64_t>
+#define floatQ Fixed<30, int64_t>
 #else
 #define floatRW float
 #define floatQ float

@@ -51,7 +51,7 @@ protected:
                     Math::TFastMul<fixed8>(this->i4dx13, this->i4dy12);
 
       // Reject small areas (1/4 x 1/4 = 1/16)
-      auto u8Area = Math::TAbs(i8Area);
+      auto u8Area = std::abs(i8Area);
       if (u8Area.data() < 16)
         return false;
 
@@ -128,7 +128,7 @@ protected:
       return T::make((delta * this->fRatio.data() + half) >> FRAC);
 #else
       return T::make(
-          static_cast<TFixed<T::FRAC - fixed8::FRAC>>(delta * this->fRatio)
+          static_cast<Fixed<T::FRAC - fixed8::FRAC>>(delta * this->fRatio)
               .data());
 #endif
     }

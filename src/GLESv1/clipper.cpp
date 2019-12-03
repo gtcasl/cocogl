@@ -21,27 +21,28 @@ template <typename R> inline float TScalar(float lhs, float rhs) {
   return static_cast<R>(lhs / (lhs - rhs));
 }
 
-template <typename R, uint32_t T> inline R TScalar(TFixed<T> lhs, TFixed<T> rhs) {
+template <typename R, uint32_t T>
+inline R TScalar(Fixed<T> lhs, Fixed<T> rhs) {
   assert(lhs.data() != rhs.data());
   int diff = lhs.data() - rhs.data();
   return R::make((static_cast<int64_t>(lhs.data()) << R::FRAC) / diff);
 }
 
 template <uint32_t T>
-inline int CullSign(TFixed<T> x0, TFixed<T> y0, TFixed<T> w0, TFixed<T> x1,
-                    TFixed<T> y1, TFixed<T> w1, TFixed<T> x2, TFixed<T> y2,
-                    TFixed<T> w2) {
+inline int CullSign(Fixed<T> x0, Fixed<T> y0, Fixed<T> w0, Fixed<T> x1,
+                    Fixed<T> y1, Fixed<T> w1, Fixed<T> x2, Fixed<T> y2,
+                    Fixed<T> w2) {
   auto _x0 = static_cast<int64_t>(x0.data());
   auto _x1 = static_cast<int64_t>(x1.data());
   auto _x2 = static_cast<int64_t>(x2.data());
 
-  int SHIFT = 2 * TFixed<T>::FRAC - 12;
+  int SHIFT = 2 * Fixed<T>::FRAC - 12;
 
   int64_t sign12 =
       (w0.data() * ((_x1 * y2.data() - _x2 * y1.data()) >> SHIFT) -
        w1.data() * ((_x0 * y2.data() - _x2 * y0.data()) >> SHIFT) +
        w2.data() * ((_x0 * y1.data() - _x1 * y0.data()) >> SHIFT)) >>
-      TFixed<T>::FRAC;
+      Fixed<T>::FRAC;
 
   if (sign12 < 0) {
     return -1;
@@ -114,7 +115,7 @@ bool Rasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 }
 
 void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
-                                    uint32_t clipUnion) {
+                                   uint32_t clipUnion) {
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
@@ -208,7 +209,7 @@ void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
 }
 
 void Rasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
-                                        uint32_t clipUnion) {
+                                       uint32_t clipUnion) {
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
@@ -302,8 +303,8 @@ void Rasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
 }
 
 uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
-                                   uint32_t *pSrc, uint32_t *pDst,
-                                   uint32_t *pTmp) {
+                                  uint32_t *pSrc, uint32_t *pDst,
+                                  uint32_t *pTmp) {
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
 
@@ -348,7 +349,7 @@ uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
 }
 
 void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
-                                    floatf fDistB, uint32_t i2) {
+                                   floatf fDistB, uint32_t i2) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
   auto pvClipPos =
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);

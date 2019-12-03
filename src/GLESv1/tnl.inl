@@ -395,7 +395,7 @@ void TNL::processVertexColor(uint32_t count) {
 
 template <bool Transform, eVertexFormat VertexFormat>
 void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
-                            uint32_t count) {
+                           uint32_t count) {
   auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
       pbVertexData_[VERTEXDATA_TEXCOORD0 + dstIndex]);
   auto &transform = pMsTexCoords_[srcIndex]->getMatrix();
@@ -452,7 +452,7 @@ void TNL::processPointSize(uint32_t count) {
     TDecodeVertex<VECTOR1, TVertexData<VertexFormat>>(&vPointSize,
                                                       pbIn + i * stride);
     if constexpr (QuadraticAttenuation) {
-      auto fEyeDist = Math::TAbs(pvEyePos[i].z);
+      auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
                      vAttenuation.y * fEyeDist + vAttenuation.x;
       if (!Math::TIsZero(fInvAtt - fONE)) {
@@ -463,7 +463,7 @@ void TNL::processPointSize(uint32_t count) {
     }
 
     pfPointSizes[i] =
-        static_cast<fixed4>(Math::TMax<floatf>(vPointSize.x, fONE));
+        static_cast<fixed4>(std::max<floatf>(vPointSize.x, fONE));
   }
 }
 
@@ -477,7 +477,7 @@ template <eFogMode FogMode> void TNL::processFog(uint32_t count) {
     auto fFogRatio = fog_.fRatio;
 
     for (uint32_t i = 0; i < count; ++i) {
-      auto fEyeDist = Math::TAbs(pvEyePos[i].z);
+      auto fEyeDist = std::abs(pvEyePos[i].z);
       pfFogs[i] = Math::TSat(fFogRatio * (fFogEnd - fEyeDist));
     }
   }
@@ -485,7 +485,7 @@ template <eFogMode FogMode> void TNL::processFog(uint32_t count) {
     auto fFogDensity = fog_.getFactor(GL_FOG_DENSITY);
 
     for (uint32_t i = 0; i < count; ++i) {
-      auto fEyeDist = Math::TAbs(pvEyePos[i].z);
+      auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fTmp = fEyeDist * fFogDensity;
       pfFogs[i] = static_cast<fixedRF>(Math::TSat(Math::TExp(-fTmp)));
     }
@@ -494,7 +494,7 @@ template <eFogMode FogMode> void TNL::processFog(uint32_t count) {
     auto fFogDensity = fog_.getFactor(GL_FOG_DENSITY);
 
     for (uint32_t i = 0; i < count; ++i) {
-      auto fEyeDist = Math::TAbs(pvEyePos[i].z);
+      auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fTmp = fEyeDist * fFogDensity;
       pfFogs[i] = static_cast<fixedRF>(Math::TSat(Math::TExp(-(fTmp * fTmp))));
     }

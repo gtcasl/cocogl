@@ -225,7 +225,7 @@ template <uint32_t Address> inline int TAddress(int x) {
     return x & fixedRX::MASK;
   }
   if constexpr (Address == ADDRESS_CLAMP) {
-    return Math::TClamp<int>(x, 0, fixedRX::MASK);
+    return std::clamp<int>(x, 0, fixedRX::MASK);
   }
 }
 
@@ -347,9 +347,9 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
   if constexpr (MipFilter == FILTER_NEAREST) {
     if constexpr (MinFilter == MagFilter) {
       auto fJ =
-          Math::TMax<fixed16>(fixed16::make(fM.data()), TConst<fixed16>::One());
+          std::max<fixed16>(fixed16::make(fM.data()), TConst<fixed16>::One());
 
-      int mipLevel = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+      int mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                      sampler.MaxMipLevel);
 
       return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
@@ -357,7 +357,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
     } else {
       auto fJ = fixed16::make(fM.data());
       if (fJ > TConst<fixed16>::One()) {
-        int mipLevel = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+        int mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                        sampler.MaxMipLevel);
 
         return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
@@ -375,12 +375,12 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
 
     if constexpr (MinFilter == MagFilter) {
       auto fJ =
-          Math::TMax<fixed16>(fixed16::make(fM.data()), TConst<fixed16>::One());
+          std::max<fixed16>(fixed16::make(fM.data()), TConst<fixed16>::One());
 
-      int mipLevel0 = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+      int mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                       sampler.MaxMipLevel);
 
-      int mipLevel1 = Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
+      int mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
       int mipLerp =
           (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
@@ -396,10 +396,10 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
     } else {
       auto fJ = fixed16::make(fM.data());
       if (fJ > TConst<fixed16>::One()) {
-        int mipLevel0 = Math::TMin<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
+        int mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                         sampler.MaxMipLevel);
 
-        int mipLevel1 = Math::TMin<int>(mipLevel0 + 1, sampler.MaxMipLevel);
+        int mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
         int mipLerp =
             (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
@@ -628,7 +628,7 @@ void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
   }
 
   if constexpr (BlendOp == BLEND_SRC_ALPHA_SATURATE) {
-    int factor = Math::TMin(cSrc.a, 0xff - cDst.a);
+    int factor = std::min(cSrc.a, 0xff - cDst.a);
     pInOut->r = Math::Mul8(pInOut->r, factor);
     pInOut->g = Math::Mul8(pInOut->g, factor);
     pInOut->b = Math::Mul8(pInOut->b, factor);
@@ -715,8 +715,8 @@ uint32_t ApplyLogicOp(uint32_t srcColor, uint32_t dstColor) {
 
 inline void ToColor4(Color4 *pColor, fixedRX fA, fixedRX fR, fixedRX fG,
                      fixedRX fB) {
-  pColor->b = fB.data() >> fixedRC::FRAC;
-  pColor->g = fG.data() >> fixedRC::FRAC;
-  pColor->r = fR.data() >> fixedRC::FRAC;
-  pColor->a = fA.data() >> fixedRC::FRAC;
+  pColor->b = std::clamp(fB.data() >> (fixedRX::FRAC - 8), 0, 255);
+  pColor->g = std::clamp(fG.data() >> (fixedRX::FRAC - 8), 0, 255);
+  pColor->r = std::clamp(fR.data() >> (fixedRX::FRAC - 8), 0, 255);
+  pColor->a = std::clamp(fA.data() >> (fixedRX::FRAC - 8), 0, 255);
 }

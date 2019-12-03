@@ -23,7 +23,7 @@ class TNL : public InputAssembler {
 public:
   typedef void (TNL::*PfnDecodeVertices)(uint32_t count);
   typedef void (TNL::*PfnDecodeTexCoord)(uint32_t dstIndex, uint32_t srcIndex,
-                                          uint32_t count);
+                                         uint32_t count);
 
   template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
   void processPointSize(uint32_t count);

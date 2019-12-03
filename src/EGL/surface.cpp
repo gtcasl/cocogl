@@ -462,7 +462,7 @@ EGLint _EGLSurface::InitializePBF(EGLint width, EGLint height,
       }
 
       if (bGenMipMaps) {
-        mipLevels_ = Math::TMax(Math::iLog2(width), Math::iLog2(height));
+        mipLevels_ = std::max(Math::iLog2(width), Math::iLog2(height));
       }
     }
 
@@ -673,7 +673,7 @@ EGLint _EGLSurface::copyBuffer(EGLNativePixmapType hPixmap) {
   GLSurfaceDesc srcDesc;
 
   if (ppBuffers_) {
-    auto mipLevel = Math::TClamp<uint32_t>(mipLevel_, 0, mipLevels_ - 1);
+    auto mipLevel = std::clamp<uint32_t>(mipLevel_, 0, mipLevels_ - 1);
     uint32_t nBPP = pConfig_->getAttribute(EGL_BUFFER_SIZE);
     srcDesc.pBits = ppBuffers_[mipLevel];
     srcDesc.Format = _EGLSurface::getColorFormat(nBPP);
@@ -830,7 +830,7 @@ EGLint _EGLSurface::InitDepthStencil(uint32_t width, uint32_t height,
 void _EGLSurface::getPBufferDesc(GLSurfaceDesc *pSurfaceDesc) {
   assert(pSurfaceDesc);
 
-  auto mipLevel = Math::TClamp<uint32_t>(mipLevel_, 0, mipLevels_ - 1);
+  auto mipLevel = std::clamp<uint32_t>(mipLevel_, 0, mipLevels_ - 1);
   uint32_t width = width_;
   uint32_t height = height_;
 

@@ -51,55 +51,55 @@ template <> struct TConst<float> {
   inline static float LogE() { return 1.442695041f; }
 };
 
-template <uint32_t F, typename T> struct TConst<TFixed<F, T>> {
-  inline static auto Zero() { return TFixed<F, T>::make(0); }
+template <uint32_t F, typename T> struct TConst<Fixed<F, T>> {
+  inline static auto Zero() { return Fixed<F, T>::make(0); }
 
-  inline static auto Half() { return TFixed<F, T>::make(TFixed<F, T>::HALF); }
+  inline static auto Half() { return Fixed<F, T>::make(Fixed<F, T>::HALF); }
 
-  inline static auto One() { return TFixed<F, T>::make(TFixed<F, T>::ONE); }
+  inline static auto One() { return Fixed<F, T>::make(Fixed<F, T>::ONE); }
 
-  inline static auto Two() { return TFixed<F, T>::make(TFixed<F, T>::TWO); }
+  inline static auto Two() { return Fixed<F, T>::make(Fixed<F, T>::TWO); }
 
   inline static auto Min() {
-    return TFixed<F, T>::make(-(1 << (8 * sizeof(T) - 1)));
+    return Fixed<F, T>::make(-(1 << (8 * sizeof(T) - 1)));
   }
 
   inline static auto Max() {
-    return TFixed<F, T>::make((1 << (8 * sizeof(T) - 1)) - 1);
+    return Fixed<F, T>::make((1 << (8 * sizeof(T) - 1)) - 1);
   }
 
-  inline static auto Epsilon() { return TFixed<F, T>::make(1); }
+  inline static auto Epsilon() { return Fixed<F, T>::make(1); }
 
   inline static auto PI() {
-    return TFixed<F, T>::make(3.1415926535f * TFixed<F, T>::ONE);
+    return Fixed<F, T>::make(3.1415926535f * Fixed<F, T>::ONE);
   }
 
   inline static auto F128() {
-    return TFixed<F, T>::make(128 * TFixed<F, T>::ONE);
+    return Fixed<F, T>::make(128 * Fixed<F, T>::ONE);
   }
 
   inline static auto F90() {
-    return TFixed<F, T>::make(90 * TFixed<F, T>::ONE);
+    return Fixed<F, T>::make(90 * Fixed<F, T>::ONE);
   }
 
   inline static auto F180() {
-    return TFixed<F, T>::make(180 * TFixed<F, T>::ONE);
+    return Fixed<F, T>::make(180 * Fixed<F, T>::ONE);
   }
 
   inline static auto F02() {
-    return TFixed<F, T>::make(0.2f * TFixed<F, T>::ONE);
+    return Fixed<F, T>::make(0.2f * Fixed<F, T>::ONE);
   }
 
   inline static auto F08() {
-    return TFixed<F, T>::make(0.8f * TFixed<F, T>::ONE);
+    return Fixed<F, T>::make(0.8f * Fixed<F, T>::ONE);
   }
 
   inline static auto E() {
-    return TFixed<F, T>::make(2.71828183f * TFixed<F, T>::ONE);
+    return Fixed<F, T>::make(2.71828183f * Fixed<F, T>::ONE);
   }
 
   inline static auto LogE() {
-    return TFixed<F, T>::make(1.442695041f * TFixed<F, T>::ONE);
+    return Fixed<F, T>::make(1.442695041f * Fixed<F, T>::ONE);
   }
 };
 
@@ -279,20 +279,20 @@ template <typename T> struct TMatrix44 {
   }
 };
 
-typedef TFixed<4> fixed4;
-typedef TFixed<4> fixed6;
-typedef TFixed<8> fixed8;
-typedef TFixed<10> fixed10;
-typedef TFixed<12> fixed12;
-typedef TFixed<14> fixed14;
-typedef TFixed<16> fixed16;
-typedef TFixed<18> fixed18;
-typedef TFixed<20> fixed20;
-typedef TFixed<22> fixed22;
-typedef TFixed<24> fixed24;
-typedef TFixed<26> fixed26;
-typedef TFixed<28> fixed28;
-typedef TFixed<30> fixed30;
+typedef Fixed<4> fixed4;
+typedef Fixed<4> fixed6;
+typedef Fixed<8> fixed8;
+typedef Fixed<10> fixed10;
+typedef Fixed<12> fixed12;
+typedef Fixed<14> fixed14;
+typedef Fixed<16> fixed16;
+typedef Fixed<18> fixed18;
+typedef Fixed<20> fixed20;
+typedef Fixed<22> fixed22;
+typedef Fixed<24> fixed24;
+typedef Fixed<26> fixed26;
+typedef Fixed<28> fixed28;
+typedef Fixed<30> fixed30;
 
 #ifdef COCOGL_PIXEDPOINT
 
@@ -346,6 +346,15 @@ typedef TMatrix44<floatf> MATRIX44;
 #define f08 TConst<floatf>::F08()
 #define fEPS TConst<floatf>::Epsilon()
 
+namespace std {  
+
+template <uint32_t F, typename T> 
+Fixed<F, T> abs(Fixed<F, T> rhs) {
+  return Fixed<F, T>::make(::abs(rhs.data()));
+} 
+
+} // namespace std
+
 namespace Math {
 
 uint32_t iLog2(uint32_t rhs);
@@ -367,14 +376,6 @@ template <typename T> int TToUNORM8(T rhs);
 template <typename T> int TToUNORM16(T rhs);
 
 template <typename T> bool TIsZero(T rhs);
-
-template <typename T> T TAbs(T rhs);
-
-template <typename T> T TMin(T lhs, T rhs);
-
-template <typename T> T TMax(T lhs, T rhs);
-
-template <typename T> T TClamp(T rhs, T min, T max);
 
 template <typename T> T TSat(T rhs);
 
@@ -418,7 +419,8 @@ template <typename R> R TMul(float lhs, float rhs);
 
 template <typename R> R TMul(float lhs, int rhs);
 
-template <typename R, uint32_t F, typename T> R TMul(float lhs, TFixed<F, T> rhs);
+template <typename R, uint32_t F, typename T>
+R TMul(float lhs, Fixed<F, T> rhs);
 
 float MulDiv(float lhs, float rhs);
 
@@ -446,58 +448,60 @@ template <typename R> R TShiftRight(float lhs, int rhs);
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <typename R, uint32_t F, typename T> R TInv(TFixed<F, T> rhs);
+template <typename R, uint32_t F, typename T> R TInv(Fixed<F, T> rhs);
 
 template <typename R> R TInv(float rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R TFastMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs);
+R TFastMul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R TFastDiv(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs);
+R TFastDiv(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R TMulRnd(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs);
+R TMulRnd(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, int c);
+R TMulRnd(Fixed<F1, T1> a, Fixed<F2, T2> b, int c);
 
 template <typename R, uint32_t F1, uint32_t F2, uint32_t F3, typename T1,
           typename T2, typename T3>
-R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F3, T3> c);
-
-template <typename R, uint32_t F, typename T> R TMulRnd(TFixed<F, T> lhs, int rhs);
-
-template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R TMulAdd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
-          TFixed<F2, T2> d);
-
-template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R TMulSub(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
-          TFixed<F2, T2> d);
-
-template <typename R, uint32_t F, typename T> R TMul(TFixed<F, T> lhs, int rhs);
-
-template <typename R, uint32_t F, typename T> R TMul(TFixed<F, T> lhs, float rhs);
-
-template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R TMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs);
+R TMulRnd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F3, T3> c);
 
 template <typename R, uint32_t F, typename T>
-R TMul(TFixed<F, T> lhs, TFixed<F, T> rhs);
+R TMulRnd(Fixed<F, T> lhs, int rhs);
+
+template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
+R TMulAdd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c,
+          Fixed<F2, T2> d);
+
+template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
+R TMulSub(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c,
+          Fixed<F2, T2> d);
+
+template <typename R, uint32_t F, typename T> R TMul(Fixed<F, T> lhs, int rhs);
+
+template <typename R, uint32_t F, typename T>
+R TMul(Fixed<F, T> lhs, float rhs);
+
+template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
+R TMul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
+
+template <typename R, uint32_t F, typename T>
+R TMul(Fixed<F, T> lhs, Fixed<F, T> rhs);
 
 template <uint32_t F1, uint32_t F2, typename T1, typename T2>
-TFixed<F1, T1> TLerpf(TFixed<F1, T1> lhs, TFixed<F1, T1> rhs,
-                      TFixed<F2, T2> scalar);
+Fixed<F1, T1> TLerpf(Fixed<F1, T1> lhs, Fixed<F1, T1> rhs,
+                      Fixed<F2, T2> scalar);
 
 template <uint32_t F, typename T>
-TFixed<F, T> TLerpf(TFixed<F, T> lhs, TFixed<F, T> rhs, float scalar);
+Fixed<F, T> TLerpf(Fixed<F, T> lhs, Fixed<F, T> rhs, float scalar);
 
 template <typename R, uint32_t F, typename T>
-R TShiftLeft(TFixed<F, T> lhs, int rhs);
+R TShiftLeft(Fixed<F, T> lhs, int rhs);
 
 template <typename R, uint32_t F, typename T>
-R TShiftRight(TFixed<F, T> lhs, int rhs);
+R TShiftRight(Fixed<F, T> lhs, int rhs);
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -588,32 +592,27 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<>
-inline fixed16 TInvSqrt(fixed16 rhs) {
+template <> inline fixed16 TInvSqrt(fixed16 rhs) {
   int32_t fxInvSqrt(int32_t x);
   return fixed16::make(fxInvSqrt(rhs.data()));
 }
 
-template<>
-inline fixed16 TPow(fixed16 lhs, fixed16 rhs) {
+template <> inline fixed16 TPow(fixed16 lhs, fixed16 rhs) {
   int32_t fxPow(int32_t x, int32_t y);
   return fixed16::make(fxPow(lhs.data(), rhs.data()));
 }
 
-template<>
-inline fixed16 TPow2(fixed16 rhs) {
+template <> inline fixed16 TPow2(fixed16 rhs) {
   int32_t fxPow2(int32_t x);
   return fixed16::make(fxPow2(rhs.data()));
 }
 
-template<>
-inline fixed16 TSin(fixed16 rhs) {
+template <> inline fixed16 TSin(fixed16 rhs) {
   int32_t fxSin(int32_t x);
   return fixed16::make(fxSin(rhs.data()));
 }
 
-template<>
-inline fixed16 TCos(fixed16 rhs) {
+template <> inline fixed16 TCos(fixed16 rhs) {
   int32_t fxCos(int32_t x);
   return fixed16::make(fxCos(rhs.data()));
 }
@@ -627,14 +626,14 @@ inline float MulAdd(float a0, float b0, float a1, float b1, float a2, float b2,
 }
 
 template <uint32_t F, typename T>
-inline TFixed<F, T> MulAdd(TFixed<F, T> a0, TFixed<F, T> b0, TFixed<F, T> a1,
-                           TFixed<F, T> b1, TFixed<F, T> a2, TFixed<F, T> b2,
-                           TFixed<F, T> a3, TFixed<F, T> b3) {
-  return TFixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
+inline Fixed<F, T> MulAdd(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
+                           Fixed<F, T> b1, Fixed<F, T> a2, Fixed<F, T> b2,
+                           Fixed<F, T> a3, Fixed<F, T> b3) {
+  return Fixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
                              static_cast<int64_t>(a1.data()) * b1.data() +
                              static_cast<int64_t>(a2.data()) * b2.data() +
                              static_cast<int64_t>(a3.data()) * b3.data()) >>
-                            TFixed<F, T>::FRAC);
+                            Fixed<F, T>::FRAC);
 }
 
 template <>
@@ -644,12 +643,12 @@ inline float MulAdd(float a0, float b0, float a1, float b1, float a2,
 }
 
 template <uint32_t F, typename T>
-inline TFixed<F, T> MulAdd(TFixed<F, T> a0, TFixed<F, T> b0, TFixed<F, T> a1,
-                           TFixed<F, T> b1, TFixed<F, T> a2, TFixed<F, T> b2) {
-  return TFixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
+inline Fixed<F, T> MulAdd(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
+                           Fixed<F, T> b1, Fixed<F, T> a2, Fixed<F, T> b2) {
+  return Fixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
                              static_cast<int64_t>(a1.data()) * b1.data() +
                              static_cast<int64_t>(a2.data()) * b2.data()) >>
-                            TFixed<F, T>::FRAC);
+                            Fixed<F, T>::FRAC);
 }
 
 template <> inline float MulAdd(float a0, float b0, float a1, float b1) {
@@ -657,11 +656,11 @@ template <> inline float MulAdd(float a0, float b0, float a1, float b1) {
 }
 
 template <uint32_t F, typename T>
-inline TFixed<F, T> MulAdd(TFixed<F, T> a0, TFixed<F, T> b0, TFixed<F, T> a1,
-                           TFixed<F, T> b1) {
-  return TFixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
+inline Fixed<F, T> MulAdd(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
+                           Fixed<F, T> b1) {
+  return Fixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
                              static_cast<int64_t>(a1.data()) * b1.data()) >>
-                            TFixed<F, T>::FRAC);
+                            Fixed<F, T>::FRAC);
 }
 
 template <> inline float MulSub(float a0, float b0, float a1, float b1) {
@@ -669,11 +668,11 @@ template <> inline float MulSub(float a0, float b0, float a1, float b1) {
 }
 
 template <uint32_t F, typename T>
-inline TFixed<F, T> MulSub(TFixed<F, T> a0, TFixed<F, T> b0, TFixed<F, T> a1,
-                           TFixed<F, T> b1) {
-  return TFixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() -
+inline Fixed<F, T> MulSub(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
+                           Fixed<F, T> b1) {
+  return Fixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() -
                              static_cast<int64_t>(a1.data()) * b1.data()) >>
-                            TFixed<F, T>::FRAC);
+                            Fixed<F, T>::FRAC);
 }
 
 template <> inline float TFromUNORM8<float>(int rhs) {
@@ -692,44 +691,18 @@ template <> inline int TFromUNORM8<int>(int rhs) { return rhs; }
 
 inline int Mul8(int lhs, int rhs) { return (lhs * rhs + 0xff) >> 8; }
 
-inline int Add8(int lhs, int rhs) { return Math::TMin(lhs + rhs, 0xff); }
+inline int Add8(int lhs, int rhs) { return std::min(lhs + rhs, 0xff); }
 
 inline int Lerp8(int lhs, int rhs, int frac) {
   return lhs + ((frac * (rhs - lhs) + 0xff) >> 8);
 }
 
-template <> inline int TAbs<int>(int rhs) { return ::abs(rhs); }
-
-template <> inline float TAbs<float>(float rhs) { return ::fabsf(rhs); }
-
-template <uint32_t F> TFixed<F> TAbs(TFixed<F> rhs) {
-  return TFixed<F>::make(::abs(rhs.data()));
-}
-
-template <uint32_t F> inline TFixed<F, int64_t> TAbs(TFixed<F, int64_t> rhs) {
-  return TFixed<F, int64_t>::make(labs(rhs.data()));
-}
-
-template <typename T> inline T TMin(T lhs, T rhs) {
-  return (lhs <= rhs) ? lhs : rhs;
-}
-
-template <typename T> inline T TMax(T lhs, T rhs) {
-  return (lhs >= rhs) ? lhs : rhs;
-}
-
-template <typename T> inline T TClamp(T lhs, T min, T max) {
-  assert(max >= min);
-  T tmp = (lhs >= min) ? lhs : min;
-  return (tmp <= max) ? tmp : max;
-}
-
 template <typename T> inline T TSat(T rhs) {
-  return Math::TClamp(rhs, TConst<T>::Zero(), TConst<T>::One());
+  return std::clamp(rhs, TConst<T>::Zero(), TConst<T>::One());
 }
 
 template <typename T> inline bool TIsZero(T rhs) {
-  return Math::TAbs(rhs) <= TConst<T>::Epsilon();
+  return std::abs(rhs) <= TConst<T>::Epsilon();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -826,7 +799,7 @@ template <typename R> inline R TMul(float lhs, int rhs) {
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TMul(float lhs, TFixed<F, T> rhs) {
+inline R TMul(float lhs, Fixed<F, T> rhs) {
   return static_cast<R>(lhs * rhs);
 }
 
@@ -888,47 +861,47 @@ template <typename R> inline R TShiftRight(float lhs, int rhs) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <uint32_t F, typename T> inline TFixed<F, T> TExp(TFixed<F, T> rhs) {
-  return TFixed<F, T>(std::exp(static_cast<float>(rhs)));
+template <uint32_t F, typename T> inline Fixed<F, T> TExp(Fixed<F, T> rhs) {
+  return Fixed<F, T>(std::exp(static_cast<float>(rhs)));
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TCeili(TFixed<F, T> rhs) {
-  int value = rhs.data() + TFixed<F, T>::MASK;
-  return static_cast<R>(value >> TFixed<F, T>::FRAC);
+inline R TCeili(Fixed<F, T> rhs) {
+  int value = rhs.data() + Fixed<F, T>::MASK;
+  return static_cast<R>(value >> Fixed<F, T>::FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TCeilf(TFixed<F, T> rhs) {
-  int value = (rhs.data() + TFixed<F, T>::MASK) & TFixed<F, T>::IMASK;
-  return R::make(value >> (TFixed<F, T>::FRAC - R::FRAC));
+inline R TCeilf(Fixed<F, T> rhs) {
+  int value = (rhs.data() + Fixed<F, T>::MASK) & Fixed<F, T>::IMASK;
+  return R::make(value >> (Fixed<F, T>::FRAC - R::FRAC));
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TFloori(TFixed<F, T> rhs) {
-  return static_cast<R>(rhs.data() >> TFixed<F, T>::FRAC);
+inline R TFloori(Fixed<F, T> rhs) {
+  return static_cast<R>(rhs.data() >> Fixed<F, T>::FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TFloorf(TFixed<F, T> rhs) {
-  int value = rhs.data() & TFixed<F, T>::IMASK;
-  return R::make(value >> (TFixed<F, T>::FRAC - R::FRAC));
+inline R TFloorf(Fixed<F, T> rhs) {
+  int value = rhs.data() & Fixed<F, T>::IMASK;
+  return R::make(value >> (Fixed<F, T>::FRAC - R::FRAC));
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TRoundi(TFixed<F, T> rhs) {
-  return static_cast<R>((rhs.data() + TFixed<F, T>::HALF) >>
-                        TFixed<F, T>::FRAC);
+inline R TRoundi(Fixed<F, T> rhs) {
+  return static_cast<R>((rhs.data() + Fixed<F, T>::HALF) >>
+                        Fixed<F, T>::FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TRoundf(TFixed<F, T> rhs) {
-  int value = (rhs.data() + TFixed<F, T>::HALF) & TFixed<F, T>::IMASK;
-  return R::make(value >> (TFixed<F, T>::FRAC - R::FRAC));
+inline R TRoundf(Fixed<F, T> rhs) {
+  int value = (rhs.data() + Fixed<F, T>::HALF) & Fixed<F, T>::IMASK;
+  return R::make(value >> (Fixed<F, T>::FRAC - R::FRAC));
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TDiv(TFixed<F, T> lhs, TFixed<F, T> rhs) {
+inline R TDiv(Fixed<F, T> lhs, Fixed<F, T> rhs) {
   assert(rhs.data() != 0);
   return R::make((static_cast<int64_t>(lhs.data()) << R::FRAC) / rhs.data());
 }
@@ -943,35 +916,35 @@ template <> inline fixed16 TSqrt(fixed16 rhs) {
   return fixed16::make(Math::iSqrt(rhs.data()) << 8);
 }
 
-template <uint32_t F, typename T> inline int TToUNORM8(TFixed<F, T> rhs) {
-  assert((rhs >= TConst<TFixed<F, T>>::Zero()) &&
-         (rhs <= TConst<TFixed<F, T>>::One()));
-  return (0xff * rhs.data()) >> TFixed<F, T>::FRAC;
+template <uint32_t F, typename T> inline int TToUNORM8(Fixed<F, T> rhs) {
+  assert((rhs >= TConst<Fixed<F, T>>::Zero()) &&
+         (rhs <= TConst<Fixed<F, T>>::One()));
+  return (0xff * rhs.data()) >> Fixed<F, T>::FRAC;
 }
 
-template <uint32_t F, typename T> inline int TToUNORM16(TFixed<F, T> rhs) {
-  assert((rhs >= TConst<TFixed<F, T>>::Zero()) &&
-         (rhs <= TConst<TFixed<F, T>>::One()));
-  return (0xffff * rhs.data()) >> TFixed<F, T>::FRAC;
+template <uint32_t F, typename T> inline int TToUNORM16(Fixed<F, T> rhs) {
+  assert((rhs >= TConst<Fixed<F, T>>::Zero()) &&
+         (rhs <= TConst<Fixed<F, T>>::One()));
+  return (0xffff * rhs.data()) >> Fixed<F, T>::FRAC;
 }
 
 template <typename R, uint32_t F, typename T> class TInvSelect {
 public:
-  inline static R Invert(TFixed<F, T> rhs) {
+  inline static R Invert(Fixed<F, T> rhs) {
     return R::make(
         detail::TShiftInverter<typename R::data_type,
-                               TFixed<F, T>::FRAC + R::FRAC>::call(rhs.data()));
+                               Fixed<F, T>::FRAC + R::FRAC>::call(rhs.data()));
   }
 };
 
 template <uint32_t F, typename T> class TInvSelect<float, F, T> {
 public:
-  inline static float Invert(TFixed<F, T> rhs) {
+  inline static float Invert(Fixed<F, T> rhs) {
     return 1.0f / static_cast<float>(rhs);
   }
 };
 
-template <typename R, uint32_t F, typename T> inline R TInv(TFixed<F, T> rhs) {
+template <typename R, uint32_t F, typename T> inline R TInv(Fixed<F, T> rhs) {
   return TInvSelect<R, F, T>::Invert(rhs);
 }
 
@@ -981,39 +954,39 @@ template <typename R> inline R TInv(float rhs) {
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline R TFastMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
+inline R TFastMul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs) {
   assert((static_cast<int64_t>(lhs.data()) * rhs.data()) ==
          (lhs.data() * rhs.data()));
-  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   return R::make((lhs.data() * rhs.data()) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline R TFastDiv(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
-  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+inline R TFastDiv(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs) {
+  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   assert((static_cast<int64_t>(lhs.data()) << FRAC) == (lhs.data() << FRAC));
   return R::make((lhs.data() << FRAC) / rhs.data());
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TMulRnd(TFixed<F, T> lhs, int rhs) {
-  int FRAC = TFixed<F, T>::FRAC - R::FRAC;
+inline R TMulRnd(Fixed<F, T> lhs, int rhs) {
+  int FRAC = Fixed<F, T>::FRAC - R::FRAC;
   int HALF = 1 << (FRAC - 1);
   auto value = static_cast<int64_t>(lhs.data()) * rhs;
   return R::make((value + HALF) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline R TMulRnd(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
-  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+inline R TMulRnd(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs) {
+  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   int HALF = 1 << (FRAC - 1);
   auto value = static_cast<int64_t>(lhs.data()) * rhs.data();
   return R::make((value + HALF) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, int c) {
-  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+inline R TMulRnd(Fixed<F1, T1> a, Fixed<F2, T2> b, int c) {
+  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   auto HALF = static_cast<int64_t>(1) << (FRAC - 1);
   auto value = static_cast<int64_t>(a.data()) * b.data() * c;
   return R::make((value + HALF) >> FRAC);
@@ -1021,95 +994,95 @@ inline R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, int c) {
 
 template <typename R, uint32_t F1, uint32_t F2, uint32_t F3, typename T1,
           typename T2, typename T3>
-inline R TMulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F3, T3> c) {
-  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC +
-             TFixed<F3, T3>::FRAC - R::FRAC;
+inline R TMulRnd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F3, T3> c) {
+  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC +
+             Fixed<F3, T3>::FRAC - R::FRAC;
   auto HALF = static_cast<int64_t>(1) << (FRAC - 1);
   int64_t value = static_cast<int64_t>(a.data()) * b.data() * c.data();
   return R::make((value + HALF) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline R TMulAdd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
-                 TFixed<F2, T2> d) {
-  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+inline R TMulAdd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c,
+                 Fixed<F2, T2> d) {
+  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   auto ab = static_cast<int64_t>(a.data()) * b.data();
   auto cd = static_cast<int64_t>(c.data()) * d.data();
   return R::make((ab + cd) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline R TMulSub(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c,
-                 TFixed<F2, T2> d) {
-  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+inline R TMulSub(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c,
+                 Fixed<F2, T2> d) {
+  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   auto ab = static_cast<int64_t>(a.data()) * b.data();
   auto cd = static_cast<int64_t>(c.data()) * d.data();
   return R::make((ab - cd) >> FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TMul(TFixed<F, T> lhs, TFixed<F, T> rhs) {
-  int FRAC = TFixed<F, T>::FRAC + TFixed<F, T>::FRAC - R::FRAC;
+inline R TMul(Fixed<F, T> lhs, Fixed<F, T> rhs) {
+  int FRAC = Fixed<F, T>::FRAC + Fixed<F, T>::FRAC - R::FRAC;
   auto value = static_cast<int64_t>(lhs.data()) * rhs.data();
   return R::make(value >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline R TMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
-  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+inline R TMul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs) {
+  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   auto value = static_cast<int64_t>(lhs.data()) * rhs.data();
   return R::make(value >> FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TMul(TFixed<F, T> lhs, int rhs) {
-  int FRAC = TFixed<F, T>::FRAC - R::FRAC;
+inline R TMul(Fixed<F, T> lhs, int rhs) {
+  int FRAC = Fixed<F, T>::FRAC - R::FRAC;
   auto value = static_cast<int64_t>(lhs.data()) * rhs;
   return R::make(value >> FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
-R TMul(TFixed<F, T> lhs, float rhs) {
+R TMul(Fixed<F, T> lhs, float rhs) {
   return static_cast<R>(rhs * lhs);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline R TMulShift(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs, R a, int shift) {
-  int FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+inline R TMulShift(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs, R a, int shift) {
+  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   auto value = static_cast<int64_t>(lhs.data()) * rhs.data();
   return R::make((value >> FRAC) - (a.data() >> shift));
 }
 
 template <uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline TFixed<F1, T1> Lerpf(TFixed<F1, T1> lhs, TFixed<F1, T1> rhs,
-                            TFixed<F2, T2> scalar) {
-  assert((scalar >= TConst<TFixed<F2, T2>>::Zero()) &&
-         (scalar <= TConst<TFixed<F2, T2>>::One()));
+inline Fixed<F1, T1> Lerpf(Fixed<F1, T1> lhs, Fixed<F1, T1> rhs,
+                            Fixed<F2, T2> scalar) {
+  assert((scalar >= TConst<Fixed<F2, T2>>::Zero()) &&
+         (scalar <= TConst<Fixed<F2, T2>>::One()));
   return lhs + (rhs - lhs) * scalar;
 }
 
 template <uint32_t F, typename T>
-inline TFixed<F, T> Lerpf(TFixed<F, T> lhs, TFixed<F, T> rhs, float scalar) {
+inline Fixed<F, T> Lerpf(Fixed<F, T> lhs, Fixed<F, T> rhs, float scalar) {
   assert((scalar >= 0.0f) && (scalar <= 1.0f));
   return lhs + (rhs - lhs) * scalar;
 }
 
 template <uint32_t F, typename T>
-inline int Lerp(int lhs, int rhs, TFixed<F, T> scalar) {
-  assert((scalar >= TConst<TFixed<F, T>>::Zero()) &&
-         (scalar <= TConst<TFixed<F, T>>::One()));
+inline int Lerp(int lhs, int rhs, Fixed<F, T> scalar) {
+  assert((scalar >= TConst<Fixed<F, T>>::Zero()) &&
+         (scalar <= TConst<Fixed<F, T>>::One()));
   return lhs +
          static_cast<int>((static_cast<int64_t>(rhs - lhs) * scalar.data()) >>
-                          TFixed<F, T>::FRAC);
+                          Fixed<F, T>::FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TShiftLeft(TFixed<F, T> lhs, int rhs) {
+inline R TShiftLeft(Fixed<F, T> lhs, int rhs) {
   return R(lhs) << rhs;
 }
 
 template <typename R, uint32_t F, typename T>
-inline R TShiftRight(TFixed<F, T> lhs, int rhs) {
+inline R TShiftRight(Fixed<F, T> lhs, int rhs) {
   return R(lhs) >> rhs;
 }
 

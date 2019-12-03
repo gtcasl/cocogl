@@ -14,57 +14,54 @@
 //
 #pragma once
 
-template <uint32_t F, typename T = int32_t> class TFixed {
+template <uint32_t F, typename T = int32_t> class Fixed {
 public:
   using data_type = T;
 
-  enum {
-    FRAC = F,
-    INT = sizeof(T) * 8 - FRAC,
-    HFRAC = FRAC >> 1,
-  };
+  static constexpr uint32_t FRAC  = F;
+  static constexpr uint32_t INT   = sizeof(T) * 8 - FRAC;
+  static constexpr uint32_t HFRAC = FRAC >> 1;
+  static constexpr T ONE = static_cast<T>(1) << FRAC;
+  static constexpr T MASK = ONE - 1;
+  static constexpr T IMASK = ~MASK;
+  static constexpr T HALF = ONE >> 1;
+  static constexpr T TWO = ONE << 1;
 
-  static const T ONE = static_cast<T>(1) << FRAC;
-  static const T MASK = ONE - 1;
-  static const T IMASK = ~MASK;
-  static const T HALF = ONE >> 1;
-  static const T TWO = ONE << 1;
+  Fixed() {}
 
-  TFixed() {}
-
-  explicit TFixed(int64_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(int64_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit TFixed(uint64_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(uint64_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit TFixed(int32_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(int32_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit TFixed(uint32_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(uint32_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit TFixed(int16_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(int16_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit TFixed(uint16_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(uint16_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit TFixed(int8_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(int8_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit TFixed(uint8_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(uint8_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  template <uint32_t F2, typename T2> explicit TFixed(TFixed<F2, T2> rhs) {
+  template <uint32_t F2, typename T2> explicit Fixed(Fixed<F2, T2> rhs) {
     if constexpr (sizeof(T) > sizeof(T2)) {
       if constexpr (F2 > F) {
         data_ = static_cast<T>(rhs.data()) >> (F2 - F);
@@ -80,51 +77,51 @@ public:
     }
   }
 
-  explicit TFixed(float rhs)
+  explicit Fixed(float rhs)
       : data_(static_cast<T>(rhs * (static_cast<T>(1) << F))) {
     assert(data_ == static_cast<T>(rhs * ONE));
   }
 
-  auto operator==(TFixed rhs) const { return (data_ == rhs.data_); }
+  auto operator==(Fixed rhs) const { return (data_ == rhs.data_); }
 
-  auto operator!=(TFixed rhs) const { return (data_ != rhs.data_); }
+  auto operator!=(Fixed rhs) const { return (data_ != rhs.data_); }
 
-  auto operator<(TFixed rhs) const { return (data_ < rhs.data_); }
+  auto operator<(Fixed rhs) const { return (data_ < rhs.data_); }
 
-  auto operator<=(TFixed rhs) const { return (data_ <= rhs.data_); }
+  auto operator<=(Fixed rhs) const { return (data_ <= rhs.data_); }
 
-  auto operator>(TFixed rhs) const { return (data_ > rhs.data_); }
+  auto operator>(Fixed rhs) const { return (data_ > rhs.data_); }
 
-  auto operator>=(TFixed rhs) const { return (data_ >= rhs.data_); }
+  auto operator>=(Fixed rhs) const { return (data_ >= rhs.data_); }
 
   auto operator-() const { return make(-data_); }
 
-  auto operator+=(TFixed rhs) {
+  auto operator+=(Fixed rhs) {
     *this = (*this) + rhs;
     return *this;
   }
 
-  auto operator-=(TFixed rhs) {
+  auto operator-=(Fixed rhs) {
     *this = (*this) - rhs;
     return *this;
   }
 
-  auto operator*=(TFixed rhs) {
+  auto operator*=(Fixed rhs) {
     *this = (*this) * rhs;
     return *this;
   }
 
-  auto operator/=(TFixed rhs) {
+  auto operator/=(Fixed rhs) {
     *this = (*this) / rhs;
     return *this;
   }
 
-  template <uint32_t F2, typename T2> auto operator*=(TFixed<F2, T2> rhs) {
+  template <uint32_t F2, typename T2> auto operator*=(Fixed<F2, T2> rhs) {
     *this = (*this) * rhs;
     return *this;
   }
 
-  template <uint32_t F2, typename T2> auto operator/=(TFixed<F2, T2> rhs) {
+  template <uint32_t F2, typename T2> auto operator/=(Fixed<F2, T2> rhs) {
     *this = (*this) / rhs;
     return *this;
   }
@@ -159,197 +156,186 @@ public:
     return *this;
   }
 
-  friend auto operator+(TFixed lhs, TFixed rhs) {
+  friend auto operator+(Fixed lhs, Fixed rhs) {
     assert((static_cast<int64_t>(lhs.data_) + rhs.data_) ==
            (lhs.data_ + rhs.data_));
-    return TFixed::make(lhs.data_ + rhs.data_);
+    return Fixed::make(lhs.data_ + rhs.data_);
   }
 
-  friend auto operator-(TFixed lhs, TFixed rhs) {
+  friend auto operator-(Fixed lhs, Fixed rhs) {
     assert((static_cast<int64_t>(lhs.data_) - rhs.data_) ==
            (lhs.data_ - rhs.data_));
-    return TFixed::make(lhs.data_ - rhs.data_);
+    return Fixed::make(lhs.data_ - rhs.data_);
   }
 
-  friend auto operator*(TFixed lhs, TFixed rhs) {
-    return TFixed::make((static_cast<int64_t>(lhs.data_) * rhs.data_) >> FRAC);
+  friend auto operator*(Fixed lhs, Fixed rhs) {
+    return Fixed::make((static_cast<int64_t>(lhs.data_) * rhs.data_) >> FRAC);
   }
 
   template <uint32_t F2, typename T2>
-  friend auto operator*(TFixed lhs, TFixed<F2, T2> rhs) {
-    return TFixed::make((static_cast<int64_t>(lhs.data_) * rhs.data()) >> F2);
+  friend auto operator*(Fixed lhs, Fixed<F2, T2> rhs) {
+    return Fixed::make((static_cast<int64_t>(lhs.data_) * rhs.data()) >> F2);
   }
 
-  friend auto operator/(TFixed lhs, TFixed rhs) {
+  friend auto operator/(Fixed lhs, Fixed rhs) {
     assert(rhs.data_ != 0);
-    return TFixed::make((static_cast<int64_t>(lhs.data_) << FRAC) / rhs.data_);
+    return Fixed::make((static_cast<int64_t>(lhs.data_) << FRAC) / rhs.data_);
   }
 
   template <uint32_t F2, typename T2>
-  friend auto operator/(TFixed lhs, TFixed<F2, T2> rhs) {
+  friend auto operator/(Fixed lhs, Fixed<F2, T2> rhs) {
     assert(rhs.data() != 0);
-    return TFixed::make((static_cast<int64_t>(lhs.data_) << F2) / rhs.data());
+    return Fixed::make((static_cast<int64_t>(lhs.data_) << F2) / rhs.data());
   }
 
-  friend auto operator*(TFixed lhs, float rhs) {
-    return TFixed(static_cast<float>(lhs) * rhs);
+  friend auto operator*(Fixed lhs, float rhs) {
+    return Fixed(static_cast<float>(lhs) * rhs);
   }
 
-  friend auto operator*(float lhs, TFixed rhs) {
-    return TFixed(lhs * static_cast<float>(rhs));
+  friend auto operator*(float lhs, Fixed rhs) {
+    return Fixed(lhs * static_cast<float>(rhs));
   }
 
-  friend auto operator/(TFixed lhs, float rhs) {
-    return TFixed(static_cast<float>(lhs) / rhs);
+  friend auto operator/(Fixed lhs, float rhs) {
+    return Fixed(static_cast<float>(lhs) / rhs);
   }
 
-  friend auto operator/(float lhs, TFixed rhs) {
-    return TFixed(lhs / static_cast<float>(rhs));
+  friend auto operator/(float lhs, Fixed rhs) {
+    return Fixed(lhs / static_cast<float>(rhs));
   }
 
-  friend auto operator*(TFixed lhs, char rhs) {
+  friend auto operator*(Fixed lhs, char rhs) {
     return lhs * static_cast<int32_t>(rhs);
   }
 
-  friend auto operator*(char lhs, TFixed rhs) { return rhs * lhs; }
+  friend auto operator*(char lhs, Fixed rhs) { return rhs * lhs; }
 
-  friend auto operator/(TFixed lhs, char rhs) {
+  friend auto operator/(Fixed lhs, char rhs) {
     return lhs / static_cast<int32_t>(rhs);
   }
 
-  friend auto operator/(char lhs, TFixed rhs) { return rhs / lhs; }
+  friend auto operator/(char lhs, Fixed rhs) { return rhs / lhs; }
 
-  friend auto operator*(TFixed lhs, uint8_t rhs) {
+  friend auto operator*(Fixed lhs, uint8_t rhs) {
     return lhs * static_cast<int32_t>(rhs);
   }
 
-  friend auto operator*(uint8_t lhs, TFixed rhs) { return rhs * lhs; }
+  friend auto operator*(uint8_t lhs, Fixed rhs) { return rhs * lhs; }
 
-  friend auto operator/(TFixed lhs, uint8_t rhs) {
+  friend auto operator/(Fixed lhs, uint8_t rhs) {
     return lhs / static_cast<int32_t>(rhs);
   }
 
-  friend auto operator/(uint8_t lhs, TFixed rhs) { return rhs / lhs; }
+  friend auto operator/(uint8_t lhs, Fixed rhs) { return rhs / lhs; }
 
-  friend auto operator*(TFixed lhs, short rhs) {
+  friend auto operator*(Fixed lhs, short rhs) {
     return lhs * static_cast<int32_t>(rhs);
   }
 
-  friend auto operator*(short lhs, TFixed rhs) { return rhs * lhs; }
+  friend auto operator*(short lhs, Fixed rhs) { return rhs * lhs; }
 
-  friend auto operator/(TFixed lhs, short rhs) {
+  friend auto operator/(Fixed lhs, short rhs) {
     return lhs / static_cast<int32_t>(rhs);
   }
 
-  friend auto operator/(short lhs, TFixed rhs) { return rhs / lhs; }
+  friend auto operator/(short lhs, Fixed rhs) { return rhs / lhs; }
 
-  friend auto operator*(TFixed lhs, uint16_t rhs) {
+  friend auto operator*(Fixed lhs, uint16_t rhs) {
     return lhs * static_cast<int32_t>(rhs);
   }
 
-  friend auto operator*(uint16_t lhs, TFixed rhs) { return rhs * lhs; }
+  friend auto operator*(uint16_t lhs, Fixed rhs) { return rhs * lhs; }
 
-  friend auto operator/(TFixed lhs, uint16_t rhs) {
+  friend auto operator/(Fixed lhs, uint16_t rhs) {
     return lhs / static_cast<int32_t>(rhs);
   }
 
-  friend auto operator/(uint16_t lhs, TFixed rhs) { return rhs / lhs; }
+  friend auto operator/(uint16_t lhs, Fixed rhs) { return rhs / lhs; }
 
-  friend auto operator*(TFixed lhs, int32_t rhs) {
+  friend auto operator*(Fixed lhs, int32_t rhs) {
     auto value = static_cast<T>(lhs.data_ * rhs);
     assert((lhs.data_ * static_cast<int64_t>(rhs)) == value);
-    return TFixed::make(value);
+    return Fixed::make(value);
   }
 
-  friend auto operator*(int32_t lhs, TFixed rhs) { return rhs * lhs; }
+  friend auto operator*(int32_t lhs, Fixed rhs) { return rhs * lhs; }
 
-  friend auto operator/(TFixed lhs, int32_t rhs) {
+  friend auto operator/(Fixed lhs, int32_t rhs) {
     assert(rhs);
     auto value = static_cast<T>(lhs.data_ / rhs);
-    return TFixed::make(value);
+    return Fixed::make(value);
   }
 
-  friend auto operator/(int32_t lhs, TFixed rhs) { return rhs / lhs; }
+  friend auto operator/(int32_t lhs, Fixed rhs) { return rhs / lhs; }
 
-  friend auto operator*(TFixed lhs, uint32_t rhs) {
+  friend auto operator*(Fixed lhs, uint32_t rhs) {
     auto value = static_cast<T>(lhs.data_ << rhs);
     assert((lhs.data_ << static_cast<int64_t>(rhs)) == value);
-    return TFixed::make(value);
+    return Fixed::make(value);
   }
 
-  friend auto operator*(uint32_t lhs, TFixed rhs) { return rhs * lhs; }
+  friend auto operator*(uint32_t lhs, Fixed rhs) { return rhs * lhs; }
 
-  friend auto operator/(TFixed lhs, uint32_t rhs) {
+  friend auto operator/(Fixed lhs, uint32_t rhs) {
     assert(rhs);
     auto value = static_cast<T>(lhs.data_ / rhs);
-    return TFixed::make(value);
+    return Fixed::make(value);
   }
 
-  friend auto operator/(uint32_t lhs, TFixed rhs) { return rhs / lhs; }
+  friend auto operator/(uint32_t lhs, Fixed rhs) { return rhs / lhs; }
 
-  friend auto operator<<(TFixed lhs, int32_t rhs) {
+  friend auto operator<<(Fixed lhs, int32_t rhs) {
     auto value = static_cast<T>(lhs.data_ << rhs);
     assert((lhs.data_ << static_cast<int64_t>(rhs)) == value);
-    return TFixed::make(value);
+    return Fixed::make(value);
   }
 
-  friend auto operator>>(TFixed lhs, int32_t rhs) {
+  friend auto operator>>(Fixed lhs, int32_t rhs) {
     auto value = static_cast<T>(lhs.data_ >> rhs);
-    return TFixed::make(value);
+    return Fixed::make(value);
   }
 
-  friend auto operator<<(TFixed lhs, uint32_t rhs) {
+  friend auto operator<<(Fixed lhs, uint32_t rhs) {
     auto value = static_cast<T>(lhs.data_ << rhs);
     assert((lhs.data_ << static_cast<int64_t>(rhs)) == value);
-    return TFixed::make(value);
+    return Fixed::make(value);
   }
 
-  friend auto operator>>(TFixed lhs, uint32_t rhs) {
+  friend auto operator>>(Fixed lhs, uint32_t rhs) {
     auto value = static_cast<T>(lhs.data_ >> rhs);
-    return TFixed::make(value);
+    return Fixed::make(value);
   }
 
   static auto make(T value) {
-    TFixed ret;
+    Fixed ret;
     ret.data_ = value;
     return ret;
   }
 
-  explicit operator int64_t() const {
-    return static_cast<int64_t>(data_ >> F);
-  }
+  explicit operator int64_t() const { return static_cast<int64_t>(data_ >> F); }
 
   explicit operator uint64_t() const {
     return static_cast<uint64_t>(data_ >> F);
   }
 
-  explicit operator int32_t() const {
-    return static_cast<int32_t>(data_ >> F);
-  }
+  explicit operator int32_t() const { return static_cast<int32_t>(data_ >> F); }
 
   explicit operator uint32_t() const {
     return static_cast<uint32_t>(data_ >> F);
   }
 
-  explicit operator int16_t() const {
-    return static_cast<int16_t>(data_ >> F);
-  }
+  explicit operator int16_t() const { return static_cast<int16_t>(data_ >> F); }
 
   explicit operator uint16_t() const {
     return static_cast<uint16_t>(data_ >> F);
   }
 
-  explicit operator int8_t() const {
-    return static_cast<int8_t>(data_ >> F);
-  }
+  explicit operator int8_t() const { return static_cast<int8_t>(data_ >> F); }
 
-  explicit operator uint8_t() const {
-    return static_cast<uint8_t>(data_ >> F);
-  }
+  explicit operator uint8_t() const { return static_cast<uint8_t>(data_ >> F); }
 
-  template <uint32_t F2, typename T2> 
-  explicit operator TFixed<F2, T2>() const {
-    return TFixed<F2, T2>(*this);
+  template <uint32_t F2, typename T2> explicit operator Fixed<F2, T2>() const {
+    return Fixed<F2, T2>(*this);
   }
 
   explicit operator float() const {

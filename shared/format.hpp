@@ -375,15 +375,15 @@ template <> struct TFormatInfo<FORMAT_PAL8_R5G5B5A1> {
 
 #define __formatInfo(format)                                                   \
   {                                                                            \
-    TFormatInfo<format>::CBSIZE, TFormatSize<TFormatInfo<format>>::RED,        \
-        TFormatSize<TFormatInfo<format>>::GREEN,                               \
-        TFormatSize<TFormatInfo<format>>::BLUE,                                \
-        TFormatSize<TFormatInfo<format>>::ALPHA,                               \
-        TFormatSize<TFormatInfo<format>>::LUMINANCE,                           \
-        TFormatSize<TFormatInfo<format>>::DEPTH,                               \
-        TFormatSize<TFormatInfo<format>>::STENCIL,                             \
-        TFormatSize<TFormatInfo<format>>::PALETTE,                             \
-        TFormatSize<TFormatInfo<format>>::LERP                                 \
+    TFormatInfo<format>::CBSIZE, FormatSize<TFormatInfo<format>>::RED,        \
+        FormatSize<TFormatInfo<format>>::GREEN,                               \
+        FormatSize<TFormatInfo<format>>::BLUE,                                \
+        FormatSize<TFormatInfo<format>>::ALPHA,                               \
+        FormatSize<TFormatInfo<format>>::LUMINANCE,                           \
+        FormatSize<TFormatInfo<format>>::DEPTH,                               \
+        FormatSize<TFormatInfo<format>>::STENCIL,                             \
+        FormatSize<TFormatInfo<format>>::PALETTE,                             \
+        FormatSize<TFormatInfo<format>>::LERP                                 \
   }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -401,7 +401,7 @@ struct FormatInfo {
   uint8_t LerpBits;
 };
 
-template <typename F> class TFormatSize {
+template <typename F> class FormatSize {
 protected:
   DEF_GET_ENUM_VALUE(RED, 0);
   DEF_GET_ENUM_VALUE(GREEN, 0);

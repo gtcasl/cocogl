@@ -91,10 +91,6 @@ protected:
   GLBuffer *pBufDefault_;
   RasterCache *pRasterCache_;
 
-#ifdef GL_COCOJIT
-  CG::CAssembler *pCGAssembler_;
-#endif
-
   uint32_t packAlignment_;
   uint32_t unpackAlignment_;
   SampleCoverage sampleCoverage_;
