@@ -672,16 +672,20 @@ struct GLCAPS {
 };
 
 struct RASTERSTATES {
-  __enum_bitfield_begin __enum_bitfield(0, 1, DEPTHFUNC, 3),
-      __enum_bitfield(1, 2, BLENDSRC, 4), __enum_bitfield(2, 3, BLENDDST, 4),
-      __enum_bitfield(3, 4, ALPHAFUNC, 3),
-      __enum_bitfield(4, 5, STENCILFUNC, 3),
-      __enum_bitfield(5, 6, STENCILFAIL, 3),
-      __enum_bitfield(6, 7, STENCILZFAIL, 3),
-      __enum_bitfield(7, 8, STENCILPASS, 3),
-      __enum_bitfield(8, 9, LOGICFUNC, 4),
-      __enum_bitfield_end DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT
-      union {
+  __enum_bitfield_begin 
+  __enum_bitfield(0, 1, DEPTHFUNC, 3),
+  __enum_bitfield(1, 2, BLENDSRC, 4), 
+  __enum_bitfield(2, 3, BLENDDST, 4),
+  __enum_bitfield(3, 4, ALPHAFUNC, 3),
+  __enum_bitfield(4, 5, STENCILFUNC, 3),
+  __enum_bitfield(5, 6, STENCILFAIL, 3),
+  __enum_bitfield(6, 7, STENCILZFAIL, 3),
+  __enum_bitfield(7, 8, STENCILPASS, 3),
+  __enum_bitfield(8, 9, LOGICFUNC, 4),
+  __enum_bitfield_end 
+DISABLE_WARNING_PUSH 
+DISABLE_WARNING_ANONYMOUS_STRUCT
+  union {
     uint32_t Value;
     struct {
       uint32_t DepthFunc : 3;
@@ -695,7 +699,7 @@ struct RASTERSTATES {
       uint32_t LogicFunc : 4;
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   RASTERSTATES() : Value(0) {
     static_assert(sizeof(RASTERSTATES) == sizeof(Value));
@@ -711,26 +715,31 @@ struct RASTERSTATES {
 };
 
 struct RASTERFLAGS {
-  __enum_bitfield_begin __enum_bitfield(0, 1, DEPTHTEST, 1),
-      __enum_bitfield(1, 2, DEPTHWRITE, 1), __enum_bitfield(2, 3, COLOR, 1),
-      __enum_bitfield(3, 4, PERSPECTIVE, 1),
-      __enum_bitfield(4, 5, NUMTEXTURES, MAX_TEXTURES_MASK),
-      __enum_bitfield(5, 6, TEXTUREMIPS, MAX_TEXTURES),
-      __enum_bitfield(6, 7, BLEND, 1), __enum_bitfield(7, 8, ALPHATEST, 1),
-      __enum_bitfield(8, 9, FOG, 1), __enum_bitfield(9, 10, STENCILTEST, 1),
-      __enum_bitfield(10, 11, STENCILWRITE, 1),
-      __enum_bitfield(11, 12, LOGICOP, 1),
-      __enum_bitfield(12, 13, COLORWRITEMASK, 1),
-      __enum_bitfield(13, 14, COLORFORMAT, 4),
-      __enum_bitfield(14, 15, DEPTHSTENCILFORMAT, 4),
-      __enum_bitfield(15, 16, INTERPOLATEDEPTH, 1),
-      __enum_bitfield(16, 17, INTERPOLATECOLOR, 1),
-      __enum_bitfield(17, 18, INTERPOLATEALPHA, 1),
-      __enum_bitfield(18, 19, INTERPOLATEMIPS, MAX_TEXTURES),
-      __enum_bitfield(19, 20, INTERPOLATEFOG, 1),
-      __enum_bitfield_end
-
-      DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT union {
+  __enum_bitfield_begin 
+  __enum_bitfield(0, 1, DEPTHTEST, 1),
+  __enum_bitfield(1, 2, DEPTHWRITE, 1), 
+  __enum_bitfield(2, 3, COLOR, 1),
+  __enum_bitfield(3, 4, PERSPECTIVE, 1),
+  __enum_bitfield(4, 5, NUMTEXTURES, MAX_TEXTURES_MASK),
+  __enum_bitfield(5, 6, TEXTUREMIPS, MAX_TEXTURES),
+  __enum_bitfield(6, 7, BLEND, 1), 
+  __enum_bitfield(7, 8, ALPHATEST, 1),
+  __enum_bitfield(8, 9, FOG, 1), 
+  __enum_bitfield(9, 10, STENCILTEST, 1),
+  __enum_bitfield(10, 11, STENCILWRITE, 1),
+  __enum_bitfield(11, 12, LOGICOP, 1),
+  __enum_bitfield(12, 13, COLORWRITEMASK, 1),
+  __enum_bitfield(13, 14, COLORFORMAT, 4),
+  __enum_bitfield(14, 15, DEPTHSTENCILFORMAT, 4),
+  __enum_bitfield(15, 16, INTERPOLATEDEPTH, 1),
+  __enum_bitfield(16, 17, INTERPOLATECOLOR, 1),
+  __enum_bitfield(17, 18, INTERPOLATEALPHA, 1),
+  __enum_bitfield(18, 19, INTERPOLATEMIPS, MAX_TEXTURES),
+  __enum_bitfield(19, 20, INTERPOLATEFOG, 1),
+  __enum_bitfield_end
+DISABLE_WARNING_PUSH 
+DISABLE_WARNING_ANONYMOUS_STRUCT 
+  union {
     uint32_t Value;
     struct {
       uint32_t DepthTest : 1;
@@ -755,7 +764,7 @@ struct RASTERFLAGS {
       uint32_t InterpolateFog : 1;
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   RASTERFLAGS() : Value(0) {
     static_assert(sizeof(RASTERFLAGS) == sizeof(Value));
@@ -781,12 +790,18 @@ struct RASTERFLAGS {
 };
 
 struct TEXTURESTATES {
-  __enum_bitfield_begin __enum_bitfield(0, 1, MIPFILTER, 2),
-      __enum_bitfield(1, 2, MINFILTER, 2), __enum_bitfield(2, 3, MAGFILTER, 2),
-      __enum_bitfield(3, 4, ADDRESSS, 2), __enum_bitfield(4, 5, ADDRESST, 2),
-      __enum_bitfield(5, 6, ENVMODE, 8), __enum_bitfield(6, 7, FORMAT, 8),
-      __enum_bitfield_end DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT
-      union {
+  __enum_bitfield_begin 
+  __enum_bitfield(0, 1, MIPFILTER, 2),
+  __enum_bitfield(1, 2, MINFILTER, 2), 
+  __enum_bitfield(2, 3, MAGFILTER, 2),
+  __enum_bitfield(3, 4, ADDRESSS, 2), 
+  __enum_bitfield(4, 5, ADDRESST, 2),
+  __enum_bitfield(5, 6, ENVMODE, 8), 
+  __enum_bitfield(6, 7, FORMAT, 8),
+  __enum_bitfield_end 
+DISABLE_WARNING_PUSH 
+DISABLE_WARNING_ANONYMOUS_STRUCT
+  union {
     uint32_t Value;
     struct {
       uint32_t MipFilter : 2;
@@ -798,7 +813,7 @@ struct TEXTURESTATES {
       uint32_t Format : 8;
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   TEXTURESTATES() : Value(0) {
     static_assert(sizeof(TEXTURESTATES) == sizeof(Value));
@@ -832,14 +847,20 @@ struct RASTERID {
 };
 
 struct TNLFLAGS {
-  __enum_bitfield_begin __enum_bitfield(0, 1, USERCLIPPLANES, 1),
-      __enum_bitfield(1, 2, EYESPACE, 1), __enum_bitfield(2, 3, EYESPACEZ, 1),
-      __enum_bitfield(3, 4, COLOR, 1), __enum_bitfield(4, 5, NORMALIZE, 1),
-      __enum_bitfield(5, 6, TEXCOORDS, MAX_TEXTURES_MASK),
-      __enum_bitfield(6, 7, FOG, 1), __enum_bitfield(7, 8, POINTSIZE, 1),
-      __enum_bitfield(8, 9, POINTATTENUATE, 1),
-      __enum_bitfield_end DISABLE_WARNING_PUSH DISABLE_WARNING_ANONYMOUS_STRUCT
-      union {
+  __enum_bitfield_begin 
+  __enum_bitfield(0, 1, USERCLIPPLANES, 1),
+  __enum_bitfield(1, 2, EYESPACE, 1), 
+  __enum_bitfield(2, 3, EYESPACEZ, 1),
+  __enum_bitfield(3, 4, COLOR, 1), 
+  __enum_bitfield(4, 5, NORMALIZE, 1),
+  __enum_bitfield(5, 6, TEXCOORDS, MAX_TEXTURES_MASK),
+  __enum_bitfield(6, 7, FOG, 1), 
+  __enum_bitfield(7, 8, POINTSIZE, 1),
+  __enum_bitfield(8, 9, POINTATTENUATE, 1),
+  __enum_bitfield_end 
+DISABLE_WARNING_PUSH 
+DISABLE_WARNING_ANONYMOUS_STRUCT
+   union {
     uint32_t Value;
     struct {
       uint32_t UserClipPlanes : 1;
@@ -853,7 +874,7 @@ struct TNLFLAGS {
       uint32_t PointSizeQAttn : 1;
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   TNLFLAGS() : Value(0) { static_assert(sizeof(TNLFLAGS) == sizeof(Value)); }
 };

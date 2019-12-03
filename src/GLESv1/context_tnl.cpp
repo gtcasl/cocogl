@@ -35,8 +35,8 @@ void GLContext::setClipPlane(GLenum plane, const VECTOR4 &equation) {
 }
 
 void GLContext::setDepthRange(floatf zNear, floatf zFar) {
-  depthRange_.fNear = Math::TSat(zNear);
-  depthRange_.fFar = Math::TSat(zFar);
+  depthRange_.fNear = Math::Sat(zNear);
+  depthRange_.fFar = Math::Sat(zFar);
 
   dirtyFlags_.ScreenXform = 1;
 }

@@ -80,10 +80,10 @@ void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     auto i4x1 = vertices[1]->x;
     auto i4y1 = vertices[1]->y;
 
-    auto fddy = Math::TMul<fixedDDA>(i4y1 - i4y0, gradient.fRatio);
-    auto x0 = std::max<int>(Math::TCeili<int>(i4x0 - TConst<fixed4>::Half()),
+    auto fddy = Math::Mul<fixedDDA>(i4y1 - i4y0, gradient.fRatio);
+    auto x0 = std::max<int>(Math::Ceil<int>(i4x0 - TConst<fixed4>::Half()),
                               scissorRect_.left);
-    auto x1 = std::min<int>(Math::TCeili<int>(i4x1 - TConst<fixed4>::Half()),
+    auto x1 = std::min<int>(Math::Ceil<int>(i4x1 - TConst<fixed4>::Half()),
                               scissorRect_.right);
 
     auto i4X0Diff = fixed4(x0) - (i4x0 - TConst<fixed4>::Half());
@@ -119,10 +119,10 @@ void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     auto i4x1 = vertices[1]->x;
     auto i4y1 = vertices[1]->y;
 
-    auto fddx = Math::TMul<fixedDDA>(i4x1 - i4x0, gradient.fRatio);
-    auto y0 = std::max<int>(Math::TCeili<int>(i4y0 - TConst<fixed4>::Half()),
+    auto fddx = Math::Mul<fixedDDA>(i4x1 - i4x0, gradient.fRatio);
+    auto y0 = std::max<int>(Math::Ceil<int>(i4y0 - TConst<fixed4>::Half()),
                               scissorRect_.top);
-    auto y1 = std::min<int>(Math::TCeili<int>(i4y1 - TConst<fixed4>::Half()),
+    auto y1 = std::min<int>(Math::Ceil<int>(i4y1 - TConst<fixed4>::Half()),
                               scissorRect_.bottom);
 
     auto i4Y0Diff = fixed4(y0) - (i4y0 - TConst<fixed4>::Half());

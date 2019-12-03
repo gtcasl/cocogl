@@ -20,8 +20,8 @@
 
 #define MAKE_SCANLINE(fog, texture1, texture0, color, depth)                   \
   {                                                                            \
-    TGenericScanlineA<depth, color, texture0, texture1, fog>::Execute,         \
-        TGenericScanlineP<depth, color, texture0, texture1, fog>::Execute      \
+    GenericScanlineA<depth, color, texture0, texture1, fog>::Execute,         \
+        GenericScanlineP<depth, color, texture0, texture1, fog>::Execute      \
   }
 
 static const struct ScanlineRasterID {

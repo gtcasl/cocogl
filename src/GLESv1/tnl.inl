@@ -158,10 +158,10 @@ TDecodeVertex<VECTOR4, TVertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
   assert(pOut);
   assert(pbIn);
 
-  pOut->x = Math::TFromUNORM8<floatf>(pbIn[0]);
-  pOut->y = Math::TFromUNORM8<floatf>(pbIn[1]);
-  pOut->z = Math::TFromUNORM8<floatf>(pbIn[2]);
-  pOut->w = Math::TFromUNORM8<floatf>(pbIn[3]);
+  pOut->x = Math::FromUNORM8<floatf>(pbIn[0]);
+  pOut->y = Math::FromUNORM8<floatf>(pbIn[1]);
+  pOut->z = Math::FromUNORM8<floatf>(pbIn[2]);
+  pOut->w = Math::FromUNORM8<floatf>(pbIn[3]);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -251,16 +251,16 @@ inline void TNL::processLightingOneSided(uint32_t count) {
     }
 
     // Clamp the front color
-    vResult.x = Math::TSat(vResult.x);
-    vResult.y = Math::TSat(vResult.y);
-    vResult.z = Math::TSat(vResult.z);
-    vResult.w = Math::TSat(vResult.w);
+    vResult.x = Math::Sat(vResult.x);
+    vResult.y = Math::Sat(vResult.y);
+    vResult.z = Math::Sat(vResult.z);
+    vResult.w = Math::Sat(vResult.w);
 
     // Set the front color
-    pcFrontColors[i].r = static_cast<uint8_t>(Math::TToUNORM8(vResult.x));
-    pcFrontColors[i].g = static_cast<uint8_t>(Math::TToUNORM8(vResult.y));
-    pcFrontColors[i].b = static_cast<uint8_t>(Math::TToUNORM8(vResult.z));
-    pcFrontColors[i].a = static_cast<uint8_t>(Math::TToUNORM8(vResult.w));
+    pcFrontColors[i].r = static_cast<uint8_t>(Math::ToUNORM8(vResult.x));
+    pcFrontColors[i].g = static_cast<uint8_t>(Math::ToUNORM8(vResult.y));
+    pcFrontColors[i].b = static_cast<uint8_t>(Math::ToUNORM8(vResult.z));
+    pcFrontColors[i].a = static_cast<uint8_t>(Math::ToUNORM8(vResult.w));
   }
 }
 
@@ -342,28 +342,28 @@ inline void TNL::processLightingTwoSided(uint32_t count) {
     }
 
     // Clamp the front color
-    vResults[0].x = Math::TSat(vResults[0].x);
-    vResults[0].y = Math::TSat(vResults[0].y);
-    vResults[0].z = Math::TSat(vResults[0].z);
-    vResults[0].w = Math::TSat(vResults[0].w);
+    vResults[0].x = Math::Sat(vResults[0].x);
+    vResults[0].y = Math::Sat(vResults[0].y);
+    vResults[0].z = Math::Sat(vResults[0].z);
+    vResults[0].w = Math::Sat(vResults[0].w);
 
     // Clamp the back color
-    vResults[1].x = Math::TSat(vResults[1].x);
-    vResults[1].y = Math::TSat(vResults[1].y);
-    vResults[1].z = Math::TSat(vResults[1].z);
-    vResults[1].w = Math::TSat(vResults[1].w);
+    vResults[1].x = Math::Sat(vResults[1].x);
+    vResults[1].y = Math::Sat(vResults[1].y);
+    vResults[1].z = Math::Sat(vResults[1].z);
+    vResults[1].w = Math::Sat(vResults[1].w);
 
     // Set the front color
-    pcFrontColors[i].r = static_cast<uint8_t>(Math::TToUNORM8(vResults[0].x));
-    pcFrontColors[i].g = static_cast<uint8_t>(Math::TToUNORM8(vResults[0].y));
-    pcFrontColors[i].b = static_cast<uint8_t>(Math::TToUNORM8(vResults[0].z));
-    pcFrontColors[i].a = static_cast<uint8_t>(Math::TToUNORM8(vResults[0].w));
+    pcFrontColors[i].r = static_cast<uint8_t>(Math::ToUNORM8(vResults[0].x));
+    pcFrontColors[i].g = static_cast<uint8_t>(Math::ToUNORM8(vResults[0].y));
+    pcFrontColors[i].b = static_cast<uint8_t>(Math::ToUNORM8(vResults[0].z));
+    pcFrontColors[i].a = static_cast<uint8_t>(Math::ToUNORM8(vResults[0].w));
 
     // Set the back color
-    pcBackColors[i].r = static_cast<uint8_t>(Math::TToUNORM8(vResults[1].x));
-    pcBackColors[i].g = static_cast<uint8_t>(Math::TToUNORM8(vResults[1].y));
-    pcBackColors[i].b = static_cast<uint8_t>(Math::TToUNORM8(vResults[1].z));
-    pcBackColors[i].a = static_cast<uint8_t>(Math::TToUNORM8(vResults[1].w));
+    pcBackColors[i].r = static_cast<uint8_t>(Math::ToUNORM8(vResults[1].x));
+    pcBackColors[i].g = static_cast<uint8_t>(Math::ToUNORM8(vResults[1].y));
+    pcBackColors[i].b = static_cast<uint8_t>(Math::ToUNORM8(vResults[1].z));
+    pcBackColors[i].a = static_cast<uint8_t>(Math::ToUNORM8(vResults[1].w));
   }
 }
 
@@ -380,16 +380,16 @@ void TNL::processVertexColor(uint32_t count) {
                                                       pbIn + i * stride);
 
     // Clamp the color
-    vColor.x = Math::TSat(vColor.x);
-    vColor.y = Math::TSat(vColor.y);
-    vColor.z = Math::TSat(vColor.z);
-    vColor.w = Math::TSat(vColor.w);
+    vColor.x = Math::Sat(vColor.x);
+    vColor.y = Math::Sat(vColor.y);
+    vColor.z = Math::Sat(vColor.z);
+    vColor.w = Math::Sat(vColor.w);
 
     // Set the front color
-    pcFrontColors[i].r = static_cast<uint8_t>(Math::TToUNORM8(vColor.x));
-    pcFrontColors[i].g = static_cast<uint8_t>(Math::TToUNORM8(vColor.y));
-    pcFrontColors[i].b = static_cast<uint8_t>(Math::TToUNORM8(vColor.z));
-    pcFrontColors[i].a = static_cast<uint8_t>(Math::TToUNORM8(vColor.w));
+    pcFrontColors[i].r = static_cast<uint8_t>(Math::ToUNORM8(vColor.x));
+    pcFrontColors[i].g = static_cast<uint8_t>(Math::ToUNORM8(vColor.y));
+    pcFrontColors[i].b = static_cast<uint8_t>(Math::ToUNORM8(vColor.z));
+    pcFrontColors[i].a = static_cast<uint8_t>(Math::ToUNORM8(vColor.w));
   }
 }
 
@@ -414,7 +414,7 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
     }
 
     if constexpr (TVertexData<VertexFormat>::Output::DIM >= 4) {
-      if (!Math::TIsZero(vIn.w - fONE) && !Math::TIsZero(vIn.w)) {
+      if (!Math::IsAlmostZero(vIn.w - fONE) && !Math::IsAlmostZero(vIn.w)) {
         auto fInvW = Math::TInv<floatf>(vIn.w);
         vIn.x *= fInvW;
         vIn.y *= fInvW;
@@ -438,8 +438,8 @@ void TNL::processPointSize(uint32_t count) {
     pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   } else {
     fInvAtt = vAttenuation.x;
-    if (!Math::TIsZero(fInvAtt - fONE)) {
-      fInvAtt = Math::TInvSqrt(fInvAtt);
+    if (!Math::IsAlmostZero(fInvAtt - fONE)) {
+      fInvAtt = Math::RSqrt(fInvAtt);
     }
   }
 
@@ -455,8 +455,8 @@ void TNL::processPointSize(uint32_t count) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
                      vAttenuation.y * fEyeDist + vAttenuation.x;
-      if (!Math::TIsZero(fInvAtt - fONE)) {
-        vPointSize.x *= Math::TInvSqrt(fInvAtt);
+      if (!Math::IsAlmostZero(fInvAtt - fONE)) {
+        vPointSize.x *= Math::RSqrt(fInvAtt);
       }
     } else {
       vPointSize.x *= fInvAtt;
@@ -478,7 +478,7 @@ template <eFogMode FogMode> void TNL::processFog(uint32_t count) {
 
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
-      pfFogs[i] = Math::TSat(fFogRatio * (fFogEnd - fEyeDist));
+      pfFogs[i] = Math::Sat(fFogRatio * (fFogEnd - fEyeDist));
     }
   }
   if constexpr (FogMode == FogExp) {
@@ -487,7 +487,7 @@ template <eFogMode FogMode> void TNL::processFog(uint32_t count) {
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fTmp = fEyeDist * fFogDensity;
-      pfFogs[i] = static_cast<fixedRF>(Math::TSat(Math::TExp(-fTmp)));
+      pfFogs[i] = static_cast<fixedRF>(Math::Sat(std::exp(-fTmp)));
     }
   }
   if constexpr (FogMode == FogExp2) {
@@ -496,7 +496,7 @@ template <eFogMode FogMode> void TNL::processFog(uint32_t count) {
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fTmp = fEyeDist * fFogDensity;
-      pfFogs[i] = static_cast<fixedRF>(Math::TSat(Math::TExp(-(fTmp * fTmp))));
+      pfFogs[i] = static_cast<fixedRF>(Math::Sat(std::exp(-(fTmp * fTmp))));
     }
   }
 }

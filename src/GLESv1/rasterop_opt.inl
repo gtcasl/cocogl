@@ -282,7 +282,7 @@ DISABLE_WARNING_PUSH
 DISABLE_WARNING_UNUSED_VARIABLE
 
 template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
-class TOptimizedScanlineA {
+class OptimizedScanlineA {
 public:
   enum {
     ColorFormat = __get_bitfield(Flags, RASTERFLAGS::COLORFORMAT),
@@ -703,7 +703,7 @@ public:
 DISABLE_WARNING_POP
 
 template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
-class TOptimizedScanlineP {
+class OptimizedScanlineP {
 public:
   enum {
     ColorFormat = __get_bitfield(Flags, RASTERFLAGS::COLORFORMAT),
@@ -1234,7 +1234,7 @@ public:
 };
 
 template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
-class TOptimizedScanlineAZ {
+class OptimizedScanlineAZ {
 public:
   enum {
     ColorFormat = __get_bitfield(Flags, RASTERFLAGS::COLORFORMAT),
@@ -1681,7 +1681,7 @@ public:
 };
 
 template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
-class TOptimizedScanlinePZ {
+class OptimizedScanlinePZ {
 public:
   enum {
     ColorFormat = __get_bitfield(Flags, RASTERFLAGS::COLORFORMAT),
@@ -2239,7 +2239,7 @@ public:
 };
 
 template <uint32_t Flags, uint32_t States, uint32_t Texture0, uint32_t Texture1>
-class TOptimizedScanline {
+class OptimizedScanline {
 private:
   enum {
     Perspective = __get_bitfield(Flags, RASTERFLAGS::PERSPECTIVE),
@@ -2253,19 +2253,19 @@ public:
     if constexpr (Perspective) {
       if constexpr (Texture0 != 0) {
         if constexpr (!AlphaTest && (DepthTest || StencilTest)) {
-          TOptimizedScanlinePZ<Flags, States, Texture0, Texture1>::Execute(
+          OptimizedScanlinePZ<Flags, States, Texture0, Texture1>::Execute(
               rasterData, y, lx, rx);
         } else {
-          TOptimizedScanlineP<Flags, States, Texture0, Texture1>::Execute(
+          OptimizedScanlineP<Flags, States, Texture0, Texture1>::Execute(
               rasterData, y, lx, rx);
         }
       }
     } else {
       if constexpr (!AlphaTest && (DepthTest || StencilTest)) {
-        TOptimizedScanlineAZ<Flags, States, Texture0, Texture1>::Execute(
+        OptimizedScanlineAZ<Flags, States, Texture0, Texture1>::Execute(
             rasterData, y, lx, rx);
       } else {
-        TOptimizedScanlineA<Flags, States, Texture0, Texture1>::Execute(
+        OptimizedScanlineA<Flags, States, Texture0, Texture1>::Execute(
             rasterData, y, lx, rx);
       }
     }

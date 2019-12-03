@@ -71,7 +71,7 @@ void DoWriteColor(const RasterData &rasterData, const Color4 &cColor,
 
 template <bool Depth, bool Color, uint32_t Texture0, uint32_t Texture1,
           bool Fog>
-class TGenericScanlineA {
+class GenericScanlineA {
 public:
   enum {
     DEPTH_SIZE = Depth ? 1 : 0,
@@ -95,11 +95,11 @@ public:
   inline static void Execute(const RasterData &rasterData, int y, int lx,
                              int rx) {
     if constexpr (Texture0 != 0) {
-      TGenericScanlineA<Depth, Color, Texture0, Texture1, Fog>::__Execute(
+      GenericScanlineA<Depth, Color, Texture0, Texture1, Fog>::__Execute(
           rasterData, y, lx, rx);
     } else {
       if constexpr (Color) {
-        TGenericScanlineA<Depth, Color, 0, 0, Fog>::__Execute(rasterData, y, lx,
+        GenericScanlineA<Depth, Color, 0, 0, Fog>::__Execute(rasterData, y, lx,
                                                               rx);
       } else {
         __unreferenced(rasterData);
@@ -327,7 +327,7 @@ public:
 
 template <bool Depth, bool Color, uint32_t Texture0, uint32_t Texture1,
           bool Fog>
-class TGenericScanlineP {
+class GenericScanlineP {
 public:
   enum {
     DEPTH_SIZE = Depth ? 1 : 0,
@@ -353,7 +353,7 @@ public:
   inline static void Execute(const RasterData &rasterData, int y, int lx,
                              int rx) {
     if constexpr (Texture0 != 0) {
-      TGenericScanlineP<Depth, Color, Texture0, Texture1, Fog>::__Execute(
+      GenericScanlineP<Depth, Color, Texture0, Texture1, Fog>::__Execute(
           rasterData, y, lx, rx);
     } else {
       __unreferenced(rasterData);

@@ -43,7 +43,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
     vParam.w = static_cast<floatf>(pParams[3]);
 
     if (GL_POSITION == pname) {
-      _light.Flags.DirectionalLight = Math::TIsZero(vParam.w) ? 1 : 0;
+      _light.Flags.DirectionalLight = Math::IsAlmostZero(vParam.w) ? 1 : 0;
       Math::Mul(&_light.vPosition, vParam, pMsModelView_->getMatrix());
     } else {
       _light.setColor(pname, vParam);
@@ -95,7 +95,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
     }
 
     _light.fSpotCutOff = vParam.x;
-    _light.fSpotCutOffCos = Math::TCos<floatf>(Math::DegToRad(vParam.x));
+    _light.fSpotCutOffCos = std::cos(Math::DegToRad(vParam.x));
   }
 
   break;

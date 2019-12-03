@@ -58,15 +58,17 @@ static uint32_t __exp2_tab[] = {
   ((static_cast<uint64_t>(a) * static_cast<uint64_t>(b)) >> 32)
 
 // By Ken Turkowski's Fixed Point Square Root from "Graphics Gems V".
-uint32_t iSqrt(uint32_t rhs) {
+int32_t fxSqrt(int32_t value) {
+  assert(value > 0);
+  uint32_t x = value << 8;
   uint32_t g = 0;
-  uint32_t s = (31 - Clz(rhs)) >> 1;
+  uint32_t s = (31 - Clz(x)) >> 1;
   uint32_t b = 1 << s;
   do {
     uint32_t tmp = (b + (g << 1)) << s;
-    if (rhs >= tmp) {
+    if (x >= tmp) {
       g += b;
-      rhs -= tmp;
+      x -= tmp;
     }
     b >>= 1;
   } while (s--);
@@ -144,15 +146,15 @@ int32_t fxPow(int32_t x, int32_t y) {
 }
 
 //--
-int32_t fxPow2(int32_t rhs) {
-  assert((rhs >= 0) && (rhs < (32 << 16)));
+int32_t fxExp2(int32_t value) {
+  assert((value >= 0) && (value < (32 << 16)));
 
   const uint32_t x5log2 = 0xb17217f8; // round(2^32*log(2))
   const int x5d3 = 0x55555555;        // round(2^32/3)
 
   int n, d, q, r;
 
-  n = (rhs << 10); // Convert to N.26
+  n = (value << 10); // Convert to N.26
   d = n << 6;
   n = n >> 26;
 
@@ -191,11 +193,10 @@ int32_t fxPow2(int32_t rhs) {
 }
 
 //--
-int32_t fxSin(int32_t rhs) {
+int32_t fxSin(int32_t value) {
   const int TWOPI = 411775;
   const int INVTWOPI = 10430;
 
-  int value = rhs;
   while (value < 0) {
     value += TWOPI;
   }
@@ -211,11 +212,10 @@ int32_t fxSin(int32_t rhs) {
 }
 
 // By Ken Turkowski's Fixed Point Square Root from "Graphics Gems V".
-int32_t fxCos(int32_t rhs) {
+int32_t fxCos(int32_t value) {
   const int TWOPI = 411775;
   const int INVTWOPI = 10430;
 
-  int value = rhs;
   while (value < 0) {
     value += TWOPI;
   }

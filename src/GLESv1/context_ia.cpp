@@ -262,8 +262,8 @@ void GLContext::setColor(floatf red, floatf green, floatf blue, floatf alpha) {
   vColor_.w = alpha;
 
   dirtyFlags_.DefaultColor =
-      Math::TIsZero(alpha - fONE) && Math::TIsZero(red - fONE) &&
-      Math::TIsZero(green - fONE) && Math::TIsZero(blue - fONE);
+      Math::IsAlmostZero(alpha - fONE) && Math::IsAlmostZero(red - fONE) &&
+      Math::IsAlmostZero(green - fONE) && Math::IsAlmostZero(blue - fONE);
 }
 
 void GLContext::setNormal(floatf nx, floatf ny, floatf nz) {
@@ -289,7 +289,7 @@ void GLContext::setMultiTexCoord(GLenum target, floatf s, floatf t,
   vTexCoords.x = s;
   vTexCoords.y = t;
 
-  if (!Math::TIsZero(q - fONE)) {
+  if (!Math::IsAlmostZero(q - fONE)) {
     auto fInvQ = Math::TInv<floatf>(q);
     vTexCoords.x *= fInvQ;
     vTexCoords.y *= fInvQ;

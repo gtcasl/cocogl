@@ -15,8 +15,8 @@
 #pragma once
 
 struct ColorARGB {
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       uint32_t value;
@@ -28,7 +28,7 @@ struct ColorARGB {
       uint8_t m[4];
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   ColorARGB() {}
 
@@ -60,8 +60,8 @@ struct ColorARGB {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct Color4 {
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       int b, g, r, a;
@@ -70,7 +70,7 @@ struct Color4 {
       int m[4];
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   Color4() {}
 

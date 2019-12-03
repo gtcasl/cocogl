@@ -1989,8 +1989,8 @@ GL_API void GL_APIENTRY glColor4ub(GLubyte red, GLubyte green, GLubyte blue,
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
     pContext->setColor(
-        Math::TFromUNORM8<floatf>(red), Math::TFromUNORM8<floatf>(green),
-        Math::TFromUNORM8<floatf>(blue), Math::TFromUNORM8<floatf>(alpha));
+        Math::FromUNORM8<floatf>(red), Math::FromUNORM8<floatf>(green),
+        Math::FromUNORM8<floatf>(blue), Math::FromUNORM8<floatf>(alpha));
   }
 }
 

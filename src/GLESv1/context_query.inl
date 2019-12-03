@@ -153,10 +153,10 @@ inline void GLContext::getTexEnv(GLenum env, GLenum pname, T *pParams) {
       break;
 
     case GL_TEXTURE_ENV_COLOR:
-      pParams[0] = Math::TFromUNORM8<T>(texUnit.cEnvColor.r);
-      pParams[1] = Math::TFromUNORM8<T>(texUnit.cEnvColor.g);
-      pParams[2] = Math::TFromUNORM8<T>(texUnit.cEnvColor.b);
-      pParams[3] = Math::TFromUNORM8<T>(texUnit.cEnvColor.a);
+      pParams[0] = Math::FromUNORM8<T>(texUnit.cEnvColor.r);
+      pParams[1] = Math::FromUNORM8<T>(texUnit.cEnvColor.g);
+      pParams[2] = Math::FromUNORM8<T>(texUnit.cEnvColor.b);
+      pParams[3] = Math::FromUNORM8<T>(texUnit.cEnvColor.a);
       break;
 
     default:
@@ -628,7 +628,7 @@ template <typename T> inline void GLContext::get(GLenum pname, T *pParams) {
     break;
 
   case GL_ALPHA_TEST_REF:
-    pParams[0] = Math::TFromUNORM8<T>(rasterData_.AlphaRef);
+    pParams[0] = Math::FromUNORM8<T>(rasterData_.AlphaRef);
     break;
 
   case GL_LIGHT_MODEL_AMBIENT:

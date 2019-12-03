@@ -153,13 +153,13 @@ inline void GLContext::setTexEnv(GLenum env, GLenum pname, const T *pParams) {
 
     case GL_TEXTURE_ENV_COLOR:
       texUnit.cEnvColor.b = static_cast<uint8_t>(
-          Math::TToUNORM8(Math::TSat(static_cast<floatf>(pParams[0]))));
+          Math::ToUNORM8(Math::Sat(static_cast<floatf>(pParams[0]))));
       texUnit.cEnvColor.g = static_cast<uint8_t>(
-          Math::TToUNORM8(Math::TSat(static_cast<floatf>(pParams[1]))));
+          Math::ToUNORM8(Math::Sat(static_cast<floatf>(pParams[1]))));
       texUnit.cEnvColor.r = static_cast<uint8_t>(
-          Math::TToUNORM8(Math::TSat(static_cast<floatf>(pParams[2]))));
+          Math::ToUNORM8(Math::Sat(static_cast<floatf>(pParams[2]))));
       texUnit.cEnvColor.a = static_cast<uint8_t>(
-          Math::TToUNORM8(Math::TSat(static_cast<floatf>(pParams[3]))));
+          Math::ToUNORM8(Math::Sat(static_cast<floatf>(pParams[3]))));
       break;
     }
 

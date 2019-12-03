@@ -49,7 +49,7 @@ void GLContext::setScissor(GLint x, GLint y, GLsizei width, GLsizei height) {
 }
 
 void GLContext::setSampleCoverage(floatf value, GLboolean invert) {
-  sampleCoverage_.fValue = Math::TSat(value);
+  sampleCoverage_.fValue = Math::Sat(value);
   sampleCoverage_.bInvert = invert ? true : false;
 }
 
@@ -94,7 +94,7 @@ void GLContext::setAlphaFunc(GLenum func, floatf ref) {
   case GL_ALWAYS:
     rasterStates_.AlphaFunc = compareFuncFromEnum(func);
     rasterData_.AlphaRef =
-        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(ref)));
+        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(ref)));
     break;
 
   default:

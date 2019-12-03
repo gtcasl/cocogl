@@ -47,8 +47,8 @@ protected:
       this->i4dy23 = (i4y2 - i4y1);
 
       // Calculate the edge direction
-      auto i8Area = Math::TFastMul<fixed8>(this->i4dx12, this->i4dy13) -
-                    Math::TFastMul<fixed8>(this->i4dx13, this->i4dy12);
+      auto i8Area = Math::FastMul<fixed8>(this->i4dx12, this->i4dy13) -
+                    Math::FastMul<fixed8>(this->i4dx13, this->i4dy12);
 
       // Reject small areas (1/4 x 1/4 = 1/16)
       auto u8Area = std::abs(i8Area);
@@ -211,16 +211,16 @@ protected:
                              uint32_t i1, uint32_t i2);
 
   void ensureClearColor() {
-    Color4 tmp(Math::TToUNORM8(Math::TSat(vClearColor_.w)),
-               Math::TToUNORM8(Math::TSat(vClearColor_.x)),
-               Math::TToUNORM8(Math::TSat(vClearColor_.y)),
-               Math::TToUNORM8(Math::TSat(vClearColor_.z)));
+    Color4 tmp(Math::ToUNORM8(Math::Sat(vClearColor_.w)),
+               Math::ToUNORM8(Math::Sat(vClearColor_.x)),
+               Math::ToUNORM8(Math::Sat(vClearColor_.y)),
+               Math::ToUNORM8(Math::Sat(vClearColor_.z)));
     pSurfDraw_->convertColor(&clearColor_, tmp);
     dirtyFlags_.ClearColor = 0;
   }
 
   void ensureClearDepth() {
-    clearDepth_ = Math::TToUNORM16(Math::TSat(fClearDepth_));
+    clearDepth_ = Math::ToUNORM16(Math::Sat(fClearDepth_));
     dirtyFlags_.ClearDepth = 0;
   }
 
@@ -232,13 +232,13 @@ protected:
 
   void ensureFogColor() {
     rasterData_.cFogColor.a =
-        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(vFogColor_.w)));
+        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.w)));
     rasterData_.cFogColor.r =
-        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(vFogColor_.x)));
+        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.x)));
     rasterData_.cFogColor.g =
-        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(vFogColor_.y)));
+        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.y)));
     rasterData_.cFogColor.b =
-        static_cast<uint8_t>(Math::TToUNORM8(Math::TSat(vFogColor_.z)));
+        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.z)));
     dirtyFlags_.FogColor = 0;
   }
 

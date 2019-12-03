@@ -27,8 +27,8 @@ private:
   };
 
   struct Entry {
-    DISABLE_WARNING_PUSH
-    DISABLE_WARNING_ANONYMOUS_STRUCT
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ANONYMOUS_STRUCT
     union {
       struct {
         uint8_t Type;  // Object type
@@ -36,7 +36,7 @@ private:
       };
       uint16_t Serial; // Serial number
     };
-    DISABLE_WARNING_POP
+  DISABLE_WARNING_POP
     void *pObject; // Object pointer
     void *pOwner;  // Object owner
     Entry *pNext;  // Next active entry

@@ -21,7 +21,7 @@
 #define MAKE_SCANLINE(flags, states, texture0, texture1)                       \
   {                                                                            \
     RASTERID(flags, states, texture0, texture1)                                \
-    , TOptimizedScanline<flags, states, texture0, texture1>::Execute           \
+    , OptimizedScanline<flags, states, texture0, texture1>::Execute           \
   }
 
 static const struct ScanlineRasterID {

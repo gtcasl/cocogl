@@ -38,13 +38,13 @@ void Rasterizer::rasterPoint(uint32_t index) {
   auto fPointSize = pfPointSize[index];
   auto fHalfSize = fPointSize >> 1;
 
-  auto ymin = std::max<int>(Math::TRoundi<int>(vertex.y - fHalfSize),
+  auto ymin = std::max<int>(Math::Roundi<int>(vertex.y - fHalfSize),
                               scissorRect_.top);
-  auto ymax = std::min<int>(Math::TRoundi<int>(vertex.y + fHalfSize),
+  auto ymax = std::min<int>(Math::Roundi<int>(vertex.y + fHalfSize),
                               scissorRect_.bottom);
-  auto xmin = std::max<int>(Math::TRoundi<int>(vertex.x - fHalfSize),
+  auto xmin = std::max<int>(Math::Roundi<int>(vertex.x - fHalfSize),
                               scissorRect_.left);
-  auto xmax = std::min<int>(Math::TRoundi<int>(vertex.x + fHalfSize),
+  auto xmax = std::min<int>(Math::Roundi<int>(vertex.x + fHalfSize),
                               scissorRect_.right);
 
   // Early out if the point has no size
