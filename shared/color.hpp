@@ -72,24 +72,13 @@ struct Color4 {
   };
   DISABLE_WARNING_POP
 
-  Color4() {
-    assert((a >= 0) && (a <= 0xff));
-    assert((r >= 0) && (r <= 0xff));
-    assert((g >= 0) && (g <= 0xff));
-    assert((b >= 0) && (b <= 0xff));
-
-    this->b = b;
-    this->g = g;
-    this->r = r;
-    this->a = a;
-  }
+  Color4() {}
 
   Color4(int a, int r, int g, int b) {
     assert((a >= 0) && (a <= 0xff));
     assert((r >= 0) && (r <= 0xff));
     assert((g >= 0) && (g <= 0xff));
     assert((b >= 0) && (b <= 0xff));
-
     this->b = b;
     this->g = g;
     this->r = r;
@@ -100,7 +89,6 @@ struct Color4 {
     assert((r >= 0) && (r <= 0xff));
     assert((g >= 0) && (g <= 0xff));
     assert((b >= 0) && (b <= 0xff));
-
     this->b = b;
     this->g = g;
     this->r = r;
