@@ -53,7 +53,7 @@ public:
     glViewport(0, 0, width, height);
 
     // Set perspective
-    float ratio = (float)width / height;
+    float ratio = static_cast<float>(width) / height;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     Perspective(45.0f, ratio, 1.0f, 40.0f);

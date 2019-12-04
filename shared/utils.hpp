@@ -131,9 +131,9 @@ template <uint64_t N> struct __countbits {
 
 template <> struct __countbits<0> { static const uint32_t nbits = 0; };
 
-inline uint32_t Clz(uint32_t rhs) { return __builtin_clz(rhs); }
+inline int32_t Clz(int32_t rhs) { return __builtin_clz(rhs); }
 
-inline uint32_t Ctz(uint32_t rhs) { return 31 - Clz(rhs & -(int)rhs); }
+inline int32_t Ctz(int32_t rhs) { return 31 - Clz(rhs & -rhs); }
 
 #ifndef NDEBUG
 #define __debugMsg(level, ...) DbgPrintf(level, __VA_ARGS__);

@@ -14,11 +14,11 @@
 //
 #pragma once
 
-template <typename T> GLenum TToGLenum(T param);
+template <typename T> GLenum ToGLenum(T param);
 
-template <typename T> class TAddressOf {
+template <typename T> class AddressOf {
 public:
-  TAddressOf(const T &value) : value_(value) {}
+  AddressOf(const T &value) : value_(value) {}
 
   operator const T *() const { return &value_; }
 
@@ -116,32 +116,32 @@ GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, int32_t dstOffsetX,
                    const GLSurfaceDesc &srcDesc, int32_t srcOffsetX,
                    int32_t srcOffsetY);
 
-template <> inline GLenum TToGLenum<float>(float param) {
+template <> inline GLenum ToGLenum<float>(float param) {
   return static_cast<GLenum>(param);
 }
 
-template <> inline GLenum TToGLenum<fixed16>(fixed16 param) {
+template <> inline GLenum ToGLenum<fixed16>(fixed16 param) {
   return *reinterpret_cast<const GLenum *>(&param);
 }
 
-template <> inline GLenum TToGLenum<int>(int param) {
+template <> inline GLenum ToGLenum<int>(int param) {
   return static_cast<GLenum>(param);
 }
 
-template <typename T, uint32_t BITS> class TBitPtr {
+template <typename T, uint32_t BITS> class BitPtr {
 public:
   enum {
     MASK = (1 << BITS) - 1,
   };
 
-  TBitPtr(const void *ptr) {
+  BitPtr(const void *ptr) {
     ptr_ = reinterpret_cast<const T *>(ptr);
     shift_ = (sizeof(T) << 3) - BITS;
   }
 
   T operator*() const { return (*ptr_ >> shift_) & MASK; }
 
-  const TBitPtr &operator++() {
+  const BitPtr &operator++() {
     if (shift_ >= BITS) {
       shift_ -= BITS;
     } else {

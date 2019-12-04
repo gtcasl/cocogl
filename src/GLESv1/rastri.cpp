@@ -17,7 +17,7 @@
 #include "raster.inl"
 
 void Rasterizer::drawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
-  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
   uint32_t flags0 = pwFlags[i0];
   uint32_t flags1 = pwFlags[i1];
   uint32_t flags2 = pwFlags[i2];
@@ -46,7 +46,7 @@ void Rasterizer::drawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 bool Rasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
                                          uint32_t i2) {
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
   auto &v2 = pvScreenPos[i2];
@@ -80,7 +80,7 @@ bool Rasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
   }
 
   uint32_t colorIndex = cullStates.bTwoSidedLighting && culled;
-  pbVertexColor_ = pbVertexData_[VERTEXDATA_COLOR0 + colorIndex];
+  pbVertexColor_ = pbVertexData_[VERTEX_COLOR0 + colorIndex];
 
   return true;
 }
@@ -89,7 +89,7 @@ void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
   auto i4y0 = pvScreenPos[i0].y;
   auto i4y1 = pvScreenPos[i1].y;
   auto i4y2 = pvScreenPos[i2].y;
@@ -210,7 +210,7 @@ bool Rasterizer::setupTriangleAttributes(const TriangleGradient &g, uint32_t i0,
   auto rasterID = rasterID_;
 
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
   auto &v2 = pvScreenPos[i2];
@@ -258,7 +258,7 @@ bool Rasterizer::setupTriangleAttributes(const TriangleGradient &g, uint32_t i0,
 }
 
 Register *Rasterizer::applyDepthGradient(Register *pRegister,
-                                         const TriangleGradient &gradient,
+                                         const TriangleGradient &g,
                                          const RDVECTOR &v0, const RDVECTOR &v1,
                                          const RDVECTOR &v2) {
   assert(pRegister);
@@ -267,8 +267,8 @@ Register *Rasterizer::applyDepthGradient(Register *pRegister,
 
   if ((fixed16(std::abs(delta[0])) > Math::Epsilon<fixed16>()) ||
       (fixed16(std::abs(delta[1])) > Math::Epsilon<fixed16>())) {
-    pRegister->m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
-    pRegister->m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
+    pRegister->m[0] = g.calcDeltaX<fixedRX>(delta[0], delta[1]);
+    pRegister->m[1] = g.calcDeltaY<fixedRX>(delta[0], delta[1]);
     rasterID_.Flags.InterpolateDepth = 1;
   } else {
     pRegister->m[0] = Math::Zero<fixedRX>();
@@ -298,7 +298,7 @@ void Rasterizer::applyPolygonOffset(Register *pRegister) {
 }
 
 Register *Rasterizer::applyColorGradient(Register *pRegister,
-                                         const TriangleGradient &gradient,
+                                         const TriangleGradient &g,
                                          uint32_t i0, uint32_t i1,
                                          uint32_t i2) {
   assert(pRegister);
@@ -316,8 +316,8 @@ Register *Rasterizer::applyColorGradient(Register *pRegister,
   if (interpolateMask) {
     for (uint32_t i = 0; i < 4; ++i) {
       int delta[2] = {c1.m[i] - c0.m[i], c2.m[i] - c0.m[i]};
-      pRegister[i].m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
-      pRegister[i].m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[0] = g.calcDeltaX<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[1] = g.calcDeltaY<fixedRX>(delta[0], delta[1]);
       pRegister[i].m[2] = static_cast<fixedRX>(c0.m[i]) >> 8;
     }
     rasterID_.Flags.InterpolateColor = (interpolateMask & 0x7) ? 1 : 0;
@@ -335,7 +335,7 @@ Register *Rasterizer::applyColorGradient(Register *pRegister,
 
 Register *
 Rasterizer::applyAffineTextureGradient(Register *pRegister,
-                                       const TriangleGradient &gradient,
+                                       const TriangleGradient &g,
                                        uint32_t i0, uint32_t i1, uint32_t i2) {
   assert(pRegister);
 
@@ -346,15 +346,15 @@ Rasterizer::applyAffineTextureGradient(Register *pRegister,
     assert(j < MAX_TEXTURES);
 
     auto vTexCoords =
-        reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEXDATA_TEXCOORD0 + j]);
+        reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEX_TEXCOORD0 + j]);
     auto &uv0 = vTexCoords[i0];
     auto &uv1 = vTexCoords[i1];
     auto &uv2 = vTexCoords[i2];
 
     for (uint32_t i = 0; i < 2; ++i) {
       float20 delta[2] = {uv1.m[i] - uv0.m[i], uv2.m[i] - uv0.m[i]};
-      pRegister[i].m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
-      pRegister[i].m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[0] = g.calcDeltaX<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[1] = g.calcDeltaY<fixedRX>(delta[0], delta[1]);
       pRegister[i].m[2] = static_cast<fixedRX>(uv0.m[i]);
     }
 
@@ -371,7 +371,7 @@ Rasterizer::applyAffineTextureGradient(Register *pRegister,
 }
 
 Register *Rasterizer::applyPerspectiveTextureGradient(
-    Register *pRegister, const TriangleGradient &gradient, uint32_t i0,
+    Register *pRegister, const TriangleGradient &g, uint32_t i0,
     uint32_t i1, uint32_t i2) {
   assert(pRegister);
 
@@ -380,7 +380,7 @@ Register *Rasterizer::applyPerspectiveTextureGradient(
 
   // Lookup vertex screen positions
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
   auto &v2 = pvScreenPos[i2];
@@ -397,15 +397,15 @@ Register *Rasterizer::applyPerspectiveTextureGradient(
 
   floatRW delta[2] = {rhws[1] - rhws[0], rhws[2] - rhws[0]};
 
-  pRegister->m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
-  pRegister->m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
+  pRegister->m[0] = g.calcDeltaX<fixedRX>(delta[0], delta[1]);
+  pRegister->m[1] = g.calcDeltaY<fixedRX>(delta[0], delta[1]);
   pRegister->m[2] = static_cast<fixedRX>(rhws[0]);
 
   ++pRegister;
 
   for (uint32_t j = 0; j < numTextures; ++j) {
     auto vTexCoords =
-        reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEXDATA_TEXCOORD0 + j]);
+        reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEX_TEXCOORD0 + j]);
     auto &uv0 = vTexCoords[i0];
     auto &uv1 = vTexCoords[i1];
     auto &uv2 = vTexCoords[i2];
@@ -416,8 +416,8 @@ Register *Rasterizer::applyPerspectiveTextureGradient(
       auto uvw2 = uv2.m[i] * rhws[2];
 
       float20 delta[2] = {uvw1 - uvw0, uvw2 - uvw0};
-      pRegister[i].m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
-      pRegister[i].m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[0] = g.calcDeltaX<fixedRX>(delta[0], delta[1]);
+      pRegister[i].m[1] = g.calcDeltaY<fixedRX>(delta[0], delta[1]);
       pRegister[i].m[2] = static_cast<fixedRX>(uvw0);
     }
 
@@ -425,7 +425,7 @@ Register *Rasterizer::applyPerspectiveTextureGradient(
   }
 
   if (rasterFlags.TextureMips) {
-    pRegister = this->applyPerspectiveTextureMipmapGradient(pRegister, gradient,
+    pRegister = this->applyPerspectiveTextureMipmapGradient(pRegister, g,
                                                             v0, v1, v2, rhws);
   }
 
@@ -492,7 +492,7 @@ Register *Rasterizer::applyAffineTextureMipmapGradient(Register *pRegister) {
 }
 
 Register *Rasterizer::applyPerspectiveTextureMipmapGradient(
-    Register *pRegister, const TriangleGradient &gradient, const RDVECTOR &v0,
+    Register *pRegister, const TriangleGradient &g, const RDVECTOR &v0,
     const RDVECTOR &v1, const RDVECTOR &v2, floatRW rhws[3]) {
   assert(pRegister);
 
@@ -564,9 +564,9 @@ Register *Rasterizer::applyPerspectiveTextureMipmapGradient(
             pRegister->m[2] =
                 fixedRX::make(static_cast<fixed16>(fMs[0]).data());
             pRegister->m[0] = fixedRX::make(
-                gradient.calcDeltaX<fixed16>(delta[0], delta[1]).data());
+                g.calcDeltaX<fixed16>(delta[0], delta[1]).data());
             pRegister->m[1] = fixedRX::make(
-                gradient.calcDeltaY<fixed16>(delta[0], delta[1]).data());
+                g.calcDeltaY<fixed16>(delta[0], delta[1]).data());
             ++pRegister;
           } else {
             if (fMs[0] > fRhw2s[0]) {
@@ -631,11 +631,11 @@ Register *Rasterizer::applyPerspectiveTextureMipmapGradient(
 }
 
 Register *Rasterizer::applyFogGradient(Register *pRegister,
-                                       const TriangleGradient &gradient,
+                                       const TriangleGradient &g,
                                        uint32_t i0, uint32_t i1, uint32_t i2) {
   assert(pRegister);
 
-  auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);
+  auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);
   auto fFog0 = pfFogs[i0];
   auto fFog1 = pfFogs[i1];
   auto fFog2 = pfFogs[i2];
@@ -644,8 +644,8 @@ Register *Rasterizer::applyFogGradient(Register *pRegister,
 
   if ((fixed8(std::abs(delta[0])) > Math::Epsilon<fixed8>()) ||
       (fixed8(std::abs(delta[1])) > Math::Epsilon<fixed8>())) {
-    pRegister->m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
-    pRegister->m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
+    pRegister->m[0] = g.calcDeltaX<fixedRX>(delta[0], delta[1]);
+    pRegister->m[1] = g.calcDeltaY<fixedRX>(delta[0], delta[1]);
     rasterID_.Flags.InterpolateFog = 1;
   } else {
     pRegister->m[0] = Math::Zero<fixedRX>();

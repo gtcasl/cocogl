@@ -226,7 +226,7 @@ inline void GLContext::setFog(GLenum pname, const T *pParams) {
 
   switch (pname) {
   case GL_FOG_MODE: {
-    GLenum param = TToGLenum<T>(*pParams);
+    GLenum param = ToGLenum<T>(*pParams);
     switch (param) {
     case GL_LINEAR:
     case GL_EXP:

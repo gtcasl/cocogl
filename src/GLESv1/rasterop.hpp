@@ -184,7 +184,7 @@ template <uint32_t compare> inline bool DoCompare(uint32_t a, uint32_t b) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t StencilOp>
-inline uint32_t TStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
+inline uint32_t DoStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
 
   if constexpr (StencilOp == STENCIL_KEEP) {
     __unreferenced(stencilRef);
@@ -220,7 +220,7 @@ inline uint32_t TStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <uint32_t Address> inline int TAddress(int x) {
+template <uint32_t Address> inline int DoAddressing(int x) {
   if constexpr (Address == ADDRESS_WRAP) {
     return x & fixedRX::MASK;
   }
@@ -239,8 +239,8 @@ inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
   uint32_t logWidth = surface.getLogWidth();
   uint32_t logHeight = surface.getLogHeight();
 
-  uint32_t u = TAddress<AddressU>(fU.data());
-  uint32_t v = TAddress<AddressV>(fV.data());
+  uint32_t u = DoAddressing<AddressU>(fU.data());
+  uint32_t v = DoAddressing<AddressV>(fV.data());
 
   uint32_t x = u >> (fixedRX::FRAC - logWidth);
   uint32_t y = v >> (fixedRX::FRAC - logHeight);
@@ -260,10 +260,10 @@ inline NColor<Format> GetTexelColorLnX(const SurfaceDesc &surface,
   uint32_t logWidth = surface.getLogWidth();
   uint32_t logHeight = surface.getLogHeight();
 
-  uint32_t v0 = TAddress<AddressV>(fV.data() - (fixedRX::HALF >> logHeight));
-  uint32_t v1 = TAddress<AddressV>(fV.data() + (fixedRX::HALF >> logHeight));
-  uint32_t u0 = TAddress<AddressU>(fU.data() - (fixedRX::HALF >> logWidth));
-  uint32_t u1 = TAddress<AddressU>(fU.data() + (fixedRX::HALF >> logWidth));
+  uint32_t v0 = DoAddressing<AddressV>(fV.data() - (fixedRX::HALF >> logHeight));
+  uint32_t v1 = DoAddressing<AddressV>(fV.data() + (fixedRX::HALF >> logHeight));
+  uint32_t u0 = DoAddressing<AddressU>(fU.data() - (fixedRX::HALF >> logWidth));
+  uint32_t u1 = DoAddressing<AddressU>(fU.data() + (fixedRX::HALF >> logWidth));
 
   uint32_t logHeightN = fixedRX::FRAC - (logHeight + lerpBits);
   uint32_t y1 = v1 >> logHeightN;

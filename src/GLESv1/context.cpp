@@ -228,15 +228,15 @@ GLenum GLContext::initialize() {
     this->setLightParameter<floatf>(light, GL_SPOT_DIRECTION,
                                     VECTOR3(Math::Zero<floatf>(), Math::Zero<floatf>(), -Math::One<floatf>()).m);
     this->setLightParameter<floatf>(light, GL_SPOT_EXPONENT,
-                                    TAddressOf<floatf>(Math::Zero<floatf>()));
+                                    AddressOf<floatf>(Math::Zero<floatf>()));
     this->setLightParameter<floatf>(light, GL_SPOT_CUTOFF,
-                                    TAddressOf<floatf>(Math::F180<floatf>()));
+                                    AddressOf<floatf>(Math::F180<floatf>()));
     this->setLightParameter<floatf>(light, GL_CONSTANT_ATTENUATION,
-                                    TAddressOf<floatf>(Math::One<floatf>()));
+                                    AddressOf<floatf>(Math::One<floatf>()));
     this->setLightParameter<floatf>(light, GL_LINEAR_ATTENUATION,
-                                    TAddressOf<floatf>(Math::Zero<floatf>()));
+                                    AddressOf<floatf>(Math::Zero<floatf>()));
     this->setLightParameter<floatf>(light, GL_QUADRATIC_ATTENUATION,
-                                    TAddressOf<floatf>(Math::Zero<floatf>()));
+                                    AddressOf<floatf>(Math::Zero<floatf>()));
   }
 
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_AMBIENT,
@@ -248,17 +248,17 @@ GLenum GLContext::initialize() {
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_EMISSION,
                             VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>()).m);
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_SHININESS,
-                            TAddressOf<floatf>(Math::Zero<floatf>()));
+                            AddressOf<floatf>(Math::Zero<floatf>()));
 
   this->setFog<fixed16>(GL_FOG_MODE,
-                        TAddressOf<fixed16>(fixed16::make(GL_EXP)));
-  this->setFog<floatf>(GL_FOG_DENSITY, TAddressOf<floatf>(Math::One<floatf>()));
-  this->setFog<floatf>(GL_FOG_START, TAddressOf<floatf>(Math::Zero<floatf>()));
-  this->setFog<floatf>(GL_FOG_END, TAddressOf<floatf>(Math::One<floatf>()));
+                        AddressOf<fixed16>(fixed16::make(GL_EXP)));
+  this->setFog<floatf>(GL_FOG_DENSITY, AddressOf<floatf>(Math::One<floatf>()));
+  this->setFog<floatf>(GL_FOG_START, AddressOf<floatf>(Math::Zero<floatf>()));
+  this->setFog<floatf>(GL_FOG_END, AddressOf<floatf>(Math::One<floatf>()));
   this->setFog<floatf>(GL_FOG_COLOR, VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>()).m);
 
   this->setLightParameterModel<floatf>(GL_LIGHT_MODEL_TWO_SIDE,
-                                       TAddressOf<floatf>(Math::Zero<floatf>()));
+                                       AddressOf<floatf>(Math::Zero<floatf>()));
   this->setLightParameterModel<floatf>(GL_LIGHT_MODEL_AMBIENT,
                                        VECTOR4(Math::F02<floatf>(), Math::F02<floatf>(), Math::F02<floatf>(), Math::One<floatf>()).m);
 
@@ -280,13 +280,13 @@ GLenum GLContext::initialize() {
     this->bindTexture(GL_TEXTURE_2D, 0);
 
     this->setTexEnv<fixed16>(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,
-                             TAddressOf<fixed16>(fixed16::make(GL_MODULATE)));
+                             AddressOf<fixed16>(fixed16::make(GL_MODULATE)));
 
     this->setTexEnv<floatf>(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,
                             VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>()).m);
 
     this->setTexEnv<fixed16>(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES,
-                             TAddressOf<fixed16>(fixed16::make(GL_FALSE)));
+                             AddressOf<fixed16>(fixed16::make(GL_FALSE)));
   }
 
   this->setAlphaFunc(GL_ALWAYS, Math::Zero<floatf>());
@@ -307,10 +307,10 @@ GLenum GLContext::initialize() {
   this->setPolygonOffset(Math::Zero<floatf>(), Math::Zero<floatf>());
 
   this->setPointSize(Math::One<floatf>());
-  this->setPointParameter<floatf>(GL_POINT_SIZE_MIN, TAddressOf<floatf>(Math::Zero<floatf>()));
-  this->setPointParameter<floatf>(GL_POINT_SIZE_MAX, TAddressOf<floatf>(Math::One<floatf>()));
+  this->setPointParameter<floatf>(GL_POINT_SIZE_MIN, AddressOf<floatf>(Math::Zero<floatf>()));
+  this->setPointParameter<floatf>(GL_POINT_SIZE_MAX, AddressOf<floatf>(Math::One<floatf>()));
   this->setPointParameter<floatf>(GL_POINT_FADE_THRESHOLD_SIZE,
-                                  TAddressOf<floatf>(Math::One<floatf>()));
+                                  AddressOf<floatf>(Math::One<floatf>()));
   this->setPointParameter<floatf>(GL_POINT_DISTANCE_ATTENUATION,
                                   VECTOR3(Math::One<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>()).m);
   this->setLineWidth(Math::One<floatf>());

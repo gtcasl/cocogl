@@ -486,16 +486,13 @@ template <typename R> R MulRnd(float a, float b, int c);
 
 template <typename R> R MulRnd(float a, float b, float c);
 
-template <typename R>
-R MulAdd(float a0, float b0, float a1, float b1, float a2, float b2, float a3,
-         float b3);
+float MulAdd(float a0, float b0, float a1, float b1, float a2, float b2, float a3, float b3);
 
-template <typename R>
-R MulAdd(float a0, float b0, float a1, float b1, float a2, float b2);
+float MulAdd(float a0, float b0, float a1, float b1, float a2, float b2);
 
-template <typename R> R MulAdd(float a0, float b0, float a1, float b1);
+float MulAdd(float a0, float b0, float a1, float b1);
 
-template <typename R> R MulSub(float a, float b, float c, float d);
+float MulSub(float a, float b, float c, float d);
 
 template <typename R> R ShiftLeft(float lhs, int rhs);
 
@@ -511,7 +508,7 @@ template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R FastMul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R TFastDiv(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
+R FastDiv(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R MulRnd(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
@@ -543,11 +540,11 @@ template <typename R, uint32_t F, typename T>
 R Mul(Fixed<F, T> lhs, Fixed<F, T> rhs);
 
 template <uint32_t F1, uint32_t F2, typename T1, typename T2>
-Fixed<F1, T1> TLerpf(Fixed<F1, T1> lhs, Fixed<F1, T1> rhs,
+Fixed<F1, T1> Lerpf(Fixed<F1, T1> lhs, Fixed<F1, T1> rhs,
                      Fixed<F2, T2> scalar);
 
 template <uint32_t F, typename T>
-Fixed<F, T> TLerpf(Fixed<F, T> lhs, Fixed<F, T> rhs, float scalar);
+Fixed<F, T> Lerpf(Fixed<F, T> lhs, Fixed<F, T> rhs, float scalar);
 
 template <typename R, uint32_t F, typename T>
 R ShiftLeft(Fixed<F, T> lhs, int rhs);
@@ -630,6 +627,22 @@ public:
   }
 };
 
+template <typename R, uint32_t F, typename T> class Inverter {
+public:
+  inline static R Invert(Fixed<F, T> rhs) {
+    return R::make(
+        detail::ShiftInverter<typename R::data_type,
+                              Fixed<F, T>::FRAC + R::FRAC>::call(rhs.data()));
+  }
+};
+
+template <uint32_t F, typename T> class Inverter<float, F, T> {
+public:
+  inline static float Invert(Fixed<F, T> rhs) {
+    return 1.0f / static_cast<float>(rhs);
+  }
+};
+
 } // namespace detail
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -640,7 +653,6 @@ template <> inline fixed16 RSqrt(fixed16 rhs) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <>
 inline float MulAdd(float a0, float b0, float a1, float b1, float a2, float b2,
                     float a3, float b3) {
   return a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
@@ -657,7 +669,6 @@ inline Fixed<F, T> MulAdd(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
                            Fixed<F, T>::FRAC);
 }
 
-template <>
 inline float MulAdd(float a0, float b0, float a1, float b1, float a2,
                     float b2) {
   return a0 * b0 + a1 * b1 + a2 * b2;
@@ -672,7 +683,7 @@ inline Fixed<F, T> MulAdd(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
                            Fixed<F, T>::FRAC);
 }
 
-template <> inline float MulAdd(float a0, float b0, float a1, float b1) {
+inline float MulAdd(float a0, float b0, float a1, float b1) {
   return a0 * b0 + a1 * b1;
 }
 
@@ -684,7 +695,7 @@ inline Fixed<F, T> MulAdd(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
                            Fixed<F, T>::FRAC);
 }
 
-template <> inline float MulSub(float a0, float b0, float a1, float b1) {
+inline float MulSub(float a0, float b0, float a1, float b1) {
   return a0 * b0 - a1 * b1;
 }
 
@@ -853,25 +864,9 @@ template <uint32_t F, typename T> inline int ToUNORM16(Fixed<F, T> rhs) {
   return (0xffff * rhs.data()) >> Fixed<F, T>::FRAC;
 }
 
-template <typename R, uint32_t F, typename T> class InverseSelect {
-public:
-  inline static R Invert(Fixed<F, T> rhs) {
-    return R::make(
-        detail::ShiftInverter<typename R::data_type,
-                              Fixed<F, T>::FRAC + R::FRAC>::call(rhs.data()));
-  }
-};
-
-template <uint32_t F, typename T> class InverseSelect<float, F, T> {
-public:
-  inline static float Invert(Fixed<F, T> rhs) {
-    return 1.0f / static_cast<float>(rhs);
-  }
-};
-
 template <typename R, uint32_t F, typename T>
 inline R Inverse(Fixed<F, T> rhs) {
-  return InverseSelect<R, F, T>::Invert(rhs);
+  return detail::Inverter<R, F, T>::Invert(rhs);
 }
 
 template <typename R> inline R Inverse(float rhs) {
@@ -888,7 +883,7 @@ inline R FastMul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs) {
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-inline R TFastDiv(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs) {
+inline R FastDiv(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs) {
   int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   assert((static_cast<int64_t>(lhs.data()) << FRAC) == (lhs.data() << FRAC));
   return R::make((lhs.data() << FRAC) / rhs.data());

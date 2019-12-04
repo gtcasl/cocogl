@@ -104,7 +104,7 @@ template <> struct VertexData<VERTEX_RGBA> {
 };
 
 template <typename D, typename T>
-inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
+inline void DecodeVertex(D *pOut, const uint8_t *pbIn) {
   assert(pOut);
   assert(pbIn);
 
@@ -145,7 +145,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
 
 template <>
 inline void
-TDecodeVertex<VECTOR4, VertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut,
+DecodeVertex<VECTOR4, VertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut,
                                                     const uint8_t *pbIn) {
   __unreferenced(pOut);
   __unreferenced(pbIn);
@@ -153,7 +153,7 @@ TDecodeVertex<VECTOR4, VertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut,
 
 template <>
 inline void
-TDecodeVertex<VECTOR4, VertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
+DecodeVertex<VECTOR4, VertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
                                                  const uint8_t *pbIn) {
   assert(pOut);
   assert(pbIn);
@@ -167,10 +167,10 @@ TDecodeVertex<VECTOR4, VertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
 //////////////////////////////////////////////////////////////////////////////
 
 template <eVertexFormat VertexFormat>
-void TDecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, uint32_t stride,
+void DecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, uint32_t stride,
                      uint32_t count) {
   for (uint32_t i = 0; i < count; ++i) {
-    TDecodeVertex<VECTOR4, VertexData<VertexFormat>>(&pOut[i],
+    DecodeVertex<VECTOR4, VertexData<VertexFormat>>(&pOut[i],
                                                       pbIn + i * stride);
   }
 }
@@ -181,9 +181,9 @@ template <bool ColorMaterial, eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
 inline void TNL::processLightingOneSided(uint32_t count) {
 
-  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
+  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
   auto pcFrontColors =
-      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
+      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEX_FRONTCOLOR]);
 
   VECTOR3 vNormal;
   VECTOR4 vVertexColor;
@@ -213,7 +213,7 @@ inline void TNL::processLightingOneSided(uint32_t count) {
     VECTOR4 vResult;
 
     if constexpr (NormalFormat != VERTEX_UNKNOWN) {
-      TDecodeVertex<VECTOR3, VertexData<NormalFormat>>(
+      DecodeVertex<VECTOR3, VertexData<NormalFormat>>(
           &vNormal, pbNormal + i * normalStride);
 
       // Transform the normal to world space
@@ -227,7 +227,7 @@ inline void TNL::processLightingOneSided(uint32_t count) {
 
     if constexpr (ColorMaterial) {
       if constexpr (ColorFormat != VERTEX_UNKNOWN) {
-        TDecodeVertex<VECTOR4, VertexData<ColorFormat>>(
+        DecodeVertex<VECTOR4, VertexData<ColorFormat>>(
             &vVertexColor, pbColor + i * colorStride);
         vVertexColor.x *= vLightModelAmbient_.x;
         vVertexColor.y *= vLightModelAmbient_.y;
@@ -268,11 +268,11 @@ template <bool ColorMaterial, eVertexFormat ColorFormat,
           eVertexFormat NormalFormat>
 inline void TNL::processLightingTwoSided(uint32_t count) {
 
-  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
+  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
   auto pcFrontColors =
-      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
+      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEX_FRONTCOLOR]);
   auto pcBackColors =
-      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_BACKCOLOR]);
+      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEX_BACKCOLOR]);
 
   VECTOR3 vNormal;
   VECTOR4 vVertexColor;
@@ -302,7 +302,7 @@ inline void TNL::processLightingTwoSided(uint32_t count) {
     VECTOR4 vResults[2];
 
     if constexpr (NormalFormat != VERTEX_UNKNOWN) {
-      TDecodeVertex<VECTOR3, VertexData<NormalFormat>>(
+      DecodeVertex<VECTOR3, VertexData<NormalFormat>>(
           &vNormal, pbNormal + i * normalStride);
 
       // Transform the normal to world space
@@ -316,7 +316,7 @@ inline void TNL::processLightingTwoSided(uint32_t count) {
 
     if constexpr (ColorMaterial) {
       if constexpr (ColorFormat != VERTEX_UNKNOWN) {
-        TDecodeVertex<VECTOR4, VertexData<ColorFormat>>(
+        DecodeVertex<VECTOR4, VertexData<ColorFormat>>(
             &vVertexColor, pbColor + i * colorStride);
         vVertexColor.x *= vLightModelAmbient_.x;
         vVertexColor.y *= vLightModelAmbient_.y;
@@ -370,13 +370,13 @@ inline void TNL::processLightingTwoSided(uint32_t count) {
 template <eVertexFormat VertexFormat>
 void TNL::processVertexColor(uint32_t count) {
   auto pcFrontColors =
-      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
+      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEX_FRONTCOLOR]);
   auto pbIn = colorDecode_.pBits;
   auto stride = colorDecode_.Stride;
 
   for (uint32_t i = 0; i < count; ++i) {
     VECTOR4 vColor;
-    TDecodeVertex<VECTOR4, VertexData<VertexFormat>>(&vColor,
+    DecodeVertex<VECTOR4, VertexData<VertexFormat>>(&vColor,
                                                       pbIn + i * stride);
 
     // Clamp the color
@@ -397,7 +397,7 @@ template <bool Transform, eVertexFormat VertexFormat>
 void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
                            uint32_t count) {
   auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
-      pbVertexData_[VERTEXDATA_TEXCOORD0 + dstIndex]);
+      pbVertexData_[VERTEX_TEXCOORD0 + dstIndex]);
   auto &transform = pMsTexCoords_[srcIndex]->getMatrix();
 
   auto pbIn = texCoordDecodes_[srcIndex].pBits;
@@ -406,7 +406,7 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
   for (uint32_t i = 0; i < count; ++i) {
     typename VertexData<VertexFormat>::Output vIn;
 
-    TDecodeVertex<typename VertexData<VertexFormat>::Output,
+    DecodeVertex<typename VertexData<VertexFormat>::Output,
                   VertexData<VertexFormat>>(&vIn, pbIn + i * stride);
 
     if constexpr (Transform) {
@@ -429,13 +429,13 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
 template <bool QuadraticAttenuation, eVertexFormat VertexFormat>
 void TNL::processPointSize(uint32_t count) {
   auto pfPointSizes =
-      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
+      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEX_POINTSIZE]);
   auto &vAttenuation = pointParams_.vAttenuation;
   const VECTOR3 *pvEyePos;
   floatf fInvAtt;
 
   if constexpr (QuadraticAttenuation) {
-    pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
+    pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
   } else {
     fInvAtt = vAttenuation.x;
     if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
@@ -449,7 +449,7 @@ void TNL::processPointSize(uint32_t count) {
   for (uint32_t i = 0; i < count; ++i) {
     VECTOR1 vPointSize;
 
-    TDecodeVertex<VECTOR1, VertexData<VertexFormat>>(&vPointSize,
+    DecodeVertex<VECTOR1, VertexData<VertexFormat>>(&vPointSize,
                                                       pbIn + i * stride);
     if constexpr (QuadraticAttenuation) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
@@ -469,8 +469,8 @@ void TNL::processPointSize(uint32_t count) {
 
 template <eFogMode FogMode> void TNL::processFog(uint32_t count) {
 
-  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
-  auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);
+  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
+  auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);
 
   if constexpr (FogMode == FogLinear) {
     auto fFogEnd = fog_.getFactor(GL_FOG_END);

@@ -57,7 +57,7 @@ static void init_GLES(void) {
   SDL_GetWindowWMInfo(glesWindow, &sysInfo);
   glContext = eglCreateContext(glDisplay, glConfig, EGL_NO_CONTEXT, nullptr);
   glSurface = eglCreateWindowSurface(
-      glDisplay, glConfig, (EGLNativeWindowType)sysInfo.info.x11.window, 0);
+      glDisplay, glConfig, static_cast<EGLNativeWindowType>(sysInfo.info.x11.window), 0);
   eglMakeCurrent(glDisplay, glSurface, glSurface, glContext);
 }
 

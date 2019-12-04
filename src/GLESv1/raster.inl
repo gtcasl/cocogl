@@ -18,7 +18,7 @@ template <eClipFlags ClipPlane>
 inline uint32_t Rasterizer::clipTriangle(uint32_t nNumVertices, uint32_t *pSrc,
                                          uint32_t *pDst, uint32_t *pTmp) {
   auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
   int coord = ClipPlane >> 1;
   static constexpr bool Signed = (ClipPlane & 1) != 0;

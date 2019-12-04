@@ -17,12 +17,12 @@
 #include "tnl.inl"
 
 static const PfnDecodePosition g_decodePosition[] = {
-    TDecodePosition<VERTEX_BYTE2>,  TDecodePosition<VERTEX_BYTE3>,
-    TDecodePosition<VERTEX_BYTE4>,  TDecodePosition<VERTEX_SHORT2>,
-    TDecodePosition<VERTEX_SHORT3>, TDecodePosition<VERTEX_SHORT4>,
-    TDecodePosition<VERTEX_FIXED2>, TDecodePosition<VERTEX_FIXED3>,
-    TDecodePosition<VERTEX_FIXED4>, TDecodePosition<VERTEX_FLOAT2>,
-    TDecodePosition<VERTEX_FLOAT3>, TDecodePosition<VERTEX_FLOAT4>,
+    DecodePosition<VERTEX_BYTE2>,  DecodePosition<VERTEX_BYTE3>,
+    DecodePosition<VERTEX_BYTE4>,  DecodePosition<VERTEX_SHORT2>,
+    DecodePosition<VERTEX_SHORT3>, DecodePosition<VERTEX_SHORT4>,
+    DecodePosition<VERTEX_FIXED2>, DecodePosition<VERTEX_FIXED3>,
+    DecodePosition<VERTEX_FIXED4>, DecodePosition<VERTEX_FLOAT2>,
+    DecodePosition<VERTEX_FLOAT3>, DecodePosition<VERTEX_FLOAT4>,
 };
 
 static const TNL::PfnDecodeVertices g_processLighting[] = {
@@ -144,11 +144,11 @@ GLenum TNL::setupTNLStates(GLenum mode, int first, uint32_t count) {
     return GL_INVALID_OPERATION;
   }
 
-  uint32_t uiFormatType = (positionArray_.Format - VERTEX_BYTE2) / 4;
-  uint32_t uiFormatSize = positionArray_.Format - 1 - uiFormatType * 4;
-  uint32_t uiFunc = uiFormatType * 3 + uiFormatSize - 1;
-  assert(uiFunc < __countof(g_decodePosition));
-  pfnDecodePosition_ = g_decodePosition[uiFunc];
+  uint32_t fmtType = (positionArray_.Format - VERTEX_BYTE2) / 4;
+  uint32_t fmtSize = positionArray_.Format - 1 - fmtType * 4;
+  uint32_t func = fmtType * 3 + fmtSize - 1;
+  assert(func < __countof(g_decodePosition));
+  pfnDecodePosition_ = g_decodePosition[func];
 
   uint32_t numVertives = count + CLIP_BUFFER_SIZE;
 
@@ -156,16 +156,16 @@ GLenum TNL::setupTNLStates(GLenum mode, int first, uint32_t count) {
 
   uint8_t *pbVertexData = nullptr;
 
-  pbVertexData_[VERTEXDATA_FLAGS] = pbVertexData;
+  pbVertexData_[VERTEX_FLAGS] = pbVertexData;
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(uint16_t), 4);
 
-  pbVertexData_[VERTEXDATA_WORLDPOS] = pbVertexData;
+  pbVertexData_[VERTEX_WORLDPOS] = pbVertexData;
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(VECTOR4), 4);
 
-  pbVertexData_[VERTEXDATA_CLIPPOS] = pbVertexData;
+  pbVertexData_[VERTEX_CLIPPOS] = pbVertexData;
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(VECTOR4), 4);
 
-  pbVertexData_[VERTEXDATA_SCREENPOS] = pbVertexData;
+  pbVertexData_[VERTEX_SCREENPOS] = pbVertexData;
   pbVertexData = __alignPtr(pbVertexData + numVertives * sizeof(RDVECTOR), 4);
 
   if (dirtyFlags_.ModelViewProj) {
@@ -215,7 +215,7 @@ GLenum TNL::setupTNLStates(GLenum mode, int first, uint32_t count) {
   // Update vertex buffer offsets
   {
     uint32_t offset = vertexBuffer_.data() - (uint8_t *)nullptr;
-    for (uint32_t i = 0; i < VERTEXDATA_SIZE; ++i) {
+    for (uint32_t i = 0; i < VERTEX_SIZE; ++i) {
       pbVertexData_[i] += offset;
     }
     pbVertexColor_ += offset;
@@ -227,13 +227,10 @@ GLenum TNL::setupTNLStates(GLenum mode, int first, uint32_t count) {
 void TNL::processVertices(uint32_t count) {
   auto flags = TNLFlags_;
 
-  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
-  auto pvWorldPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_WORLDPOS]);
-  auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
-  auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
+  auto pvWorldPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_WORLDPOS]);
+  auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
 
   // Decode vertices
   (pfnDecodePosition_)(pvWorldPos, positionDecode_.pBits,
@@ -248,7 +245,7 @@ void TNL::processVertices(uint32_t count) {
     // Compute frustum clipping flags
     auto clipFlags = this->CalcClipFlags(pvClipPos[i]);
     clipUnion |= clipFlags;
-    pwFlags[i] = (uint16_t)clipFlags;
+    pwFlags[i] = static_cast<uint16_t>(clipFlags);
   }
 
   if (flags.UserClipPlanes) {
@@ -320,9 +317,9 @@ uint32_t TNL::CalcClipFlags(const VECTOR4 &vPosition) {
 uint32_t TNL::calcUserClipFlags(uint32_t count) {
   uint32_t clipUnion = 0;
 
-  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
   auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
   for (uint32_t i = 0; i < count; ++i) {
     uint32_t clipFlags = 0;
@@ -383,8 +380,8 @@ void TNL::transformEyeSpace(uint32_t count) {
   auto &matEyeXform = pMsModelView_->getMatrix();
 
   auto pvWorldPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_WORLDPOS]);
-  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_WORLDPOS]);
+  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
 
   if (TNLFlags_.EyeSpace) {
     for (uint32_t i = 0; i < count; ++i) {
@@ -400,9 +397,9 @@ void TNL::transformEyeSpace(uint32_t count) {
 }
 
 void TNL::processPointSize(uint32_t count) {
-  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
+  auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
   auto pfPointSizes =
-      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
+      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEX_POINTSIZE]);
 
   auto &vAttenuation = pointParams_.vAttenuation;
 
@@ -432,7 +429,7 @@ void TNL::processPointSize(uint32_t count) {
 
 void TNL::processColor(uint32_t count) {
   auto pcFrontColors =
-      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEXDATA_FRONTCOLOR]);
+      reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEX_FRONTCOLOR]);
 
   // Clamp the color
   ColorARGB cColor(Math::ToUNORM8(Math::Sat(vColor_.w)),
@@ -832,7 +829,7 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
                            uint32_t count) {
   auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
-      pbVertexData_[VERTEXDATA_TEXCOORD0 + dstIndex]);
+      pbVertexData_[VERTEX_TEXCOORD0 + dstIndex]);
 
   auto vIn = vTexCoords_[srcIndex];
 
@@ -865,19 +862,19 @@ GLenum TNL::updatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
     TNLFlags_.EyeSpaceZ = 1;
   }
 
-  pbVertexData_[VERTEXDATA_POINTSIZE] = *ppbVertexData;
+  pbVertexData_[VERTEX_POINTSIZE] = *ppbVertexData;
   *ppbVertexData = __alignPtr(
       *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(fixed4), 4);
 
   if (pointSizeDecode_.pBits) {
-    uint32_t uiFunc = (pointSizeArray_.Format - VERTEX_FIXED) / 4;
+    uint32_t func = (pointSizeArray_.Format - VERTEX_FIXED) / 4;
 
     if (TNLFlags_.PointSizeQAttn) {
-      uiFunc += 2;
+      func += 2;
     }
 
-    assert(uiFunc < __countof(g_processPointSize));
-    pfnPointSize_ = g_processPointSize[uiFunc];
+    assert(func < __countof(g_processPointSize));
+    pfnPointSize_ = g_processPointSize[func];
   } else {
     pfnPointSize_ = &TNL::processPointSize;
   }
@@ -900,7 +897,7 @@ GLenum TNL::updateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
     colorDecode_.pBits = nullptr;
   }
 
-  pbVertexData_[VERTEXDATA_FRONTCOLOR] = *ppbVertexData;
+  pbVertexData_[VERTEX_FRONTCOLOR] = *ppbVertexData;
   pbVertexColor_ = *ppbVertexData;
   *ppbVertexData = __alignPtr(
       *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
@@ -915,9 +912,9 @@ GLenum TNL::updateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
     }
   } else {
     if (colorDecode_.pBits) {
-      uint32_t uiFunc = (colorArray_.Format - VERTEX_FIXED4) / 4;
-      assert(uiFunc < __countof(g_processVertexColor));
-      pfnColor_ = g_processVertexColor[uiFunc];
+      uint32_t func = (colorArray_.Format - VERTEX_FIXED4) / 4;
+      assert(func < __countof(g_processVertexColor));
+      pfnColor_ = g_processVertexColor[func];
     } else {
       pfnColor_ = &TNL::processColor;
     }
@@ -969,34 +966,34 @@ GLenum TNL::updateLighting(uint8_t **ppbVertexData, int first, uint32_t count) {
     }
   }
 
-  uint32_t uiFunc = 0;
+  uint32_t func = 0;
 
   if (normalDecode_.pBits) {
-    uiFunc = 1 + (normalArray_.Format - VERTEX_BYTE3) / 4;
+    func = 1 + (normalArray_.Format - VERTEX_BYTE3) / 4;
   }
 
   if (caps_.ColorMaterial) {
-    uint32_t _uiFunc = 1;
+    uint32_t _func = 1;
 
     if (colorDecode_.pBits) {
-      _uiFunc += 1 + (normalArray_.Format - VERTEX_FIXED4) / 4;
+      _func += 1 + (normalArray_.Format - VERTEX_FIXED4) / 4;
     }
 
-    uiFunc += _uiFunc * 5;
+    func += _func * 5;
   }
 
   if (caps_.TwoSidedLighting) {
     cullStates_.bTwoSidedLighting = true;
 
-    pbVertexData_[VERTEXDATA_BACKCOLOR] = *ppbVertexData;
+    pbVertexData_[VERTEX_BACKCOLOR] = *ppbVertexData;
     *ppbVertexData = __alignPtr(
         *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
 
-    uiFunc += 5 * 5;
+    func += 5 * 5;
   }
 
-  assert(uiFunc < __countof(g_processLighting));
-  pfnColor_ = g_processLighting[uiFunc];
+  assert(func < __countof(g_processLighting));
+  pfnColor_ = g_processLighting[func];
 
   return GL_NO_ERROR;
 }
@@ -1017,22 +1014,21 @@ GLenum TNL::updateTexcoords(uint8_t **ppbVertexData, int first,
         texCoordDecodes_[i].pBits = nullptr;
       }
 
-      pbVertexData_[VERTEXDATA_TEXCOORD0 + j++] = *ppbVertexData;
+      pbVertexData_[VERTEX_TEXCOORD0 + j++] = *ppbVertexData;
       *ppbVertexData = __alignPtr(
           *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(TEXCOORD2), 4);
 
       if (texCoordDecodes_[i].pBits) {
-        uint32_t uiFormatType = (texCoordArrays_[i].Format - VERTEX_BYTE2) / 4;
-        uint32_t uiFormatSize =
-            texCoordArrays_[i].Format - 1 - uiFormatType * 4;
-        uint32_t uiFunc = uiFormatType * 3 + uiFormatSize - 1;
+        uint32_t fmtType = (texCoordArrays_[i].Format - VERTEX_BYTE2) / 4;
+        uint32_t fmtSize = texCoordArrays_[i].Format - 1 - fmtType * 4;
+        uint32_t func = fmtType * 3 + fmtSize - 1;
 
         if (!pMsTexCoords_[i]->isIdentity()) {
-          uiFunc += 12;
+          func += 12;
         }
 
-        assert(uiFunc < __countof(g_processTexcoords));
-        pfnTexCoords_[i] = g_processTexcoords[uiFunc];
+        assert(func < __countof(g_processTexcoords));
+        pfnTexCoords_[i] = g_processTexcoords[func];
       } else {
         pfnTexCoords_[i] = &TNL::processTexCoords;
       }
@@ -1061,13 +1057,13 @@ void TNL::updateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
     dirtyFlags_.FogRatio = 0;
   }
 
-  pbVertexData_[VERTEXDATA_FOG] = *ppbVertexData;
+  pbVertexData_[VERTEX_FOG] = *ppbVertexData;
   *ppbVertexData = __alignPtr(
       *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(float20), 4);
 
-  uint32_t uiFunc = fog_.Mode;
-  assert(uiFunc < __countof(g_processFog));
-  pfnFog_ = g_processFog[uiFunc];
+  uint32_t func = fog_.Mode;
+  assert(func < __countof(g_processFog));
+  pfnFog_ = g_processFog[func];
 }
 
 void TNL::updateModelViewInvT44() {

@@ -1775,7 +1775,7 @@ GL_API void GL_APIENTRY glScalef(GLfloat x, GLfloat y, GLfloat z) {
 GL_API void GL_APIENTRY glTexEnvf(GLenum env, GLenum pname, GLfloat param) {
   __profileAPI(" - %s( env=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TexEnvToString(env), TexEnvParamToString(pname),
-               TexEnvValueToString((GLint)param));
+               TexEnvValueToString(static_cast<GLint>(param)));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
@@ -1801,7 +1801,7 @@ GL_API void GL_APIENTRY glTexParameterf(GLenum target, GLenum pname,
                                         GLfloat param) {
   __profileAPI(" - %s( target=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TextureTypeToString(target), TexParamToString(pname),
-               TexParamValueToString((GLint)param));
+               TexParamValueToString(static_cast<float>(GLint>(param))));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {

@@ -99,7 +99,7 @@ bool Mesh::OnInitialize(const char *fileName) {
 
     // Convert data to optimized data types for OpenGL ES (GLfixed and GLshort)
     for (uint32_t i = 0; i < num_indices; i++) {
-      pIndices_[i] = (GLshort)indices[i];
+      pIndices_[i] = static_cast<GLshort>(indices[i]);
     }
 
     num__indices = num_indices;

@@ -31,7 +31,7 @@ void GetTexelColorLn(Color4 *pOut, const SurfaceDesc &surface, fixedRX fU,
 //////////////////////////////////////////////////////////////////////////////
 
 template <ePixelFormat Format, eBlendOp OpSrc, eBlendOp OpDst>
-void TBlend(Color4 *pInOut, const uint8_t *pCB) {
+void Blender(Color4 *pInOut, const uint8_t *pCB) {
   Color4 cDstColor, cSrcCoeff, cDstCoeff;
 
   Format::ConvertFrom<Format, true>(&cDstColor, pCB);

@@ -17,7 +17,7 @@
 #include "raster.inl"
 
 void Rasterizer::drawLine(uint32_t i0, uint32_t i1) {
-  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
   uint32_t flags0 = pwFlags[i0];
   uint32_t flags1 = pwFlags[i1];
 
@@ -37,14 +37,14 @@ void Rasterizer::drawLine(uint32_t i0, uint32_t i1) {
 }
 
 void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
-  LineGradient gradient;
+  LineGradient g;
 
   // Setup the line attributes
-  if (!this->setupLineAttributes(&gradient, i0, i1))
+  if (!this->setupLineAttributes(&g, i0, i1))
     return;
 
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
 
@@ -70,7 +70,7 @@ void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     // X-axis sort
     const RDVECTOR *vertices[2] = {&v0, &v1};
     if (i4dx < Math::Zero<fixed4>()) {
-      gradient.fRatio = -gradient.fRatio;
+      g.fRatio = -g.fRatio;
       vertices[0] = &v1;
       vertices[1] = &v0;
     }
@@ -80,7 +80,7 @@ void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     auto i4x1 = vertices[1]->x;
     auto i4y1 = vertices[1]->y;
 
-    auto fddy = Math::Mul<fixedDDA>(i4y1 - i4y0, gradient.fRatio);
+    auto fddy = Math::Mul<fixedDDA>(i4y1 - i4y0, g.fRatio);
     auto x0 = std::max<int>(Math::Ceil<int>(i4x0 - Math::Half<fixed4>()),
                               scissorRect_.left);
     auto x1 = std::min<int>(Math::Ceil<int>(i4x1 - Math::Half<fixed4>()),
@@ -109,7 +109,7 @@ void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     // Y-axis sort
     const RDVECTOR *vertices[2] = {&v0, &v1};
     if (i4dy < Math::Zero<fixed4>()) {
-      gradient.fRatio = -gradient.fRatio;
+      g.fRatio = -g.fRatio;
       vertices[0] = &v1;
       vertices[1] = &v0;
     }
@@ -119,7 +119,7 @@ void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
     auto i4x1 = vertices[1]->x;
     auto i4y1 = vertices[1]->y;
 
-    auto fddx = Math::Mul<fixedDDA>(i4x1 - i4x0, gradient.fRatio);
+    auto fddx = Math::Mul<fixedDDA>(i4x1 - i4x0, g.fRatio);
     auto y0 = std::max<int>(Math::Ceil<int>(i4y0 - Math::Half<fixed4>()),
                               scissorRect_.top);
     auto y1 = std::min<int>(Math::Ceil<int>(i4y1 - Math::Half<fixed4>()),
@@ -153,7 +153,7 @@ bool Rasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
   auto rasterFlags = rasterID_.Flags;
   auto pRegister = rasterData_.Registers;
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
 
   auto &v0 = pvScreenPos[i0];
   auto &v1 = pvScreenPos[i1];
@@ -169,7 +169,7 @@ bool Rasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
       return false;
     }
 
-    pGradient->fRatio = Math::One<floatQ>() / i4dx;
+    pGradient->fRatio = Math::Inverse<floatQ>(i4dx);
     attribIdx = 0;
   } else {
     // Early out for empty lines
@@ -177,7 +177,7 @@ bool Rasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
       return false;
     }
 
-    pGradient->fRatio = Math::One<floatQ>() / i4dy;
+    pGradient->fRatio = Math::Inverse<floatQ>(i4dy);
     attribIdx = 1;
   }
 
@@ -234,7 +234,7 @@ bool Rasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
       assert(i < MAX_TEXTURES);
 
       auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(
-          pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
+          pbVertexData_[VERTEX_TEXCOORD0 + i]);
       auto &uv0 = vTexCoords[i0];
       auto &uv1 = vTexCoords[i1];
 
@@ -253,7 +253,7 @@ bool Rasterizer::setupLineAttributes(LineGradient *pGradient, uint32_t i0,
   }
 
   if (rasterFlags.Fog) {
-    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);
+    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);
     auto fFog0 = pfFogs[i0];
     auto fFog1 = pfFogs[i1];
 

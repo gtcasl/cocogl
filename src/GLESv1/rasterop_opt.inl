@@ -40,17 +40,17 @@ bool DoStencilTest(uint32_t depthValue, uint32_t stencilRef,
     if (DoCompare<(DepthTest ? DepthFunc
                              : static_cast<uint32_t>(COMPARE_ALWAYS))>(
             depthValue, _depthValue)) {
-      stencilResult = TStencilOp<StencilPass>(stencilValue, stencilRef);
+      stencilResult = DoStencilOp<StencilPass>(stencilValue, stencilRef);
 
       if constexpr (DepthTest && DepthWrite) {
         writeMask |= 0xffff;
       }
     } else {
-      stencilResult = TStencilOp<StencilZFail>(stencilValue, stencilRef);
+      stencilResult = DoStencilOp<StencilZFail>(stencilValue, stencilRef);
       bStencilTest = false;
     }
   } else {
-    stencilResult = TStencilOp<StencilFail>(stencilValue, stencilRef);
+    stencilResult = DoStencilOp<StencilFail>(stencilValue, stencilRef);
   }
 
   if constexpr (DepthWrite || StencilWrite) {
@@ -152,13 +152,13 @@ bool DoAlphaTest(uint32_t alphaValue, uint32_t alphaRef) {
 
 template <uint32_t Format, uint32_t BlendSrc, uint32_t BlendDst,
           bool NativeColor>
-class TBlend {
+class Blender {
 public:
   inline static uint32_t Execute(const Color4 &cColor, uint32_t dstColor);
 };
 
 template <uint32_t BlendSrc, uint32_t BlendDst, bool NativeColor>
-class TBlend<FORMAT_R5G6B5, BlendSrc, BlendDst, NativeColor> {
+class Blender<FORMAT_R5G6B5, BlendSrc, BlendDst, NativeColor> {
 private:
   enum {
     ZeroBlendSrc = (BLEND_ZERO == BlendSrc) && (BLEND_SRC_COLOR != BlendDst) &&
@@ -645,7 +645,7 @@ public:
 
         if constexpr (Blend) {
           // Execute pixel blend
-          color = TBlend<ColorFormat, BlendSrc, BlendDst, NativeColor>::Execute(
+          color = Blender<ColorFormat, BlendSrc, BlendDst, NativeColor>::Execute(
               cColor, dstColor);
         } else {
           if constexpr (NativeColor) {
@@ -1170,7 +1170,7 @@ public:
           if constexpr (Blend) {
             // Execute pixel blend
             color =
-                TBlend<ColorFormat, BlendSrc, BlendDst, NativeColor>::Execute(
+                Blender<ColorFormat, BlendSrc, BlendDst, NativeColor>::Execute(
                     cColor, dstColor);
           } else {
             if constexpr (NativeColor) {
@@ -1635,7 +1635,7 @@ public:
 
         if constexpr (Blend) {
           // Execute pixel blend
-          color = TBlend<ColorFormat, BlendSrc, BlendDst, NativeColor>::Execute(
+          color = Blender<ColorFormat, BlendSrc, BlendDst, NativeColor>::Execute(
               cColor, dstColor);
         } else {
           if constexpr (NativeColor) {
@@ -2184,7 +2184,7 @@ public:
           if constexpr (Blend) {
             // Execute pixel blend
             color =
-                TBlend<ColorFormat, BlendSrc, BlendDst, NativeColor>::Execute(
+                Blender<ColorFormat, BlendSrc, BlendDst, NativeColor>::Execute(
                     cColor, dstColor);
           } else {
             if constexpr (NativeColor) {

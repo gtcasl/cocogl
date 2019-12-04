@@ -189,19 +189,19 @@ public:
   }
 
   friend auto operator*(Fixed lhs, float rhs) {
-    return Fixed(static_cast<float>(lhs) * rhs);
+    return static_cast<float>(lhs) * rhs;
   }
 
   friend auto operator*(float lhs, Fixed rhs) {
-    return Fixed(lhs * static_cast<float>(rhs));
+    return lhs * static_cast<float>(rhs);
   }
 
   friend auto operator/(Fixed lhs, float rhs) {
-    return Fixed(static_cast<float>(lhs) / rhs);
+    return static_cast<float>(lhs) / rhs;
   }
 
   friend auto operator/(float lhs, Fixed rhs) {
-    return Fixed(lhs / static_cast<float>(rhs));
+    return lhs / static_cast<float>(rhs);
   }
 
   friend auto operator*(Fixed lhs, char rhs) {

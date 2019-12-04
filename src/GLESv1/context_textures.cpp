@@ -133,7 +133,7 @@ void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
     return;
   }
 
-  if ((GLenum)internalformat != format) {
+  if (internalformat != static_cast<GLint>(format)) {
     __glError(GL_INVALID_OPERATION, "GLContext::setTexImage2D() failed, the "
                                     "internalformat and format are "
                                     "different.\r\n");

@@ -16,13 +16,13 @@
 #include "raster.hpp"
 #include "raster.inl"
 
-template <typename R> inline float TScalar(float lhs, float rhs) {
+template <typename R> inline float LerpFactor(float lhs, float rhs) {
   assert(lhs != rhs);
   return static_cast<R>(lhs / (lhs - rhs));
 }
 
 template <typename R, uint32_t T>
-inline R TScalar(Fixed<T> lhs, Fixed<T> rhs) {
+inline R LerpFactor(Fixed<T> lhs, Fixed<T> rhs) {
   assert(lhs.data() != rhs.data());
   int diff = lhs.data() - rhs.data();
   return R::make((static_cast<int64_t>(lhs.data()) << R::FRAC) / diff);
@@ -74,7 +74,7 @@ bool Rasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 
   if (CULL_FRONT_AND_BACK != cullStates.CullFace) {
     auto pvClipPos =
-        reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
+        reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
     const VECTOR4 &v0 = pvClipPos[i0];
     const VECTOR4 &v1 = pvClipPos[i1];
     const VECTOR4 &v2 = pvClipPos[i2];
@@ -109,7 +109,7 @@ bool Rasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   }
 
   uint32_t colorIndex = cullStates.bTwoSidedLighting && bIsCulled;
-  pbVertexColor_ = pbVertexData_[VERTEXDATA_COLOR0 + colorIndex];
+  pbVertexColor_ = pbVertexData_[VERTEX_COLOR0 + colorIndex];
 
   return true;
 }
@@ -117,10 +117,10 @@ bool Rasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
                                    uint32_t clipUnion) {
   auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
-  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
 
   uint32_t iNext = clipVerticesBaseIndex_;
   uint32_t iFrom = i0;
@@ -211,10 +211,10 @@ void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
 void Rasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
                                        uint32_t clipUnion) {
   auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
-  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
 
   uint32_t clipVertices[2][CLIP_BUFFER_SIZE];
   uint32_t iTmpVertices = clipVerticesBaseIndex_;
@@ -306,7 +306,7 @@ uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
                                   uint32_t *pSrc, uint32_t *pDst,
                                   uint32_t *pTmp) {
   auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
   floatf fDistA, fDistB;
 
@@ -350,18 +350,18 @@ uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
 
 void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
                                    floatf fDistB, uint32_t i2) {
-  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
   auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
+      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
-  auto fScalar = TScalar<float30>(fDistA, fDistB);
-  assert((fScalar >= Math::Zero<float30>()) &&
-         (fScalar <= Math::One<float30>()));
+  auto factor = LerpFactor<float30>(fDistA, fDistB);
+  assert((factor >= Math::Zero<float30>()) &&
+         (factor <= Math::One<float30>()));
 
-  pvClipPos[i2].x = Math::Lerpf(pvClipPos[i0].x, pvClipPos[i1].x, fScalar);
-  pvClipPos[i2].y = Math::Lerpf(pvClipPos[i0].y, pvClipPos[i1].y, fScalar);
-  pvClipPos[i2].z = Math::Lerpf(pvClipPos[i0].z, pvClipPos[i1].z, fScalar);
-  pvClipPos[i2].w = Math::Lerpf(pvClipPos[i0].w, pvClipPos[i1].w, fScalar);
+  pvClipPos[i2].x = Math::Lerpf(pvClipPos[i0].x, pvClipPos[i1].x, factor);
+  pvClipPos[i2].y = Math::Lerpf(pvClipPos[i0].y, pvClipPos[i1].y, factor);
+  pvClipPos[i2].z = Math::Lerpf(pvClipPos[i0].z, pvClipPos[i1].z, factor);
+  pvClipPos[i2].w = Math::Lerpf(pvClipPos[i0].w, pvClipPos[i1].w, factor);
 
   RASTERFLAGS rasterFlags = rasterID_.Flags;
 
@@ -369,26 +369,26 @@ void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
     auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_);
 
     pcColors[i2] =
-        ColorARGB(Math::Lerp(pcColors[i0].a, pcColors[i1].a, fScalar),
-                  Math::Lerp(pcColors[i0].r, pcColors[i1].r, fScalar),
-                  Math::Lerp(pcColors[i0].g, pcColors[i1].g, fScalar),
-                  Math::Lerp(pcColors[i0].b, pcColors[i1].b, fScalar));
+        ColorARGB(Math::Lerp(pcColors[i0].a, pcColors[i1].a, factor),
+                  Math::Lerp(pcColors[i0].r, pcColors[i1].r, factor),
+                  Math::Lerp(pcColors[i0].g, pcColors[i1].g, factor),
+                  Math::Lerp(pcColors[i0].b, pcColors[i1].b, factor));
   }
 
   if (rasterFlags.NumTextures) {
     for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
       auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
-          pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
+          pbVertexData_[VERTEX_TEXCOORD0 + i]);
       pvTexCoords[i2].m[0] =
-          Math::Lerpf(pvTexCoords[i0].m[0], pvTexCoords[i1].m[0], fScalar);
+          Math::Lerpf(pvTexCoords[i0].m[0], pvTexCoords[i1].m[0], factor);
       pvTexCoords[i2].m[1] =
-          Math::Lerpf(pvTexCoords[i0].m[1], pvTexCoords[i1].m[1], fScalar);
+          Math::Lerpf(pvTexCoords[i0].m[1], pvTexCoords[i1].m[1], factor);
     }
   }
 
   if (rasterFlags.Fog) {
-    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);
-    pfFogs[i2] = Math::Lerpf(pfFogs[i0], pfFogs[i1], fScalar);
+    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);
+    pfFogs[i2] = Math::Lerpf(pfFogs[i0], pfFogs[i1], factor);
   }
 
   pwFlags[i2] = 1;

@@ -134,7 +134,7 @@ GLenum Surface2D::initialize(uint32_t width, uint32_t height,
   }
 
   if (16 == paletteSize) {
-    TBitPtr<uint8_t, 4> pb4Bits(pbPixels);
+    BitPtr<uint8_t, 4> pb4Bits(pbPixels);
 
     uint8_t *_pbBits = pbBits;
     for (uint32_t n = surfaceSize; n--;) {

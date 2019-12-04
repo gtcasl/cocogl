@@ -27,7 +27,7 @@ inline void GLContext::setTexParameter(GLenum target, GLenum pname,
     return;
   }
 
-  GLenum param = TToGLenum<T>(pParams[0]);
+  GLenum param = ToGLenum<T>(pParams[0]);
 
   auto pTexture = texUnits_[activeTexture_].getTexture();
   assert(pTexture);
@@ -124,7 +124,7 @@ template <typename T>
 inline void GLContext::setTexEnv(GLenum env, GLenum pname, const T *pParams) {
   assert(pParams);
 
-  GLenum param = TToGLenum<T>(pParams[0]);
+  GLenum param = ToGLenum<T>(pParams[0]);
 
   TexUnit &texUnit = texUnits_[activeTexture_];
 

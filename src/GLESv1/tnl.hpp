@@ -172,7 +172,7 @@ protected:
   VertexDecoder texCoordDecodes_[MAX_TEXTURES];
   VertexDecoder pointSizeDecode_;
 
-  uint8_t *pbVertexData_[VERTEXDATA_SIZE];
+  uint8_t *pbVertexData_[VERTEX_SIZE];
   uint8_t *pbVertexColor_;
   uint32_t clipVerticesBaseIndex_;
 

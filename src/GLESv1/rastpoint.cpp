@@ -16,7 +16,7 @@
 #include "raster.hpp"
 
 void Rasterizer::drawPoint(uint32_t index) {
-  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEXDATA_FLAGS]);
+  auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
   uint32_t flags = pwFlags[index];
 
   // Check if the vertex is clipped
@@ -30,9 +30,9 @@ void Rasterizer::drawPoint(uint32_t index) {
 
 void Rasterizer::rasterPoint(uint32_t index) {
   auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEXDATA_SCREENPOS]);
+      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
   auto pfPointSize =
-      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEXDATA_POINTSIZE]);
+      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEX_POINTSIZE]);
 
   auto &vertex = pvScreenPos[index];
   auto fPointSize = pfPointSize[index];
@@ -112,7 +112,7 @@ void Rasterizer::rasterPoint(uint32_t index) {
         pRegisters[1].m[2] = (fDelta >> 1) - fDelta * ymin;
       } else {
         auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(
-            pbVertexData_[VERTEXDATA_TEXCOORD0 + i]);
+            pbVertexData_[VERTEX_TEXCOORD0 + i]);
         const TEXCOORD2 &vTexCoord = vTexCoords[index];
 
         pRegisters[0].m[0] = Math::Zero<fixedRX>();
@@ -129,7 +129,7 @@ void Rasterizer::rasterPoint(uint32_t index) {
   }
 
   if (rasterFlags.Fog) {
-    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEXDATA_FOG]);
+    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);
     auto fFog = pfFogs[index];
 
     pRegisters->m[0] = Math::Zero<fixedRX>();
