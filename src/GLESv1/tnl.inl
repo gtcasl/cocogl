@@ -14,91 +14,91 @@
 //
 #pragma once
 
-template <eVertexFormat> struct TVertexData {};
+template <eVertexFormat> struct VertexData {};
 
-template <> struct TVertexData<VERTEX_UNKNOWN> {};
+template <> struct VertexData<VERTEX_UNKNOWN> {};
 
-template <> struct TVertexData<VERTEX_BYTE> {
+template <> struct VertexData<VERTEX_BYTE> {
   typedef TVector1<char> Input;
   typedef VECTOR1 Output;
 };
 
-template <> struct TVertexData<VERTEX_BYTE2> {
+template <> struct VertexData<VERTEX_BYTE2> {
   typedef TVector2<char> Input;
   typedef VECTOR2 Output;
 };
 
-template <> struct TVertexData<VERTEX_BYTE3> {
+template <> struct VertexData<VERTEX_BYTE3> {
   typedef TVector3<char> Input;
   typedef VECTOR3 Output;
 };
 
-template <> struct TVertexData<VERTEX_BYTE4> {
+template <> struct VertexData<VERTEX_BYTE4> {
   typedef TVector4<char> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct TVertexData<VERTEX_SHORT> {
+template <> struct VertexData<VERTEX_SHORT> {
   typedef TVector1<short> Input;
   typedef VECTOR1 Output;
 };
 
-template <> struct TVertexData<VERTEX_SHORT2> {
+template <> struct VertexData<VERTEX_SHORT2> {
   typedef TVector2<short> Input;
   typedef VECTOR2 Output;
 };
 
-template <> struct TVertexData<VERTEX_SHORT3> {
+template <> struct VertexData<VERTEX_SHORT3> {
   typedef TVector3<short> Input;
   typedef VECTOR3 Output;
 };
 
-template <> struct TVertexData<VERTEX_SHORT4> {
+template <> struct VertexData<VERTEX_SHORT4> {
   typedef TVector4<short> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct TVertexData<VERTEX_FIXED> {
+template <> struct VertexData<VERTEX_FIXED> {
   typedef TVector1<fixed16> Input;
   typedef VECTOR1 Output;
 };
 
-template <> struct TVertexData<VERTEX_FIXED2> {
+template <> struct VertexData<VERTEX_FIXED2> {
   typedef TVector2<fixed16> Input;
   typedef VECTOR2 Output;
 };
 
-template <> struct TVertexData<VERTEX_FIXED3> {
+template <> struct VertexData<VERTEX_FIXED3> {
   typedef TVector3<fixed16> Input;
   typedef VECTOR3 Output;
 };
 
-template <> struct TVertexData<VERTEX_FIXED4> {
+template <> struct VertexData<VERTEX_FIXED4> {
   typedef TVector4<fixed16> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct TVertexData<VERTEX_FLOAT> {
+template <> struct VertexData<VERTEX_FLOAT> {
   typedef TVector1<float> Input;
   typedef VECTOR1 Output;
 };
 
-template <> struct TVertexData<VERTEX_FLOAT2> {
+template <> struct VertexData<VERTEX_FLOAT2> {
   typedef TVector2<float> Input;
   typedef VECTOR2 Output;
 };
 
-template <> struct TVertexData<VERTEX_FLOAT3> {
+template <> struct VertexData<VERTEX_FLOAT3> {
   typedef TVector3<float> Input;
   typedef VECTOR3 Output;
 };
 
-template <> struct TVertexData<VERTEX_FLOAT4> {
+template <> struct VertexData<VERTEX_FLOAT4> {
   typedef TVector4<float> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct TVertexData<VERTEX_RGBA> {
+template <> struct VertexData<VERTEX_RGBA> {
   typedef TVector4<uint8_t> Input;
   typedef VECTOR4 Output;
 };
@@ -145,7 +145,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
 
 template <>
 inline void
-TDecodeVertex<VECTOR4, TVertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut,
+TDecodeVertex<VECTOR4, VertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut,
                                                     const uint8_t *pbIn) {
   __unreferenced(pOut);
   __unreferenced(pbIn);
@@ -153,7 +153,7 @@ TDecodeVertex<VECTOR4, TVertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut,
 
 template <>
 inline void
-TDecodeVertex<VECTOR4, TVertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
+TDecodeVertex<VECTOR4, VertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
                                                  const uint8_t *pbIn) {
   assert(pOut);
   assert(pbIn);
@@ -170,7 +170,7 @@ template <eVertexFormat VertexFormat>
 void TDecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, uint32_t stride,
                      uint32_t count) {
   for (uint32_t i = 0; i < count; ++i) {
-    TDecodeVertex<VECTOR4, TVertexData<VertexFormat>>(&pOut[i],
+    TDecodeVertex<VECTOR4, VertexData<VertexFormat>>(&pOut[i],
                                                       pbIn + i * stride);
   }
 }
@@ -213,7 +213,7 @@ inline void TNL::processLightingOneSided(uint32_t count) {
     VECTOR4 vResult;
 
     if constexpr (NormalFormat != VERTEX_UNKNOWN) {
-      TDecodeVertex<VECTOR3, TVertexData<NormalFormat>>(
+      TDecodeVertex<VECTOR3, VertexData<NormalFormat>>(
           &vNormal, pbNormal + i * normalStride);
 
       // Transform the normal to world space
@@ -227,7 +227,7 @@ inline void TNL::processLightingOneSided(uint32_t count) {
 
     if constexpr (ColorMaterial) {
       if constexpr (ColorFormat != VERTEX_UNKNOWN) {
-        TDecodeVertex<VECTOR4, TVertexData<ColorFormat>>(
+        TDecodeVertex<VECTOR4, VertexData<ColorFormat>>(
             &vVertexColor, pbColor + i * colorStride);
         vVertexColor.x *= vLightModelAmbient_.x;
         vVertexColor.y *= vLightModelAmbient_.y;
@@ -302,7 +302,7 @@ inline void TNL::processLightingTwoSided(uint32_t count) {
     VECTOR4 vResults[2];
 
     if constexpr (NormalFormat != VERTEX_UNKNOWN) {
-      TDecodeVertex<VECTOR3, TVertexData<NormalFormat>>(
+      TDecodeVertex<VECTOR3, VertexData<NormalFormat>>(
           &vNormal, pbNormal + i * normalStride);
 
       // Transform the normal to world space
@@ -316,7 +316,7 @@ inline void TNL::processLightingTwoSided(uint32_t count) {
 
     if constexpr (ColorMaterial) {
       if constexpr (ColorFormat != VERTEX_UNKNOWN) {
-        TDecodeVertex<VECTOR4, TVertexData<ColorFormat>>(
+        TDecodeVertex<VECTOR4, VertexData<ColorFormat>>(
             &vVertexColor, pbColor + i * colorStride);
         vVertexColor.x *= vLightModelAmbient_.x;
         vVertexColor.y *= vLightModelAmbient_.y;
@@ -376,7 +376,7 @@ void TNL::processVertexColor(uint32_t count) {
 
   for (uint32_t i = 0; i < count; ++i) {
     VECTOR4 vColor;
-    TDecodeVertex<VECTOR4, TVertexData<VertexFormat>>(&vColor,
+    TDecodeVertex<VECTOR4, VertexData<VertexFormat>>(&vColor,
                                                       pbIn + i * stride);
 
     // Clamp the color
@@ -404,16 +404,16 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
   auto stride = texCoordDecodes_[srcIndex].Stride;
 
   for (uint32_t i = 0; i < count; ++i) {
-    typename TVertexData<VertexFormat>::Output vIn;
+    typename VertexData<VertexFormat>::Output vIn;
 
-    TDecodeVertex<typename TVertexData<VertexFormat>::Output,
-                  TVertexData<VertexFormat>>(&vIn, pbIn + i * stride);
+    TDecodeVertex<typename VertexData<VertexFormat>::Output,
+                  VertexData<VertexFormat>>(&vIn, pbIn + i * stride);
 
     if constexpr (Transform) {
       Math::Mul(&vIn, vIn, transform);
     }
 
-    if constexpr (TVertexData<VertexFormat>::Output::DIM >= 4) {
+    if constexpr (VertexData<VertexFormat>::Output::DIM >= 4) {
       if (!Math::IsAlmostZero(vIn.w - Math::One<floatf>()) && !Math::IsAlmostZero(vIn.w)) {
         auto fInvW = Math::Inverse<floatf>(vIn.w);
         vIn.x *= fInvW;
@@ -449,7 +449,7 @@ void TNL::processPointSize(uint32_t count) {
   for (uint32_t i = 0; i < count; ++i) {
     VECTOR1 vPointSize;
 
-    TDecodeVertex<VECTOR1, TVertexData<VertexFormat>>(&vPointSize,
+    TDecodeVertex<VECTOR1, VertexData<VertexFormat>>(&vPointSize,
                                                       pbIn + i * stride);
     if constexpr (QuadraticAttenuation) {
       auto fEyeDist = std::abs(pvEyePos[i].z);

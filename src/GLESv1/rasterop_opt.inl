@@ -191,14 +191,14 @@ private:
 
     if constexpr (BlendOp == BLEND_SRC_ALPHA) {
       uint32_t alpha = srcAlpha >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
-      const TColorNative<FORMAT_R5G6B5> c0(inColor);
+      const NColor<FORMAT_R5G6B5> c0(inColor);
       return c0.multiply(alpha);
     }
 
     if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
       uint32_t alpha =
           (0xff - srcAlpha) >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
-      const TColorNative<FORMAT_R5G6B5> c0(inColor);
+      const NColor<FORMAT_R5G6B5> c0(inColor);
       return c0.multiply(alpha);
     }
   }
@@ -224,15 +224,15 @@ public:
 
       if constexpr (AlphaBlendSrc) {
         uint32_t alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
-        const TColorNative<FORMAT_R5G6B5> c0(dstColor);
-        const TColorNative<FORMAT_R5G6B5> c1(srcColor);
+        const NColor<FORMAT_R5G6B5> c0(dstColor);
+        const NColor<FORMAT_R5G6B5> c1(srcColor);
         return c0.lerp(c1, alpha);
       }
 
       if constexpr (AlphaBlendDst) {
         uint32_t alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
-        const TColorNative<FORMAT_R5G6B5> c0(srcColor);
-        const TColorNative<FORMAT_R5G6B5> c1(dstColor);
+        const NColor<FORMAT_R5G6B5> c0(srcColor);
+        const NColor<FORMAT_R5G6B5> c1(dstColor);
         return c0.lerp(c1, alpha);
       }
     } else {

@@ -14,13 +14,13 @@
 //
 #pragma once
 
-template <uint32_t Format> struct TColorNative {
+template <uint32_t Format> struct NColor {
   uint32_t Low;
   uint32_t High;
 
-  TColorNative() {}
+  NColor() {}
 
-  explicit TColorNative(uint32_t value) {
+  explicit NColor(uint32_t value) {
     if constexpr (Format == FORMAT_A8) {
       this->Low = value;
     }
@@ -73,8 +73,8 @@ template <uint32_t Format> struct TColorNative {
     }
   }
 
-  TColorNative<Format> multiply(uint32_t frac) const {
-    TColorNative<Format> result;
+  NColor<Format> multiply(uint32_t frac) const {
+    NColor<Format> result;
 
     if constexpr (Format == FORMAT_A8) {
       result.Low = (this->Low * frac) >> 8;
@@ -104,9 +104,9 @@ template <uint32_t Format> struct TColorNative {
     return result;
   }
 
-  TColorNative<Format> lerp(const TColorNative<Format> &c1,
+  NColor<Format> lerp(const NColor<Format> &c1,
                             uint32_t frac) const {
-    TColorNative<Format> result;
+    NColor<Format> result;
 
     if constexpr (Format == FORMAT_A8) {
       result.Low = this->Low + (((c1.Low - this->Low) * frac) >> 8);
@@ -250,7 +250,7 @@ inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
 }
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-inline TColorNative<Format> GetTexelColorLnX(const SurfaceDesc &surface,
+inline NColor<Format> GetTexelColorLnX(const SurfaceDesc &surface,
                                              fixedRX fU, fixedRX fV) {
   int lerpBits = TFormatInfo<Format>::LERP;
   int lerpMask = (1 << lerpBits) - 1;
@@ -284,12 +284,12 @@ inline TColorNative<Format> GetTexelColorLnX(const SurfaceDesc &surface,
   uint32_t c2 = pBits[y3 + x2];
   uint32_t c3 = pBits[y3 + x3];
 
-  TColorNative<Format> nc0(c0);
-  TColorNative<Format> nc1(c1);
+  NColor<Format> nc0(c0);
+  NColor<Format> nc1(c1);
   nc0 = nc0.lerp(nc1, alpha);
 
-  TColorNative<Format> nc2(c2);
-  TColorNative<Format> nc3(c3);
+  NColor<Format> nc2(c2);
+  NColor<Format> nc3(c3);
   nc2 = nc2.lerp(nc3, alpha);
 
   return nc0.lerp(nc2, beta);
@@ -312,10 +312,10 @@ inline uint32_t GetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
 
 template <uint32_t Filter, uint32_t Format, uint32_t AddressU,
           uint32_t AddressV>
-inline TColorNative<Format> GetMinFilterX(const SurfaceDesc &surface,
+inline NColor<Format> GetMinFilterX(const SurfaceDesc &surface,
                                           fixedRX fU, fixedRX fV) {
   if constexpr (Filter == FILTER_NEAREST) {
-    return TColorNative<Format>(
+    return NColor<Format>(
         GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
   }
 
@@ -384,11 +384,11 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
       int mipLerp =
           (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
-      const TColorNative<Format> c0 =
+      const NColor<Format> c0 =
           GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
               sampler.pMipLevels[mipLevel0], fU, fV);
 
-      const TColorNative<Format> c1 =
+      const NColor<Format> c1 =
           GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
               sampler.pMipLevels[mipLevel1], fU, fV);
 
@@ -403,11 +403,11 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
         int mipLerp =
             (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
-        const TColorNative<Format> c0 =
+        const NColor<Format> c0 =
             GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
                 sampler.pMipLevels[mipLevel0], fU, fV);
 
-        const TColorNative<Format> c1 =
+        const NColor<Format> c1 =
             GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
                 sampler.pMipLevels[mipLevel1], fU, fV);
 

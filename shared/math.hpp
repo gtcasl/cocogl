@@ -615,7 +615,7 @@ floatf RadToDeg(floatf rhs);
 
 namespace detail {
 
-template <typename Type, uint32_t Shift> struct TShiftInverter {
+template <typename Type, uint32_t Shift> struct ShiftInverter {
 public:
   inline static Type call(int value) {
     if constexpr (Shift >= 32) {
@@ -857,8 +857,8 @@ template <typename R, uint32_t F, typename T> class InverseSelect {
 public:
   inline static R Invert(Fixed<F, T> rhs) {
     return R::make(
-        detail::TShiftInverter<typename R::data_type,
-                               Fixed<F, T>::FRAC + R::FRAC>::call(rhs.data()));
+        detail::ShiftInverter<typename R::data_type,
+                              Fixed<F, T>::FRAC + R::FRAC>::call(rhs.data()));
   }
 };
 
