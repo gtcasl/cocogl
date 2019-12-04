@@ -727,7 +727,7 @@ void GenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
     __no_default;
   case FILTER_NONE: {
     auto fJ = fixed16::make(fM.data());
-    if (fJ > TConst<fixed16>::One()) {
+    if (fJ > Math::One<fixed16>()) {
       (samplers_[unit].pfnGetTexelColorMin)(pOut, sampler.pMipLevels[0], fU,
                                             fV);
     } else {
@@ -739,7 +739,7 @@ void GenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
   }
   case FILTER_NEAREST: {
     auto fJ = fixed16::make(fM.data());
-    if (fJ > TConst<fixed16>::One()) {
+    if (fJ > Math::One<fixed16>()) {
       int mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                      sampler.MaxMipLevel);
 
@@ -755,7 +755,7 @@ void GenericRasterOp::getSamplerColor(Color4 *pOut, uint32_t unit,
 
   case FILTER_LINEAR: {
     auto fJ = fixed16::make(fM.data());
-    if (fJ > TConst<fixed16>::One()) {
+    if (fJ > Math::One<fixed16>()) {
       Color4 tmp;
 
       int mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,

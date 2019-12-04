@@ -334,7 +334,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
           sampler.pMipLevels[0], fU, fV);
     } else {
       auto fJ = fixed16::make(fM.data());
-      if (fJ > TConst<fixed16>::One()) {
+      if (fJ > Math::One<fixed16>()) {
         return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[0], fU, fV);
       } else {
@@ -347,7 +347,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
   if constexpr (MipFilter == FILTER_NEAREST) {
     if constexpr (MinFilter == MagFilter) {
       auto fJ =
-          std::max<fixed16>(fixed16::make(fM.data()), TConst<fixed16>::One());
+          std::max<fixed16>(fixed16::make(fM.data()), Math::One<fixed16>());
 
       int mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                      sampler.MaxMipLevel);
@@ -356,7 +356,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
           sampler.pMipLevels[mipLevel], fU, fV);
     } else {
       auto fJ = fixed16::make(fM.data());
-      if (fJ > TConst<fixed16>::One()) {
+      if (fJ > Math::One<fixed16>()) {
         int mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                        sampler.MaxMipLevel);
 
@@ -375,7 +375,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
 
     if constexpr (MinFilter == MagFilter) {
       auto fJ =
-          std::max<fixed16>(fixed16::make(fM.data()), TConst<fixed16>::One());
+          std::max<fixed16>(fixed16::make(fM.data()), Math::One<fixed16>());
 
       int mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                       sampler.MaxMipLevel);
@@ -395,7 +395,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
       return c0.Lerp(c1, mipLerp);
     } else {
       auto fJ = fixed16::make(fM.data());
-      if (fJ > TConst<fixed16>::One()) {
+      if (fJ > Math::One<fixed16>()) {
         int mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
                                         sampler.MaxMipLevel);
 

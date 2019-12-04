@@ -375,15 +375,15 @@ template <> struct TFormatInfo<FORMAT_PAL8_R5G5B5A1> {
 
 #define __formatInfo(format)                                                   \
   {                                                                            \
-    TFormatInfo<format>::CBSIZE, FormatSize<TFormatInfo<format>>::RED,        \
-        FormatSize<TFormatInfo<format>>::GREEN,                               \
-        FormatSize<TFormatInfo<format>>::BLUE,                                \
-        FormatSize<TFormatInfo<format>>::ALPHA,                               \
-        FormatSize<TFormatInfo<format>>::LUMINANCE,                           \
-        FormatSize<TFormatInfo<format>>::DEPTH,                               \
-        FormatSize<TFormatInfo<format>>::STENCIL,                             \
-        FormatSize<TFormatInfo<format>>::PALETTE,                             \
-        FormatSize<TFormatInfo<format>>::LERP                                 \
+    TFormatInfo<format>::CBSIZE, FormatSize<TFormatInfo<format>>::RED,         \
+        FormatSize<TFormatInfo<format>>::GREEN,                                \
+        FormatSize<TFormatInfo<format>>::BLUE,                                 \
+        FormatSize<TFormatInfo<format>>::ALPHA,                                \
+        FormatSize<TFormatInfo<format>>::LUMINANCE,                            \
+        FormatSize<TFormatInfo<format>>::DEPTH,                                \
+        FormatSize<TFormatInfo<format>>::STENCIL,                              \
+        FormatSize<TFormatInfo<format>>::PALETTE,                              \
+        FormatSize<TFormatInfo<format>>::LERP                                  \
   }
 
 ///////////////////////////////////////////////////////////////////////////////

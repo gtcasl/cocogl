@@ -114,7 +114,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
     pOut->x = static_cast<floatf>(pIn->x);
   } else {
     if constexpr (D::DIM >= 1) {
-      pOut->x = fZERO;
+      pOut->x = Math::Zero<floatf>();
     }
   }
 
@@ -122,7 +122,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
     pOut->y = static_cast<floatf>(pIn->y);
   } else {
     if constexpr (D::DIM >= 2) {
-      pOut->y = fZERO;
+      pOut->y = Math::Zero<floatf>();
     }
   }
 
@@ -130,7 +130,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
     pOut->z = static_cast<floatf>(pIn->z);
   } else {
     if constexpr (D::DIM >= 3) {
-      pOut->z = fZERO;
+      pOut->z = Math::Zero<floatf>();
     }
   }
 
@@ -138,7 +138,7 @@ inline void TDecodeVertex(D *pOut, const uint8_t *pbIn) {
     pOut->w = static_cast<floatf>(pIn->w);
   } else {
     if constexpr (D::DIM >= 4) {
-      pOut->w = fONE;
+      pOut->w = Math::One<floatf>();
     }
   }
 }
@@ -414,7 +414,7 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
     }
 
     if constexpr (TVertexData<VertexFormat>::Output::DIM >= 4) {
-      if (!Math::IsAlmostZero(vIn.w - fONE) && !Math::IsAlmostZero(vIn.w)) {
+      if (!Math::IsAlmostZero(vIn.w - Math::One<floatf>()) && !Math::IsAlmostZero(vIn.w)) {
         auto fInvW = Math::Inverse<floatf>(vIn.w);
         vIn.x *= fInvW;
         vIn.y *= fInvW;
@@ -438,7 +438,7 @@ void TNL::processPointSize(uint32_t count) {
     pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEXDATA_EYEPOS]);
   } else {
     fInvAtt = vAttenuation.x;
-    if (!Math::IsAlmostZero(fInvAtt - fONE)) {
+    if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
       fInvAtt = Math::RSqrt(fInvAtt);
     }
   }
@@ -455,7 +455,7 @@ void TNL::processPointSize(uint32_t count) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
                      vAttenuation.y * fEyeDist + vAttenuation.x;
-      if (!Math::IsAlmostZero(fInvAtt - fONE)) {
+      if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
         vPointSize.x *= Math::RSqrt(fInvAtt);
       }
     } else {
@@ -463,7 +463,7 @@ void TNL::processPointSize(uint32_t count) {
     }
 
     pfPointSizes[i] =
-        static_cast<fixed4>(std::max<floatf>(vPointSize.x, fONE));
+        static_cast<fixed4>(std::max<floatf>(vPointSize.x, Math::One<floatf>()));
   }
 }
 

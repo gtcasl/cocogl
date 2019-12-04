@@ -18,8 +18,8 @@ template <uint32_t F, typename T = int32_t> class Fixed {
 public:
   using data_type = T;
 
-  static constexpr uint32_t FRAC  = F;
-  static constexpr uint32_t INT   = sizeof(T) * 8 - FRAC;
+  static constexpr uint32_t FRAC = F;
+  static constexpr uint32_t INT = sizeof(T) * 8 - FRAC;
   static constexpr uint32_t HFRAC = FRAC >> 1;
   static constexpr T ONE = static_cast<T>(1) << FRAC;
   static constexpr T MASK = ONE - 1;

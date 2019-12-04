@@ -179,14 +179,14 @@ void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
         break;
       }
 
-      if (fDistA >= fZERO) {
-        if (fDistB >= fZERO) {
+      if (fDistA >= Math::Zero<floatf>()) {
+        if (fDistB >= Math::Zero<floatf>()) {
           continue;
         }
 
         this->interpolateVertex(iTo, iFrom, fDistA, fDistB, iNext);
         iTo = iNext++;
-      } else if (fDistB < fZERO) {
+      } else if (fDistB < Math::Zero<floatf>()) {
         continue;
       }
 
@@ -324,14 +324,14 @@ uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
     iVA = *pSrc++;
     fDistA = Math::Dot<floatf>(pvClipPos[iVA], vClipPlanesCS_[plane]);
 
-    if (fDistB >= fZERO) {
+    if (fDistB >= Math::Zero<floatf>()) {
       // Add vertex to the current list
       assert(nClipVertices < CLIP_BUFFER_SIZE);
       pDst[nClipVertices++] = iVB;
-      if (fDistA >= fZERO) {
+      if (fDistA >= Math::Zero<floatf>()) {
         continue;
       }
-    } else if (fDistA < fZERO) {
+    } else if (fDistA < Math::Zero<floatf>()) {
       continue;
     }
 
@@ -355,8 +355,8 @@ void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
       reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEXDATA_CLIPPOS]);
 
   auto fScalar = TScalar<float30>(fDistA, fDistB);
-  assert((fScalar >= TConst<float30>::Zero()) &&
-         (fScalar <= TConst<float30>::One()));
+  assert((fScalar >= Math::Zero<float30>()) &&
+         (fScalar <= Math::One<float30>()));
 
   pvClipPos[i2].x = Math::Lerpf(pvClipPos[i0].x, pvClipPos[i1].x, fScalar);
   pvClipPos[i2].y = Math::Lerpf(pvClipPos[i0].y, pvClipPos[i1].y, fScalar);

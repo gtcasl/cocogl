@@ -63,10 +63,10 @@ bool Rasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
     auto fSign = Math::FastMul<fixed8>(fdx10, fdy20) -
                  Math::FastMul<fixed8>(fdx20, fdy10);
     if (CULL_BACK == cullStates.CullFace) {
-      culled = static_cast<uint32_t>(fSign < TConst<fixed8>::Zero()) ^
+      culled = static_cast<uint32_t>(fSign < Math::Zero<fixed8>()) ^
                cullStates.FrontFace;
     } else {
-      culled = static_cast<uint32_t>(fSign > TConst<fixed8>::Zero()) ^
+      culled = static_cast<uint32_t>(fSign > Math::Zero<fixed8>()) ^
                cullStates.FrontFace;
     }
   } else {
@@ -120,12 +120,12 @@ void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   if (!this->setupTriangleAttributes(g, i0, i1, i2))
     return;
 
-  bool bMiddleIsRight = (g.fRatio >= TConst<floatQ>::Zero());
-  auto fRndCeil = fixedDDA::make(fixedDDA::MASK) - TConst<fixedDDA>::Half();
+  bool bMiddleIsRight = (g.fRatio >= Math::Zero<floatQ>());
+  auto fRndCeil = fixedDDA::make(fixedDDA::MASK) - Math::Half<fixedDDA>();
 
-  int y = std::max<int>(Math::Ceil<int>(i4y0 - TConst<fixed4>::Half()),
+  int y = std::max<int>(Math::Ceil<int>(i4y0 - Math::Half<fixed4>()),
                           scissorRect_.top);
-  auto i4Y0Diff = fixed4(y) - (i4y0 - TConst<fixed4>::Half());
+  auto i4Y0Diff = fixed4(y) - (i4y0 - Math::Half<fixed4>());
 
 #ifdef COCOGL_RASTER_PROFILE
   auto start_time = std::chrono::high_resolution_clock::now();
@@ -138,7 +138,7 @@ void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   auto pfnScanline = rasterData_.pRasterOp->getScanline();
 
   if (g.i4dy12.data()) {
-    int y1 = std::min<int>(Math::Ceil<int>(i4y1 - TConst<fixed4>::Half()),
+    int y1 = std::min<int>(Math::Ceil<int>(i4y1 - Math::Half<fixed4>()),
                              scissorRect_.bottom);
     fdx0 = fixedDDA(g.i4dx12) / g.i4dy12;
     fdx1 = fixedDDA(g.i4dx13) / g.i4dy13;
@@ -172,9 +172,9 @@ void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   }
 
   if (g.i4dy23.data()) {
-    auto y2 = std::min<int>(Math::Ceil<int>(i4y2 - TConst<fixed4>::Half()),
+    auto y2 = std::min<int>(Math::Ceil<int>(i4y2 - Math::Half<fixed4>()),
                               scissorRect_.bottom);
-    auto i4Y1Diff = fixed4(y) - (i4y1 - TConst<fixed4>::Half());
+    auto i4Y1Diff = fixed4(y) - (i4y1 - Math::Half<fixed4>());
     auto fdx2 = fixedDDA(g.i4dx23) / g.i4dy23;
     auto fx2 = fixedDDA(i4x1) + fdx2 * i4Y1Diff + fRndCeil;
 
@@ -227,8 +227,8 @@ bool Rasterizer::setupTriangleAttributes(const TriangleGradient &g, uint32_t i0,
   }
 
   if (rasterFlags.NumTextures) {
-    if ((fixedRX(std::abs(v1.rhw - v0.rhw)) > TConst<fixedRX>::Epsilon()) ||
-        (fixedRX(std::abs(v2.rhw - v0.rhw)) > TConst<fixedRX>::Epsilon())) {
+    if ((fixedRX(std::abs(v1.rhw - v0.rhw)) > Math::Epsilon<fixedRX>()) ||
+        (fixedRX(std::abs(v2.rhw - v0.rhw)) > Math::Epsilon<fixedRX>())) {
       pRegister =
           this->applyPerspectiveTextureGradient(pRegister, g, i0, i1, i2);
     } else {
@@ -241,8 +241,8 @@ bool Rasterizer::setupTriangleAttributes(const TriangleGradient &g, uint32_t i0,
   }
 
   // Set the reference offset
-  rasterData_.fRefX = v0.x - TConst<fixed4>::Half();
-  rasterData_.fRefY = v0.y - TConst<fixed4>::Half();
+  rasterData_.fRefX = v0.x - Math::Half<fixed4>();
+  rasterData_.fRefY = v0.y - Math::Half<fixed4>();
 
   // Generate the rasterization routine
   if (!this->generateRasterOp()) {
@@ -265,14 +265,14 @@ Register *Rasterizer::applyDepthGradient(Register *pRegister,
 
   float20 delta[2] = {v1.z - v0.z, v2.z - v0.z};
 
-  if ((fixed16(std::abs(delta[0])) > TConst<fixed16>::Epsilon()) ||
-      (fixed16(std::abs(delta[1])) > TConst<fixed16>::Epsilon())) {
+  if ((fixed16(std::abs(delta[0])) > Math::Epsilon<fixed16>()) ||
+      (fixed16(std::abs(delta[1])) > Math::Epsilon<fixed16>())) {
     pRegister->m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
     pRegister->m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
     rasterID_.Flags.InterpolateDepth = 1;
   } else {
-    pRegister->m[0] = TConst<fixedRX>::Zero();
-    pRegister->m[1] = TConst<fixedRX>::Zero();
+    pRegister->m[0] = Math::Zero<fixedRX>();
+    pRegister->m[1] = Math::Zero<fixedRX>();
   }
 
   pRegister->m[2] = static_cast<fixedRX>(v0.z);
@@ -291,7 +291,7 @@ void Rasterizer::applyPolygonOffset(Register *pRegister) {
       std::max(std::abs(pRegister->m[0]), std::abs(pRegister->m[1])));
 
   auto fOffset = static_cast<floatf>((polygonOffset_.fFactor * fSlope) +
-                                     polygonOffset_.fUnits * fEPS);
+                                     polygonOffset_.fUnits * Math::Epsilon<floatf>());
 
   pRegister->m[2] = static_cast<fixedRX>(
       Math::Sat(static_cast<floatf>(pRegister->m[2]) + fOffset));
@@ -324,8 +324,8 @@ Register *Rasterizer::applyColorGradient(Register *pRegister,
     rasterID_.Flags.InterpolateAlpha = interpolateMask >> 3;
   } else {
     for (uint32_t i = 0; i < 4; ++i) {
-      pRegister[i].m[0] = TConst<fixedRX>::Zero();
-      pRegister[i].m[1] = TConst<fixedRX>::Zero();
+      pRegister[i].m[0] = Math::Zero<fixedRX>();
+      pRegister[i].m[1] = Math::Zero<fixedRX>();
       pRegister[i].m[2] = static_cast<fixedRX>(c2.m[i]) >> 8;
     }
   }
@@ -388,7 +388,7 @@ Register *Rasterizer::applyPerspectiveTextureGradient(
   floatRW rhws[3] = {v0.rhw, v1.rhw, v2.rhw};
 
   // Scale up rhw to avoid fixed point overflow
-  auto fSatW = TConst<floatRW>::One() / 16;
+  auto fSatW = Math::One<floatRW>() / 16;
   while ((rhws[0] < fSatW) && (rhws[1] < fSatW) && (rhws[2] < fSatW)) {
     rhws[0] *= 16;
     rhws[1] *= 16;
@@ -458,7 +458,7 @@ Register *Rasterizer::applyAffineTextureMipmapGradient(Register *pRegister) {
       auto fMV = Math::Mul<floatf>(fMaxDm[1], 1 << logHeight);
       auto fM = std::max(fMU, fMV);
 
-      if (fM > fONE) {
+      if (fM > Math::One<floatf>()) {
         if (FILTER_NONE == rasterID_.Textures[j].MipFilter) {
           // Turn off trilinear filtering
           rasterID_.Textures[j].MipFilter = FILTER_NONE;
@@ -475,8 +475,8 @@ Register *Rasterizer::applyAffineTextureMipmapGradient(Register *pRegister) {
           }
 
           pRegister->m[2] = fixedRX::make(static_cast<fixed16>(fM).data());
-          pRegister->m[0] = TConst<fixedRX>::Zero();
-          pRegister->m[1] = TConst<fixedRX>::Zero();
+          pRegister->m[0] = Math::Zero<fixedRX>();
+          pRegister->m[1] = Math::Zero<fixedRX>();
           ++pRegister;
         }
       } else {
@@ -558,8 +558,8 @@ Register *Rasterizer::applyPerspectiveTextureMipmapGradient(
              fRhw2s[2])) {
           floatf delta[2] = {fMs[1] - fMs[0], fMs[2] - fMs[0]};
 
-          if ((fixed16(std::abs(delta[0])) > TConst<fixed16>::Epsilon()) ||
-              (fixed16(std::abs(delta[1])) > TConst<fixed16>::Epsilon())) {
+          if ((fixed16(std::abs(delta[0])) > Math::Epsilon<fixed16>()) ||
+              (fixed16(std::abs(delta[1])) > Math::Epsilon<fixed16>())) {
             rasterID_.Flags.InterpolateMips |= (1 << j);
             pRegister->m[2] =
                 fixedRX::make(static_cast<fixed16>(fMs[0]).data());
@@ -591,8 +591,8 @@ Register *Rasterizer::applyPerspectiveTextureMipmapGradient(
 
                 pRegister->m[2] =
                     fixedRX::make(static_cast<fixed16>(fM).data());
-                pRegister->m[0] = TConst<fixedRX>::Zero();
-                pRegister->m[1] = TConst<fixedRX>::Zero();
+                pRegister->m[0] = Math::Zero<fixedRX>();
+                pRegister->m[1] = Math::Zero<fixedRX>();
                 ++pRegister;
               }
             } else {
@@ -613,8 +613,8 @@ Register *Rasterizer::applyPerspectiveTextureMipmapGradient(
             rasterID_.Textures[j].MagFilter = rasterID_.Textures[j].MinFilter;
             pRegister->m[2] =
                 fixedRX::make(fixed16(1 << sampler.MaxMipLevel).data());
-            pRegister->m[0] = TConst<fixedRX>::Zero();
-            pRegister->m[1] = TConst<fixedRX>::Zero();
+            pRegister->m[0] = Math::Zero<fixedRX>();
+            pRegister->m[1] = Math::Zero<fixedRX>();
             ++pRegister;
           }
         }
@@ -642,14 +642,14 @@ Register *Rasterizer::applyFogGradient(Register *pRegister,
 
   float20 delta[2] = {fFog1 - fFog0, fFog2 - fFog0};
 
-  if ((fixed8(std::abs(delta[0])) > TConst<fixed8>::Epsilon()) ||
-      (fixed8(std::abs(delta[1])) > TConst<fixed8>::Epsilon())) {
+  if ((fixed8(std::abs(delta[0])) > Math::Epsilon<fixed8>()) ||
+      (fixed8(std::abs(delta[1])) > Math::Epsilon<fixed8>())) {
     pRegister->m[0] = gradient.calcDeltaX<fixedRX>(delta[0], delta[1]);
     pRegister->m[1] = gradient.calcDeltaY<fixedRX>(delta[0], delta[1]);
     rasterID_.Flags.InterpolateFog = 1;
   } else {
-    pRegister->m[0] = TConst<fixedRX>::Zero();
-    pRegister->m[1] = TConst<fixedRX>::Zero();
+    pRegister->m[0] = Math::Zero<fixedRX>();
+    pRegister->m[1] = Math::Zero<fixedRX>();
   }
 
   pRegister->m[2] = static_cast<fixedRX>(fFog0);

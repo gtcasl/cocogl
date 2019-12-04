@@ -17,9 +17,11 @@
 #include <math.h>
 #include "fixed.hpp"
 
-template <typename T> struct TConst {};
+namespace Math {
 
-template <> struct TConst<float> {
+template <typename T> struct Constants {};
+
+template <> struct Constants<float> {
   inline static float Zero() { return 0.0f; }
 
   inline static float Half() { return 0.5f; }
@@ -51,7 +53,7 @@ template <> struct TConst<float> {
   inline static float LogE() { return 1.442695041f; }
 };
 
-template <uint32_t F, typename T> struct TConst<Fixed<F, T>> {
+template <uint32_t F, typename T> struct Constants<Fixed<F, T>> {
   inline static auto Zero() { return Fixed<F, T>::make(0); }
 
   inline static auto Half() { return Fixed<F, T>::make(Fixed<F, T>::HALF); }
@@ -78,9 +80,7 @@ template <uint32_t F, typename T> struct TConst<Fixed<F, T>> {
     return Fixed<F, T>::make(128 * Fixed<F, T>::ONE);
   }
 
-  inline static auto F90() {
-    return Fixed<F, T>::make(90 * Fixed<F, T>::ONE);
-  }
+  inline static auto F90() { return Fixed<F, T>::make(90 * Fixed<F, T>::ONE); }
 
   inline static auto F180() {
     return Fixed<F, T>::make(180 * Fixed<F, T>::ONE);
@@ -102,6 +102,38 @@ template <uint32_t F, typename T> struct TConst<Fixed<F, T>> {
     return Fixed<F, T>::make(1.442695041f * Fixed<F, T>::ONE);
   }
 };
+
+template <typename T> static T Zero() { return Constants<T>::Zero(); }
+
+template <typename T> static T Half() { return Constants<T>::Half(); }
+
+template <typename T> static T One() { return Constants<T>::One(); }
+
+template <typename T> static T Two() { return Constants<T>::Two(); }
+
+template <typename T> static T Min() { return Constants<T>::Min(); }
+
+template <typename T> static T Max() { return Constants<T>::Max(); }
+
+template <typename T> static T Epsilon() { return Constants<T>::Epsilon(); }
+
+template <typename T> static T PI() { return Constants<T>::PI(); }
+
+template <typename T> static T F128() { return Constants<T>::F128(); }
+
+template <typename T> static T F90() { return Constants<T>::F90(); }
+
+template <typename T> static T F180() { return Constants<T>::F180(); }
+
+template <typename T> static T F02() { return Constants<T>::F02(); }
+
+template <typename T> static T F08() { return Constants<T>::F08(); }
+
+template <typename T> static T E() { return Constants<T>::E(); }
+
+template <typename T> static T LogE() { return Constants<T>::LogE(); }
+
+} // namespace Math
 
 template <typename T> struct TVector1 {
   DISABLE_WARNING_PUSH
@@ -260,22 +292,22 @@ template <typename T> struct TMatrix44 {
   }
 
   void toIdentity() {
-    this->_11 = TConst<T>::One();
-    this->_12 = TConst<T>::Zero();
-    this->_13 = TConst<T>::Zero();
-    this->_14 = TConst<T>::Zero();
-    this->_21 = TConst<T>::Zero();
-    this->_22 = TConst<T>::One();
-    this->_23 = TConst<T>::Zero();
-    this->_24 = TConst<T>::Zero();
-    this->_31 = TConst<T>::Zero();
-    this->_32 = TConst<T>::Zero();
-    this->_33 = TConst<T>::One();
-    this->_34 = TConst<T>::Zero();
-    this->_41 = TConst<T>::Zero();
-    this->_42 = TConst<T>::Zero();
-    this->_43 = TConst<T>::Zero();
-    this->_44 = TConst<T>::One();
+    this->_11 = Math::One<T>();
+    this->_12 = Math::Zero<T>();
+    this->_13 = Math::Zero<T>();
+    this->_14 = Math::Zero<T>();
+    this->_21 = Math::Zero<T>();
+    this->_22 = Math::One<T>();
+    this->_23 = Math::Zero<T>();
+    this->_24 = Math::Zero<T>();
+    this->_31 = Math::Zero<T>();
+    this->_32 = Math::Zero<T>();
+    this->_33 = Math::One<T>();
+    this->_34 = Math::Zero<T>();
+    this->_41 = Math::Zero<T>();
+    this->_42 = Math::Zero<T>();
+    this->_43 = Math::Zero<T>();
+    this->_44 = Math::One<T>();
   }
 };
 
@@ -334,18 +366,6 @@ typedef TVector3<floatf> VECTOR3;
 typedef TVector4<floatf> VECTOR4;
 typedef TMatrix44<floatf> MATRIX44;
 
-#define fZERO TConst<floatf>::Zero()
-#define fHALF TConst<floatf>::Half()
-#define fONE TConst<floatf>::One()
-#define fTWO TConst<floatf>::Two()
-#define fPI TConst<floatf>::PI()
-#define f128 TConst<floatf>::F128()
-#define f90 TConst<floatf>::F90()
-#define f180 TConst<floatf>::F180()
-#define f02 TConst<floatf>::F02()
-#define f08 TConst<floatf>::F08()
-#define fEPS TConst<floatf>::Epsilon()
-
 namespace Math {
 
 int32_t fxSin(int32_t x);
@@ -364,51 +384,48 @@ int Inverse32(int value);
 
 } // namespace Math
 
-namespace std {  
+namespace std {
 
-template <uint32_t F, typename T> 
-Fixed<F, T> abs(Fixed<F, T> rhs) {
+template <uint32_t F, typename T> Fixed<F, T> abs(Fixed<F, T> rhs) {
   return Fixed<F, T>::make(::abs(rhs.data()));
-} 
+}
 
-inline fixed16 sin(fixed16 rhs) {  
+inline fixed16 sin(fixed16 rhs) {
   return fixed16::make(Math::fxSin(rhs.data()));
 }
 
-inline fixed16 cos(fixed16 rhs) {  
+inline fixed16 cos(fixed16 rhs) {
   return fixed16::make(Math::fxCos(rhs.data()));
 }
 
-inline fixed16 sqrt(fixed16 rhs) {  
+inline fixed16 sqrt(fixed16 rhs) {
   return fixed16::make(Math::fxSqrt(rhs.data()));
 }
 
-inline fixed16 pow(fixed16 lhs, fixed16 rhs) {  
+inline fixed16 pow(fixed16 lhs, fixed16 rhs) {
   return fixed16::make(Math::fxPow(lhs.data(), rhs.data()));
 }
 
-inline fixed16 exp2(fixed16 rhs) {  
+inline fixed16 exp2(fixed16 rhs) {
   return fixed16::make(Math::fxExp2(rhs.data()));
 }
 
-template <uint32_t F, typename T> 
-inline Fixed<F, T> exp(Fixed<F, T> rhs) {
+template <uint32_t F, typename T> inline Fixed<F, T> exp(Fixed<F, T> rhs) {
   return Fixed<F, T>(std::exp(static_cast<float>(rhs)));
 }
 
-template <uint32_t F, typename T>
-inline Fixed<F, T> ceil(Fixed<F, T> rhs) {
-  return Fixed<F, T>::make((rhs.data() + Fixed<F, T>::MASK) & Fixed<F, T>::IMASK);
+template <uint32_t F, typename T> inline Fixed<F, T> ceil(Fixed<F, T> rhs) {
+  return Fixed<F, T>::make((rhs.data() + Fixed<F, T>::MASK) &
+                           Fixed<F, T>::IMASK);
 }
 
-template <uint32_t F, typename T>
-inline Fixed<F, T> floor(Fixed<F, T> rhs) {
+template <uint32_t F, typename T> inline Fixed<F, T> floor(Fixed<F, T> rhs) {
   return Fixed<F, T>::make(rhs.data() & Fixed<F, T>::IMASK);
 }
 
-template <uint32_t F, typename T>
-inline Fixed<F, T> round(Fixed<F, T> rhs) {
-  return Fixed<F, T>::make((rhs.data() + Fixed<F, T>::HALF) & Fixed<F, T>::IMASK);
+template <uint32_t F, typename T> inline Fixed<F, T> round(Fixed<F, T> rhs) {
+  return Fixed<F, T>::make((rhs.data() + Fixed<F, T>::HALF) &
+                           Fixed<F, T>::IMASK);
 }
 
 } // namespace std
@@ -449,8 +466,7 @@ template <typename R> R Mul(float lhs, float rhs);
 
 template <typename R> R Mul(float lhs, int rhs);
 
-template <typename R, uint32_t F, typename T>
-R Mul(float lhs, Fixed<F, T> rhs);
+template <typename R, uint32_t F, typename T> R Mul(float lhs, Fixed<F, T> rhs);
 
 float MulDiv(float lhs, float rhs);
 
@@ -470,9 +486,12 @@ template <typename R> R MulRnd(float a, float b, int c);
 
 template <typename R> R MulRnd(float a, float b, float c);
 
-template <typename R> R MulAdd(float a0, float b0, float a1, float b1, float a2, float b2, float a3, float b3);
+template <typename R>
+R MulAdd(float a0, float b0, float a1, float b1, float a2, float b2, float a3,
+         float b3);
 
-template <typename R> R MulAdd(float a0, float b0, float a1, float b1, float a2, float b2);
+template <typename R>
+R MulAdd(float a0, float b0, float a1, float b1, float a2, float b2);
 
 template <typename R> R MulAdd(float a0, float b0, float a1, float b1);
 
@@ -508,16 +527,14 @@ template <typename R, uint32_t F, typename T>
 R MulRnd(Fixed<F, T> lhs, int rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R MulAdd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c,
-          Fixed<F2, T2> d);
+R MulAdd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c, Fixed<F2, T2> d);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R MulSub(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c, Fixed<F2, T2> d);
 
 template <typename R, uint32_t F, typename T> R Mul(Fixed<F, T> lhs, int rhs);
 
-template <typename R, uint32_t F, typename T>
-R Mul(Fixed<F, T> lhs, float rhs);
+template <typename R, uint32_t F, typename T> R Mul(Fixed<F, T> lhs, float rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R Mul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
@@ -527,7 +544,7 @@ R Mul(Fixed<F, T> lhs, Fixed<F, T> rhs);
 
 template <uint32_t F1, uint32_t F2, typename T1, typename T2>
 Fixed<F1, T1> TLerpf(Fixed<F1, T1> lhs, Fixed<F1, T1> rhs,
-                      Fixed<F2, T2> scalar);
+                     Fixed<F2, T2> scalar);
 
 template <uint32_t F, typename T>
 Fixed<F, T> TLerpf(Fixed<F, T> lhs, Fixed<F, T> rhs, float scalar);
@@ -617,7 +634,7 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <> inline fixed16 RSqrt(fixed16 rhs) {  
+template <> inline fixed16 RSqrt(fixed16 rhs) {
   return fixed16::make(fxInvSqrt(rhs.data()));
 }
 
@@ -631,13 +648,13 @@ inline float MulAdd(float a0, float b0, float a1, float b1, float a2, float b2,
 
 template <uint32_t F, typename T>
 inline Fixed<F, T> MulAdd(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
-                           Fixed<F, T> b1, Fixed<F, T> a2, Fixed<F, T> b2,
-                           Fixed<F, T> a3, Fixed<F, T> b3) {
+                          Fixed<F, T> b1, Fixed<F, T> a2, Fixed<F, T> b2,
+                          Fixed<F, T> a3, Fixed<F, T> b3) {
   return Fixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
-                             static_cast<int64_t>(a1.data()) * b1.data() +
-                             static_cast<int64_t>(a2.data()) * b2.data() +
-                             static_cast<int64_t>(a3.data()) * b3.data()) >>
-                            Fixed<F, T>::FRAC);
+                            static_cast<int64_t>(a1.data()) * b1.data() +
+                            static_cast<int64_t>(a2.data()) * b2.data() +
+                            static_cast<int64_t>(a3.data()) * b3.data()) >>
+                           Fixed<F, T>::FRAC);
 }
 
 template <>
@@ -648,11 +665,11 @@ inline float MulAdd(float a0, float b0, float a1, float b1, float a2,
 
 template <uint32_t F, typename T>
 inline Fixed<F, T> MulAdd(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
-                           Fixed<F, T> b1, Fixed<F, T> a2, Fixed<F, T> b2) {
+                          Fixed<F, T> b1, Fixed<F, T> a2, Fixed<F, T> b2) {
   return Fixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
-                             static_cast<int64_t>(a1.data()) * b1.data() +
-                             static_cast<int64_t>(a2.data()) * b2.data()) >>
-                            Fixed<F, T>::FRAC);
+                            static_cast<int64_t>(a1.data()) * b1.data() +
+                            static_cast<int64_t>(a2.data()) * b2.data()) >>
+                           Fixed<F, T>::FRAC);
 }
 
 template <> inline float MulAdd(float a0, float b0, float a1, float b1) {
@@ -661,10 +678,10 @@ template <> inline float MulAdd(float a0, float b0, float a1, float b1) {
 
 template <uint32_t F, typename T>
 inline Fixed<F, T> MulAdd(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
-                           Fixed<F, T> b1) {
+                          Fixed<F, T> b1) {
   return Fixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
-                             static_cast<int64_t>(a1.data()) * b1.data()) >>
-                            Fixed<F, T>::FRAC);
+                            static_cast<int64_t>(a1.data()) * b1.data()) >>
+                           Fixed<F, T>::FRAC);
 }
 
 template <> inline float MulSub(float a0, float b0, float a1, float b1) {
@@ -673,10 +690,10 @@ template <> inline float MulSub(float a0, float b0, float a1, float b1) {
 
 template <uint32_t F, typename T>
 inline Fixed<F, T> MulSub(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
-                           Fixed<F, T> b1) {
+                          Fixed<F, T> b1) {
   return Fixed<F, T>::make((static_cast<int64_t>(a0.data()) * b0.data() -
-                             static_cast<int64_t>(a1.data()) * b1.data()) >>
-                            Fixed<F, T>::FRAC);
+                            static_cast<int64_t>(a1.data()) * b1.data()) >>
+                           Fixed<F, T>::FRAC);
 }
 
 template <> inline float FromUNORM8<float>(int rhs) {
@@ -702,11 +719,11 @@ inline int Lerp8(int lhs, int rhs, int frac) {
 }
 
 template <typename T> inline T Sat(T rhs) {
-  return std::clamp(rhs, TConst<T>::Zero(), TConst<T>::One());
+  return std::clamp(rhs, Math::Zero<T>(), Math::One<T>());
 }
 
 template <typename T> inline bool IsAlmostZero(T rhs) {
-  return std::abs(rhs) <= TConst<T>::Epsilon();
+  return std::abs(rhs) <= Math::Epsilon<T>();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -811,32 +828,28 @@ template <typename R> inline R ShiftRight(float lhs, int rhs) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <typename R, uint32_t F, typename T>
-inline R Ceil(Fixed<F, T> rhs) {
+template <typename R, uint32_t F, typename T> inline R Ceil(Fixed<F, T> rhs) {
   int value = rhs.data() + Fixed<F, T>::MASK;
   return static_cast<R>(value >> Fixed<F, T>::FRAC);
 }
 
-template <typename R, uint32_t F, typename T>
-inline R Floori(Fixed<F, T> rhs) {
+template <typename R, uint32_t F, typename T> inline R Floori(Fixed<F, T> rhs) {
   return static_cast<R>(rhs.data() >> Fixed<F, T>::FRAC);
 }
 
-template <typename R, uint32_t F, typename T>
-inline R Roundi(Fixed<F, T> rhs) {
-  return static_cast<R>((rhs.data() + Fixed<F, T>::HALF) >>
-                        Fixed<F, T>::FRAC);
+template <typename R, uint32_t F, typename T> inline R Roundi(Fixed<F, T> rhs) {
+  return static_cast<R>((rhs.data() + Fixed<F, T>::HALF) >> Fixed<F, T>::FRAC);
 }
 
 template <uint32_t F, typename T> inline int ToUNORM8(Fixed<F, T> rhs) {
-  assert((rhs >= TConst<Fixed<F, T>>::Zero()) &&
-         (rhs <= TConst<Fixed<F, T>>::One()));
+  assert((rhs >= Math::Zero<Fixed<F, T>>()) &&
+         (rhs <= Math::One<Fixed<F, T>>()));
   return (0xff * rhs.data()) >> Fixed<F, T>::FRAC;
 }
 
 template <uint32_t F, typename T> inline int ToUNORM16(Fixed<F, T> rhs) {
-  assert((rhs >= TConst<Fixed<F, T>>::Zero()) &&
-         (rhs <= TConst<Fixed<F, T>>::One()));
+  assert((rhs >= Math::Zero<Fixed<F, T>>()) &&
+         (rhs <= Math::One<Fixed<F, T>>()));
   return (0xffff * rhs.data()) >> Fixed<F, T>::FRAC;
 }
 
@@ -856,7 +869,8 @@ public:
   }
 };
 
-template <typename R, uint32_t F, typename T> inline R Inverse(Fixed<F, T> rhs) {
+template <typename R, uint32_t F, typename T>
+inline R Inverse(Fixed<F, T> rhs) {
   return InverseSelect<R, F, T>::Invert(rhs);
 }
 
@@ -907,8 +921,8 @@ inline R MulRnd(Fixed<F1, T1> a, Fixed<F2, T2> b, int c) {
 template <typename R, uint32_t F1, uint32_t F2, uint32_t F3, typename T1,
           typename T2, typename T3>
 inline R MulRnd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F3, T3> c) {
-  int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC +
-             Fixed<F3, T3>::FRAC - R::FRAC;
+  int FRAC =
+      Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC + Fixed<F3, T3>::FRAC - R::FRAC;
   auto HALF = static_cast<int64_t>(1) << (FRAC - 1);
   int64_t value = static_cast<int64_t>(a.data()) * b.data() * c.data();
   return R::make((value + HALF) >> FRAC);
@@ -916,7 +930,7 @@ inline R MulRnd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F3, T3> c) {
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 inline R MulAdd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c,
-                 Fixed<F2, T2> d) {
+                Fixed<F2, T2> d) {
   int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   auto ab = static_cast<int64_t>(a.data()) * b.data();
   auto cd = static_cast<int64_t>(c.data()) * d.data();
@@ -925,7 +939,7 @@ inline R MulAdd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c,
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 inline R MulSub(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c,
-                 Fixed<F2, T2> d) {
+                Fixed<F2, T2> d) {
   int FRAC = Fixed<F1, T1>::FRAC + Fixed<F2, T2>::FRAC - R::FRAC;
   auto ab = static_cast<int64_t>(a.data()) * b.data();
   auto cd = static_cast<int64_t>(c.data()) * d.data();
@@ -967,9 +981,9 @@ inline R MulShift(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs, R a, int shift) {
 
 template <uint32_t F1, uint32_t F2, typename T1, typename T2>
 inline Fixed<F1, T1> Lerpf(Fixed<F1, T1> lhs, Fixed<F1, T1> rhs,
-                            Fixed<F2, T2> scalar) {
-  assert((scalar >= TConst<Fixed<F2, T2>>::Zero()) &&
-         (scalar <= TConst<Fixed<F2, T2>>::One()));
+                           Fixed<F2, T2> scalar) {
+  assert((scalar >= Math::Zero<Fixed<F2, T2>>()) &&
+         (scalar <= Math::One<Fixed<F2, T2>>()));
   return lhs + (rhs - lhs) * scalar;
 }
 
@@ -981,8 +995,8 @@ inline Fixed<F, T> Lerpf(Fixed<F, T> lhs, Fixed<F, T> rhs, float scalar) {
 
 template <uint32_t F, typename T>
 inline int Lerp(int lhs, int rhs, Fixed<F, T> scalar) {
-  assert((scalar >= TConst<Fixed<F, T>>::Zero()) &&
-         (scalar <= TConst<Fixed<F, T>>::One()));
+  assert((scalar >= Math::Zero<Fixed<F, T>>()) &&
+         (scalar <= Math::One<Fixed<F, T>>()));
   return lhs +
          static_cast<int>((static_cast<int64_t>(rhs - lhs) * scalar.data()) >>
                           Fixed<F, T>::FRAC);
@@ -1002,7 +1016,7 @@ inline R ShiftRight(Fixed<F, T> lhs, int rhs) {
 
 template <>
 inline fixed16 Dot<fixed16>(const TVector3<fixed16> &lhs,
-                             const TVector3<fixed16> &rhs) {
+                            const TVector3<fixed16> &rhs) {
   auto xx = static_cast<int64_t>(lhs.x.data()) * rhs.x.data();
   auto yy = static_cast<int64_t>(lhs.y.data()) * rhs.y.data();
   auto zz = static_cast<int64_t>(lhs.z.data()) * rhs.z.data();
@@ -1011,7 +1025,7 @@ inline fixed16 Dot<fixed16>(const TVector3<fixed16> &lhs,
 
 template <>
 inline fixed16 Dot<fixed16>(const TVector4<fixed16> &lhs,
-                             const TVector4<fixed16> &rhs) {
+                            const TVector4<fixed16> &rhs) {
   auto xx = static_cast<int64_t>(lhs.x.data()) * rhs.x.data();
   auto yy = static_cast<int64_t>(lhs.y.data()) * rhs.y.data();
   auto zz = static_cast<int64_t>(lhs.z.data()) * rhs.z.data();
@@ -1021,13 +1035,13 @@ inline fixed16 Dot<fixed16>(const TVector4<fixed16> &lhs,
 
 template <>
 inline float Dot<float>(const TVector3<float> &lhs,
-                         const TVector3<float> &rhs) {
+                        const TVector3<float> &rhs) {
   return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 }
 
 template <>
 inline float Dot<float>(const TVector4<float> &lhs,
-                         const TVector4<float> &rhs) {
+                        const TVector4<float> &rhs) {
   return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 }
 
@@ -1119,7 +1133,7 @@ inline void Mul(VECTOR2 *pvOut, const VECTOR2 &vIn, const MATRIX44 &mat) {
 
 inline floatf Length(const VECTOR3 &vIn) {
   auto fDot = Math::Dot<floatf>(vIn, vIn);
-  if (!Math::IsAlmostZero(fDot - fONE)) {
+  if (!Math::IsAlmostZero(fDot - Math::One<floatf>())) {
     return std::sqrt(fDot);
   }
   return fDot;
@@ -1128,7 +1142,8 @@ inline floatf Length(const VECTOR3 &vIn) {
 inline void Normalize(VECTOR3 *pvOut) {
   assert(pvOut);
   auto fDot = Math::Dot<floatf>(*pvOut, *pvOut);
-  if (!Math::IsAlmostZero(fDot - fONE) && !Math::IsAlmostZero(fDot)) {
+  if (!Math::IsAlmostZero(fDot - Math::One<floatf>()) &&
+      !Math::IsAlmostZero(fDot)) {
     auto fInvLen = Math::RSqrt(fDot);
     pvOut->x = pvOut->x * fInvLen;
     pvOut->y = pvOut->y * fInvLen;
@@ -1210,9 +1225,13 @@ inline void Translate(MATRIX44 *pmatOut, floatf x, floatf y, floatf z) {
 
 inline bool IsPowerOf2(int value) { return 0 == (value & (value - 1)); }
 
-inline floatf DegToRad(floatf rhs) { return rhs * (fPI / f180); }
+inline floatf DegToRad(floatf rhs) {
+  return rhs * (Math::PI<floatf>() / Math::F180<floatf>());
+}
 
-inline floatf RadToDeg(floatf rhs) { return rhs * (f180 / fPI); }
+inline floatf RadToDeg(floatf rhs) {
+  return rhs * (Math::F180<floatf>() / Math::PI<floatf>());
+}
 
 inline uint32_t iLog2(uint32_t rhs) { return 31 - Clz(rhs); }
 
@@ -1274,7 +1293,7 @@ inline void Inverse33(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
   auto fDet = MulAdd(matIn._11, pmatOut->_11, matIn._21, pmatOut->_21,
                      matIn._31, pmatOut->_31);
 
-  if (!Math::IsAlmostZero(fDet - fONE)) {
+  if (!Math::IsAlmostZero(fDet - Math::One<floatf>())) {
     auto fDetInv = Math::Inverse<floatf>(fDet);
 
     pmatOut->_11 *= fDetInv;
@@ -1331,7 +1350,7 @@ inline void Inverse(MATRIX44 *pmatOut, const MATRIX44 &matIn) {
   auto fDet = MulAdd(fA0, fB5, fA2, fB3, fA3, fB2, fA5, fB0) -
               MulAdd(fA1, fB4, fA4, fB1);
 
-  if (!Math::IsAlmostZero(fDet - fONE)) {
+  if (!Math::IsAlmostZero(fDet - Math::One<floatf>())) {
     auto fDetInv = Math::Inverse<floatf>(fDet);
 
     pmatOut->_11 *= fDetInv;
@@ -1364,29 +1383,35 @@ inline void Ortho(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
   auto fHeight = top - bottom;
   auto fDepth = zFar - zNear;
 
-  auto fInvWidth = (fWidth != fZERO) ? Math::Inverse<floatf>(fWidth) : fZERO;
-  auto fInvHeight = (fHeight != fZERO) ? Math::Inverse<floatf>(fHeight) : fZERO;
-  auto fInvDepth = (fDepth != fZERO) ? Math::Inverse<floatf>(fDepth) : fZERO;
+  auto fInvWidth = (fWidth != Math::Zero<floatf>())
+                       ? Math::Inverse<floatf>(fWidth)
+                       : Math::Zero<floatf>();
+  auto fInvHeight = (fHeight != Math::Zero<floatf>())
+                        ? Math::Inverse<floatf>(fHeight)
+                        : Math::Zero<floatf>();
+  auto fInvDepth = (fDepth != Math::Zero<floatf>())
+                       ? Math::Inverse<floatf>(fDepth)
+                       : Math::Zero<floatf>();
 
-  pmatOut->_11 = fTWO * fInvWidth;
-  pmatOut->_12 = fZERO;
-  pmatOut->_13 = fZERO;
-  pmatOut->_14 = fZERO;
+  pmatOut->_11 = Math::Two<floatf>() * fInvWidth;
+  pmatOut->_12 = Math::Zero<floatf>();
+  pmatOut->_13 = Math::Zero<floatf>();
+  pmatOut->_14 = Math::Zero<floatf>();
 
-  pmatOut->_21 = fZERO;
-  pmatOut->_22 = fTWO * fInvHeight;
-  pmatOut->_23 = fZERO;
-  pmatOut->_24 = fZERO;
+  pmatOut->_21 = Math::Zero<floatf>();
+  pmatOut->_22 = Math::Two<floatf>() * fInvHeight;
+  pmatOut->_23 = Math::Zero<floatf>();
+  pmatOut->_24 = Math::Zero<floatf>();
 
-  pmatOut->_31 = fZERO;
-  pmatOut->_32 = fZERO;
-  pmatOut->_33 = -fTWO * fInvDepth;
-  pmatOut->_34 = fZERO;
+  pmatOut->_31 = Math::Zero<floatf>();
+  pmatOut->_32 = Math::Zero<floatf>();
+  pmatOut->_33 = -Math::Two<floatf>() * fInvDepth;
+  pmatOut->_34 = Math::Zero<floatf>();
 
   pmatOut->_41 = -(right + left) * fInvWidth;
   pmatOut->_42 = -(top + bottom) * fInvHeight;
   pmatOut->_43 = -(zFar + zNear) * fInvDepth;
-  pmatOut->_44 = fONE;
+  pmatOut->_44 = Math::One<floatf>();
 }
 
 inline void Frustum(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
@@ -1397,31 +1422,37 @@ inline void Frustum(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
   auto fHeight = top - bottom;
   auto fDepth = zFar - zNear;
 
-  auto fInvWidth = (fWidth != fZERO) ? Math::Inverse<floatf>(fWidth) : fZERO;
-  auto fInvHeight = (fHeight != fZERO) ? Math::Inverse<floatf>(fHeight) : fZERO;
-  auto fInvDepth = (fDepth != fZERO) ? Math::Inverse<floatf>(fDepth) : fZERO;
+  auto fInvWidth = (fWidth != Math::Zero<floatf>())
+                       ? Math::Inverse<floatf>(fWidth)
+                       : Math::Zero<floatf>();
+  auto fInvHeight = (fHeight != Math::Zero<floatf>())
+                        ? Math::Inverse<floatf>(fHeight)
+                        : Math::Zero<floatf>();
+  auto fInvDepth = (fDepth != Math::Zero<floatf>())
+                       ? Math::Inverse<floatf>(fDepth)
+                       : Math::Zero<floatf>();
 
-  auto fTwoNear = fTWO * zNear;
+  auto fTwoNear = Math::Two<floatf>() * zNear;
 
   pmatOut->_11 = fTwoNear * fInvWidth;
-  pmatOut->_12 = fZERO;
-  pmatOut->_13 = fZERO;
-  pmatOut->_14 = fZERO;
+  pmatOut->_12 = Math::Zero<floatf>();
+  pmatOut->_13 = Math::Zero<floatf>();
+  pmatOut->_14 = Math::Zero<floatf>();
 
-  pmatOut->_21 = fZERO;
+  pmatOut->_21 = Math::Zero<floatf>();
   pmatOut->_22 = fTwoNear * fInvHeight;
-  pmatOut->_23 = fZERO;
-  pmatOut->_24 = fZERO;
+  pmatOut->_23 = Math::Zero<floatf>();
+  pmatOut->_24 = Math::Zero<floatf>();
 
   pmatOut->_31 = (right + left) * fInvWidth;
   pmatOut->_32 = (top + bottom) * fInvHeight;
   pmatOut->_33 = -(zFar + zNear) * fInvDepth;
-  pmatOut->_34 = -fONE;
+  pmatOut->_34 = -Math::One<floatf>();
 
-  pmatOut->_41 = fZERO;
-  pmatOut->_42 = fZERO;
+  pmatOut->_41 = Math::Zero<floatf>();
+  pmatOut->_42 = Math::Zero<floatf>();
   pmatOut->_43 = -zFar * (fTwoNear * fInvDepth);
-  pmatOut->_44 = fZERO;
+  pmatOut->_44 = Math::Zero<floatf>();
 }
 
 inline void Rotate(MATRIX44 *pmatOut, floatf angle, floatf x, floatf y,
@@ -1433,7 +1464,7 @@ inline void Rotate(MATRIX44 *pmatOut, floatf angle, floatf x, floatf y,
 
   auto fSin = std::sin(angle);
   auto fCos = std::cos(angle);
-  auto fICos = fONE - fCos;
+  auto fICos = Math::One<floatf>() - fCos;
 
   auto _fA = fICos * vAxis.x * vAxis.y;
   auto _fB = fICos * vAxis.x * vAxis.z;
@@ -1442,22 +1473,22 @@ inline void Rotate(MATRIX44 *pmatOut, floatf angle, floatf x, floatf y,
   pmatOut->_11 = fICos * vAxis.x * vAxis.x + fCos;
   pmatOut->_12 = _fA + vAxis.z * fSin;
   pmatOut->_13 = _fB - vAxis.y * fSin;
-  pmatOut->_14 = fZERO;
+  pmatOut->_14 = Math::Zero<floatf>();
 
   pmatOut->_21 = _fA - vAxis.z * fSin;
   pmatOut->_22 = fICos * vAxis.y * vAxis.y + fCos;
   pmatOut->_23 = _fC + vAxis.x * fSin;
-  pmatOut->_24 = fZERO;
+  pmatOut->_24 = Math::Zero<floatf>();
 
   pmatOut->_31 = _fB + vAxis.y * fSin;
   pmatOut->_32 = _fC - vAxis.x * fSin;
   pmatOut->_33 = fICos * vAxis.z * vAxis.z + fCos;
-  pmatOut->_34 = fZERO;
+  pmatOut->_34 = Math::Zero<floatf>();
 
-  pmatOut->_41 = fZERO;
-  pmatOut->_42 = fZERO;
-  pmatOut->_43 = fZERO;
-  pmatOut->_44 = fONE;
+  pmatOut->_41 = Math::Zero<floatf>();
+  pmatOut->_42 = Math::Zero<floatf>();
+  pmatOut->_43 = Math::Zero<floatf>();
+  pmatOut->_44 = Math::One<floatf>();
 }
 
 } // namespace Math

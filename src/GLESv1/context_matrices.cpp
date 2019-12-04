@@ -76,13 +76,13 @@ void GLContext::loadMatrix(const MATRIX44 &matrix) {
 
 void GLContext::frustum(floatf left, floatf right, floatf bottom, floatf top,
                         floatf zNear, floatf zFar) {
-  if (zNear < fZERO) {
+  if (zNear < Math::Zero<floatf>()) {
     __glError(GL_INVALID_VALUE,
               "GLContext::frustum() failed, zNear should not be negative.\r\n");
     return;
   }
 
-  if (zFar < fZERO) {
+  if (zFar < Math::Zero<floatf>()) {
     __glError(GL_INVALID_VALUE,
               "GLContext::frustum() failed, zFar should not be negative.\r\n");
     return;

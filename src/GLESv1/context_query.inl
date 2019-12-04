@@ -586,8 +586,8 @@ template <typename T> inline void GLContext::get(GLenum pname, T *pParams) {
   case GL_CURRENT_TEXTURE_COORDS:
     pParams[0] = static_cast<T>(vTexCoords_[activeTexture_].x);
     pParams[1] = static_cast<T>(vTexCoords_[activeTexture_].y);
-    pParams[2] = static_cast<T>(fZERO);
-    pParams[3] = static_cast<T>(fONE);
+    pParams[2] = static_cast<T>(Math::Zero<floatf>());
+    pParams[3] = static_cast<T>(Math::One<floatf>());
     break;
 
   case GL_CURRENT_NORMAL:

@@ -198,7 +198,7 @@ inline void GLContext::setPointParameter(GLenum pname, const T *pParams) {
   case GL_POINT_SIZE_MAX:
   case GL_POINT_FADE_THRESHOLD_SIZE: {
     auto param = static_cast<floatf>(pParams[0]);
-    if (param < fZERO) {
+    if (param < Math::Zero<floatf>()) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setPointParameter() failed, "
                 "invalid param parameter: %d.\r\n",

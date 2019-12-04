@@ -552,7 +552,7 @@ public:
               fM0OverW2 += fM0OverW2dA << log2width;
               fdMr0 = (fM0OverW2 * fWr2 - fM0) >> log2width;
             } else {
-              fdMr0 = TConst<fixedRX>::Zero();
+              fdMr0 = Math::Zero<fixedRX>();
             }
           }
         }
@@ -568,7 +568,7 @@ public:
               fM1OverW2 += fM1OverW2dA << log2width;
               fdMr1 = (fM1OverW2 * fWr2 - fM1) >> log2width;
             } else {
-              fdMr1 = TConst<fixedRX>::Zero();
+              fdMr1 = Math::Zero<fixedRX>();
             }
           }
         }

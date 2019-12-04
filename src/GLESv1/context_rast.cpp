@@ -59,7 +59,7 @@ void GLContext::setPolygonOffset(floatf factor, floatf units) {
 }
 
 void GLContext::setPointSize(floatf size) {
-  if (size <= fZERO) {
+  if (size <= Math::Zero<floatf>()) {
     __glError(
         GL_INVALID_VALUE,
         "GLContext::setPointSize() failed, invalid size parameter: %d.\r\n",
@@ -71,7 +71,7 @@ void GLContext::setPointSize(floatf size) {
 }
 
 void GLContext::setLineWidth(floatf width) {
-  if (width <= fZERO) {
+  if (width <= Math::Zero<floatf>()) {
     __glError(
         GL_INVALID_VALUE,
         "GLContext::setLineWidth() failed, invalid width parameter: %d.\r\n",

@@ -71,7 +71,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
 
   case GL_SPOT_EXPONENT: {
     vParam.x = static_cast<floatf>(pParams[0]);
-    if ((vParam.x < fZERO) || (vParam.x > f128)) {
+    if ((vParam.x < Math::Zero<floatf>()) || (vParam.x > Math::F128<floatf>())) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setLightParameter() failed, invalid param "
                 "parameter: %d.\r\n",
@@ -86,7 +86,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
 
   case GL_SPOT_CUTOFF: {
     vParam.x = static_cast<floatf>(pParams[0]);
-    if (((vParam.x < fZERO) || (vParam.x > f90)) && (vParam.x != f180)) {
+    if (((vParam.x < Math::Zero<floatf>()) || (vParam.x > Math::F90<floatf>())) && (vParam.x != Math::F180<floatf>())) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setLightParameter() failed, invalid param "
                 "parameter: %d.\r\n",
@@ -104,7 +104,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
   case GL_LINEAR_ATTENUATION:
   case GL_QUADRATIC_ATTENUATION: {
     vParam.x = static_cast<floatf>(pParams[0]);
-    if (vParam.x < fZERO) {
+    if (vParam.x < Math::Zero<floatf>()) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setLightParameter() failed, invalid param "
                 "parameter: %d.\r\n",
@@ -132,7 +132,7 @@ inline void GLContext::setLightParameterModel(GLenum pname, const T *pParams) {
 
   switch (pname) {
   case GL_LIGHT_MODEL_TWO_SIDE:
-    caps_.TwoSidedLighting = (static_cast<floatf>(pParams[0]) != fZERO);
+    caps_.TwoSidedLighting = (static_cast<floatf>(pParams[0]) != Math::Zero<floatf>());
     break;
 
   case GL_LIGHT_MODEL_AMBIENT:
@@ -198,7 +198,7 @@ inline void GLContext::setMaterial(GLenum face, GLenum pname,
 
   case GL_SHININESS: {
     vParam.x = static_cast<floatf>(pParams[0]);
-    if ((vParam.x < fZERO) || (vParam.x > f128)) {
+    if ((vParam.x < Math::Zero<floatf>()) || (vParam.x > Math::F128<floatf>())) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setMaterial() failed, invalid "
                 "param parameter: %d.\r\n",
