@@ -16,7 +16,6 @@
 
 #include <cstring>
 #include <list>
-#include <mutex>
 #include <thread>
 
 #include <platform.hpp>

@@ -15,13 +15,11 @@
 
 #pragma once
 
-#include <chrono>
-#include <climits>
 #include <list>
 #include <map>
-#include <mutex>
-#include <string.h>
+#include <cstring>
 #include <vector>
+#include <thread>
 
 #include <platform.hpp>
 #include <utils.hpp>

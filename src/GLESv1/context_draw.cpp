@@ -150,20 +150,20 @@ void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
       goto L_EXIT;
     }
 
-    // Setup the raster states
-    err = this->setupRasterStates(mode);
-    if (__glFailed(err)) {
-      __glLogError("Rasterizer::setupRasterStates() failed, err = %d.\r\n",
-                   err);
-      goto L_EXIT;
-    }
-
     uint32_t vmin, vmax;
 
     // Prepare index buffer
     err = this->prepareIndices(type, &pIndices, count, &vmin, &vmax);
     if (__glFailed(err)) {
       __glError(err, "GLContext::prepareIndices() failed, err = %d.\r\n", err);
+      goto L_EXIT;
+    }
+
+    // Setup the raster states
+    err = this->setupRasterStates(mode);
+    if (__glFailed(err)) {
+      __glLogError("Rasterizer::setupRasterStates() failed, err = %d.\r\n",
+                   err);
       goto L_EXIT;
     }
 

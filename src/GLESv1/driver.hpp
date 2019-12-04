@@ -12,7 +12,11 @@
 // INDEMNITIES.
 //
 #pragma once
-#include "context.hpp"
+
+class GLContext;
+class GLSurface;
+class ThreadPool;
+class RasterCache;
 
 class GLDriver {
 public:
@@ -61,5 +65,6 @@ public:
 
 private:
   HandleTable *handles_;
+  ThreadPool* threadpool_;
   RasterCache *pRasterCache_;
 };

@@ -147,4 +147,4 @@ inline int32_t Ctz(int32_t rhs) { return 31 - Clz(rhs & -rhs); }
 #define __no_default assert(false);
 #endif
 
-template <typename... Args> void __unreferenced(Args &&...) {}
+template <typename... Args> void __unused(Args &&...) {}

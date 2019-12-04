@@ -45,7 +45,7 @@ GLenum InputAssembler::prepareIndices(GLenum type, const GLvoid **ppvIndices,
     }
   }
 
-  uint32_t min = UINT_MAX;
+  uint32_t min = -1;
   uint32_t max = 0;
 
   switch (type) {

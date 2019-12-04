@@ -621,20 +621,20 @@ inline static uint32_t GetNativeFormat(uint32_t pixelFormat) {
 ///////////////////////////////////////////////////////////////////////////////
 
 template <> inline uint32_t ConvertTo<FORMAT_UNKNOWN>(const Color4 &in) {
-  __unreferenced(in);
+  __unused(in);
   return 0;
 }
 
 template <>
 inline void ConvertFrom<FORMAT_UNKNOWN, false>(Color4 *pOut, uint32_t in) {
-  __unreferenced(pOut);
-  __unreferenced(in);
+  __unused(pOut);
+  __unused(in);
 }
 
 template <>
 inline void ConvertFrom<FORMAT_UNKNOWN, true>(Color4 *pOut, uint32_t in) {
-  __unreferenced(pOut);
-  __unreferenced(in);
+  __unused(pOut);
+  __unused(in);
 }
 
 //////////////////////////////////////////////////////////////////////////////

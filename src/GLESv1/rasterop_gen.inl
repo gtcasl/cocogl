@@ -59,8 +59,8 @@ void DoWriteColor(const RasterData &rasterData, const Color4 &cColor,
     uint32_t writeMask = rasterData.ColorWriteMask;
     result = (result & writeMask) | (dstColor & ~writeMask);
   } else {
-    __unreferenced(rasterData);
-    __unreferenced(dstColor);
+    __unused(rasterData);
+    __unused(dstColor);
   }
 
   *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB) =
@@ -102,10 +102,10 @@ public:
         GenericScanlineA<Depth, Color, 0, 0, Fog>::__Execute(rasterData, y, lx,
                                                               rx);
       } else {
-        __unreferenced(rasterData);
-        __unreferenced(y);
-        __unreferenced(lx);
-        __unreferenced(rx);
+        __unused(rasterData);
+        __unused(y);
+        __unused(lx);
+        __unused(rx);
       }
     }
   }
@@ -356,10 +356,10 @@ public:
       GenericScanlineP<Depth, Color, Texture0, Texture1, Fog>::__Execute(
           rasterData, y, lx, rx);
     } else {
-      __unreferenced(rasterData);
-      __unreferenced(y);
-      __unreferenced(lx);
-      __unreferenced(rx);
+      __unused(rasterData);
+      __unused(y);
+      __unused(lx);
+      __unused(rx);
     }
   }
 

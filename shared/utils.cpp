@@ -15,7 +15,7 @@
 #include <stdarg.h>
 
 void DbgPrintf(int level, const char *format, ...) {
-  __unreferenced(level);
+  __unused(level);
   va_list args;
   va_start(args, format);
   vfprintf(stderr, format, args);

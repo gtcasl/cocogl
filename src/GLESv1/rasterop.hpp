@@ -145,8 +145,8 @@ template <uint32_t Format> struct NColor {
 template <uint32_t compare> inline bool DoCompare(uint32_t a, uint32_t b) {
 
   if constexpr (compare == COMPARE_NEVER) {
-    __unreferenced(a);
-    __unreferenced(b);
+    __unused(a);
+    __unused(b);
     return false;
   }
 
@@ -175,8 +175,8 @@ template <uint32_t compare> inline bool DoCompare(uint32_t a, uint32_t b) {
   }
 
   if constexpr (compare == COMPARE_ALWAYS) {
-    __unreferenced(a);
-    __unreferenced(b);
+    __unused(a);
+    __unused(b);
     return true;
   }
 }
@@ -187,33 +187,33 @@ template <uint32_t StencilOp>
 inline uint32_t DoStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
 
   if constexpr (StencilOp == STENCIL_KEEP) {
-    __unreferenced(stencilRef);
+    __unused(stencilRef);
     return stencilValue;
   }
 
   if constexpr (StencilOp == STENCIL_REPLACE) {
-    __unreferenced(stencilValue);
+    __unused(stencilValue);
     return stencilRef;
   }
 
   if constexpr (StencilOp == STENCIL_INCR) {
-    __unreferenced(stencilRef);
+    __unused(stencilRef);
     return stencilValue + (stencilValue != 0xffff) ? 1 : 0;
   }
 
   if constexpr (StencilOp == STENCIL_DECR) {
-    __unreferenced(stencilRef);
+    __unused(stencilRef);
     return stencilValue - (stencilValue != 0) ? 1 : 0;
   }
 
   if constexpr (StencilOp == STENCIL_ZERO) {
-    __unreferenced(stencilValue);
-    __unreferenced(stencilRef);
+    __unused(stencilValue);
+    __unused(stencilRef);
     return 0;
   }
 
   if constexpr (StencilOp == STENCIL_INVERT) {
-    __unreferenced(stencilRef);
+    __unused(stencilRef);
     return ~stencilValue;
   }
 }
@@ -426,7 +426,7 @@ template <uint32_t EnvMode>
 void GetTexEnvColorA(Color4 *pInOut, const Color4 &cTexture,
                      ColorARGB cEnvColor) {
 
-  __unreferenced(cEnvColor);
+  __unused(cEnvColor);
 
   if constexpr (EnvMode == ENVMODE_ADD) {
     pInOut->a = Math::Mul8(pInOut->a, cTexture.a);
@@ -454,7 +454,7 @@ void GetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
                        ColorARGB cEnvColor) {
 
   if constexpr (EnvMode == ENVMODE_ADD) {
-    __unreferenced(cEnvColor);
+    __unused(cEnvColor);
     pInOut->r = Math::Add8(pInOut->r, cTexture.r);
     pInOut->g = Math::Add8(pInOut->g, cTexture.g);
     pInOut->b = Math::Add8(pInOut->b, cTexture.b);
@@ -467,21 +467,21 @@ void GetTexEnvColorRGB(Color4 *pInOut, const Color4 &cTexture,
   }
 
   if constexpr (EnvMode == ENVMODE_REPLACE) {
-    __unreferenced(cEnvColor);
+    __unused(cEnvColor);
     pInOut->r = cTexture.r;
     pInOut->g = cTexture.g;
     pInOut->b = cTexture.b;
   }
 
   if constexpr (EnvMode == ENVMODE_MODULATE) {
-    __unreferenced(cEnvColor);
+    __unused(cEnvColor);
     pInOut->r = Math::Mul8(pInOut->r, cTexture.r);
     pInOut->g = Math::Mul8(pInOut->g, cTexture.g);
     pInOut->b = Math::Mul8(pInOut->b, cTexture.b);
   }
 
   if constexpr (EnvMode == ENVMODE_DECAL) {
-    __unreferenced(cEnvColor);
+    __unused(cEnvColor);
     pInOut->r = cTexture.r;
     pInOut->g = cTexture.g;
     pInOut->b = cTexture.b;
@@ -493,7 +493,7 @@ void GetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
                         ColorARGB cEnvColor) {
 
   if constexpr (EnvMode == ENVMODE_ADD) {
-    __unreferenced(cEnvColor);
+    __unused(cEnvColor);
     pInOut->r = Math::Add8(pInOut->r, cTexture.r);
     pInOut->g = Math::Add8(pInOut->g, cTexture.g);
     pInOut->b = Math::Add8(pInOut->b, cTexture.b);
@@ -508,7 +508,7 @@ void GetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
   }
 
   if constexpr (EnvMode == ENVMODE_REPLACE) {
-    __unreferenced(cEnvColor);
+    __unused(cEnvColor);
     pInOut->r = cTexture.r;
     pInOut->g = cTexture.g;
     pInOut->b = cTexture.b;
@@ -516,7 +516,7 @@ void GetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
   }
 
   if constexpr (EnvMode == ENVMODE_MODULATE) {
-    __unreferenced(cEnvColor);
+    __unused(cEnvColor);
     pInOut->r = Math::Mul8(pInOut->r, cTexture.r);
     pInOut->g = Math::Mul8(pInOut->g, cTexture.g);
     pInOut->b = Math::Mul8(pInOut->b, cTexture.b);
@@ -524,7 +524,7 @@ void GetTexEnvColorARGB(Color4 *pInOut, const Color4 &cTexture,
   }
 
   if constexpr (EnvMode == ENVMODE_DECAL) {
-    __unreferenced(cEnvColor);
+    __unused(cEnvColor);
     pInOut->r = Math::Lerp8(pInOut->r, cTexture.r, cTexture.a);
     pInOut->g = Math::Lerp8(pInOut->g, cTexture.g, cTexture.a);
     pInOut->b = Math::Lerp8(pInOut->b, cTexture.b, cTexture.a);
@@ -538,8 +538,8 @@ template <uint32_t BlendOp>
 void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
 
   if constexpr (BlendOp == BLEND_ZERO) {
-    __unreferenced(cSrc);
-    __unreferenced(cDst);
+    __unused(cSrc);
+    __unused(cDst);
 
     pInOut->r = 0;
     pInOut->g = 0;
@@ -548,13 +548,13 @@ void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
   }
 
   if constexpr (BlendOp == BLEND_ONE) {
-    __unreferenced(pInOut);
-    __unreferenced(cSrc);
-    __unreferenced(cDst);
+    __unused(pInOut);
+    __unused(cSrc);
+    __unused(cDst);
   }
 
   if constexpr (BlendOp == BLEND_SRC_COLOR) {
-    __unreferenced(cDst);
+    __unused(cDst);
 
     pInOut->r = Math::Mul8(pInOut->r, cSrc.r);
     pInOut->g = Math::Mul8(pInOut->g, cSrc.g);
@@ -563,7 +563,7 @@ void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
   }
 
   if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_COLOR) {
-    __unreferenced(cDst);
+    __unused(cDst);
 
     pInOut->r = Math::Mul8(pInOut->r, 0xff - cSrc.r);
     pInOut->g = Math::Mul8(pInOut->g, 0xff - cSrc.g);
@@ -572,7 +572,7 @@ void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
   }
 
   if constexpr (BlendOp == BLEND_SRC_ALPHA) {
-    __unreferenced(cDst);
+    __unused(cDst);
 
     pInOut->r = Math::Mul8(pInOut->r, cSrc.a);
     pInOut->g = Math::Mul8(pInOut->g, cSrc.a);
@@ -581,7 +581,7 @@ void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
   }
 
   if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
-    __unreferenced(cDst);
+    __unused(cDst);
 
     int invAlpha = 0xff - cSrc.a;
     pInOut->r = Math::Mul8(pInOut->r, invAlpha);
@@ -591,7 +591,7 @@ void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
   }
 
   if constexpr (BlendOp == BLEND_DST_ALPHA) {
-    __unreferenced(cSrc);
+    __unused(cSrc);
 
     pInOut->r = Math::Mul8(pInOut->r, cDst.a);
     pInOut->g = Math::Mul8(pInOut->g, cDst.a);
@@ -600,7 +600,7 @@ void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
   }
 
   if constexpr (BlendOp == BLEND_ONE_MINUS_DST_ALPHA) {
-    __unreferenced(cSrc);
+    __unused(cSrc);
 
     int invAlpha = 0xff - cDst.a;
     pInOut->r = Math::Mul8(pInOut->r, invAlpha);
@@ -610,7 +610,7 @@ void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
   }
 
   if constexpr (BlendOp == BLEND_DST_COLOR) {
-    __unreferenced(cSrc);
+    __unused(cSrc);
 
     pInOut->r = Math::Mul8(pInOut->r, cDst.r);
     pInOut->g = Math::Mul8(pInOut->g, cDst.g);
@@ -619,7 +619,7 @@ void GetBlendCoeff(Color4 *pInOut, const Color4 &cSrc, const Color4 &cDst) {
   }
 
   if constexpr (BlendOp == BLEND_ONE_MINUS_DST_COLOR) {
-    __unreferenced(cSrc);
+    __unused(cSrc);
 
     pInOut->r = Math::Mul8(pInOut->r, 0xff - cDst.r);
     pInOut->g = Math::Mul8(pInOut->g, 0xff - cDst.g);
@@ -641,8 +641,8 @@ template <uint32_t LogicOp>
 uint32_t ApplyLogicOp(uint32_t srcColor, uint32_t dstColor) {
 
   if constexpr (LogicOp == LOGICOP_CLEAR) {
-    __unreferenced(srcColor);
-    __unreferenced(dstColor);
+    __unused(srcColor);
+    __unused(dstColor);
     return 0;
   }
 
@@ -655,7 +655,7 @@ uint32_t ApplyLogicOp(uint32_t srcColor, uint32_t dstColor) {
   }
 
   if constexpr (LogicOp == LOGICOP_COPY) {
-    __unreferenced(dstColor);
+    __unused(dstColor);
     return srcColor;
   }
 
@@ -664,7 +664,7 @@ uint32_t ApplyLogicOp(uint32_t srcColor, uint32_t dstColor) {
   }
 
   if constexpr (LogicOp == LOGICOP_NOOP) {
-    __unreferenced(srcColor);
+    __unused(srcColor);
     return dstColor;
   }
 
@@ -685,7 +685,7 @@ uint32_t ApplyLogicOp(uint32_t srcColor, uint32_t dstColor) {
   }
 
   if constexpr (LogicOp == LOGICOP_INVERT) {
-    __unreferenced(srcColor);
+    __unused(srcColor);
     return ~dstColor;
   }
 
@@ -694,7 +694,7 @@ uint32_t ApplyLogicOp(uint32_t srcColor, uint32_t dstColor) {
   }
 
   if constexpr (LogicOp == LOGICOP_COPY_INVERTED) {
-    __unreferenced(dstColor);
+    __unused(dstColor);
     return ~srcColor;
   }
 
@@ -707,8 +707,8 @@ uint32_t ApplyLogicOp(uint32_t srcColor, uint32_t dstColor) {
   }
 
   if constexpr (LogicOp == LOGICOP_SET) {
-    __unreferenced(srcColor);
-    __unreferenced(dstColor);
+    __unused(srcColor);
+    __unused(dstColor);
     return 0xffffffff;
   }
 }

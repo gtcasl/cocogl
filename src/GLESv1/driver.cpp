@@ -14,6 +14,8 @@
 //
 #include "stdafx.h"
 #include "driver.hpp"
+#include "context.hpp"
+#include "threadpool.hpp"
 
 thread_local GLContext *tls_glctx = nullptr;
 
@@ -26,11 +28,15 @@ GLDriver::GLDriver() : handles_(nullptr), pRasterCache_(nullptr) {
   handles_ = new HandleTable();
   handles_->addRef();
 
+  // Create the thread pool
+  threadpool_ = new ThreadPool();
+  threadpool_->addRef();
+
   // Create the raster cache
   err = RasterCache::Create(&pRasterCache_);
   if (__glFailed(err)) {
     __glLogError("RasterCache::Create() failed, err = %x.\r\n", err);
-    return;
+    std::abort();
   }
 }
 
@@ -39,6 +45,7 @@ GLDriver::~GLDriver() {
 
   __safeRelease(tls_glctx);
   __safeRelease(pRasterCache_);
+  __safeRelease(threadpool_);
 
   if (handles_) {
     {

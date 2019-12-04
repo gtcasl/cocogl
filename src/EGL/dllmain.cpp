@@ -729,7 +729,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapInterval(EGLDisplay display,
                                               EGLint interval) {
   __profileAPI(" - %s( display=%d, interval=%d )\n", __FUNCTION__, display,
                interval);
-  __unreferenced(interval);
+  __unused(interval);
 
   // Find the display object from the handle table
   auto pDisplay = g_driver.getObject<_EGLDisplay *>(display);

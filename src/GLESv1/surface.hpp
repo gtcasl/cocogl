@@ -122,15 +122,15 @@ private:
 
   static void colorFillNoop(const GLSurfaceDesc &surfDesc, uint32_t value,
                             uint32_t mask, const Rect &rect) {
-    __unreferenced(surfDesc);
-    __unreferenced(value);
-    __unreferenced(mask);
-    __unreferenced(rect);
+    __unused(surfDesc);
+    __unused(value);
+    __unused(mask);
+    __unused(rect);
   }
 
   static void colorConvNoop(void *pColorOut, const Color4 &color) {
-    __unreferenced(pColorOut);
-    __unreferenced(color);
+    __unused(pColorOut);
+    __unused(color);
   }
 
   GLint attributes_[ATTRIBUTES_SIZE];

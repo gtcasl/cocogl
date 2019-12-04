@@ -147,8 +147,8 @@ template <>
 inline void
 DecodeVertex<VECTOR4, VertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut,
                                                     const uint8_t *pbIn) {
-  __unreferenced(pOut);
-  __unreferenced(pbIn);
+  __unused(pOut);
+  __unused(pbIn);
 }
 
 template <>

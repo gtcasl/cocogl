@@ -13,11 +13,7 @@
 //
 #pragma once
 
-#include "config.hpp"
-#include "context.hpp"
-#include "surface.hpp"
-
-class _EGConfig;
+class _EGLConfig;
 
 class _EGLDisplay : public Object {
 public:
