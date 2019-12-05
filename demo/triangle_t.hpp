@@ -17,12 +17,11 @@
 
 class TriangleTest : public Renderer {
 public:
-  TriangleTest() {}
+  TriangleTest(EGLNativeWindowType window) : Renderer(window) {}
 
   ~TriangleTest() {}
 
-  bool OnInitialize(EGLNativeWindowType window) {
-    Renderer::OnInitialize(window);
+  bool OnInitialize() {
     /*
     Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
@@ -77,7 +76,5 @@ public:
     // Disable selected arrays
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
-
-    Renderer::OnRender();
   }
 };

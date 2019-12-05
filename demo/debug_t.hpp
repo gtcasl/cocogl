@@ -15,9 +15,9 @@
 
 class DebugTest : public Renderer {
 public:
-  bool OnInitialize(EGLNativeWindowType window) {
-    Renderer::OnInitialize(window);
+   DebugTest(EGLNativeWindowType window) : Renderer(window) {}
 
+  bool OnInitialize() {
     glViewport(0, 0, 48, 48);
     glScissor(0, 0, 48, 48);
 
@@ -92,7 +92,5 @@ public:
     // UINT pixels;
     // glReadPixels( 4, 38, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixels );
     // glReadPixels( 19, 38, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixels );
-
-    Renderer::OnRender();
   }
 };

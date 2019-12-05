@@ -61,40 +61,40 @@ static Renderer* create_test(int tid, EGLNativeWindowType window) {
   Renderer *test = nullptr;
   switch (tid) {
   case 0:
-    test = new ClearTest();
+    test = new ClearTest(window);
     break;
   case 1:
-    test = new LineTest();
+    test = new LineTest(window);
     break;
   case 2:
-    test = new TriangleTest();
+    test = new TriangleTest(window);
     break;
   case 3:
-    test = new CubeTest();
+    test = new CubeTest(window);
     break;
   case 4:
-    test = new TextureTest();
+    test = new TextureTest(window);
     break;
   case 5:
-    test = new SceneTest();
+    test = new SceneTest(window);
     break;
   case 6:
-    test = new FogTest();
+    test = new FogTest(window);
     break;
   case 7:
-    test = new StencilTest();
+    test = new StencilTest(window);
     break;
   case 8:
-    test = new QuadTest();
+    test = new QuadTest(window);
     break;
   case 9:
-    test = new DebugTest();
+    test = new DebugTest(window);
     break;
   default:
     std::cout << "invalid testid=" << testid << std::endl;
     exit(-1);
   }
-  if (!test->OnInitialize(window)) {
+  if (!test->OnInitialize()) {
     std::cout << "test initiaklization failed" << std::endl;
     delete test;
     exit(1);
@@ -106,6 +106,8 @@ int main(int argc, char **argv) {
   //--
   parse_args(argc, argv);
 
+
+  bool text_enable = true;
   int loop = 1;
   SDL_Event event;
   
@@ -120,6 +122,11 @@ int main(int argc, char **argv) {
    // create test
   auto test = create_test(testid, window);
 
+  // create text renderer
+  auto tr = new TextRenderer();
+  if (!tr->initialize("media/font.tga"))
+    exit(1);
+
   auto start_time = std::chrono::high_resolution_clock::now();
   uint64_t num_frames = 0;
 
@@ -128,6 +135,9 @@ int main(int argc, char **argv) {
       switch (event.type) {
       case SDL_KEYDOWN:
         switch (event.key.keysym.sym) {
+        case SDLK_t:
+          text_enable = !text_enable;
+          break;
         case SDLK_PAGEUP:          
           if (testid > 0) {
             test->OnDestroy();
@@ -158,6 +168,10 @@ int main(int argc, char **argv) {
     }
 
     test->OnRender();
+    if (text_enable) {
+      tr->drawText("A", 0, 0, 1.0f / 640);
+    }
+    test->Present();
     ++num_frames;    
   }
 
@@ -168,6 +182,8 @@ int main(int argc, char **argv) {
   std::cout << "FPS: " << FPS << std::endl;
 
   // Cleaning
+  tr->destroy();
+  delete tr;
   test->OnDestroy();  
   delete test;
 

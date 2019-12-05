@@ -13,15 +13,57 @@
 //
 #pragma once
 
+class TextRenderer {
+public:
+
+  TextRenderer();
+
+  ~TextRenderer();
+
+  bool initialize(const char* fontimage);
+
+  void drawText(const char *text, float x, float y, float scale);
+
+  void destroy();
+
+private:
+
+  enum{ NUMCHARS = 256, SPACE = 32 };
+
+  struct glyph_t {
+    int l;
+    int t;
+    int w;
+    int h;
+  };
+
+  struct vertex_t {
+    GLfloat x;
+    GLfloat y;
+    GLfloat s;
+    GLfloat t;
+  };
+
+  std::vector<vertex_t> vertices_;
+  std::array<glyph_t, NUMCHARS> glyphs_;
+  float inv_width_;
+  float inv_height_;
+
+  GLuint texture_;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
 class Renderer {
 public:
 
-  Renderer();
+  Renderer(EGLNativeWindowType window);
+
   virtual ~Renderer();
 
-  virtual bool OnInitialize(EGLNativeWindowType window);
+  virtual bool OnInitialize();
 
-  virtual void OnRender();
+  virtual void OnRender() = 0;
 
   virtual void OnKeyNext();
 
@@ -29,6 +71,8 @@ public:
 
   virtual void OnDestroy();
 
+  void Present();
+  
 protected:
 
   EGLDisplay glDisplay_;

@@ -24,18 +24,15 @@ private:
   float yrot_;
 
 public:
-  FogTest() {
+  FogTest(EGLNativeWindowType window) : Renderer(window) {
     xrot_ = 0.0f;
     yrot_ = 0.0f;
   }
 
   ~FogTest() {}
 
-  bool OnInitialize(EGLNativeWindowType window) {
-    Renderer::OnInitialize(window);
-
+  bool OnInitialize() {
     static const float fogColor[] = {0.5f, 0.5f, 0.5f, 1.0f};
-
     static const GLfloat box[] = {
         // FRONT
         -0.5f,
@@ -133,8 +130,13 @@ public:
 
     static const float matAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-    if (!LoadTGA("media/block.tga", &texture_))
-      return false;
+    {
+      std::vector<uint8_t> pixels;
+      int width, height, bpp;
+      if (!LoadTGA("media/block.tga", pixels, &width, &height, &bpp))    
+        return false;
+      texture_ = loadTexture(pixels, width, height, bpp);
+    }
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -216,12 +218,9 @@ public:
     glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
     glNormal3f(0.0f, -1.0f, 0.0f);
     glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
-
-    Renderer::OnRender();
   }
 
   void OnDestroy() { 
     glDeleteTextures(1, &texture_); 
-    Renderer::OnDestroy();
   }
 };

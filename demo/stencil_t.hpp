@@ -28,7 +28,7 @@ private:
   bool yup_;
 
 public:
-  StencilTest() {
+  StencilTest(EGLNativeWindowType window) : Renderer(window) {
     xrot_ = 0.0f;
     yrot_ = 0.0f;
     yval_ = 1.0f;
@@ -37,9 +37,7 @@ public:
 
   ~StencilTest() {}
 
-  bool OnInitialize(EGLNativeWindowType window) {
-    Renderer::OnInitialize(window);
-
+  bool OnInitialize() {
     static const GLfloat floorVertices[] = {-3.0f, 0.0f, 3.0f,  3.0f,
                                             0.0f,  3.0f, -3.0f, 0.0f,
                                             -3.0f, 3.0f, 0.0f,  -3.0f};
@@ -258,12 +256,9 @@ public:
     glDisable(GL_BLEND);
 
     drawCube();
-
-    Renderer::OnRender();
   }
 
   void OnDestroy() { 
-    glDeleteTextures(1, &texture_); 
-    Renderer::OnDestroy();
+    glDeleteTextures(1, &texture_);
   }
 };

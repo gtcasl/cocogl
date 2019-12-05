@@ -462,7 +462,7 @@ void GLContext::readPixels(GLint x, GLint y, GLsizei width, GLsizei height,
   dstDesc.pBits = reinterpret_cast<uint8_t *>(const_cast<GLvoid *>(pPixels));
   dstDesc.Width = width;
   dstDesc.Height = height;
-  dstDesc.Pitch = __align(width * dstBPP, unpackAlignment_);
+  dstDesc.Pitch = __align(width * dstBPP, packAlignment_);
   dstDesc.Format = static_cast<uint8_t>(dstFormat);
 
   err = CopyBuffers(dstDesc, 0, 0, width, height, srcDesc, x, y);

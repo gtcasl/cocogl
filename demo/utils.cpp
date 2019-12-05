@@ -13,7 +13,22 @@
 //
 #include "stdafx.h"
 #include <math.h>
-#include <string.h>
+#include <fstream>
+
+struct __attribute__((__packed__)) tga_header_t {
+  int8_t  idlength;
+  int8_t  colourmaptype;
+  int8_t  datatypecode;
+  int16_t colourmaporigin;
+  int16_t colourmaplength;
+  int8_t  colourmapdepth;
+  int16_t x_origin;
+  int16_t y_origin;
+  int16_t width;
+  int16_t height;
+  int8_t  bitsperpixel;
+  int8_t  imagedescriptor;
+};
 
 void Ortho2D(int width, int height) {
   glMatrixMode(GL_PROJECTION);
@@ -89,91 +104,77 @@ void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
   glTranslatef(-eyex, -eyey, -eyez);
 }
 
-bool LoadTGA(const char *fileName, GLuint *id) {
+GLuint loadTexture(const std::vector<uint8_t>& pixels, int width, int height, int bpp) {
+  GLuint texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexParameterx(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+  auto format = (bpp == 32) ? GL_RGBA : GL_RGB;
+  glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format,
+                GL_UNSIGNED_BYTE, pixels.data());
+  assert(GL_NO_ERROR == glGetError());
+  return texture;
+}
 
-  auto f = fopen(fileName, "rb");
-  if (nullptr == f) {
+bool LoadTGA(const char *filename, std::vector<uint8_t>& pixels, int* width, int* height, int* bpp) {
+  std::ifstream ifs(filename, std::ios::in | std::ios::binary);
+  if (!ifs.is_open()) {
+    std::cerr << "couldn't open TGA file: " << filename << "!" << std::endl;
     return false;
   }
 
-  GLubyte *pixels = nullptr;
-
-  uint16_t width = 0, height = 0;
-  uint8_t headerLength = 0;
-  uint8_t imageType = 0;
-  uint8_t bits = 0;
-  int format = 0;
-  int lineWidth = 0;
-
-  fread(&headerLength, sizeof(uint8_t), 1, f);
-
-  // skip next uint8_t
-  fseek(f, 1, SEEK_CUR);
-
-  // read in the imageType (RLE, RGB, etc...)
-  fread(&imageType, sizeof(uint8_t), 1, f);
-
-  // skip information we don't care about
-  fseek(f, 9, SEEK_CUR);
-
-  // read the width, height and bits per pixel
-  fread(&width, sizeof(uint16_t), 1, f);
-  fread(&height, sizeof(uint16_t), 1, f);
-  fread(&bits, sizeof(uint8_t), 1, f);
-
-  // move the file pointer to the pixel data
-  fseek(f, headerLength + 1, SEEK_CUR);
-
-  // check if the image is not compressed
-  if (imageType != 10) {
-    switch (bits) {
-    case 24:
-    case 32: {
-      format = bits >> 3;
-      lineWidth = format * width;
-      pixels = new GLubyte[lineWidth * height];
-
-      // we are going to load the pixel data line by line
-      for (int y = 0; y < height; ++y) {
-        // Read current line of pixels
-        GLubyte *line = &pixels[lineWidth * y];
-        fread(line, lineWidth, 1, f);
-
-        // Because the TGA is BGR instead of RGB, we must swap RG components
-        for (int i = 0; i < lineWidth; i += format) {
-          GLubyte temp = line[i];
-          line[i] = line[i + 2];
-          line[i + 2] = temp;
-        }
-      }
-      break;
-    }
-    default:
-      fclose(f);
-      *id = 0;
-      return false;
-    }
+  tga_header_t header;
+  ifs.read(reinterpret_cast<char*>(&header), sizeof(tga_header_t)); 
+   if (ifs.fail()) {
+    std::cerr << "invalid TGA file header!" << std::endl;
+    return false;
   }
 
-  fclose(f);
+  if (header.datatypecode != 2) {
+    std::cerr << "unsupported TGA encoding format!" << std::endl;
+    return false;
+  }
 
-  glGenTextures(1, id);
-  glBindTexture(GL_TEXTURE_2D, *id);
-  glTexParameterx(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+  ifs.seekg(header.idlength, std::ios::cur); // skip string
+  if (ifs.fail()) {
+    std::cerr << "invalid TGA file!" << std::endl;
+    return false;
+  }
 
-  switch (bits) {
+  switch (header.bitsperpixel) {
   case 24:
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, pixels);
-    break;
+  case 32: {
+    auto stride = header.bitsperpixel / 8;
+    auto pitch = header.width * stride;
+    pixels.resize(header.height * pitch);
 
-  case 32:
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, pixels);
+    // we are going to load the pixel data line by line
+    for (int y = 0; y < header.height; ++y) {
+      // Read current line of pixels
+      auto line = pixels.data() + y * pitch;
+      ifs.read(reinterpret_cast<char*>(line), pitch);
+      if (ifs.fail()) {
+        std::cerr << "invalid TGA file!" << std::endl;
+        return false;
+      }
+
+      // Because the TGA is BGR instead of RGB, we must swap RG components
+      for (int i = 0; i < pitch; i += stride) {
+        auto tmp = line[i];
+        line[i] = line[i + 2];
+        line[i + 2] = tmp;
+      }
+    }
     break;
   }
+  default:
+    std::cerr << "unsupported TGA bitsperpixel!" << std::endl;
+    return false;
+  }
 
-  delete[] pixels;
+  *width = header.width;
+  *height = header.height;
+  *bpp = header.bitsperpixel;
 
-  return (GL_NO_ERROR == glGetError());
+  return true;  
 }

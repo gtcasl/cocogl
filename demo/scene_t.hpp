@@ -22,11 +22,9 @@ private:
   float lightRotation_;
 
 public:
-  SceneTest() : rotation_(0), lightRotation_(0) {}
+  SceneTest(EGLNativeWindowType window) : Renderer(window), rotation_(0), lightRotation_(0) {}
 
-  bool OnInitialize(EGLNativeWindowType window) {
-    Renderer::OnInitialize(window);
-
+  bool OnInitialize() {
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
     the fixed point version (they finish in 'x'*/
@@ -115,7 +113,5 @@ public:
 
     ++rotation_;
     lightRotation_ += 0.2f;
-
-    Renderer::OnRender();
   }
 };

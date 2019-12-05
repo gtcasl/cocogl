@@ -24,13 +24,11 @@ private:
   int rotation_;
 
 public:
-  TextureTest() : offset_(0), rotation_(0) {}
+  TextureTest(EGLNativeWindowType window) : Renderer(window), offset_(0), rotation_(0) {}
 
   ~TextureTest() {}
 
-  bool OnInitialize(EGLNativeWindowType window) {
-    Renderer::OnInitialize(window);
-
+  bool OnInitialize() {
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
     the fixed point version (they finish in 'x'*/
@@ -61,12 +59,25 @@ public:
     Perspective(45.0f, ratio, 1.0f, 40.0f);
     glMatrixMode(GL_MODELVIEW);
 
-    bool result = LoadTGA("media/door128.tga", &texture1_);
-    result &= LoadTGA("media/fire128.tga", &texture2_);
+     {
+      std::vector<uint8_t> pixels;
+      int width, height, bpp;
+      if (!LoadTGA("media/door128.tga", pixels, &width, &height, &bpp))    
+        return false;
+      texture1_ = loadTexture(pixels, width, height, bpp);
+    }
+
+    {
+      std::vector<uint8_t> pixels;
+      int width, height, bpp;
+      if (!LoadTGA("media/fire128.tga", pixels, &width, &height, &bpp))    
+        return false;
+      texture2_ = loadTexture(pixels, width, height, bpp);
+    }
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-    return result;
+    return true;
   }
 
   void OnRender() {
@@ -162,14 +173,10 @@ public:
 
     offset_ += 0.01f;
     ++rotation_;
-
-    Renderer::OnRender();
   }
 
   void OnDestroy() {
     glDeleteTextures(1, &texture1_);
     glDeleteTextures(1, &texture2_);
-
-    Renderer::OnDestroy();
   }
 };

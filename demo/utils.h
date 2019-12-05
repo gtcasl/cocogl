@@ -13,10 +13,15 @@
 //
 #pragma once
 
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+
 void Perspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar);
 
 void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
              GLfloat centery, GLfloat centerz, GLfloat upx, GLfloat upy,
              GLfloat upz);
 
-bool LoadTGA(const char *fileName, GLuint *id);
+GLuint loadTexture(const std::vector<uint8_t>& pixels, int width, int height, int bpp);
+
+bool LoadTGA(const char *filename, std::vector<uint8_t>& pixels, int* width, int* height, int* bpp);
+

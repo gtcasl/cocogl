@@ -15,6 +15,10 @@
 
 #include <chrono>
 #include <iostream>
+#include <vector>
+#include <array>
+#include <cstring>
+#include <assert.h>
 
 #include <EGL/egl.h>
 #include <GLES/gl.h>

@@ -17,8 +17,9 @@
 
 class LineTest : public Renderer {
 public:
-  bool OnInitialize(EGLNativeWindowType window) {
-    Renderer::OnInitialize(window);    
+  LineTest(EGLNativeWindowType window) : Renderer(window) {}
+  
+  bool OnInitialize() {
     /*
     Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
@@ -71,7 +72,5 @@ public:
     // Disable selected arrays
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
-
-    Renderer::OnRender();
   }
 };

@@ -21,13 +21,12 @@ private:
   uint32_t testcase_;
 
 public:
-  QuadTest() {
+  QuadTest(EGLNativeWindowType window) : Renderer(window) {
     texture_ = 0;
     testcase_ = 21;
   }
 
-  bool OnInitialize(EGLNativeWindowType window) {
-    Renderer::OnInitialize(window);    
+  bool OnInitialize() {
     /*
     Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
@@ -35,8 +34,13 @@ public:
     */
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    if (!LoadTGA("media/lady.tga", &texture_))
-      return false;
+     {
+      std::vector<uint8_t> pixels;
+      int width, height, bpp;
+      if (!LoadTGA("media/lady.tga", pixels, &width, &height, &bpp))    
+        return false;
+      texture_ = loadTexture(pixels, width, height, bpp);
+    }
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_);
@@ -338,8 +342,6 @@ public:
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    Renderer::OnRender();
   }
 
   void OnKeyNext() {
@@ -355,7 +357,6 @@ public:
   }  
 
   void OnDestroy() {
-    glDeleteTextures(1, &texture_);   
-    Renderer::OnDestroy();
+    glDeleteTextures(1, &texture_);  
   }
 };

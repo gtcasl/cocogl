@@ -20,10 +20,9 @@ private:
   int rotation_;
 
 public:
-  CubeTest() : rotation_(0) {}
+   CubeTest(EGLNativeWindowType window) : Renderer(window) {}
 
-  bool OnInitialize(EGLNativeWindowType window) {
-    Renderer::OnInitialize(window);
+  bool OnInitialize() {
 
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
@@ -129,7 +128,5 @@ public:
     glDisableClientState(GL_VERTEX_ARRAY);
 
     ++rotation_;
-
-    Renderer::OnRender();
   }
 };
