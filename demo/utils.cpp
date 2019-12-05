@@ -12,7 +12,6 @@
 // INDEMNITIES.
 //
 #include "stdafx.h"
-#include "test.hpp"
 #include <math.h>
 #include <string.h>
 

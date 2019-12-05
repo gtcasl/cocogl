@@ -13,9 +13,9 @@
 //
 #pragma once
 
-#include "test.hpp"
+#include "renderer.hpp"
 
-class FogTest : public TestBase {
+class FogTest : public Renderer {
 private:
   GLfloat _box[12 * 6];
   GLfloat _texCoords[8 * 6];
@@ -31,7 +31,9 @@ public:
 
   ~FogTest() {}
 
-  bool OnInitialize(uint32_t width, uint32_t height) {
+  bool OnInitialize(EGLNativeWindowType window) {
+    Renderer::OnInitialize(window);
+
     static const float fogColor[] = {0.5f, 0.5f, 0.5f, 1.0f};
 
     static const GLfloat box[] = {
@@ -137,10 +139,10 @@ public:
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    float ratio = static_cast<float>(width) / height;
+    float ratio = static_cast<float>(width_) / height_;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, width_, height_);
     Perspective(45.0f, ratio, 0.1f, 100.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -214,7 +216,12 @@ public:
     glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
     glNormal3f(0.0f, -1.0f, 0.0f);
     glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
+
+    Renderer::OnRender();
   }
 
-  void OnDestroy() { glDeleteTextures(1, &texture_); }
+  void OnDestroy() { 
+    glDeleteTextures(1, &texture_); 
+    Renderer::OnDestroy();
+  }
 };

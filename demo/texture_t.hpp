@@ -13,9 +13,9 @@
 //
 #pragma once
 
-#include "test.hpp"
+#include "renderer.hpp"
 
-class TextureTest : public TestBase {
+class TextureTest : public Renderer {
 private:
   // Texture handles
   GLuint texture1_;
@@ -28,7 +28,9 @@ public:
 
   ~TextureTest() {}
 
-  bool OnInitialize(uint32_t width, uint32_t height) {
+  bool OnInitialize(EGLNativeWindowType window) {
+    Renderer::OnInitialize(window);
+
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
     the fixed point version (they finish in 'x'*/
@@ -50,10 +52,10 @@ public:
     /*In order to set a viewport that fits entirely our window, we need
     to know the window dimensions. They could be obtained through the
     WinCE call GetWindowRect, using our window handle*/
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, width_, height_);
 
     // Set perspective
-    float ratio = static_cast<float>(width) / height;
+    float ratio = static_cast<float>(width_) / height_;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     Perspective(45.0f, ratio, 1.0f, 40.0f);
@@ -160,10 +162,14 @@ public:
 
     offset_ += 0.01f;
     ++rotation_;
+
+    Renderer::OnRender();
   }
 
   void OnDestroy() {
     glDeleteTextures(1, &texture1_);
     glDeleteTextures(1, &texture2_);
+
+    Renderer::OnDestroy();
   }
 };

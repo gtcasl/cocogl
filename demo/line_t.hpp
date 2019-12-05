@@ -13,11 +13,12 @@
 //
 #pragma once
 
-#include "test.hpp"
+#include "renderer.hpp"
 
-class LineTest : public TestBase {
+class LineTest : public Renderer {
 public:
-  bool OnInitialize(uint32_t width, uint32_t height) {
+  bool OnInitialize(EGLNativeWindowType window) {
+    Renderer::OnInitialize(window);    
     /*
     Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
@@ -31,7 +32,7 @@ public:
     to know the window dimensions. They could be obtained through the
     WinCE call GetWindowRect, using our window handle
     */
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, width_, height_);
 
     /*
     Setup of the projection matrix. We will use an ortho cube centered
@@ -70,5 +71,7 @@ public:
     // Disable selected arrays
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
+
+    Renderer::OnRender();
   }
 };

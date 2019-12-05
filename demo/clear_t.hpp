@@ -13,14 +13,18 @@
 //
 #pragma once
 
-#include "test.hpp"
+#include "renderer.hpp"
 
-class ClearTest : public TestBase {
+class ClearTest : public Renderer {
 public:
-  bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) {
+  bool OnInitialize(EGLNativeWindowType window) {
+    Renderer::OnInitialize(window);
     glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
     return true;
   }
 
-  void OnRender() { glClear(GL_COLOR_BUFFER_BIT); }
+  void OnRender() { 
+    glClear(GL_COLOR_BUFFER_BIT); 
+    Renderer::OnRender();
+  }
 };

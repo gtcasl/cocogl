@@ -13,9 +13,11 @@
 //
 #pragma once
 
-class DebugTest : public TestBase {
+class DebugTest : public Renderer {
 public:
-  bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) {
+  bool OnInitialize(EGLNativeWindowType window) {
+    Renderer::OnInitialize(window);
+
     glViewport(0, 0, 48, 48);
     glScissor(0, 0, 48, 48);
 
@@ -90,5 +92,7 @@ public:
     // UINT pixels;
     // glReadPixels( 4, 38, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixels );
     // glReadPixels( 19, 38, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixels );
+
+    Renderer::OnRender();
   }
 };

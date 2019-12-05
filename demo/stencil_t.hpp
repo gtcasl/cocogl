@@ -13,9 +13,9 @@
 //
 #pragma once
 
-#include "test.hpp"
+#include "renderer.hpp"
 
-class StencilTest : public TestBase {
+class StencilTest : public Renderer {
 private:
   GLfloat _boxColors[16 * 6];
   GLfloat _box[12 * 6];
@@ -37,7 +37,9 @@ public:
 
   ~StencilTest() {}
 
-  bool OnInitialize(uint32_t width, uint32_t height) {
+  bool OnInitialize(EGLNativeWindowType window) {
+    Renderer::OnInitialize(window);
+
     static const GLfloat floorVertices[] = {-3.0f, 0.0f, 3.0f,  3.0f,
                                             0.0f,  3.0f, -3.0f, 0.0f,
                                             -3.0f, 3.0f, 0.0f,  -3.0f};
@@ -145,10 +147,10 @@ public:
     memcpy(_boxColors, boxColors, sizeof(boxColors));
 
     // set perspective
-    float ratio = static_cast<float>(width) / height;
+    float ratio = static_cast<float>(width_) / height_;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, width_, height_);
     Perspective(45.0f, ratio, 1.0f, 100.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -256,7 +258,12 @@ public:
     glDisable(GL_BLEND);
 
     drawCube();
+
+    Renderer::OnRender();
   }
 
-  void OnDestroy() { glDeleteTextures(1, &texture_); }
+  void OnDestroy() { 
+    glDeleteTextures(1, &texture_); 
+    Renderer::OnDestroy();
+  }
 };

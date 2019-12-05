@@ -13,16 +13,18 @@
 //
 #pragma once
 
-#include "test.hpp"
+#include "renderer.hpp"
 
-class CubeTest : public TestBase {
+class CubeTest : public Renderer {
 private:
   int rotation_;
 
 public:
   CubeTest() : rotation_(0) {}
 
-  bool OnInitialize(uint32_t width, uint32_t height) {
+  bool OnInitialize(EGLNativeWindowType window) {
+    Renderer::OnInitialize(window);
+
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
     the fixed point version (they finish in 'x'*/
@@ -44,7 +46,7 @@ public:
     /*In order to set a viewport that fits entirely our window, we need
     to know the window dimensions. They could be obtained through the
     WinCE call GetWindowRect, using our window handle*/
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, width_, height_);
 
     /*
    Setup of the orthographic matrix.
@@ -127,5 +129,7 @@ public:
     glDisableClientState(GL_VERTEX_ARRAY);
 
     ++rotation_;
+
+    Renderer::OnRender();
   }
 };

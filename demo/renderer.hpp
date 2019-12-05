@@ -13,12 +13,28 @@
 //
 #pragma once
 
-#include <chrono>
-#include <iostream>
+class Renderer {
+public:
 
-#include <EGL/egl.h>
-#include <GLES/gl.h>
-#include <GLES/glext.h>
+  Renderer();
+  virtual ~Renderer();
 
-#include "utils.h"
-#include "mesh.hpp"
+  virtual bool OnInitialize(EGLNativeWindowType window);
+
+  virtual void OnRender();
+
+  virtual void OnKeyNext();
+
+  virtual void OnKeyPrev();
+
+  virtual void OnDestroy();
+
+protected:
+
+  EGLDisplay glDisplay_;
+  EGLConfig  glConfig_;
+  EGLContext glContext_;
+  EGLSurface glSurface_;
+  EGLint width_;
+  EGLint height_;
+};

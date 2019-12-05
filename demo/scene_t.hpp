@@ -13,9 +13,9 @@
 //
 #pragma once
 
-#include "test.hpp"
+#include "renderer.hpp"
 
-class SceneTest : public TestBase {
+class SceneTest : public Renderer {
 private:
   Mesh mesh_;
   int rotation_;
@@ -24,7 +24,9 @@ private:
 public:
   SceneTest() : rotation_(0), lightRotation_(0) {}
 
-  bool OnInitialize(uint32_t width, uint32_t height) {
+  bool OnInitialize(EGLNativeWindowType window) {
+    Renderer::OnInitialize(window);
+
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
     the fixed point version (they finish in 'x'*/
@@ -46,10 +48,10 @@ public:
     /*In order to set a viewport that fits entirely our window, we need
     to know the window dimensions. They could be obtained through the
     WinCE call GetWindowRect, using our window handle*/
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, width_, height_);
 
     // Set perspective
-    float ratio = static_cast<float>(width) / height;
+    float ratio = static_cast<float>(width_) / height_;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     Perspective(45.0f, ratio, 1.0f, 100.0f);
@@ -113,5 +115,7 @@ public:
 
     ++rotation_;
     lightRotation_ += 0.2f;
+
+    Renderer::OnRender();
   }
 };

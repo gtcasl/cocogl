@@ -13,8 +13,6 @@
 //
 #pragma once
 
-#include "mesh.hpp"
-
 void Perspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar);
 
 void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
@@ -22,23 +20,3 @@ void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
              GLfloat upz);
 
 bool LoadTGA(const char *fileName, GLuint *id);
-
-///////////////////////////////////////////////////////////////////////////////
-
-class TestBase {
-public:
-  TestBase() {}
-  virtual ~TestBase() {}
-
-  virtual bool OnInitialize(uint32_t /*width*/, uint32_t /*height*/) {
-    return true;
-  };
-
-  virtual void OnRender(){};
-
-  virtual void OnKeyNext(){};
-
-  virtual void OnKeyPrev(){};
-
-  virtual void OnDestroy(){};
-};
