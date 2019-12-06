@@ -17,12 +17,18 @@
 #include "tnl.inl"
 
 static const PfnDecodePosition g_decodePosition[] = {
-    DecodePosition<VERTEX_BYTE2>,  DecodePosition<VERTEX_BYTE3>,
-    DecodePosition<VERTEX_BYTE4>,  DecodePosition<VERTEX_SHORT2>,
-    DecodePosition<VERTEX_SHORT3>, DecodePosition<VERTEX_SHORT4>,
-    DecodePosition<VERTEX_FIXED2>, DecodePosition<VERTEX_FIXED3>,
-    DecodePosition<VERTEX_FIXED4>, DecodePosition<VERTEX_FLOAT2>,
-    DecodePosition<VERTEX_FLOAT3>, DecodePosition<VERTEX_FLOAT4>,
+    DecodePosition<VERTEX_BYTE2>,  
+    DecodePosition<VERTEX_BYTE3>,
+    DecodePosition<VERTEX_BYTE4>,  
+    DecodePosition<VERTEX_SHORT2>,
+    DecodePosition<VERTEX_SHORT3>, 
+    DecodePosition<VERTEX_SHORT4>,
+    DecodePosition<VERTEX_FIXED2>, 
+    DecodePosition<VERTEX_FIXED3>,
+    DecodePosition<VERTEX_FIXED4>, 
+    DecodePosition<VERTEX_FLOAT2>,
+    DecodePosition<VERTEX_FLOAT3>, 
+    DecodePosition<VERTEX_FLOAT4>,
 };
 
 static const TNL::PfnDecodeVertices g_processLighting[] = {

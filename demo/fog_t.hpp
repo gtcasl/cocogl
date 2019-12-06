@@ -34,81 +34,14 @@ public:
   bool OnInitialize() {
     static const float fogColor[] = {0.5f, 0.5f, 0.5f, 1.0f};
     static const GLfloat box[] = {
-        // FRONT
-        -0.5f,
-        -0.5f,
-        0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        0.5f,
-        0.5f,
-        0.5f,
-        0.5f, // BACK
-        -0.5f,
-        -0.5f,
-        -0.5f,
-        -0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        -0.5f,
-        -0.5f,
-        0.5f,
-        0.5f,
-        -0.5f, // LEFT
-        -0.5f,
-        -0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        0.5f,
-        -0.5f,
-        -0.5f,
-        -0.5f,
-        -0.5f,
-        0.5f,
-        -0.5f, // RIGHT
-        0.5f,
-        -0.5f,
-        -0.5f,
-        0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        0.5f,
-        0.5f,
-        0.5f, // TOP
-        -0.5f,
-        0.5f,
-        0.5f,
-        0.5f,
-        0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        0.5f,
-        -0.5f,
-
-        // BOTTOM
-        -0.5f,
-        -0.5f,
-        0.5f,
-        -0.5f,
-        -0.5f,
-        -0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        0.5f,
-        -0.5f,
-        -0.5f,
+        -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f,
+        0.5f,  -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, 0.5f,
+        -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f,
+        0.5f,  -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, 0.5f,
+        0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,  0.5f,  0.5f,
+        -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, 0.5f,
+        -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f,
     };
 
     static_assert(sizeof(_box) == sizeof(box));
@@ -133,7 +66,7 @@ public:
     {
       std::vector<uint8_t> pixels;
       int width, height, bpp;
-      if (!LoadTGA("media/block.tga", pixels, &width, &height, &bpp))    
+      if (!LoadTGA("media/block.tga", pixels, &width, &height, &bpp))
         return false;
       texture_ = loadTexture(pixels, width, height, bpp);
     }
@@ -220,7 +153,5 @@ public:
     glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
   }
 
-  void OnDestroy() { 
-    glDeleteTextures(1, &texture_); 
-  }
+  void OnDestroy() { glDeleteTextures(1, &texture_); }
 };

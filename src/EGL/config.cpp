@@ -256,13 +256,20 @@ int _EGLConfig::compare(const _EGLConfig *pConfigA,
   assert(pConfigA && pConfigB);
 
   static const EGLint sortedList[] = {
-      EGL_CONFIG_CAVEAT,      EGL_RED_SIZE,
-      EGL_GREEN_SIZE,         EGL_BLUE_SIZE,
-      EGL_ALPHA_SIZE,         EGL_BUFFER_SIZE,
-      EGL_SAMPLE_BUFFERS,     EGL_SAMPLES,
-      EGL_DEPTH_SIZE,         EGL_STENCIL_SIZE,
-      EGL_NATIVE_VISUAL_TYPE, EGL_LUMINANCE_SIZE,
-      EGL_ALPHA_MASK_SIZE,    EGL_CONFIG_ID,
+      EGL_CONFIG_CAVEAT,      
+      EGL_RED_SIZE,
+      EGL_GREEN_SIZE,         
+      EGL_BLUE_SIZE,
+      EGL_ALPHA_SIZE,         
+      EGL_BUFFER_SIZE,
+      EGL_SAMPLE_BUFFERS,     
+      EGL_SAMPLES,
+      EGL_DEPTH_SIZE,         
+      EGL_STENCIL_SIZE,
+      EGL_NATIVE_VISUAL_TYPE, 
+      EGL_LUMINANCE_SIZE,
+      EGL_ALPHA_MASK_SIZE,    
+      EGL_CONFIG_ID,
   };
 
   for (uint32_t i = 0; i < __countof(sortedList); ++i) {

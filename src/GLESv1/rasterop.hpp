@@ -57,15 +57,15 @@ template <uint32_t Format> struct NColor {
     }
 
     if constexpr (Format == FORMAT_A8L8) {
-      return (uint16_t)(this->Low | (this->Low >> 8));
+      return (this->Low | (this->Low >> 8)) & 0xffff;
     }
 
     if constexpr (Format == FORMAT_R5G6B5) {
-      return (uint16_t)(this->Low | (this->Low >> 16));
+      return (this->Low | (this->Low >> 16)) & 0xffff;
     }
 
     if constexpr (Format == FORMAT_A4R4G4B4) {
-      return (uint16_t)(this->Low | (this->Low >> 12));
+      return (this->Low | (this->Low >> 12)) & 0xffff;
     }
 
     if constexpr (Format == FORMAT_A8R8G8B8) {

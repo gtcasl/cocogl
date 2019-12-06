@@ -98,7 +98,7 @@ void TextRenderer::drawText(const char *text, float x, float y, float scale) {
   glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(vertex_t), vertices_.data(), GL_DYNAMIC_DRAW);
   glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
   glTexCoordPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(8));
-
+  
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 

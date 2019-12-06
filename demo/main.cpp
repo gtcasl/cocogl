@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
 
     test->OnRender();
     if (text_enable) {
-      tr->drawText("A", 0, 0, 1.0f / 640);
+      tr->drawText("o", 0, 0, 1.0f / 640);
     }
     test->Present();
     ++num_frames;    

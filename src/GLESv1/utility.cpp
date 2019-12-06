@@ -327,19 +327,19 @@ eVertexFormat ToVertexFormat(GLenum type, GLint size) {
   default:
     __no_default;
   case GL_BYTE:
-    return (eVertexFormat)(VERTEX_BYTE + size - 1);
+    return static_cast<eVertexFormat>(VERTEX_BYTE + size - 1);
 
   case GL_UNSIGNED_BYTE:
     return VERTEX_RGBA;
 
   case GL_SHORT:
-    return (eVertexFormat)(VERTEX_SHORT + size - 1);
+    return static_cast<eVertexFormat>(VERTEX_SHORT + size - 1);
 
   case GL_FLOAT:
-    return (eVertexFormat)(VERTEX_FLOAT + size - 1);
+    return static_cast<eVertexFormat>(VERTEX_FLOAT + size - 1);
 
   case GL_FIXED:
-    return (eVertexFormat)(VERTEX_FIXED + size - 1);
+    return static_cast<eVertexFormat>(VERTEX_FIXED + size - 1);
   }
 }
 

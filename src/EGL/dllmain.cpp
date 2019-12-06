@@ -97,10 +97,8 @@ EGLAPI void (*EGLAPIENTRY eglGetProcAddress(const char *procName))() {
   };
 
   static const t_procedure procedures[] = {
-      {"glQueryMatrixxOES",
-       reinterpret_cast<PfnProcAddress>(glQueryMatrixxOES)},
-      {"glPointSizePointerOES",
-       reinterpret_cast<PfnProcAddress>(glPointSizePointerOES)},
+      {"glQueryMatrixxOES", reinterpret_cast<PfnProcAddress>(glQueryMatrixxOES)},
+      {"glPointSizePointerOES", reinterpret_cast<PfnProcAddress>(glPointSizePointerOES)},
   };
 
   if (procName) {

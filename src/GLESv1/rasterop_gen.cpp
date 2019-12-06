@@ -150,23 +150,33 @@ static const PfnGetTexelColor l_pfnGetTexelColorTable[] = {
 };
 
 static const Pfncompare s_pfncompare[] = {
-    DoCompare<COMPARE_NEVER>,   DoCompare<COMPARE_LESS>,
-    DoCompare<COMPARE_EQUAL>,   DoCompare<COMPARE_LEQUAL>,
-    DoCompare<COMPARE_GREATER>, DoCompare<COMPARE_NOTEQUAL>,
-    DoCompare<COMPARE_GEQUAL>,  DoCompare<COMPARE_ALWAYS>,
+    DoCompare<COMPARE_NEVER>,   
+    DoCompare<COMPARE_LESS>,
+    DoCompare<COMPARE_EQUAL>,   
+    DoCompare<COMPARE_LEQUAL>,
+    DoCompare<COMPARE_GREATER>, 
+    DoCompare<COMPARE_NOTEQUAL>,
+    DoCompare<COMPARE_GEQUAL>,  
+    DoCompare<COMPARE_ALWAYS>,
 };
 
 static const PfnGetTexEnvColor s_pfnGetTexEnvColorTable[] = {
-    GetTexEnvColorA<ENVMODE_ADD>,        GetTexEnvColorA<ENVMODE_BLEND>,
-    GetTexEnvColorA<ENVMODE_REPLACE>,    GetTexEnvColorA<ENVMODE_MODULATE>,
+    GetTexEnvColorA<ENVMODE_ADD>,        
+    GetTexEnvColorA<ENVMODE_BLEND>,
+    GetTexEnvColorA<ENVMODE_REPLACE>,    
+    GetTexEnvColorA<ENVMODE_MODULATE>,
     GetTexEnvColorA<ENVMODE_DECAL>,
 
-    GetTexEnvColorRGB<ENVMODE_ADD>,      GetTexEnvColorRGB<ENVMODE_BLEND>,
-    GetTexEnvColorRGB<ENVMODE_REPLACE>,  GetTexEnvColorRGB<ENVMODE_MODULATE>,
+    GetTexEnvColorRGB<ENVMODE_ADD>,      
+    GetTexEnvColorRGB<ENVMODE_BLEND>,
+    GetTexEnvColorRGB<ENVMODE_REPLACE>,  
+    GetTexEnvColorRGB<ENVMODE_MODULATE>,
     GetTexEnvColorRGB<ENVMODE_DECAL>,
 
-    GetTexEnvColorARGB<ENVMODE_ADD>,     GetTexEnvColorARGB<ENVMODE_BLEND>,
-    GetTexEnvColorARGB<ENVMODE_REPLACE>, GetTexEnvColorARGB<ENVMODE_MODULATE>,
+    GetTexEnvColorARGB<ENVMODE_ADD>,     
+    GetTexEnvColorARGB<ENVMODE_BLEND>,
+    GetTexEnvColorARGB<ENVMODE_REPLACE>, 
+    GetTexEnvColorARGB<ENVMODE_MODULATE>,
     GetTexEnvColorARGB<ENVMODE_DECAL>,
 };
 
