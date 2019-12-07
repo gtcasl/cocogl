@@ -27,7 +27,7 @@ ColorARGB GetTexelColorLn(const SurfaceDesc &surface, fixedRX fU, fixedRX fV) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <ePixelFormat Format, eBlendOp OpSrc, eBlendOp OpDst>
-ColorARGB Blender(const ColorARGB& cColor, const uint8_t *pCB) {
+ColorARGB Blender(const ColorARGB &cColor, const uint8_t *pCB) {
   ColorARGB ret;
 
   auto cDstColor = Format::ConvertFrom<Format, true>(pCB);
@@ -47,7 +47,7 @@ ColorARGB Blender(const ColorARGB& cColor, const uint8_t *pCB) {
 template <ePixelFormat Format, bool bWriteMask, eLogicOp LogicOp>
 void DoWriteColor(const RasterData &rasterData, const ColorARGB &cColor,
                   uint8_t *pCB) {
-  uint32_t dstColor =  *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB);
+  uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB);
   auto result = Format::ConvertTo<Format>(cColor);
   result = ApplyLogicOp<LogicOp>(result, dstColor);
 

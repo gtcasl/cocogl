@@ -27,9 +27,13 @@ public:
   EGLint chooseConfig(const EGLint *pAttrib_list, EGLConfig *pConfigs,
                       EGLint config_size, EGLint *pNum_config);
 
-  auto getNativeHandle() const { return hNative_; }
+  auto getNativeHandle() const {
+    return hNative_;
+  }
 
-  bool isInitialized() const { return bInitialized_; }
+  bool isInitialized() const {
+    return bInitialized_;
+  }
 
 private:
   _EGLDisplay(EGLNativeDisplayType hDC, HandleTable *pHandles);

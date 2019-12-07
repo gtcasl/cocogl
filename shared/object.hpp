@@ -28,7 +28,9 @@ protected:
 
 class Object : public IObject {
 public:
-  virtual long addRef() const { return ++refcount_; }
+  virtual long addRef() const {
+    return ++refcount_;
+  }
 
   virtual long release() const {
     assert(refcount_ > 0);
@@ -40,7 +42,8 @@ public:
   }
 
 protected:
-  Object() : refcount_(0) {}
+  Object()
+      : refcount_(0) {}
   virtual ~Object() {}
 
 private:

@@ -24,7 +24,8 @@ private:
   float yrot_;
 
 public:
-  FogTest(EGLNativeWindowType window) : Renderer(window) {
+  FogTest(EGLNativeWindowType window)
+      : Renderer(window) {
     xrot_ = 0.0f;
     yrot_ = 0.0f;
   }
@@ -34,26 +35,25 @@ public:
   bool OnInitialize() {
     static const float fogColor[] = {0.5f, 0.5f, 0.5f, 1.0f};
     static const GLfloat box[] = {
-        -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f,
-        0.5f,  -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f,
-        0.5f,  -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, 0.5f,
-        0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,  0.5f,  0.5f,
-        -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, 0.5f,
-        -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f,
+        -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f, 0.5f,
+        -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+        -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f, 0.5f,
+        -0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f,
     };
 
     static_assert(sizeof(_box) == sizeof(box));
     memcpy(_box, box, sizeof(box));
 
     static const GLfloat texCoords[] = {
-        // FRONT
-        0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // BACK
-        1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // LEFT
-        1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // RIGHT
-        1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // TOP
-        0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // BOTTOM
+        0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 
         1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
 
     static_assert(sizeof(_texCoords) == sizeof(texCoords));
@@ -154,5 +154,7 @@ public:
     glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
   }
 
-  void OnDestroy() { glDeleteTextures(1, &texture_); }
+  void OnDestroy() {
+    glDeleteTextures(1, &texture_);
+  }
 };

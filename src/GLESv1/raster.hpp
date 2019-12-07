@@ -59,7 +59,8 @@ protected:
       return true;
     }
 
-    template <typename T, typename D> T calcDeltaX(D delta0, D delta1) const {
+    template <typename T, typename D>
+    T calcDeltaX(D delta0, D delta1) const {
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       auto half = static_cast<int64_t>(1) << (FRAC - 1);
@@ -72,7 +73,8 @@ protected:
 #endif
     }
 
-    template <typename T, typename D> T calcDeltaY(D delta0, D delta1) const {
+    template <typename T, typename D>
+    T calcDeltaY(D delta0, D delta1) const {
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
       auto half = static_cast<int64_t>(1) << (FRAC - 1);
@@ -85,7 +87,8 @@ protected:
 #endif
     }
 
-    template <typename T> T calcDeltaX(int delta0, int delta1) const {
+    template <typename T>
+    T calcDeltaX(int delta0, int delta1) const {
       auto diff = this->i4dy13 * delta0 - this->i4dy12 * delta1;
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
@@ -96,7 +99,8 @@ protected:
 #endif
     }
 
-    template <typename T> T calcDeltaY(int delta0, int delta1) const {
+    template <typename T>
+    T calcDeltaY(int delta0, int delta1) const {
       auto diff = this->i4dx12 * delta1 - this->i4dx13 * delta0;
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + fixed4::FRAC + floatQ::FRAC - T::FRAC;
@@ -111,7 +115,8 @@ protected:
   struct LineGradient {
     floatQ fRatio;
 
-    template <typename T, typename D> T calcDelta(D delta) const {
+    template <typename T, typename D>
+    T calcDelta(D delta) const {
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = D::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
@@ -121,7 +126,8 @@ protected:
 #endif
     }
 
-    template <typename T> T calcDelta(int delta) const {
+    template <typename T>
+    T calcDelta(int delta) const {
 #ifdef COCOGL_PIXEDPOINT
       int FRAC = fixed8::FRAC + floatQ::FRAC - T::FRAC;
       int half = 1 << (FRAC - 1);
@@ -212,9 +218,9 @@ protected:
 
   void ensureClearColor() {
     ColorARGB tmp(Math::ToUNORM8(Math::Sat(vClearColor_.w)),
-               Math::ToUNORM8(Math::Sat(vClearColor_.x)),
-               Math::ToUNORM8(Math::Sat(vClearColor_.y)),
-               Math::ToUNORM8(Math::Sat(vClearColor_.z)));
+                  Math::ToUNORM8(Math::Sat(vClearColor_.x)),
+                  Math::ToUNORM8(Math::Sat(vClearColor_.y)),
+                  Math::ToUNORM8(Math::Sat(vClearColor_.z)));
     pSurfDraw_->convertColor(&clearColor_, tmp);
     dirtyFlags_.ClearColor = 0;
   }

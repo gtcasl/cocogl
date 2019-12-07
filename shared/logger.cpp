@@ -84,7 +84,8 @@ HRESULT Logger::write(const char *format, va_list arglist) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-AutoLog::AutoLog(Logger &logger, const char *func, ...) : logger_(logger) {
+AutoLog::AutoLog(Logger &logger, const char *func, ...)
+    : logger_(logger) {
   va_list arglist;
   va_start(arglist, func);
   logger.write(func, arglist);
@@ -92,4 +93,6 @@ AutoLog::AutoLog(Logger &logger, const char *func, ...) : logger_(logger) {
   va_end(arglist);
 }
 
-AutoLog::~AutoLog() { logger_.decrIndent(); }
+AutoLog::~AutoLog() {
+  logger_.decrIndent();
+}

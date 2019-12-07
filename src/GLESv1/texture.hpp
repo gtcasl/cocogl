@@ -20,17 +20,29 @@ class Surface2D;
 
 class SurfaceDesc {
 public:
-  const uint8_t *getBits() const { return pbBits_; }
+  const uint8_t *getBits() const {
+    return pbBits_;
+  }
 
-  uint8_t *getBits() { return pbBits_; }
+  uint8_t *getBits() {
+    return pbBits_;
+  }
 
-  uint8_t getLogWidth() const { return logWidth_; }
+  uint8_t getLogWidth() const {
+    return logWidth_;
+  }
 
-  uint8_t getLogHeight() const { return logHeight_; }
+  uint8_t getLogHeight() const {
+    return logHeight_;
+  }
 
-  uint16_t getWidth() const { return 1 << logWidth_; }
+  uint16_t getWidth() const {
+    return 1 << logWidth_;
+  }
 
-  uint16_t getHeight() const { return 1 << logHeight_; }
+  uint16_t getHeight() const {
+    return 1 << logHeight_;
+  }
 
 protected:
   uint8_t *pbBits_;
@@ -66,9 +78,13 @@ struct Sampler {
 
 class Surface2D : public SurfaceDesc {
 public:
-  Surface2D() { this->clear(); }
+  Surface2D() {
+    this->clear();
+  }
 
-  ~Surface2D() { this->destroy(); }
+  ~Surface2D() {
+    this->destroy();
+  }
 
   GLenum initialize(uint32_t width, uint32_t height, ePixelFormat format);
 
@@ -78,9 +94,13 @@ public:
   GLenum initialize(uint32_t width, uint32_t height, ePixelFormat format,
                     const GLvoid *pPixels);
 
-  uint32_t getPitch() const { return pitch_; }
+  uint32_t getPitch() const {
+    return pitch_;
+  }
 
-  ePixelFormat getFormat() const { return static_cast<ePixelFormat>(format_); }
+  ePixelFormat getFormat() const {
+    return static_cast<ePixelFormat>(format_);
+  }
 
   void getDesc(GLSurfaceDesc *pSurfaceDesc) const {
     assert(pSurfaceDesc);
@@ -113,13 +133,21 @@ public:
     return surfaces_[level];
   }
 
-  const Surface2D *getSurfaces() const { return surfaces_; }
+  const Surface2D *getSurfaces() const {
+    return surfaces_;
+  }
 
-  ePixelFormat getFormat() const { return surfaces_[0].getFormat(); }
+  ePixelFormat getFormat() const {
+    return surfaces_[0].getFormat();
+  }
 
-  uint32_t getHandle() const { return handle_; }
+  uint32_t getHandle() const {
+    return handle_;
+  }
 
-  void setHandle(uint32_t handle) { handle_ = handle; }
+  void setHandle(uint32_t handle) {
+    handle_ = handle;
+  }
 
   GLenum InitializeSurface(uint32_t level, uint32_t width, uint32_t height,
                            ePixelFormat format) {
@@ -138,15 +166,25 @@ public:
 
   bool validate();
 
-  bool isDirty() const { return bIsDirty_; }
+  bool isDirty() const {
+    return bIsDirty_;
+  }
 
-  void Invalidate() { bIsDirty_ = true; }
+  void Invalidate() {
+    bIsDirty_ = true;
+  }
 
-  uint8_t getLogWidth() const { return surfaces_[0].getLogWidth(); }
+  uint8_t getLogWidth() const {
+    return surfaces_[0].getLogWidth();
+  }
 
-  uint8_t getLogHeight() const { return surfaces_[0].getLogHeight(); }
+  uint8_t getLogHeight() const {
+    return surfaces_[0].getLogHeight();
+  }
 
-  uint8_t getMaxMipLevel() const { return maxMipLevel_; }
+  uint8_t getMaxMipLevel() const {
+    return maxMipLevel_;
+  }
 
   void freeSurfaces();
 
@@ -169,13 +207,16 @@ public:
   uint8_t EnvMode;
   bool bCoordReplace;
 
-  TexUnit() : pTexture_(nullptr) {}
+  TexUnit()
+      : pTexture_(nullptr) {}
 
-  ~TexUnit() { 
-    __safeRelease(pTexture_); 
+  ~TexUnit() {
+    __safeRelease(pTexture_);
   }
 
-  Texture *getTexture() const { return pTexture_; }
+  Texture *getTexture() const {
+    return pTexture_;
+  }
 
   void setTexture(Texture *pTexture) {
     if (pTexture) {

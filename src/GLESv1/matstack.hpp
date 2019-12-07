@@ -30,7 +30,9 @@ public:
     this->setIdentity(false);
   }
 
-  const MATRIX44 &getMatrix() const { return pMatrices_[curIndex_]; }
+  const MATRIX44 &getMatrix() const {
+    return pMatrices_[curIndex_];
+  }
 
   bool push() {
     if (curIndex_ + 1 < size_) {
@@ -53,11 +55,16 @@ public:
     return false;
   }
 
-  bool isIdentity() const { return identityMask_ & (1 << curIndex_); }
+  bool isIdentity() const {
+    return identityMask_ & (1 << curIndex_);
+  }
 
-  uint32_t getSize() const { return size_; }
+  uint32_t getSize() const {
+    return size_;
+  }
 
-  template <typename T> void getTop(T *pDst) const {
+  template <typename T>
+  void getTop(T *pDst) const {
     assert(pDst);
 
     auto pSrc = pMatrices_[curIndex_]._m;

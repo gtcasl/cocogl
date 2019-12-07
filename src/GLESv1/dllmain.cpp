@@ -1801,7 +1801,7 @@ GL_API void GL_APIENTRY glTexParameterf(GLenum target, GLenum pname,
                                         GLfloat param) {
   __profileAPI(" - %s( target=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TextureTypeToString(target), TexParamToString(pname),
-               TexParamValueToString(static_cast<float>(GLint>(param))));
+               TexParamValueToString(static_cast<float>(GLint > (param))));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {

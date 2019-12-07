@@ -32,7 +32,9 @@ void GLContext::clearDepth(floatf depth) {
   dirtyFlags_.ClearDepth = 1;
 }
 
-void GLContext::clearStencil(GLint stencil) { clearStencil_ = stencil; }
+void GLContext::clearStencil(GLint stencil) {
+  clearStencil_ = stencil;
+}
 
 void GLContext::setColorMask(GLboolean red, GLboolean green, GLboolean blue,
                              GLboolean alpha) {
@@ -48,7 +50,9 @@ void GLContext::setDepthMask(GLboolean flag) {
   depthWriteMask_ = flag ? 0xffff : 0;
 }
 
-void GLContext::setStencilMask(GLuint mask) { stencilWriteMask_ = mask; }
+void GLContext::setStencilMask(GLuint mask) {
+  stencilWriteMask_ = mask;
+}
 
 void GLContext::clear(GLbitfield mask) {
   if (mask &

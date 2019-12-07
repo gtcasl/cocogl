@@ -17,7 +17,8 @@
 
 class TriangleTest : public Renderer {
 public:
-  TriangleTest(EGLNativeWindowType window) : Renderer(window) {}
+  TriangleTest(EGLNativeWindowType window)
+      : Renderer(window) {}
 
   ~TriangleTest() {}
 

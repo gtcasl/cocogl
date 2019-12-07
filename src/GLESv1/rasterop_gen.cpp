@@ -18,10 +18,10 @@
 #include "rasterop_gen.hpp"
 #include "rasterop_gen.inl"
 
-#define MAKE_SCANLINE(fog, texture1, texture0, color, depth)                   \
-  {                                                                            \
-    GenericScanlineA<depth, color, texture0, texture1, fog>::Execute,         \
-        GenericScanlineP<depth, color, texture0, texture1, fog>::Execute      \
+#define MAKE_SCANLINE(fog, texture1, texture0, color, depth)             \
+  {                                                                      \
+    GenericScanlineA<depth, color, texture0, texture1, fog>::Execute,    \
+        GenericScanlineP<depth, color, texture0, texture1, fog>::Execute \
   }
 
 static const struct ScanlineRasterID {
@@ -150,32 +150,32 @@ static const PfnGetTexelColor l_pfnGetTexelColorTable[] = {
 };
 
 static const Pfncompare s_pfncompare[] = {
-    DoCompare<COMPARE_NEVER>,   
+    DoCompare<COMPARE_NEVER>,
     DoCompare<COMPARE_LESS>,
-    DoCompare<COMPARE_EQUAL>,   
+    DoCompare<COMPARE_EQUAL>,
     DoCompare<COMPARE_LEQUAL>,
-    DoCompare<COMPARE_GREATER>, 
+    DoCompare<COMPARE_GREATER>,
     DoCompare<COMPARE_NOTEQUAL>,
-    DoCompare<COMPARE_GEQUAL>,  
+    DoCompare<COMPARE_GEQUAL>,
     DoCompare<COMPARE_ALWAYS>,
 };
 
 static const PfnGetTexEnvColor s_pfnGetTexEnvColorTable[] = {
-    GetTexEnvColorA<ENVMODE_ADD>,        
+    GetTexEnvColorA<ENVMODE_ADD>,
     GetTexEnvColorA<ENVMODE_BLEND>,
-    GetTexEnvColorA<ENVMODE_REPLACE>,    
+    GetTexEnvColorA<ENVMODE_REPLACE>,
     GetTexEnvColorA<ENVMODE_MODULATE>,
     GetTexEnvColorA<ENVMODE_DECAL>,
 
-    GetTexEnvColorRGB<ENVMODE_ADD>,      
+    GetTexEnvColorRGB<ENVMODE_ADD>,
     GetTexEnvColorRGB<ENVMODE_BLEND>,
-    GetTexEnvColorRGB<ENVMODE_REPLACE>,  
+    GetTexEnvColorRGB<ENVMODE_REPLACE>,
     GetTexEnvColorRGB<ENVMODE_MODULATE>,
     GetTexEnvColorRGB<ENVMODE_DECAL>,
 
-    GetTexEnvColorARGB<ENVMODE_ADD>,     
+    GetTexEnvColorARGB<ENVMODE_ADD>,
     GetTexEnvColorARGB<ENVMODE_BLEND>,
-    GetTexEnvColorARGB<ENVMODE_REPLACE>, 
+    GetTexEnvColorARGB<ENVMODE_REPLACE>,
     GetTexEnvColorARGB<ENVMODE_MODULATE>,
     GetTexEnvColorARGB<ENVMODE_DECAL>,
 };
@@ -310,15 +310,15 @@ static const PfnBlend s_pfnBlendTable[] = {
     Blender<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     Blender<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA,
-           BLEND_ONE_MINUS_SRC_COLOR>,
+            BLEND_ONE_MINUS_SRC_COLOR>,
     Blender<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE_MINUS_SRC_COLOR>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA,
-           BLEND_ONE_MINUS_SRC_COLOR>,
+            BLEND_ONE_MINUS_SRC_COLOR>,
     Blender<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE_MINUS_SRC_COLOR>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR,
-           BLEND_ONE_MINUS_SRC_COLOR>,
+            BLEND_ONE_MINUS_SRC_COLOR>,
     Blender<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE,
-           BLEND_ONE_MINUS_SRC_COLOR>,
+            BLEND_ONE_MINUS_SRC_COLOR>,
     Blender<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_SRC_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_SRC_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
@@ -336,15 +336,15 @@ static const PfnBlend s_pfnBlendTable[] = {
     Blender<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     Blender<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA,
-           BLEND_ONE_MINUS_SRC_ALPHA>,
+            BLEND_ONE_MINUS_SRC_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA,
-           BLEND_ONE_MINUS_SRC_ALPHA>,
+            BLEND_ONE_MINUS_SRC_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE_MINUS_SRC_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR,
-           BLEND_ONE_MINUS_SRC_ALPHA>,
+            BLEND_ONE_MINUS_SRC_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE,
-           BLEND_ONE_MINUS_SRC_ALPHA>,
+            BLEND_ONE_MINUS_SRC_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_DST_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE, BLEND_DST_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
@@ -362,15 +362,15 @@ static const PfnBlend s_pfnBlendTable[] = {
     Blender<FORMAT_A8R8G8B8, BLEND_ZERO, BLEND_ZERO>,
     Blender<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_SRC_ALPHA,
-           BLEND_ONE_MINUS_DST_ALPHA>,
+            BLEND_ONE_MINUS_DST_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_DST_ALPHA, BLEND_ONE_MINUS_DST_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_ALPHA,
-           BLEND_ONE_MINUS_DST_ALPHA>,
+            BLEND_ONE_MINUS_DST_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_DST_COLOR, BLEND_ONE_MINUS_DST_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_ONE_MINUS_DST_COLOR,
-           BLEND_ONE_MINUS_DST_ALPHA>,
+            BLEND_ONE_MINUS_DST_ALPHA>,
     Blender<FORMAT_A8R8G8B8, BLEND_SRC_ALPHA_SATURATE,
-           BLEND_ONE_MINUS_DST_ALPHA>,
+            BLEND_ONE_MINUS_DST_ALPHA>,
 #endif
 };
 
@@ -460,7 +460,9 @@ GenericRasterOp::GenericRasterOp(const RASTERID &rasterID) {
   pfnScanline_ = nullptr;
 }
 
-GenericRasterOp::~GenericRasterOp() { __profileAPI(" - %s()\n", __FUNCTION__); }
+GenericRasterOp::~GenericRasterOp() {
+  __profileAPI(" - %s()\n", __FUNCTION__);
+}
 
 GLenum GenericRasterOp::Create(IRasterOp **ppRasterOp,
                                const RASTERID &rasterID) {
@@ -572,7 +574,7 @@ void GenericRasterOp::selectSamplerFunc() {
     auto texState = rasterID_.Textures[i];
 
     auto baseIndex = 1 * texState.AddressV + 2 * texState.AddressU +
-                         4 * (texState.Format - 1);
+                     4 * (texState.Format - 1);
 
     auto minIndex = baseIndex + 20 * (texState.MinFilter - 1);
 
@@ -639,7 +641,7 @@ void GenericRasterOp::selectWriteColorFunc() {
 
   auto bColorWriteMask = rasterFlags.ColorWriteMask;
   auto logicFunc = (rasterFlags.LogicOp ? rasterStates.LogicFunc
-                           : static_cast<uint32_t>(LOGICOP_COPY));
+                                        : static_cast<uint32_t>(LOGICOP_COPY));
   int index = 1 * logicFunc + LOGICOP_SIZE_ * bColorWriteMask;
   assert(index < __countof(s_pfnWriteColorTable));
   pfnWriteColor_ = s_pfnWriteColorTable[index];
@@ -724,8 +726,8 @@ bool GenericRasterOp::doStencilTest(const RasterData &rasterData,
 }
 
 ColorARGB GenericRasterOp::getSamplerColor(uint32_t unit,
-                                      const RasterData &rasterData, fixedRX fU,
-                                      fixedRX fV, fixedRX fM) const {
+                                           const RasterData &rasterData, fixedRX fU,
+                                           fixedRX fV, fixedRX fM) const {
   ColorARGB color;
   auto &sampler = rasterData.Samplers[unit];
 
@@ -775,11 +777,11 @@ ColorARGB GenericRasterOp::getSamplerColor(uint32_t unit,
   return color;
 }
 
-ColorARGB GenericRasterOp::applyFog(const RasterData &rasterData, const ColorARGB& cColor,
-                               fixedRX fFactor) {
-  ColorARGB ret;  
+ColorARGB GenericRasterOp::applyFog(const RasterData &rasterData, const ColorARGB &cColor,
+                                    fixedRX fFactor) {
+  ColorARGB ret;
   auto factor = fFactor.data();
-  auto cFogColor = rasterData.cFogColor;  
+  auto cFogColor = rasterData.cFogColor;
   ret.r = cFogColor.r + ((factor * (cColor.r - cFogColor.r)) >> fixedRX::FRAC);
   ret.g = cFogColor.g + ((factor * (cColor.g - cFogColor.g)) >> fixedRX::FRAC);
   ret.b = cFogColor.b + ((factor * (cColor.b - cFogColor.b)) >> fixedRX::FRAC);

@@ -52,9 +52,11 @@ enum ePixelFormat {
 #define FORMAT_ARGB FORMAT_A8R8G8B8
 #define FORMAT_ARGB_ FORMAT_A4R4G4B4
 
-template <uint32_t PixelFormat> struct TFormatInfo {};
+template <uint32_t PixelFormat>
+struct TFormatInfo {};
 
-template <> struct TFormatInfo<FORMAT_UNKNOWN> {
+template <>
+struct TFormatInfo<FORMAT_UNKNOWN> {
   typedef uint8_t TYPE;
 
   enum {
@@ -62,7 +64,8 @@ template <> struct TFormatInfo<FORMAT_UNKNOWN> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_A4R4G4B4> {
+template <>
+struct TFormatInfo<FORMAT_A4R4G4B4> {
   typedef uint16_t TYPE;
 
   enum {
@@ -75,7 +78,8 @@ template <> struct TFormatInfo<FORMAT_A4R4G4B4> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_R4G4B4A4> {
+template <>
+struct TFormatInfo<FORMAT_R4G4B4A4> {
   typedef uint16_t TYPE;
 
   enum {
@@ -88,7 +92,8 @@ template <> struct TFormatInfo<FORMAT_R4G4B4A4> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_A1R5G5B5> {
+template <>
+struct TFormatInfo<FORMAT_A1R5G5B5> {
   typedef uint16_t TYPE;
 
   enum {
@@ -101,7 +106,8 @@ template <> struct TFormatInfo<FORMAT_A1R5G5B5> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_R5G5B5A1> {
+template <>
+struct TFormatInfo<FORMAT_R5G5B5A1> {
   typedef uint16_t TYPE;
 
   enum {
@@ -114,7 +120,8 @@ template <> struct TFormatInfo<FORMAT_R5G5B5A1> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_R5G6B5> {
+template <>
+struct TFormatInfo<FORMAT_R5G6B5> {
   typedef uint16_t TYPE;
 
   enum {
@@ -126,7 +133,8 @@ template <> struct TFormatInfo<FORMAT_R5G6B5> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_R8G8B8> {
+template <>
+struct TFormatInfo<FORMAT_R8G8B8> {
   typedef uint24_t TYPE;
 
   enum {
@@ -138,7 +146,8 @@ template <> struct TFormatInfo<FORMAT_R8G8B8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_B8G8R8> {
+template <>
+struct TFormatInfo<FORMAT_B8G8R8> {
   typedef uint24_t TYPE;
 
   enum {
@@ -150,7 +159,8 @@ template <> struct TFormatInfo<FORMAT_B8G8R8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_A8R8G8B8> {
+template <>
+struct TFormatInfo<FORMAT_A8R8G8B8> {
   typedef uint32_t TYPE;
 
   enum {
@@ -163,7 +173,8 @@ template <> struct TFormatInfo<FORMAT_A8R8G8B8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_A8B8G8R8> {
+template <>
+struct TFormatInfo<FORMAT_A8B8G8R8> {
   typedef uint32_t TYPE;
 
   enum {
@@ -176,7 +187,8 @@ template <> struct TFormatInfo<FORMAT_A8B8G8R8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_A8> {
+template <>
+struct TFormatInfo<FORMAT_A8> {
   typedef uint8_t TYPE;
 
   enum {
@@ -186,7 +198,8 @@ template <> struct TFormatInfo<FORMAT_A8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_L8> {
+template <>
+struct TFormatInfo<FORMAT_L8> {
   typedef uint8_t TYPE;
 
   enum {
@@ -196,7 +209,8 @@ template <> struct TFormatInfo<FORMAT_L8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_A8L8> {
+template <>
+struct TFormatInfo<FORMAT_A8L8> {
   typedef uint16_t TYPE;
 
   enum {
@@ -207,7 +221,8 @@ template <> struct TFormatInfo<FORMAT_A8L8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_D16> {
+template <>
+struct TFormatInfo<FORMAT_D16> {
   typedef uint16_t TYPE;
 
   enum {
@@ -216,7 +231,8 @@ template <> struct TFormatInfo<FORMAT_D16> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_X8S8D16> {
+template <>
+struct TFormatInfo<FORMAT_X8S8D16> {
   typedef uint16_t TYPE;
 
   enum {
@@ -226,7 +242,8 @@ template <> struct TFormatInfo<FORMAT_X8S8D16> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL4_B8G8R8> {
+template <>
+struct TFormatInfo<FORMAT_PAL4_B8G8R8> {
   typedef uint16_t TYPE;
 
   enum {
@@ -239,7 +256,8 @@ template <> struct TFormatInfo<FORMAT_PAL4_B8G8R8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL4_A8B8G8R8> {
+template <>
+struct TFormatInfo<FORMAT_PAL4_A8B8G8R8> {
   typedef uint16_t TYPE;
 
   enum {
@@ -253,7 +271,8 @@ template <> struct TFormatInfo<FORMAT_PAL4_A8B8G8R8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL4_R5G6B5> {
+template <>
+struct TFormatInfo<FORMAT_PAL4_R5G6B5> {
   typedef uint16_t TYPE;
 
   enum {
@@ -266,7 +285,8 @@ template <> struct TFormatInfo<FORMAT_PAL4_R5G6B5> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL4_R4G4B4A4> {
+template <>
+struct TFormatInfo<FORMAT_PAL4_R4G4B4A4> {
   typedef uint16_t TYPE;
 
   enum {
@@ -280,7 +300,8 @@ template <> struct TFormatInfo<FORMAT_PAL4_R4G4B4A4> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL4_R5G5B5A1> {
+template <>
+struct TFormatInfo<FORMAT_PAL4_R5G5B5A1> {
   typedef uint16_t TYPE;
 
   enum {
@@ -294,7 +315,8 @@ template <> struct TFormatInfo<FORMAT_PAL4_R5G5B5A1> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL8_B8G8R8> {
+template <>
+struct TFormatInfo<FORMAT_PAL8_B8G8R8> {
   typedef uint16_t TYPE;
 
   enum {
@@ -307,7 +329,8 @@ template <> struct TFormatInfo<FORMAT_PAL8_B8G8R8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL8_A8B8G8R8> {
+template <>
+struct TFormatInfo<FORMAT_PAL8_A8B8G8R8> {
   typedef uint16_t TYPE;
 
   enum {
@@ -321,7 +344,8 @@ template <> struct TFormatInfo<FORMAT_PAL8_A8B8G8R8> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL8_R5G6B5> {
+template <>
+struct TFormatInfo<FORMAT_PAL8_R5G6B5> {
   typedef uint16_t TYPE;
 
   enum {
@@ -334,7 +358,8 @@ template <> struct TFormatInfo<FORMAT_PAL8_R5G6B5> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL8_R4G4B4A4> {
+template <>
+struct TFormatInfo<FORMAT_PAL8_R4G4B4A4> {
   typedef uint16_t TYPE;
 
   enum {
@@ -348,7 +373,8 @@ template <> struct TFormatInfo<FORMAT_PAL8_R4G4B4A4> {
   };
 };
 
-template <> struct TFormatInfo<FORMAT_PAL8_R5G5B5A1> {
+template <>
+struct TFormatInfo<FORMAT_PAL8_R5G5B5A1> {
   typedef uint16_t TYPE;
 
   enum {
@@ -364,26 +390,27 @@ template <> struct TFormatInfo<FORMAT_PAL8_R5G5B5A1> {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define DEF_GET_ENUM_VALUE(Name, Default)                                      \
-  template <typename T, typename Enable = void> struct enum_get_##Name {       \
-    static constexpr int value = Default;                                      \
-  };                                                                           \
-  template <typename T>                                                        \
-  struct enum_get_##Name<T, std::enable_if_t<(T::Name != 0)>> {                \
-    static constexpr int value = T::Name;                                      \
+#define DEF_GET_ENUM_VALUE(Name, Default)                       \
+  template <typename T, typename Enable = void>                 \
+  struct enum_get_##Name {                                      \
+    static constexpr int value = Default;                       \
+  };                                                            \
+  template <typename T>                                         \
+  struct enum_get_##Name<T, std::enable_if_t<(T::Name != 0)>> { \
+    static constexpr int value = T::Name;                       \
   }
 
-#define __formatInfo(format)                                                   \
-  {                                                                            \
-    TFormatInfo<format>::CBSIZE, FormatSize<TFormatInfo<format>>::RED,         \
-        FormatSize<TFormatInfo<format>>::GREEN,                                \
-        FormatSize<TFormatInfo<format>>::BLUE,                                 \
-        FormatSize<TFormatInfo<format>>::ALPHA,                                \
-        FormatSize<TFormatInfo<format>>::LUMINANCE,                            \
-        FormatSize<TFormatInfo<format>>::DEPTH,                                \
-        FormatSize<TFormatInfo<format>>::STENCIL,                              \
-        FormatSize<TFormatInfo<format>>::PALETTE,                              \
-        FormatSize<TFormatInfo<format>>::LERP                                  \
+#define __formatInfo(format)                                           \
+  {                                                                    \
+    TFormatInfo<format>::CBSIZE, FormatSize<TFormatInfo<format>>::RED, \
+        FormatSize<TFormatInfo<format>>::GREEN,                        \
+        FormatSize<TFormatInfo<format>>::BLUE,                         \
+        FormatSize<TFormatInfo<format>>::ALPHA,                        \
+        FormatSize<TFormatInfo<format>>::LUMINANCE,                    \
+        FormatSize<TFormatInfo<format>>::DEPTH,                        \
+        FormatSize<TFormatInfo<format>>::STENCIL,                      \
+        FormatSize<TFormatInfo<format>>::PALETTE,                      \
+        FormatSize<TFormatInfo<format>>::LERP                          \
   }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -401,7 +428,8 @@ struct FormatInfo {
   uint8_t LerpBits;
 };
 
-template <typename F> class FormatSize {
+template <typename F>
+class FormatSize {
 protected:
   DEF_GET_ENUM_VALUE(RED, 0);
   DEF_GET_ENUM_VALUE(GREEN, 0);
@@ -471,7 +499,8 @@ typedef ColorARGB (*pfn_convert_from)(const void *pIn);
 
 typedef void (*pfn_convert_to)(void *pOut, const ColorARGB &in);
 
-template <uint32_t PixelFormat> static uint32_t ConvertTo(const ColorARGB &color);
+template <uint32_t PixelFormat>
+static uint32_t ConvertTo(const ColorARGB &color);
 
 template <uint32_t PixelFormat>
 static void ConvertTo(void *pOut, const ColorARGB &in) {
@@ -486,7 +515,7 @@ static ColorARGB ConvertFrom(uint32_t in);
 template <uint32_t PixelFormat, bool bForceAlpha>
 static ColorARGB ConvertFrom(const void *pIn) {
   return ConvertFrom<PixelFormat, bForceAlpha>(
-    *reinterpret_cast<const typename TFormatInfo<PixelFormat>::TYPE *>(pIn));
+      *reinterpret_cast<const typename TFormatInfo<PixelFormat>::TYPE *>(pIn));
 }
 
 inline static pfn_convert_to GetConvertTo(uint32_t pixelFormat) {
@@ -619,7 +648,8 @@ inline static uint32_t GetNativeFormat(uint32_t pixelFormat) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_UNKNOWN>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_UNKNOWN>(const ColorARGB &in) {
   __unused(in);
   return 0;
 }
@@ -638,7 +668,8 @@ inline ColorARGB ConvertFrom<FORMAT_UNKNOWN, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_R5G6B5>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_R5G6B5>(const ColorARGB &in) {
   return ((in.r & 0xf8) << 8) | ((in.g & 0xfc) << 3) | (in.b >> 3);
 }
 
@@ -663,7 +694,8 @@ inline ColorARGB ConvertFrom<FORMAT_R5G6B5, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A1R5G5B5>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_A1R5G5B5>(const ColorARGB &in) {
   return (in.a ? 0x8000 : 0) | ((in.r & 0xf8) << 7) | ((in.g & 0xf8) << 2) |
          (in.b >> 3);
 }
@@ -690,7 +722,8 @@ inline ColorARGB ConvertFrom<FORMAT_A1R5G5B5, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_R5G5B5A1>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_R5G5B5A1>(const ColorARGB &in) {
   return ((in.r & 0xf8) << 8) | ((in.g & 0xf8) << 3) | ((in.b & 0xf8) >> 2) |
          (in.a ? 0x1 : 0);
 }
@@ -717,7 +750,8 @@ inline ColorARGB ConvertFrom<FORMAT_R5G5B5A1, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A4R4G4B4>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_A4R4G4B4>(const ColorARGB &in) {
   return ((in.a & 0xf0) << 8) | ((in.r & 0xf0) << 4) | ((in.g & 0xf0) << 0) |
          (in.b >> 4);
 }
@@ -744,7 +778,8 @@ inline ColorARGB ConvertFrom<FORMAT_A4R4G4B4, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_R4G4B4A4>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_R4G4B4A4>(const ColorARGB &in) {
   return ((in.r & 0xf0) << 8) | ((in.g & 0xf0) << 4) | ((in.b & 0xf0) << 0) |
          (in.a >> 4);
 }
@@ -771,7 +806,8 @@ inline ColorARGB ConvertFrom<FORMAT_R4G4B4A4, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_R8G8B8>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_R8G8B8>(const ColorARGB &in) {
   return (in.r << 16) | (in.g << 8) | in.b;
 }
 
@@ -796,7 +832,8 @@ inline ColorARGB ConvertFrom<FORMAT_R8G8B8, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_B8G8R8>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_B8G8R8>(const ColorARGB &in) {
   return (in.b << 16) | (in.g << 8) | in.r;
 }
 
@@ -821,7 +858,8 @@ inline ColorARGB ConvertFrom<FORMAT_B8G8R8, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A8R8G8B8>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_A8R8G8B8>(const ColorARGB &in) {
   return (in.a << 24) | (in.r << 16) | (in.g << 8) | in.b;
 }
 
@@ -847,7 +885,8 @@ inline ColorARGB ConvertFrom<FORMAT_A8R8G8B8, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A8B8G8R8>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_A8B8G8R8>(const ColorARGB &in) {
   return (in.a << 24) | (in.b << 16) | (in.g << 8) | in.r;
 }
 
@@ -873,7 +912,8 @@ inline ColorARGB ConvertFrom<FORMAT_A8B8G8R8, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A8>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_A8>(const ColorARGB &in) {
   return in.a;
 }
 
@@ -893,7 +933,8 @@ inline ColorARGB ConvertFrom<FORMAT_A8, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_L8>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_L8>(const ColorARGB &in) {
   return in.r;
 }
 
@@ -918,7 +959,8 @@ inline ColorARGB ConvertFrom<FORMAT_L8, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A8L8>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_A8L8>(const ColorARGB &in) {
   return (in.a << 8) | in.r;
 }
 
@@ -944,7 +986,8 @@ inline ColorARGB ConvertFrom<FORMAT_A8L8, true>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_D16>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_D16>(const ColorARGB &in) {
   return in.value;
 }
 
@@ -957,7 +1000,8 @@ inline ColorARGB ConvertFrom<FORMAT_D16, false>(uint32_t in) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_X8S8D16>(const ColorARGB &in) {
+template <>
+inline uint32_t ConvertTo<FORMAT_X8S8D16>(const ColorARGB &in) {
   return in.b;
 }
 

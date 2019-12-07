@@ -14,91 +14,110 @@
 //
 #pragma once
 
-template <eVertexFormat> struct VertexData {};
+template <eVertexFormat>
+struct VertexData {};
 
-template <> struct VertexData<VERTEX_UNKNOWN> {};
+template <>
+struct VertexData<VERTEX_UNKNOWN> {};
 
-template <> struct VertexData<VERTEX_BYTE> {
+template <>
+struct VertexData<VERTEX_BYTE> {
   typedef TVector1<char> Input;
   typedef VECTOR1 Output;
 };
 
-template <> struct VertexData<VERTEX_BYTE2> {
+template <>
+struct VertexData<VERTEX_BYTE2> {
   typedef TVector2<char> Input;
   typedef VECTOR2 Output;
 };
 
-template <> struct VertexData<VERTEX_BYTE3> {
+template <>
+struct VertexData<VERTEX_BYTE3> {
   typedef TVector3<char> Input;
   typedef VECTOR3 Output;
 };
 
-template <> struct VertexData<VERTEX_BYTE4> {
+template <>
+struct VertexData<VERTEX_BYTE4> {
   typedef TVector4<char> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct VertexData<VERTEX_SHORT> {
+template <>
+struct VertexData<VERTEX_SHORT> {
   typedef TVector1<short> Input;
   typedef VECTOR1 Output;
 };
 
-template <> struct VertexData<VERTEX_SHORT2> {
+template <>
+struct VertexData<VERTEX_SHORT2> {
   typedef TVector2<short> Input;
   typedef VECTOR2 Output;
 };
 
-template <> struct VertexData<VERTEX_SHORT3> {
+template <>
+struct VertexData<VERTEX_SHORT3> {
   typedef TVector3<short> Input;
   typedef VECTOR3 Output;
 };
 
-template <> struct VertexData<VERTEX_SHORT4> {
+template <>
+struct VertexData<VERTEX_SHORT4> {
   typedef TVector4<short> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct VertexData<VERTEX_FIXED> {
+template <>
+struct VertexData<VERTEX_FIXED> {
   typedef TVector1<fixed16> Input;
   typedef VECTOR1 Output;
 };
 
-template <> struct VertexData<VERTEX_FIXED2> {
+template <>
+struct VertexData<VERTEX_FIXED2> {
   typedef TVector2<fixed16> Input;
   typedef VECTOR2 Output;
 };
 
-template <> struct VertexData<VERTEX_FIXED3> {
+template <>
+struct VertexData<VERTEX_FIXED3> {
   typedef TVector3<fixed16> Input;
   typedef VECTOR3 Output;
 };
 
-template <> struct VertexData<VERTEX_FIXED4> {
+template <>
+struct VertexData<VERTEX_FIXED4> {
   typedef TVector4<fixed16> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct VertexData<VERTEX_FLOAT> {
+template <>
+struct VertexData<VERTEX_FLOAT> {
   typedef TVector1<float> Input;
   typedef VECTOR1 Output;
 };
 
-template <> struct VertexData<VERTEX_FLOAT2> {
+template <>
+struct VertexData<VERTEX_FLOAT2> {
   typedef TVector2<float> Input;
   typedef VECTOR2 Output;
 };
 
-template <> struct VertexData<VERTEX_FLOAT3> {
+template <>
+struct VertexData<VERTEX_FLOAT3> {
   typedef TVector3<float> Input;
   typedef VECTOR3 Output;
 };
 
-template <> struct VertexData<VERTEX_FLOAT4> {
+template <>
+struct VertexData<VERTEX_FLOAT4> {
   typedef TVector4<float> Input;
   typedef VECTOR4 Output;
 };
 
-template <> struct VertexData<VERTEX_RGBA> {
+template <>
+struct VertexData<VERTEX_RGBA> {
   typedef TVector4<uint8_t> Input;
   typedef VECTOR4 Output;
 };
@@ -146,7 +165,7 @@ inline void DecodeVertex(D *pOut, const uint8_t *pbIn) {
 template <>
 inline void
 DecodeVertex<VECTOR4, VertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut,
-                                                    const uint8_t *pbIn) {
+                                                  const uint8_t *pbIn) {
   __unused(pOut);
   __unused(pbIn);
 }
@@ -154,7 +173,7 @@ DecodeVertex<VECTOR4, VertexData<VERTEX_UNKNOWN>>(VECTOR4 *pOut,
 template <>
 inline void
 DecodeVertex<VECTOR4, VertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
-                                                 const uint8_t *pbIn) {
+                                               const uint8_t *pbIn) {
   assert(pOut);
   assert(pbIn);
 
@@ -168,10 +187,10 @@ DecodeVertex<VECTOR4, VertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
 
 template <eVertexFormat VertexFormat>
 void DecodePosition(VECTOR4 *pOut, const uint8_t *pbIn, uint32_t stride,
-                     uint32_t count) {
+                    uint32_t count) {
   for (uint32_t i = 0; i < count; ++i) {
     DecodeVertex<VECTOR4, VertexData<VertexFormat>>(&pOut[i],
-                                                      pbIn + i * stride);
+                                                    pbIn + i * stride);
   }
 }
 
@@ -377,7 +396,7 @@ void TNL::processVertexColor(uint32_t count) {
   for (uint32_t i = 0; i < count; ++i) {
     VECTOR4 vColor;
     DecodeVertex<VECTOR4, VertexData<VertexFormat>>(&vColor,
-                                                      pbIn + i * stride);
+                                                    pbIn + i * stride);
 
     // Clamp the color
     vColor.x = Math::Sat(vColor.x);
@@ -407,7 +426,7 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
     typename VertexData<VertexFormat>::Output vIn;
 
     DecodeVertex<typename VertexData<VertexFormat>::Output,
-                  VertexData<VertexFormat>>(&vIn, pbIn + i * stride);
+                 VertexData<VertexFormat>>(&vIn, pbIn + i * stride);
 
     if constexpr (Transform) {
       Math::Mul(&vIn, vIn, transform);
@@ -450,7 +469,7 @@ void TNL::processPointSize(uint32_t count) {
     VECTOR1 vPointSize;
 
     DecodeVertex<VECTOR1, VertexData<VertexFormat>>(&vPointSize,
-                                                      pbIn + i * stride);
+                                                    pbIn + i * stride);
     if constexpr (QuadraticAttenuation) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
@@ -467,7 +486,8 @@ void TNL::processPointSize(uint32_t count) {
   }
 }
 
-template <eFogMode FogMode> void TNL::processFog(uint32_t count) {
+template <eFogMode FogMode>
+void TNL::processFog(uint32_t count) {
 
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
   auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);

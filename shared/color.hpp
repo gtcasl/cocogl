@@ -54,9 +54,9 @@ struct ColorARGB {
     this->r = static_cast<uint8_t>(r);
   }
 
-  ColorARGB(int value) { 
-    this->value = value; 
-  }  
+  ColorARGB(int value) {
+    this->value = value;
+  }
 
   void operator=(const ColorARGB &rhs) {
     this->value = rhs.value;

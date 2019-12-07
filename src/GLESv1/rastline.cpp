@@ -82,9 +82,9 @@ void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
 
     auto fddy = Math::Mul<fixedDDA>(i4y1 - i4y0, g.fRatio);
     auto x0 = std::max<int>(Math::Ceil<int>(i4x0 - Math::Half<fixed4>()),
-                              scissorRect_.left);
+                            scissorRect_.left);
     auto x1 = std::min<int>(Math::Ceil<int>(i4x1 - Math::Half<fixed4>()),
-                              scissorRect_.right);
+                            scissorRect_.right);
 
     auto i4X0Diff = fixed4(x0) - (i4x0 - Math::Half<fixed4>());
     auto fty = fixedDDA(i4y0) + fddy * i4X0Diff - (fLineWidth / 2) + fRndCeil;
@@ -121,9 +121,9 @@ void Rasterizer::rasterLine(uint32_t i0, uint32_t i1) {
 
     auto fddx = Math::Mul<fixedDDA>(i4x1 - i4x0, g.fRatio);
     auto y0 = std::max<int>(Math::Ceil<int>(i4y0 - Math::Half<fixed4>()),
-                              scissorRect_.top);
+                            scissorRect_.top);
     auto y1 = std::min<int>(Math::Ceil<int>(i4y1 - Math::Half<fixed4>()),
-                              scissorRect_.bottom);
+                            scissorRect_.bottom);
 
     auto i4Y0Diff = fixed4(y0) - (i4y0 - Math::Half<fixed4>());
     auto flx = fixedDDA(i4x0) + fddx * i4Y0Diff - (fLineWidth / 2) + fRndCeil;

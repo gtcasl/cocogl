@@ -29,5 +29,7 @@ struct uint24_t {
     m[2] = z;
   }
 
-  operator uint32_t() const { return (m[2] << 16) | (m[1] << 8) | m[0]; }
+  operator uint32_t() const {
+    return (m[2] << 16) | (m[1] << 8) | m[0];
+  }
 };

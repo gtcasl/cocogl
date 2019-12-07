@@ -28,7 +28,14 @@ static const uint16_t __rcp_tab[] = {0x8000, 0x71c7, 0x6666, 0x5d17,
 // 1 / ( 2 * sqrt( x ) ) - extra divide by 2 to scale to 16 bits
 static const uint16_t __rsq_tab[] = {
     // domain 0.5 .. 1.0-1/16
-    0xb504, 0xaaaa, 0xa1e8, 0x9a5f, 0x93cd, 0x8e00, 0x88d6, 0x8432,
+    0xb504,
+    0xaaaa,
+    0xa1e8,
+    0x9a5f,
+    0x93cd,
+    0x8e00,
+    0x88d6,
+    0x8432,
 };
 
 // -ln(x)/ln(2) with x = N/16, N=[8...16]
@@ -41,20 +48,46 @@ static uint16_t __alog_tab[] = {0xffff, 0xeac0, 0xd744, 0xc567, 0xb504,
 
 // table[i] = round(2^31*exp2(a)) where a=(i+0.5)/32
 static uint32_t __exp2_tab[] = {
-    0x8164d1f4, 0x843a28c4, 0x871f6197, 0x8a14d575, 0x8d1adf5b, 0x9031dc43,
-    0x935a2b2f, 0x96942d37, 0x99e04593, 0x9d3ed9a7, 0xa0b05110, 0xa43515ae,
-    0xa7cd93b5, 0xab7a39b6, 0xaf3b78ad, 0xb311c413, 0xb6fd91e3, 0xbaff5ab2,
-    0xbf1799b6, 0xc346ccda, 0xc78d74c9, 0xcbec14ff, 0xd06333db, 0xd4f35aac,
-    0xd99d15c2, 0xde60f482, 0xe33f8973, 0xe8396a50, 0xed4f301f, 0xf281773c,
-    0xf7d0df73, 0xfd3e0c0d,
+    0x8164d1f4,
+    0x843a28c4,
+    0x871f6197,
+    0x8a14d575,
+    0x8d1adf5b,
+    0x9031dc43,
+    0x935a2b2f,
+    0x96942d37,
+    0x99e04593,
+    0x9d3ed9a7,
+    0xa0b05110,
+    0xa43515ae,
+    0xa7cd93b5,
+    0xab7a39b6,
+    0xaf3b78ad,
+    0xb311c413,
+    0xb6fd91e3,
+    0xbaff5ab2,
+    0xbf1799b6,
+    0xc346ccda,
+    0xc78d74c9,
+    0xcbec14ff,
+    0xd06333db,
+    0xd4f35aac,
+    0xd99d15c2,
+    0xde60f482,
+    0xe33f8973,
+    0xe8396a50,
+    0xed4f301f,
+    0xf281773c,
+    0xf7d0df73,
+    0xfd3e0c0d,
 };
 
-#define __fpmul(a, b)                                                          \
+#define __fpmul(a, b) \
   static_cast<int>((static_cast<int64_t>(a) * static_cast<int64_t>(b)) >> 16)
 
 #define smull(a, b) ((static_cast<int64_t>(a) * static_cast<int64_t>(b)) >> 32)
 
-#define umull(a, b)                                                            \
+#define umull(a, b) \
   ((static_cast<uint64_t>(a) * static_cast<uint64_t>(b)) >> 32)
 
 // By Ken Turkowski's Fixed Point Square Root from "Graphics Gems V".

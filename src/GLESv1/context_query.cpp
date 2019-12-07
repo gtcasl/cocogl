@@ -15,7 +15,9 @@
 #include "stdafx.h"
 #include "context.hpp"
 
-void GLContext::setError(GLenum error) { error_ = error; }
+void GLContext::setError(GLenum error) {
+  error_ = error;
+}
 
 GLenum GLContext::getError() const {
   GLenum error = error_;

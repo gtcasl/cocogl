@@ -36,12 +36,14 @@ public:
             eVertexFormat NormalFormat>
   void processLightingTwoSided(uint32_t count);
 
-  template <eVertexFormat VertexFormat> void processVertexColor(uint32_t count);
+  template <eVertexFormat VertexFormat>
+  void processVertexColor(uint32_t count);
 
   template <bool Transform, eVertexFormat VertexFormat>
   void processTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
 
-  template <eFogMode FogMode> void processFog(uint32_t count);
+  template <eFogMode FogMode>
+  void processFog(uint32_t count);
 
 protected:
   TNL() {}

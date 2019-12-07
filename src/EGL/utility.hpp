@@ -13,9 +13,13 @@
 //
 #pragma once
 
-inline bool __eglFailed(EGLint err) { return err != EGL_SUCCESS; }
+inline bool __eglFailed(EGLint err) {
+  return err != EGL_SUCCESS;
+}
 
-inline bool __eglSucceeded(EGLint err) { return err == EGL_SUCCESS; }
+inline bool __eglSucceeded(EGLint err) {
+  return err == EGL_SUCCESS;
+}
 
 #ifndef COCOGL_API_PROFILE
 #define __profileAPI(func, ...)
@@ -26,17 +30,17 @@ inline bool __eglSucceeded(EGLint err) { return err == EGL_SUCCESS; }
 #ifndef NDEBUG
 #define __eglLog(...) g_logger.write(__VA_ARGS__);
 
-#define __eglLogError(...)                                                     \
-  g_logger.write("*** Error in file %s at line %d.\r\n", __FILE__, __LINE__);  \
-  g_logger.write(__VA_ARGS__);                                                 \
+#define __eglLogError(...)                                                    \
+  g_logger.write("*** Error in file %s at line %d.\r\n", __FILE__, __LINE__); \
+  g_logger.write(__VA_ARGS__);                                                \
   assert(false);
 #else
 #define __eglLog(...)
 #define __eglLogError(...)
 #endif
 
-#define __eglError(error, ...)                                                 \
-  __eglLogError(__VA_ARGS__);                                                  \
+#define __eglError(error, ...) \
+  __eglLogError(__VA_ARGS__);  \
   g_driver.setError(error);
 
 inline EGLint EGLERROR_FROM_HRESULT(HRESULT hr) {

@@ -17,17 +17,17 @@
 #include "tnl.inl"
 
 static const PfnDecodePosition g_decodePosition[] = {
-    DecodePosition<VERTEX_BYTE2>,  
+    DecodePosition<VERTEX_BYTE2>,
     DecodePosition<VERTEX_BYTE3>,
-    DecodePosition<VERTEX_BYTE4>,  
+    DecodePosition<VERTEX_BYTE4>,
     DecodePosition<VERTEX_SHORT2>,
-    DecodePosition<VERTEX_SHORT3>, 
+    DecodePosition<VERTEX_SHORT3>,
     DecodePosition<VERTEX_SHORT4>,
-    DecodePosition<VERTEX_FIXED2>, 
+    DecodePosition<VERTEX_FIXED2>,
     DecodePosition<VERTEX_FIXED3>,
-    DecodePosition<VERTEX_FIXED4>, 
+    DecodePosition<VERTEX_FIXED4>,
     DecodePosition<VERTEX_FLOAT2>,
-    DecodePosition<VERTEX_FLOAT3>, 
+    DecodePosition<VERTEX_FLOAT3>,
     DecodePosition<VERTEX_FLOAT4>,
 };
 
@@ -449,7 +449,7 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                 const VECTOR3 &vNormal,
                                 const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
-    VECTOR3 vL;       // Light vector
+    VECTOR3 vL;                      // Light vector
     auto fAtt = Math::One<floatf>(); // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
@@ -536,7 +536,7 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                 const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
-    VECTOR3 vL;       // Light vector
+    VECTOR3 vL;                      // Light vector
     auto fAtt = Math::One<floatf>(); // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
@@ -623,8 +623,8 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                 const VECTOR3 &vNormal,
                                 const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
-    VECTOR3 vL;       // Light vector
-    VECTOR3 vH;       // Halfway vector
+    VECTOR3 vL;                      // Light vector
+    VECTOR3 vH;                      // Halfway vector
     auto fAtt = Math::One<floatf>(); // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
@@ -728,8 +728,8 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                 const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
-    VECTOR3 vL;       // Light vector
-    VECTOR3 vH;       // Halfway vector
+    VECTOR3 vL;                      // Light vector
+    VECTOR3 vH;                      // Halfway vector
     auto fAtt = Math::One<floatf>(); // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
@@ -1247,7 +1247,7 @@ void TNL::updateLights() {
         Math::Normalize(&pLight->vHalfway);
       } else {
         if (Math::IsAlmostZero(pLight->getAttenuation(GL_CONSTANT_ATTENUATION) -
-                          Math::One<floatf>()) &&
+                               Math::One<floatf>()) &&
             Math::IsAlmostZero(pLight->getAttenuation(GL_LINEAR_ATTENUATION)) &&
             Math::IsAlmostZero(pLight->getAttenuation(GL_QUADRATIC_ATTENUATION))) {
           pLight->Flags.Attenuation = 0;

@@ -19,48 +19,89 @@
 
 namespace Math {
 
-template <typename T> struct Constants {};
+template <typename T>
+struct Constants {};
 
-template <> struct Constants<float> {
-  inline static float Zero() { return 0.0f; }
+template <>
+struct Constants<float> {
+  inline static float Zero() {
+    return 0.0f;
+  }
 
-  inline static float Half() { return 0.5f; }
+  inline static float Half() {
+    return 0.5f;
+  }
 
-  inline static float One() { return 1.0f; }
+  inline static float One() {
+    return 1.0f;
+  }
 
-  inline static float Two() { return 2.0f; }
+  inline static float Two() {
+    return 2.0f;
+  }
 
-  inline static float Min() { return -2147483647.0f; }
+  inline static float Min() {
+    return -2147483647.0f;
+  }
 
-  inline static float Max() { return 2147483647.0f; }
+  inline static float Max() {
+    return 2147483647.0f;
+  }
 
-  inline static float Epsilon() { return 0.00000001f; }
+  inline static float Epsilon() {
+    return 0.00000001f;
+  }
 
-  inline static float PI() { return 3.14159265f; }
+  inline static float PI() {
+    return 3.14159265f;
+  }
 
-  inline static float F128() { return 128.0f; }
+  inline static float F128() {
+    return 128.0f;
+  }
 
-  inline static float F90() { return 90.0f; }
+  inline static float F90() {
+    return 90.0f;
+  }
 
-  inline static float F180() { return 180.0f; }
+  inline static float F180() {
+    return 180.0f;
+  }
 
-  inline static float F02() { return 0.2f; }
+  inline static float F02() {
+    return 0.2f;
+  }
 
-  inline static float F08() { return 0.8f; }
+  inline static float F08() {
+    return 0.8f;
+  }
 
-  inline static float E() { return 2.71828183f; }
+  inline static float E() {
+    return 2.71828183f;
+  }
 
-  inline static float LogE() { return 1.442695041f; }
+  inline static float LogE() {
+    return 1.442695041f;
+  }
 };
 
-template <uint32_t F, typename T> struct Constants<Fixed<F, T>> {
-  inline static auto Zero() { return Fixed<F, T>::make(0); }
+template <uint32_t F, typename T>
+struct Constants<Fixed<F, T>> {
+  inline static auto Zero() {
+    return Fixed<F, T>::make(0);
+  }
 
-  inline static auto Half() { return Fixed<F, T>::make(Fixed<F, T>::HALF); }
+  inline static auto Half() {
+    return Fixed<F, T>::make(Fixed<F, T>::HALF);
+  }
 
-  inline static auto One() { return Fixed<F, T>::make(Fixed<F, T>::ONE); }
+  inline static auto One() {
+    return Fixed<F, T>::make(Fixed<F, T>::ONE);
+  }
 
-  inline static auto Two() { return Fixed<F, T>::make(Fixed<F, T>::TWO); }
+  inline static auto Two() {
+    return Fixed<F, T>::make(Fixed<F, T>::TWO);
+  }
 
   inline static auto Min() {
     return Fixed<F, T>::make(-(1 << (8 * sizeof(T) - 1)));
@@ -70,7 +111,9 @@ template <uint32_t F, typename T> struct Constants<Fixed<F, T>> {
     return Fixed<F, T>::make((1 << (8 * sizeof(T) - 1)) - 1);
   }
 
-  inline static auto Epsilon() { return Fixed<F, T>::make(1); }
+  inline static auto Epsilon() {
+    return Fixed<F, T>::make(1);
+  }
 
   inline static auto PI() {
     return Fixed<F, T>::make(3.1415926535f * Fixed<F, T>::ONE);
@@ -80,7 +123,9 @@ template <uint32_t F, typename T> struct Constants<Fixed<F, T>> {
     return Fixed<F, T>::make(128 * Fixed<F, T>::ONE);
   }
 
-  inline static auto F90() { return Fixed<F, T>::make(90 * Fixed<F, T>::ONE); }
+  inline static auto F90() {
+    return Fixed<F, T>::make(90 * Fixed<F, T>::ONE);
+  }
 
   inline static auto F180() {
     return Fixed<F, T>::make(180 * Fixed<F, T>::ONE);
@@ -103,39 +148,85 @@ template <uint32_t F, typename T> struct Constants<Fixed<F, T>> {
   }
 };
 
-template <typename T> static T Zero() { return Constants<T>::Zero(); }
+template <typename T>
+static T Zero() {
+  return Constants<T>::Zero();
+}
 
-template <typename T> static T Half() { return Constants<T>::Half(); }
+template <typename T>
+static T Half() {
+  return Constants<T>::Half();
+}
 
-template <typename T> static T One() { return Constants<T>::One(); }
+template <typename T>
+static T One() {
+  return Constants<T>::One();
+}
 
-template <typename T> static T Two() { return Constants<T>::Two(); }
+template <typename T>
+static T Two() {
+  return Constants<T>::Two();
+}
 
-template <typename T> static T Min() { return Constants<T>::Min(); }
+template <typename T>
+static T Min() {
+  return Constants<T>::Min();
+}
 
-template <typename T> static T Max() { return Constants<T>::Max(); }
+template <typename T>
+static T Max() {
+  return Constants<T>::Max();
+}
 
-template <typename T> static T Epsilon() { return Constants<T>::Epsilon(); }
+template <typename T>
+static T Epsilon() {
+  return Constants<T>::Epsilon();
+}
 
-template <typename T> static T PI() { return Constants<T>::PI(); }
+template <typename T>
+static T PI() {
+  return Constants<T>::PI();
+}
 
-template <typename T> static T F128() { return Constants<T>::F128(); }
+template <typename T>
+static T F128() {
+  return Constants<T>::F128();
+}
 
-template <typename T> static T F90() { return Constants<T>::F90(); }
+template <typename T>
+static T F90() {
+  return Constants<T>::F90();
+}
 
-template <typename T> static T F180() { return Constants<T>::F180(); }
+template <typename T>
+static T F180() {
+  return Constants<T>::F180();
+}
 
-template <typename T> static T F02() { return Constants<T>::F02(); }
+template <typename T>
+static T F02() {
+  return Constants<T>::F02();
+}
 
-template <typename T> static T F08() { return Constants<T>::F08(); }
+template <typename T>
+static T F08() {
+  return Constants<T>::F08();
+}
 
-template <typename T> static T E() { return Constants<T>::E(); }
+template <typename T>
+static T E() {
+  return Constants<T>::E();
+}
 
-template <typename T> static T LogE() { return Constants<T>::LogE(); }
+template <typename T>
+static T LogE() {
+  return Constants<T>::LogE();
+}
 
 } // namespace Math
 
-template <typename T> struct TVector1 {
+template <typename T>
+struct TVector1 {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 1 };
@@ -151,12 +242,16 @@ template <typename T> struct TVector1 {
 
   TVector1() {}
 
-  TVector1(T X) : x(X) {}
+  TVector1(T X)
+      : x(X) {}
 
-  TVector1(const TVector1 &rhs) { this->x = rhs.x; }
+  TVector1(const TVector1 &rhs) {
+    this->x = rhs.x;
+  }
 };
 
-template <typename T> struct TVector2 {
+template <typename T>
+struct TVector2 {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 2 };
@@ -172,7 +267,8 @@ template <typename T> struct TVector2 {
 
   TVector2() {}
 
-  TVector2(T X, T Y) : x(X), y(Y) {}
+  TVector2(T X, T Y)
+      : x(X), y(Y) {}
 
   TVector2(const TVector2 &rhs) {
     this->x = rhs.x;
@@ -180,7 +276,8 @@ template <typename T> struct TVector2 {
   }
 };
 
-template <typename T> struct TVector3 {
+template <typename T>
+struct TVector3 {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 3 };
@@ -196,7 +293,8 @@ template <typename T> struct TVector3 {
 
   TVector3() {}
 
-  TVector3(T X, T Y, T Z) : x(X), y(Y), z(Z) {}
+  TVector3(T X, T Y, T Z)
+      : x(X), y(Y), z(Z) {}
 
   TVector3(const TVector3 &rhs) {
     this->x = rhs.x;
@@ -205,7 +303,8 @@ template <typename T> struct TVector3 {
   }
 };
 
-template <typename T> struct TVector4 {
+template <typename T>
+struct TVector4 {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 4 };
@@ -221,7 +320,8 @@ template <typename T> struct TVector4 {
 
   TVector4() {}
 
-  TVector4(T X, T Y, T Z, T W) : x(X), y(Y), z(Z), w(W) {}
+  TVector4(T X, T Y, T Z, T W)
+      : x(X), y(Y), z(Z), w(W) {}
 
   TVector4(const TVector4 &rhs) {
     this->x = rhs.x;
@@ -231,7 +331,8 @@ template <typename T> struct TVector4 {
   }
 };
 
-template <typename T> struct TMatrix44 {
+template <typename T>
+struct TMatrix44 {
   DISABLE_WARNING_PUSH
   DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
@@ -386,7 +487,8 @@ int Inverse32(int value);
 
 namespace std {
 
-template <uint32_t F, typename T> Fixed<F, T> abs(Fixed<F, T> rhs) {
+template <uint32_t F, typename T>
+Fixed<F, T> abs(Fixed<F, T> rhs) {
   return Fixed<F, T>::make(::abs(rhs.data()));
 }
 
@@ -410,20 +512,24 @@ inline fixed16 exp2(fixed16 rhs) {
   return fixed16::make(Math::fxExp2(rhs.data()));
 }
 
-template <uint32_t F, typename T> inline Fixed<F, T> exp(Fixed<F, T> rhs) {
+template <uint32_t F, typename T>
+inline Fixed<F, T> exp(Fixed<F, T> rhs) {
   return Fixed<F, T>(std::exp(static_cast<float>(rhs)));
 }
 
-template <uint32_t F, typename T> inline Fixed<F, T> ceil(Fixed<F, T> rhs) {
+template <uint32_t F, typename T>
+inline Fixed<F, T> ceil(Fixed<F, T> rhs) {
   return Fixed<F, T>::make((rhs.data() + Fixed<F, T>::MASK) &
                            Fixed<F, T>::IMASK);
 }
 
-template <uint32_t F, typename T> inline Fixed<F, T> floor(Fixed<F, T> rhs) {
+template <uint32_t F, typename T>
+inline Fixed<F, T> floor(Fixed<F, T> rhs) {
   return Fixed<F, T>::make(rhs.data() & Fixed<F, T>::IMASK);
 }
 
-template <uint32_t F, typename T> inline Fixed<F, T> round(Fixed<F, T> rhs) {
+template <uint32_t F, typename T>
+inline Fixed<F, T> round(Fixed<F, T> rhs) {
   return Fixed<F, T>::make((rhs.data() + Fixed<F, T>::HALF) &
                            Fixed<F, T>::IMASK);
 }
@@ -440,33 +546,45 @@ int Add8(int lhs, int rhs);
 
 int Lerp8(int lhs, int rhs, int frac);
 
-template <typename R> R FromUNORM8(int rhs);
+template <typename R>
+R FromUNORM8(int rhs);
 
-template <typename T> int ToUNORM8(T rhs);
+template <typename T>
+int ToUNORM8(T rhs);
 
-template <typename T> int ToUNORM16(T rhs);
+template <typename T>
+int ToUNORM16(T rhs);
 
-template <typename T> bool IsAlmostZero(T rhs);
+template <typename T>
+bool IsAlmostZero(T rhs);
 
-template <typename T> T Sat(T rhs);
+template <typename T>
+T Sat(T rhs);
 
-template <typename R, typename T> R Ceil(T rhs);
+template <typename R, typename T>
+R Ceil(T rhs);
 
-template <typename R, typename T> R Floori(T rhs);
+template <typename R, typename T>
+R Floori(T rhs);
 
-template <typename R, typename T> R Roundi(T rhs);
+template <typename R, typename T>
+R Roundi(T rhs);
 
-template <typename T> T RSqrt(T rhs);
+template <typename T>
+T RSqrt(T rhs);
 
 //////////////////////////////////////////////////////////////////////////////
 
 float FastMul(float lhs, float rhs);
 
-template <typename R> R Mul(float lhs, float rhs);
+template <typename R>
+R Mul(float lhs, float rhs);
 
-template <typename R> R Mul(float lhs, int rhs);
+template <typename R>
+R Mul(float lhs, int rhs);
 
-template <typename R, uint32_t F, typename T> R Mul(float lhs, Fixed<F, T> rhs);
+template <typename R, uint32_t F, typename T>
+R Mul(float lhs, Fixed<F, T> rhs);
 
 float MulDiv(float lhs, float rhs);
 
@@ -474,13 +592,17 @@ float Lerpf(float lhs, float rhs, float scalar);
 
 int Lerp(int lhs, int rhs, float scalar);
 
-template <typename R> R Mul(float fOffset, float fRhw, int iScale);
+template <typename R>
+R Mul(float fOffset, float fRhw, int iScale);
 
-template <typename R> R Mul(float fOffset, float fRhw, float fScale);
+template <typename R>
+R Mul(float fOffset, float fRhw, float fScale);
 
-template <typename R> R MulRnd(float lhs, float rhs);
+template <typename R>
+R MulRnd(float lhs, float rhs);
 
-template <typename R> R MulRnd(float a, float b, float c);
+template <typename R>
+R MulRnd(float a, float b, float c);
 
 float MulAdd(float a0, float b0, float a1, float b1, float a2, float b2, float a3, float b3);
 
@@ -490,15 +612,19 @@ float MulAdd(float a0, float b0, float a1, float b1);
 
 float MulSub(float a, float b, float c, float d);
 
-template <typename R> R ShiftLeft(float lhs, int rhs);
+template <typename R>
+R ShiftLeft(float lhs, int rhs);
 
-template <typename R> R ShiftRight(float lhs, int rhs);
+template <typename R>
+R ShiftRight(float lhs, int rhs);
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <typename R, uint32_t F, typename T> R Inverse(Fixed<F, T> rhs);
+template <typename R, uint32_t F, typename T>
+R Inverse(Fixed<F, T> rhs);
 
-template <typename R> R Inverse(float rhs);
+template <typename R>
+R Inverse(float rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R FastMul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
@@ -519,9 +645,11 @@ R MulAdd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c, Fixed<F2, T2> d);
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R MulSub(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c, Fixed<F2, T2> d);
 
-template <typename R, uint32_t F, typename T> R Mul(Fixed<F, T> lhs, int rhs);
+template <typename R, uint32_t F, typename T>
+R Mul(Fixed<F, T> lhs, int rhs);
 
-template <typename R, uint32_t F, typename T> R Mul(Fixed<F, T> lhs, float rhs);
+template <typename R, uint32_t F, typename T>
+R Mul(Fixed<F, T> lhs, float rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R Mul(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
@@ -531,7 +659,7 @@ R Mul(Fixed<F, T> lhs, Fixed<F, T> rhs);
 
 template <uint32_t F1, uint32_t F2, typename T1, typename T2>
 Fixed<F1, T1> Lerpf(Fixed<F1, T1> lhs, Fixed<F1, T1> rhs,
-                     Fixed<F2, T2> scalar);
+                    Fixed<F2, T2> scalar);
 
 template <uint32_t F, typename T>
 Fixed<F, T> Lerpf(Fixed<F, T> lhs, Fixed<F, T> rhs, float scalar);
@@ -588,9 +716,11 @@ void Rotate(MATRIX44 *pmatOut, floatf angle, floatf x, floatf y, floatf z);
 void Frustum(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
              floatf top, floatf zNear, floatf zFar);
 
-template <typename T> T Dot(const TVector3<T> &lhs, const TVector3<T> &rhs);
+template <typename T>
+T Dot(const TVector3<T> &lhs, const TVector3<T> &rhs);
 
-template <typename T> T Dot(const TVector4<T> &lhs, const TVector4<T> &rhs);
+template <typename T>
+T Dot(const TVector4<T> &lhs, const TVector4<T> &rhs);
 
 bool IsPowerOf2(int value);
 
@@ -602,7 +732,8 @@ floatf RadToDeg(floatf rhs);
 
 namespace detail {
 
-template <typename Type, uint32_t Shift> struct ShiftInverter {
+template <typename Type, uint32_t Shift>
+struct ShiftInverter {
 public:
   inline static Type call(int value) {
     if constexpr (Shift >= 32) {
@@ -617,7 +748,8 @@ public:
   }
 };
 
-template <typename R, uint32_t F, typename T> class Inverter {
+template <typename R, uint32_t F, typename T>
+class Inverter {
 public:
   inline static R Invert(Fixed<F, T> rhs) {
     return R::make(
@@ -626,7 +758,8 @@ public:
   }
 };
 
-template <uint32_t F, typename T> class Inverter<float, F, T> {
+template <uint32_t F, typename T>
+class Inverter<float, F, T> {
 public:
   inline static float Invert(Fixed<F, T> rhs) {
     return 1.0f / static_cast<float>(rhs);
@@ -637,7 +770,8 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <> inline fixed16 RSqrt(fixed16 rhs) {
+template <>
+inline fixed16 RSqrt(fixed16 rhs) {
   return fixed16::make(fxInvSqrt(rhs.data()));
 }
 
@@ -697,72 +831,94 @@ inline Fixed<F, T> MulSub(Fixed<F, T> a0, Fixed<F, T> b0, Fixed<F, T> a1,
                            Fixed<F, T>::FRAC);
 }
 
-template <> inline float FromUNORM8<float>(int rhs) {
+template <>
+inline float FromUNORM8<float>(int rhs) {
   return rhs * (1.0f / 255);
 }
 
-template <> inline fixed16 FromUNORM8<fixed16>(int rhs) {
+template <>
+inline fixed16 FromUNORM8<fixed16>(int rhs) {
   return fixed16::make((rhs << fixed16::FRAC) / 255);
 }
 
-template <> inline fixed20 FromUNORM8<fixed20>(int rhs) {
+template <>
+inline fixed20 FromUNORM8<fixed20>(int rhs) {
   return fixed20::make((rhs << fixed20::FRAC) / 255);
 }
 
-template <> inline int FromUNORM8<int>(int rhs) { return rhs; }
+template <>
+inline int FromUNORM8<int>(int rhs) {
+  return rhs;
+}
 
-inline int Mul8(int lhs, int rhs) { return (lhs * rhs + 0xff) >> 8; }
+inline int Mul8(int lhs, int rhs) {
+  return (lhs * rhs + 0xff) >> 8;
+}
 
-inline int Add8(int lhs, int rhs) { return std::min(lhs + rhs, 0xff); }
+inline int Add8(int lhs, int rhs) {
+  return std::min(lhs + rhs, 0xff);
+}
 
 inline int Lerp8(int lhs, int rhs, int frac) {
   return lhs + ((frac * (rhs - lhs) + 0xff) >> 8);
 }
 
-template <typename T> inline T Sat(T rhs) {
+template <typename T>
+inline T Sat(T rhs) {
   return std::clamp(rhs, Math::Zero<T>(), Math::One<T>());
 }
 
-template <typename T> inline bool IsAlmostZero(T rhs) {
+template <typename T>
+inline bool IsAlmostZero(T rhs) {
   return std::abs(rhs) <= Math::Epsilon<T>();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <typename R> inline R Ceil(float rhs) {
+template <typename R>
+inline R Ceil(float rhs) {
   return static_cast<R>(::ceil(rhs));
 }
 
-template <typename R> inline R Floori(float rhs) {
+template <typename R>
+inline R Floori(float rhs) {
   return static_cast<R>(::floor(rhs));
 }
 
-template <typename R> inline R Roundi(float rhs) {
+template <typename R>
+inline R Roundi(float rhs) {
   return static_cast<R>(rhs + 0.5f);
 }
 
-template <> inline float RSqrt(float rhs) {
+template <>
+inline float RSqrt(float rhs) {
   assert(rhs != 0.0f);
   return 1.0f / std::sqrt(rhs);
 }
 
-template <> inline int ToUNORM8(float rhs) {
+template <>
+inline int ToUNORM8(float rhs) {
   assert((rhs >= 0.0f) && (rhs <= 1.0f));
   return static_cast<int>(0xff * rhs);
 }
 
-template <> inline int ToUNORM16(float rhs) {
+template <>
+inline int ToUNORM16(float rhs) {
   assert((rhs >= 0.0f) && (rhs <= 1.0f));
   return static_cast<int>(0xffff * rhs);
 }
 
-inline float FastMul(float lhs, float rhs) { return lhs * rhs; }
+inline float FastMul(float lhs, float rhs) {
+  return lhs * rhs;
+}
 
-template <typename R> inline R Mul(float lhs, float rhs) {
+template <typename R>
+inline R Mul(float lhs, float rhs) {
   return static_cast<R>(lhs * rhs);
 }
 
-template <typename R> inline R Mul(float lhs, int rhs) {
+template <typename R>
+inline R Mul(float lhs, int rhs) {
   return static_cast<R>(lhs * rhs);
 }
 
@@ -771,7 +927,9 @@ inline R Mul(float lhs, Fixed<F, T> rhs) {
   return static_cast<R>(lhs * rhs);
 }
 
-inline float MulDiv(float lhs, float rhs) { return lhs / rhs; }
+inline float MulDiv(float lhs, float rhs) {
+  return lhs / rhs;
+}
 
 inline float Lerpf(float lhs, float rhs, float scalar) {
   assert((scalar >= 0.0f) && (scalar <= 1.0f));
@@ -783,7 +941,8 @@ inline int Lerp(int lhs, int rhs, float scalar) {
   return lhs + static_cast<int>((rhs - lhs) * scalar);
 }
 
-template <> inline fixed4 Mul<fixed4>(float fOffset, float fRhw, int iScale) {
+template <>
+inline fixed4 Mul<fixed4>(float fOffset, float fRhw, int iScale) {
   return fixed4(fOffset * fRhw * iScale);
 }
 
@@ -797,50 +956,60 @@ inline fixed24 Mul<fixed24>(float fOffset, float fRhw, float fScale) {
   return fixed24(fOffset * fRhw * fScale);
 }
 
-template <typename R> inline R MulRnd(float a, float b) {
+template <typename R>
+inline R MulRnd(float a, float b) {
   return static_cast<R>(a * b);
 }
 
-template <typename R> inline R MulRnd(float a, float b, float c) {
+template <typename R>
+inline R MulRnd(float a, float b, float c) {
   return static_cast<R>(a * b * c);
 }
 
-template <typename R> inline R MulSub(float a, float b, float c, float d) {
+template <typename R>
+inline R MulSub(float a, float b, float c, float d) {
   return static_cast<R>(a * b - c * d);
 }
 
-template <typename R> inline R ShiftLeft(float lhs, int rhs) {
+template <typename R>
+inline R ShiftLeft(float lhs, int rhs) {
   float scale = static_cast<float>(1 << rhs);
   return static_cast<R>(lhs * scale);
 }
 
-template <typename R> inline R ShiftRight(float lhs, int rhs) {
+template <typename R>
+inline R ShiftRight(float lhs, int rhs) {
   float scale = 1.0f / static_cast<float>(1 << rhs);
   return static_cast<R>(lhs * scale);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <typename R, uint32_t F, typename T> inline R Ceil(Fixed<F, T> rhs) {
+template <typename R, uint32_t F, typename T>
+inline R Ceil(Fixed<F, T> rhs) {
   int value = rhs.data() + Fixed<F, T>::MASK;
   return static_cast<R>(value >> Fixed<F, T>::FRAC);
 }
 
-template <typename R, uint32_t F, typename T> inline R Floori(Fixed<F, T> rhs) {
+template <typename R, uint32_t F, typename T>
+inline R Floori(Fixed<F, T> rhs) {
   return static_cast<R>(rhs.data() >> Fixed<F, T>::FRAC);
 }
 
-template <typename R, uint32_t F, typename T> inline R Roundi(Fixed<F, T> rhs) {
+template <typename R, uint32_t F, typename T>
+inline R Roundi(Fixed<F, T> rhs) {
   return static_cast<R>((rhs.data() + Fixed<F, T>::HALF) >> Fixed<F, T>::FRAC);
 }
 
-template <uint32_t F, typename T> inline int ToUNORM8(Fixed<F, T> rhs) {
+template <uint32_t F, typename T>
+inline int ToUNORM8(Fixed<F, T> rhs) {
   assert((rhs >= Math::Zero<Fixed<F, T>>()) &&
          (rhs <= Math::One<Fixed<F, T>>()));
   return (0xff * rhs.data()) >> Fixed<F, T>::FRAC;
 }
 
-template <uint32_t F, typename T> inline int ToUNORM16(Fixed<F, T> rhs) {
+template <uint32_t F, typename T>
+inline int ToUNORM16(Fixed<F, T> rhs) {
   assert((rhs >= Math::Zero<Fixed<F, T>>()) &&
          (rhs <= Math::One<Fixed<F, T>>()));
   return (0xffff * rhs.data()) >> Fixed<F, T>::FRAC;
@@ -851,7 +1020,8 @@ inline R Inverse(Fixed<F, T> rhs) {
   return detail::Inverter<R, F, T>::Invert(rhs);
 }
 
-template <typename R> inline R Inverse(float rhs) {
+template <typename R>
+inline R Inverse(float rhs) {
   assert(rhs != 0.0f);
   return static_cast<R>(1.0f / rhs);
 }
@@ -1200,8 +1370,8 @@ inline void Translate(MATRIX44 *pmatOut, floatf x, floatf y, floatf z) {
   pmatOut->_43 = z;
 }
 
-inline bool IsPowerOf2(int value) { 
-  return 0 == (value & (value - 1)); 
+inline bool IsPowerOf2(int value) {
+  return 0 == (value & (value - 1));
 }
 
 inline floatf DegToRad(floatf value) {
@@ -1212,8 +1382,8 @@ inline floatf RadToDeg(floatf value) {
   return value * (Math::F180<floatf>() / Math::PI<floatf>());
 }
 
-inline int iLog2(int value) { 
-  return 31 - Clz(value); 
+inline int iLog2(int value) {
+  return 31 - Clz(value);
 }
 
 inline void Mul(MATRIX44 *pmatOut, const MATRIX44 &mat1, const MATRIX44 &mat2) {

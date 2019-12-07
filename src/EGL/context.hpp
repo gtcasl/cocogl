@@ -27,19 +27,33 @@ public:
   void setBindings(std::thread::id threadID, _EGLSurface *pSurfDraw,
                    _EGLSurface *pSurfRead);
 
-  auto getDisplay() const { return pDisplay_; }
+  auto getDisplay() const {
+    return pDisplay_;
+  }
 
-  auto getConfig() const { return pConfig_; }
+  auto getConfig() const {
+    return pConfig_;
+  }
 
-  auto getThreadID() const { return threadID_; }
+  auto getThreadID() const {
+    return threadID_;
+  }
 
-  auto getDrawSurface() const { return pSurfDraw_; }
+  auto getDrawSurface() const {
+    return pSurfDraw_;
+  }
 
-  auto getReadSurface() const { return pSurfRead_; }
+  auto getReadSurface() const {
+    return pSurfRead_;
+  }
 
-  auto getNativeData() const { return glContext_; }
+  auto getNativeData() const {
+    return glContext_;
+  }
 
-  bool hasBindings() const { return (pSurfDraw_ || pSurfRead_); }
+  bool hasBindings() const {
+    return (pSurfDraw_ || pSurfRead_);
+  }
 
 private:
   _EGLContext(_EGLDisplay *pDisplay, _EGLConfig *pConfig);

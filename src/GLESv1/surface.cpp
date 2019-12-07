@@ -31,7 +31,9 @@ GLSurface::GLSurface() {
   }
 }
 
-GLSurface::~GLSurface() { __profileAPI(" - %s()\n", __FUNCTION__); }
+GLSurface::~GLSurface() {
+  __profileAPI(" - %s()\n", __FUNCTION__);
+}
 
 GLenum GLSurface::Create(GLSurface **ppSurface, const GLSurfaceDesc *pColorDesc,
                          const GLSurfaceDesc *pDepthStencilDesc) {

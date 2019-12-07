@@ -28,7 +28,8 @@ private:
   bool yup_;
 
 public:
-  StencilTest(EGLNativeWindowType window) : Renderer(window) {
+  StencilTest(EGLNativeWindowType window)
+      : Renderer(window) {
     xrot_ = 0.0f;
     yrot_ = 0.0f;
     yval_ = 1.0f;
@@ -38,22 +39,22 @@ public:
   ~StencilTest() {}
 
   bool OnInitialize() {
-    static const GLfloat floorVertices[] = {-3.0f, 0.0f, 3.0f,  3.0f,
-                                            0.0f,  3.0f, -3.0f, 0.0f,
-                                            -3.0f, 3.0f, 0.0f,  -3.0f};
+    static const GLfloat floorVertices[] = {-3.0f, 0.0f, 3.0f, 3.0f,
+                                            0.0f, 3.0f, -3.0f, 0.0f,
+                                            -3.0f, 3.0f, 0.0f, -3.0f};
 
     static_assert(sizeof(_floorVertices) == sizeof(floorVertices));
     memcpy(_floorVertices, floorVertices, sizeof(floorVertices));
 
     static const GLfloat box[] = {
-        -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f,
-        0.5f,  -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f,
-        0.5f,  -0.5f, -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f, 0.5f,
-        0.5f,  0.5f,  0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,  0.5f,  0.5f,
-        -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, -0.5f, 0.5f,
-        -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f,
+        -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f, 0.5f,
+        -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+        -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f, 0.5f,
+        -0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f,
     };
 
     static_assert(sizeof(_box) == sizeof(box));
@@ -186,5 +187,7 @@ public:
     drawCube();
   }
 
-  void OnDestroy() { glDeleteTextures(1, &texture_); }
+  void OnDestroy() {
+    glDeleteTextures(1, &texture_);
+  }
 };

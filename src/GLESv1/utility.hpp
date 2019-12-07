@@ -14,15 +14,22 @@
 //
 #pragma once
 
-template <typename T> GLenum ToGLenum(T param);
+template <typename T>
+GLenum ToGLenum(T param);
 
-template <typename T> class AddressOf {
+template <typename T>
+class AddressOf {
 public:
-  AddressOf(const T &value) : value_(value) {}
+  AddressOf(const T &value)
+      : value_(value) {}
 
-  operator const T *() const { return &value_; }
+  operator const T *() const {
+    return &value_;
+  }
 
-  operator T *() { return &value_; }
+  operator T *() {
+    return &value_;
+  }
 
 private:
   T value_;
@@ -34,23 +41,27 @@ private:
 #define __profileAPI(func, ...) AutoLog profiler(g_logger, func, __VA_ARGS__);
 #endif
 
-inline bool __glFailed(uint32_t err) { return (err != GL_NO_ERROR); }
+inline bool __glFailed(uint32_t err) {
+  return (err != GL_NO_ERROR);
+}
 
-inline bool __glSucceeded(uint32_t err) { return (err == GL_NO_ERROR); }
+inline bool __glSucceeded(uint32_t err) {
+  return (err == GL_NO_ERROR);
+}
 
 #ifndef NDEBUG
 #define __glLog(...) g_logger.write(__VA_ARGS__);
 
-#define __glLogError(...)                                                      \
-  g_logger.write("*** Error in file %s at line %d.\r\n", __FILE__, __LINE__);  \
-  g_logger.write(__VA_ARGS__);                                                 \
+#define __glLogError(...)                                                     \
+  g_logger.write("*** Error in file %s at line %d.\r\n", __FILE__, __LINE__); \
+  g_logger.write(__VA_ARGS__);                                                \
   assert(false);
 #else
 #define __glLog(...)
 #define __glLogError(...)
 #endif
-#define __glError(error, ...)                                                  \
-  __glLogError(__VA_ARGS__);                                                   \
+#define __glError(error, ...) \
+  __glLogError(__VA_ARGS__);  \
   this->setError(error);
 
 void memset16(void *dst, int fill, int cwCount);
@@ -116,19 +127,23 @@ GLenum CopyBuffers(const GLSurfaceDesc &dstDesc, int32_t dstOffsetX,
                    const GLSurfaceDesc &srcDesc, int32_t srcOffsetX,
                    int32_t srcOffsetY);
 
-template <> inline GLenum ToGLenum<float>(float param) {
+template <>
+inline GLenum ToGLenum<float>(float param) {
   return static_cast<GLenum>(param);
 }
 
-template <> inline GLenum ToGLenum<fixed16>(fixed16 param) {
+template <>
+inline GLenum ToGLenum<fixed16>(fixed16 param) {
   return *reinterpret_cast<const GLenum *>(&param);
 }
 
-template <> inline GLenum ToGLenum<int>(int param) {
+template <>
+inline GLenum ToGLenum<int>(int param) {
   return static_cast<GLenum>(param);
 }
 
-template <typename T, uint32_t BITS> class BitPtr {
+template <typename T, uint32_t BITS>
+class BitPtr {
 public:
   enum {
     MASK = (1 << BITS) - 1,
@@ -139,7 +154,9 @@ public:
     shift_ = (sizeof(T) << 3) - BITS;
   }
 
-  T operator*() const { return (*ptr_ >> shift_) & MASK; }
+  T operator*() const {
+    return (*ptr_ >> shift_) & MASK;
+  }
 
   const BitPtr &operator++() {
     if (shift_ >= BITS) {

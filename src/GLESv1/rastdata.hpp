@@ -32,7 +32,9 @@ public:
   void startProfile(uint32_t numPixels);
   void endProfile(float elapsedTime);
   void logProfile(const RASTERID &rasterID);
-  const ProfileCounter &getProfile() const { return profile_; }
+  const ProfileCounter &getProfile() const {
+    return profile_;
+  }
 
 private:
   ProfileCounter profile_;
@@ -147,7 +149,9 @@ private:
     COMPACT_RATIO = 4,
   };
 
-  RasterCache() { cbTotalSize_ = 0; }
+  RasterCache() {
+    cbTotalSize_ = 0;
+  }
 
   std::map<RASTERID, IRasterOp *> map_;
 
@@ -189,5 +193,6 @@ struct RasterData {
 
   IRasterOp *pRasterOp;
 
-  RasterData() : pRasterOp(nullptr) {}
+  RasterData()
+      : pRasterOp(nullptr) {}
 };

@@ -19,7 +19,8 @@
 
 thread_local GLContext *tls_glctx = nullptr;
 
-GLDriver::GLDriver() : handles_(nullptr), pRasterCache_(nullptr) {
+GLDriver::GLDriver()
+    : handles_(nullptr), pRasterCache_(nullptr) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
@@ -72,7 +73,9 @@ GLDriver::~GLDriver() {
   }
 }
 
-GLContext *GLDriver::getCurrentContext() const { return tls_glctx; }
+GLContext *GLDriver::getCurrentContext() const {
+  return tls_glctx;
+}
 
 void GLDriver::makeCurrent(GLContext *pContext, GLSurface *pSurfDraw,
                            GLSurface *pSurfRead) {

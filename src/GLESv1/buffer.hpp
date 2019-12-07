@@ -26,15 +26,25 @@ public:
 
   GLenum getParameter(GLenum pname, GLint *pParams);
 
-  const uint8_t *getBits() const { return pBits_; }
+  const uint8_t *getBits() const {
+    return pBits_;
+  }
 
-  uint32_t getSize() const { return size_; }
+  uint32_t getSize() const {
+    return size_;
+  }
 
-  GLenum getUsage() const { return usage_; }
+  GLenum getUsage() const {
+    return usage_;
+  }
 
-  uint32_t getHandle() const { return handle_; }
+  uint32_t getHandle() const {
+    return handle_;
+  }
 
-  void setHandle(uint32_t handle) { handle_ = handle; }
+  void setHandle(uint32_t handle) {
+    handle_ = handle;
+  }
 
 private:
   GLBuffer();

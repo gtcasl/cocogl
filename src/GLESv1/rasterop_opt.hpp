@@ -19,9 +19,13 @@ public:
   OptimizedRasterOp(PfnScanline pfnScanline);
   ~OptimizedRasterOp();
 
-  PfnScanline getScanline() const { return pfnScanline_; }
+  PfnScanline getScanline() const {
+    return pfnScanline_;
+  }
 
-  uint32_t getCbSize() const { return sizeof(PfnScanline); }
+  uint32_t getCbSize() const {
+    return sizeof(PfnScanline);
+  }
 
   static GLenum Create(IRasterOp **ppRasterOp, const RASTERID &rasterID);
 

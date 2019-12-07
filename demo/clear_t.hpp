@@ -17,12 +17,15 @@
 
 class ClearTest : public Renderer {
 public:
-  ClearTest(EGLNativeWindowType window) : Renderer(window) {}
+  ClearTest(EGLNativeWindowType window)
+      : Renderer(window) {}
 
   bool OnInitialize() {
     glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
     return true;
   }
 
-  void OnRender() { glClear(GL_COLOR_BUFFER_BIT); }
+  void OnRender() {
+    glClear(GL_COLOR_BUFFER_BIT);
+  }
 };

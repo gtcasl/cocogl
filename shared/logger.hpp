@@ -29,9 +29,13 @@ public:
 
   HRESULT write(const char *format, va_list arglist);
 
-  void setIndent(uint32_t indent) { indent_ = indent; }
+  void setIndent(uint32_t indent) {
+    indent_ = indent;
+  }
 
-  auto getIndent() const { return indent_; }
+  auto getIndent() const {
+    return indent_;
+  }
 
   void incrIndent() {
     assert(indent_ < MAX_INDENT);

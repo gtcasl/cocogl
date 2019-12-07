@@ -45,18 +45,26 @@ private:
 public:
   class Enumerator {
   public:
-    uint8_t getType() const { return list_->Type; }
+    uint8_t getType() const {
+      return list_->Type;
+    }
 
-    void *getObject() const { return list_->pObject; }
+    void *getObject() const {
+      return list_->pObject;
+    }
 
-    void *getOwner() const { return list_->pOwner; }
+    void *getOwner() const {
+      return list_->pOwner;
+    }
 
     uint32_t getHandle() const {
       return (list_->Serial << HANDLE_SERIAL_SHIFT) |
              ((list_ - handles_->entries_) & HANDLE_INDEX_MASK);
     }
 
-    bool isEnd() const { return (nullptr == list_); }
+    bool isEnd() const {
+      return (nullptr == list_);
+    }
 
     void moveNext() {
       if (list_) {
@@ -106,7 +114,9 @@ public:
     return Enumerator(this, pOwner);
   }
 
-  uint32_t getNumHandles() const { return count_; }
+  uint32_t getNumHandles() const {
+    return count_;
+  }
 
   uint32_t findHandle(const void *pObject, const void *pOwner = nullptr) {
     auto enumerator = this->getEnumerator(pOwner);

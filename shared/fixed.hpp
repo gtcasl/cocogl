@@ -14,7 +14,8 @@
 //
 #pragma once
 
-template <uint32_t F, typename T = int32_t> class Fixed {
+template <uint32_t F, typename T = int32_t>
+class Fixed {
 public:
   using data_type = T;
 
@@ -29,39 +30,48 @@ public:
 
   Fixed() {}
 
-  explicit Fixed(int64_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(int64_t rhs)
+      : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit Fixed(uint64_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(uint64_t rhs)
+      : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit Fixed(int32_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(int32_t rhs)
+      : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit Fixed(uint32_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(uint32_t rhs)
+      : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit Fixed(int16_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(int16_t rhs)
+      : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit Fixed(uint16_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(uint16_t rhs)
+      : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit Fixed(int8_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(int8_t rhs)
+      : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  explicit Fixed(uint8_t rhs) : data_(static_cast<T>(rhs << FRAC)) {
+  explicit Fixed(uint8_t rhs)
+      : data_(static_cast<T>(rhs << FRAC)) {
     assert((static_cast<int64_t>(rhs) << FRAC) == data_);
   }
 
-  template <uint32_t F2, typename T2> explicit Fixed(Fixed<F2, T2> rhs) {
+  template <uint32_t F2, typename T2>
+  explicit Fixed(Fixed<F2, T2> rhs) {
     if constexpr (sizeof(T) > sizeof(T2)) {
       if constexpr (F2 > F) {
         data_ = static_cast<T>(rhs.data()) >> (F2 - F);
@@ -82,19 +92,33 @@ public:
     assert(data_ == static_cast<T>(rhs * ONE));
   }
 
-  auto operator==(Fixed rhs) const { return (data_ == rhs.data_); }
+  auto operator==(Fixed rhs) const {
+    return (data_ == rhs.data_);
+  }
 
-  auto operator!=(Fixed rhs) const { return (data_ != rhs.data_); }
+  auto operator!=(Fixed rhs) const {
+    return (data_ != rhs.data_);
+  }
 
-  auto operator<(Fixed rhs) const { return (data_ < rhs.data_); }
+  auto operator<(Fixed rhs) const {
+    return (data_ < rhs.data_);
+  }
 
-  auto operator<=(Fixed rhs) const { return (data_ <= rhs.data_); }
+  auto operator<=(Fixed rhs) const {
+    return (data_ <= rhs.data_);
+  }
 
-  auto operator>(Fixed rhs) const { return (data_ > rhs.data_); }
+  auto operator>(Fixed rhs) const {
+    return (data_ > rhs.data_);
+  }
 
-  auto operator>=(Fixed rhs) const { return (data_ >= rhs.data_); }
+  auto operator>=(Fixed rhs) const {
+    return (data_ >= rhs.data_);
+  }
 
-  auto operator-() const { return make(-data_); }
+  auto operator-() const {
+    return make(-data_);
+  }
 
   auto operator+=(Fixed rhs) {
     *this = (*this) + rhs;
@@ -116,12 +140,14 @@ public:
     return *this;
   }
 
-  template <uint32_t F2, typename T2> auto operator*=(Fixed<F2, T2> rhs) {
+  template <uint32_t F2, typename T2>
+  auto operator*=(Fixed<F2, T2> rhs) {
     *this = (*this) * rhs;
     return *this;
   }
 
-  template <uint32_t F2, typename T2> auto operator/=(Fixed<F2, T2> rhs) {
+  template <uint32_t F2, typename T2>
+  auto operator/=(Fixed<F2, T2> rhs) {
     *this = (*this) / rhs;
     return *this;
   }
@@ -208,49 +234,65 @@ public:
     return lhs * static_cast<int32_t>(rhs);
   }
 
-  friend auto operator*(char lhs, Fixed rhs) { return rhs * lhs; }
+  friend auto operator*(char lhs, Fixed rhs) {
+    return rhs * lhs;
+  }
 
   friend auto operator/(Fixed lhs, char rhs) {
     return lhs / static_cast<int32_t>(rhs);
   }
 
-  friend auto operator/(char lhs, Fixed rhs) { return rhs / lhs; }
+  friend auto operator/(char lhs, Fixed rhs) {
+    return rhs / lhs;
+  }
 
   friend auto operator*(Fixed lhs, uint8_t rhs) {
     return lhs * static_cast<int32_t>(rhs);
   }
 
-  friend auto operator*(uint8_t lhs, Fixed rhs) { return rhs * lhs; }
+  friend auto operator*(uint8_t lhs, Fixed rhs) {
+    return rhs * lhs;
+  }
 
   friend auto operator/(Fixed lhs, uint8_t rhs) {
     return lhs / static_cast<int32_t>(rhs);
   }
 
-  friend auto operator/(uint8_t lhs, Fixed rhs) { return rhs / lhs; }
+  friend auto operator/(uint8_t lhs, Fixed rhs) {
+    return rhs / lhs;
+  }
 
   friend auto operator*(Fixed lhs, short rhs) {
     return lhs * static_cast<int32_t>(rhs);
   }
 
-  friend auto operator*(short lhs, Fixed rhs) { return rhs * lhs; }
+  friend auto operator*(short lhs, Fixed rhs) {
+    return rhs * lhs;
+  }
 
   friend auto operator/(Fixed lhs, short rhs) {
     return lhs / static_cast<int32_t>(rhs);
   }
 
-  friend auto operator/(short lhs, Fixed rhs) { return rhs / lhs; }
+  friend auto operator/(short lhs, Fixed rhs) {
+    return rhs / lhs;
+  }
 
   friend auto operator*(Fixed lhs, uint16_t rhs) {
     return lhs * static_cast<int32_t>(rhs);
   }
 
-  friend auto operator*(uint16_t lhs, Fixed rhs) { return rhs * lhs; }
+  friend auto operator*(uint16_t lhs, Fixed rhs) {
+    return rhs * lhs;
+  }
 
   friend auto operator/(Fixed lhs, uint16_t rhs) {
     return lhs / static_cast<int32_t>(rhs);
   }
 
-  friend auto operator/(uint16_t lhs, Fixed rhs) { return rhs / lhs; }
+  friend auto operator/(uint16_t lhs, Fixed rhs) {
+    return rhs / lhs;
+  }
 
   friend auto operator*(Fixed lhs, int32_t rhs) {
     auto value = static_cast<T>(lhs.data_ * rhs);
@@ -258,7 +300,9 @@ public:
     return Fixed::make(value);
   }
 
-  friend auto operator*(int32_t lhs, Fixed rhs) { return rhs * lhs; }
+  friend auto operator*(int32_t lhs, Fixed rhs) {
+    return rhs * lhs;
+  }
 
   friend auto operator/(Fixed lhs, int32_t rhs) {
     assert(rhs);
@@ -266,7 +310,9 @@ public:
     return Fixed::make(value);
   }
 
-  friend auto operator/(int32_t lhs, Fixed rhs) { return rhs / lhs; }
+  friend auto operator/(int32_t lhs, Fixed rhs) {
+    return rhs / lhs;
+  }
 
   friend auto operator*(Fixed lhs, uint32_t rhs) {
     auto value = static_cast<T>(lhs.data_ << rhs);
@@ -274,7 +320,9 @@ public:
     return Fixed::make(value);
   }
 
-  friend auto operator*(uint32_t lhs, Fixed rhs) { return rhs * lhs; }
+  friend auto operator*(uint32_t lhs, Fixed rhs) {
+    return rhs * lhs;
+  }
 
   friend auto operator/(Fixed lhs, uint32_t rhs) {
     assert(rhs);
@@ -282,7 +330,9 @@ public:
     return Fixed::make(value);
   }
 
-  friend auto operator/(uint32_t lhs, Fixed rhs) { return rhs / lhs; }
+  friend auto operator/(uint32_t lhs, Fixed rhs) {
+    return rhs / lhs;
+  }
 
   friend auto operator<<(Fixed lhs, int32_t rhs) {
     auto value = static_cast<T>(lhs.data_ << rhs);
@@ -312,29 +362,40 @@ public:
     return ret;
   }
 
-  explicit operator int64_t() const { return static_cast<int64_t>(data_ >> F); }
+  explicit operator int64_t() const {
+    return static_cast<int64_t>(data_ >> F);
+  }
 
   explicit operator uint64_t() const {
     return static_cast<uint64_t>(data_ >> F);
   }
 
-  explicit operator int32_t() const { return static_cast<int32_t>(data_ >> F); }
+  explicit operator int32_t() const {
+    return static_cast<int32_t>(data_ >> F);
+  }
 
   explicit operator uint32_t() const {
     return static_cast<uint32_t>(data_ >> F);
   }
 
-  explicit operator int16_t() const { return static_cast<int16_t>(data_ >> F); }
+  explicit operator int16_t() const {
+    return static_cast<int16_t>(data_ >> F);
+  }
 
   explicit operator uint16_t() const {
     return static_cast<uint16_t>(data_ >> F);
   }
 
-  explicit operator int8_t() const { return static_cast<int8_t>(data_ >> F); }
+  explicit operator int8_t() const {
+    return static_cast<int8_t>(data_ >> F);
+  }
 
-  explicit operator uint8_t() const { return static_cast<uint8_t>(data_ >> F); }
+  explicit operator uint8_t() const {
+    return static_cast<uint8_t>(data_ >> F);
+  }
 
-  template <uint32_t F2, typename T2> explicit operator Fixed<F2, T2>() const {
+  template <uint32_t F2, typename T2>
+  explicit operator Fixed<F2, T2>() const {
     return Fixed<F2, T2>(*this);
   }
 
@@ -342,7 +403,9 @@ public:
     return static_cast<float>(data_) / (static_cast<T>(1) << F);
   }
 
-  auto data() const { return data_; }
+  auto data() const {
+    return data_;
+  }
 
 private:
   T data_;

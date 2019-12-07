@@ -21,7 +21,8 @@ private:
   uint32_t testcase_;
 
 public:
-  QuadTest(EGLNativeWindowType window) : Renderer(window) {
+  QuadTest(EGLNativeWindowType window)
+      : Renderer(window) {
     texture_ = 0;
     testcase_ = 21;
   }
@@ -80,7 +81,7 @@ public:
 
   void OnRender() {
     GLfloat vertexArray[12] = {-1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.5f,
-                               -1.0f, 1.0f,  0.0f, 1.0f, 1.0f,  0.5f};
+                               -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.5f};
 
     GLubyte colorArray[16] = {0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00,
                               0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00};
@@ -356,5 +357,7 @@ public:
     }
   }
 
-  void OnDestroy() { glDeleteTextures(1, &texture_); }
+  void OnDestroy() {
+    glDeleteTextures(1, &texture_);
+  }
 };

@@ -28,16 +28,22 @@ public:
 
   GLContext *getCurrentContext() const;
 
-  HandleTable *getHandles() const { return handles_; }
+  HandleTable *getHandles() const {
+    return handles_;
+  }
 
-  RasterCache *getRasterCache() const { return pRasterCache_; }
+  RasterCache *getRasterCache() const {
+    return pRasterCache_;
+  }
 
-  template <typename T> inline T getObject(void *handle) const {
+  template <typename T>
+  inline T getObject(void *handle) const {
     return reinterpret_cast<T>(
         handles_->getObject(reinterpret_cast<intptr_t>(handle), this));
   }
 
-  template <typename T> inline T getObject(void *handle, void *pOwner) const {
+  template <typename T>
+  inline T getObject(void *handle, void *pOwner) const {
     return reinterpret_cast<T>(
         handles_->getObject(reinterpret_cast<intptr_t>(handle), pOwner));
   }
@@ -52,7 +58,8 @@ public:
         handles_->insert(phandle, pObject, type, pOwner));
   }
 
-  template <typename T> inline T unregisterObject(void *handle) const {
+  template <typename T>
+  inline T unregisterObject(void *handle) const {
     return reinterpret_cast<T>(
         handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
   }
@@ -65,6 +72,6 @@ public:
 
 private:
   HandleTable *handles_;
-  ThreadPool* threadpool_;
+  ThreadPool *threadpool_;
   RasterCache *pRasterCache_;
 };

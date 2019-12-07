@@ -184,4 +184,6 @@ void GLFont::setColor(float r, float g, float b) {
   cb_ = b;
 }
 
-void GLFont::destroy() { glDeleteTextures(1, &texture_); }
+void GLFont::destroy() {
+  glDeleteTextures(1, &texture_);
+}

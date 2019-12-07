@@ -17,7 +17,8 @@
 
 class LineTest : public Renderer {
 public:
-  LineTest(EGLNativeWindowType window) : Renderer(window) {}
+  LineTest(EGLNativeWindowType window)
+      : Renderer(window) {}
 
   bool OnInitialize() {
     /*

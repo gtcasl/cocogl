@@ -20,7 +20,8 @@
 thread_local _EGLContext *tls_eglctx = nullptr;
 thread_local EGLint tls_eglerror = EGL_SUCCESS;
 
-_EGLDriver::_EGLDriver() : handles_(nullptr) {
+_EGLDriver::_EGLDriver()
+    : handles_(nullptr) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   // Create the handle table
@@ -69,9 +70,13 @@ void _EGLDriver::makeCurrent(_EGLContext *pContext, std::thread::id threadID,
   }
 }
 
-_EGLContext *_EGLDriver::getCurrentContext() const { return tls_eglctx; }
+_EGLContext *_EGLDriver::getCurrentContext() const {
+  return tls_eglctx;
+}
 
-void _EGLDriver::setError(EGLint error) { tls_eglerror = error; }
+void _EGLDriver::setError(EGLint error) {
+  tls_eglerror = error;
+}
 
 EGLint _EGLDriver::getError() const {
   auto error = tls_eglerror;

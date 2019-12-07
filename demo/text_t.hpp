@@ -20,7 +20,8 @@ class TextTest : public Renderer {
 public:
   GLFont font_;
 
-  TextTest(EGLNativeWindowType window) : Renderer(window) {}
+  TextTest(EGLNativeWindowType window)
+      : Renderer(window) {}
 
   bool OnInitialize() {
     glViewport(0, 0, width_, height_);

@@ -15,14 +15,14 @@
 #pragma once
 
 extern const GLint g_compressedFormats[] = {
-    GL_PALETTE4_RGB8_OES,   
-    GL_PALETTE4_RGBA8_OES,    
+    GL_PALETTE4_RGB8_OES,
+    GL_PALETTE4_RGBA8_OES,
     GL_PALETTE4_R5_G6_B5_OES,
-    GL_PALETTE4_RGBA4_OES,  
-    GL_PALETTE4_RGB5_A1_OES,  
+    GL_PALETTE4_RGBA4_OES,
+    GL_PALETTE4_RGB5_A1_OES,
     GL_PALETTE8_RGB8_OES,
-    GL_PALETTE8_RGBA8_OES,  
-    GL_PALETTE8_R5_G6_B5_OES, 
+    GL_PALETTE8_RGBA8_OES,
+    GL_PALETTE8_R5_G6_B5_OES,
     GL_PALETTE8_RGBA4_OES,
     GL_PALETTE8_RGB5_A1_OES};
 
@@ -229,7 +229,8 @@ inline void GLContext::getTexParameter(GLenum target, GLenum pname,
   }
 }
 
-template <> inline void GLContext::get<bool>(GLenum pname, bool *pParams) {
+template <>
+inline void GLContext::get<bool>(GLenum pname, bool *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -264,7 +265,8 @@ template <> inline void GLContext::get<bool>(GLenum pname, bool *pParams) {
   }
 }
 
-template <> inline void GLContext::get<int>(GLenum pname, int *pParams) {
+template <>
+inline void GLContext::get<int>(GLenum pname, int *pParams) {
   assert(pParams);
 
   switch (pname) {
@@ -574,7 +576,8 @@ template <> inline void GLContext::get<int>(GLenum pname, int *pParams) {
   }
 }
 
-template <typename T> inline void GLContext::get(GLenum pname, T *pParams) {
+template <typename T>
+inline void GLContext::get(GLenum pname, T *pParams) {
   assert(pParams);
 
   switch (pname) {

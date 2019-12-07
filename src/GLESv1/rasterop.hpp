@@ -14,7 +14,8 @@
 //
 #pragma once
 
-template <uint32_t Format> struct NColor {
+template <uint32_t Format>
+struct NColor {
   uint32_t Low;
   uint32_t High;
 
@@ -104,7 +105,7 @@ template <uint32_t Format> struct NColor {
     return result;
   }
 
-  NColor<Format> lerp(const NColor<Format> &c1,  uint32_t frac) const {
+  NColor<Format> lerp(const NColor<Format> &c1, uint32_t frac) const {
     NColor<Format> result;
 
     if constexpr (Format == FORMAT_A8) {
@@ -136,7 +137,8 @@ template <uint32_t Format> struct NColor {
   }
 };
 
-template <uint32_t compare> inline bool DoCompare(uint32_t a, uint32_t b) {
+template <uint32_t compare>
+inline bool DoCompare(uint32_t a, uint32_t b) {
 
   if constexpr (compare == COMPARE_NEVER) {
     __unused(a);
@@ -214,7 +216,8 @@ inline uint32_t DoStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <uint32_t Address> inline int DoAddressing(int x) {
+template <uint32_t Address>
+inline int DoAddressing(int x) {
   if constexpr (Address == ADDRESS_WRAP) {
     return x & fixedRX::MASK;
   }
@@ -244,7 +247,7 @@ inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline NColor<Format> GetTexelColorLnX(const SurfaceDesc &surface,
-                                             fixedRX fU, fixedRX fV) {
+                                       fixedRX fU, fixedRX fV) {
   auto lerpBits = TFormatInfo<Format>::LERP;
   auto lerpMask = (1 << lerpBits) - 1;
 
@@ -303,7 +306,7 @@ inline uint32_t GetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
 
 template <uint32_t Filter, uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline NColor<Format> GetMinFilterX(const SurfaceDesc &surface,
-                                          fixedRX fU, fixedRX fV) {
+                                    fixedRX fU, fixedRX fV) {
   if constexpr (Filter == FILTER_NEAREST) {
     return NColor<Format>(
         GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
@@ -338,7 +341,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
     if constexpr (MinFilter == MagFilter) {
       auto fJ = std::max<fixed16>(fixed16::make(fM.data()), Math::One<fixed16>());
       auto mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
-                                     sampler.MaxMipLevel);
+                                    sampler.MaxMipLevel);
 
       return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[mipLevel], fU, fV);
@@ -346,7 +349,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
       auto fJ = fixed16::make(fM.data());
       if (fJ > Math::One<fixed16>()) {
         int mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
-                                       sampler.MaxMipLevel);
+                                     sampler.MaxMipLevel);
 
         return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[mipLevel], fU, fV);
@@ -368,9 +371,9 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
       auto mipLerp = (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
       auto c0 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-              sampler.pMipLevels[mipLevel0], fU, fV);
+          sampler.pMipLevels[mipLevel0], fU, fV);
       auto c1 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-              sampler.pMipLevels[mipLevel1], fU, fV);
+          sampler.pMipLevels[mipLevel1], fU, fV);
       return c0.Lerp(c1, mipLerp);
     } else {
       auto fJ = fixed16::make(fM.data());
@@ -380,9 +383,9 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
         auto mipLerp = (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
 
         auto c0 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-                sampler.pMipLevels[mipLevel0], fU, fV);
+            sampler.pMipLevels[mipLevel0], fU, fV);
         auto c1 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-                sampler.pMipLevels[mipLevel1], fU, fV);
+            sampler.pMipLevels[mipLevel1], fU, fV);
         return c0.Lerp(c1, mipLerp);
       } else {
         return GetMinFilterN<MagFilter, Format, AddressU, AddressV>(
@@ -395,8 +398,8 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t EnvMode>
-ColorARGB GetTexEnvColorA(const ColorARGB& cColor, const ColorARGB &cTexture,
-                     const ColorARGB& cEnvColor) {
+ColorARGB GetTexEnvColorA(const ColorARGB &cColor, const ColorARGB &cTexture,
+                          const ColorARGB &cEnvColor) {
   __unused(cEnvColor);
   ColorARGB ret(cColor);
 
@@ -423,8 +426,8 @@ ColorARGB GetTexEnvColorA(const ColorARGB& cColor, const ColorARGB &cTexture,
 }
 
 template <uint32_t EnvMode>
-ColorARGB GetTexEnvColorRGB(const ColorARGB& cColor, const ColorARGB &cTexture,
-                       const ColorARGB& cEnvColor) {
+ColorARGB GetTexEnvColorRGB(const ColorARGB &cColor, const ColorARGB &cTexture,
+                            const ColorARGB &cEnvColor) {
   ColorARGB ret(cColor);
 
   if constexpr (EnvMode == ENVMODE_ADD) {
@@ -465,8 +468,8 @@ ColorARGB GetTexEnvColorRGB(const ColorARGB& cColor, const ColorARGB &cTexture,
 }
 
 template <uint32_t EnvMode>
-ColorARGB GetTexEnvColorARGB(const ColorARGB& cColor, const ColorARGB &cTexture,
-                        const ColorARGB& cEnvColor) {
+ColorARGB GetTexEnvColorARGB(const ColorARGB &cColor, const ColorARGB &cTexture,
+                             const ColorARGB &cEnvColor) {
   ColorARGB ret;
 
   if constexpr (EnvMode == ENVMODE_ADD) {
@@ -514,7 +517,7 @@ ColorARGB GetTexEnvColorARGB(const ColorARGB& cColor, const ColorARGB &cTexture,
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t BlendOp>
-ColorARGB GetBlendCoeff(const ColorARGB& cColor, const ColorARGB &cSrc, const ColorARGB &cDst) {
+ColorARGB GetBlendCoeff(const ColorARGB &cColor, const ColorARGB &cSrc, const ColorARGB &cDst) {
   ColorARGB ret;
 
   if constexpr (BlendOp == BLEND_ZERO) {

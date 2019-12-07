@@ -199,9 +199,9 @@ private:
 
     while (copyHeight--) {
       auto pSrc = reinterpret_cast<const typename TFormatInfo<SrcFormat>::TYPE *>(pbSrc);
-      for (auto * pDst = reinterpret_cast<typename TFormatInfo<DstFormat>::TYPE *>(
-                  pbDst),
-              *const pEnd = pDst + copyWidth;
+      for (auto *pDst = reinterpret_cast<typename TFormatInfo<DstFormat>::TYPE *>(
+                    pbDst),
+                *const pEnd = pDst + copyWidth;
            pDst != pEnd; ++pDst, ++pSrc) {
         auto tmp = Format::ConvertFrom<SrcFormat, true>(pSrc);
         Format::ConvertTo<DstFormat>(pDst, tmp);
@@ -573,9 +573,13 @@ ecompare Reverse(ecompare compare) {
   }
 }
 
-uint32_t compareFuncFromEnum(GLenum func) { return (func - GL_NEVER); }
+uint32_t compareFuncFromEnum(GLenum func) {
+  return (func - GL_NEVER);
+}
 
-GLenum EnumFromcompareFunc(uint32_t func) { return (GL_NEVER + func); }
+GLenum EnumFromcompareFunc(uint32_t func) {
+  return (GL_NEVER + func);
+}
 
 uint32_t StencilOpFromEnum(GLenum op) {
   if (GL_ZERO == op) {
@@ -619,9 +623,13 @@ GLenum EnumFromBlendFunc(uint32_t func) {
   }
 }
 
-uint32_t LogicOpFromEnum(GLenum op) { return (op - GL_CLEAR); }
+uint32_t LogicOpFromEnum(GLenum op) {
+  return (op - GL_CLEAR);
+}
 
-GLenum EnumFromLogicOp(uint32_t op) { return (GL_CLEAR + op); }
+GLenum EnumFromLogicOp(uint32_t op) {
+  return (GL_CLEAR + op);
+}
 
 uint32_t FogModeFromEnum(GLenum mode) {
   switch (mode) {
@@ -725,9 +733,13 @@ GLenum EnumFromFrontFace(uint32_t mode) {
   }
 }
 
-uint32_t HintFromEnum(GLenum mode) { return (mode - GL_DONT_CARE); }
+uint32_t HintFromEnum(GLenum mode) {
+  return (mode - GL_DONT_CARE);
+}
 
-GLenum EnumFromHint(uint32_t mode) { return (GL_DONT_CARE + mode); }
+GLenum EnumFromHint(uint32_t mode) {
+  return (GL_DONT_CARE + mode);
+}
 
 uint32_t TexFilterFromEnum(GLenum param) {
   switch (param) {

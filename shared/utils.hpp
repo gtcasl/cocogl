@@ -55,8 +55,11 @@ constexpr bool is_detected_v =
 
 class scope_exit {
 public:
-  scope_exit(const std::function<void()> &func) : func_(func) {}
-  ~scope_exit() { func_(); }
+  scope_exit(const std::function<void()> &func)
+      : func_(func) {}
+  ~scope_exit() {
+    func_();
+  }
   // force stack only allocation!
   static void *operator new(size_t) = delete;
   static void *operator new[](size_t) = delete;
@@ -67,45 +70,52 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename T> inline int __countof(const T &a) {
+template <typename T>
+inline int __countof(const T &a) {
   return (sizeof(a) / sizeof(a[0]));
 }
 
-template <typename T> inline void __safeAcquire(T *p) {
+template <typename T>
+inline void __safeAcquire(T *p) {
   if (p) {
     p->addRef();
   }
 }
 
-template <typename T> inline void __safeRelease(T *&p) {
+template <typename T>
+inline void __safeRelease(T *&p) {
   if (p) {
     p->release();
     p = nullptr;
   }
 }
 
-template <typename T> inline void __safeDelete(T *&p) {
+template <typename T>
+inline void __safeDelete(T *&p) {
   if (p) {
     delete p;
     p = nullptr;
   }
 }
 
-template <typename T> inline void __safeDeleteArray(T *&p) {
+template <typename T>
+inline void __safeDeleteArray(T *&p) {
   if (p) {
     delete[] p;
     p = nullptr;
   }
 }
 
-template <typename T> inline void __safeFree(T *&p) {
+template <typename T>
+inline void __safeFree(T *&p) {
   if (p) {
     free(p);
     p = nullptr;
   }
 }
 
-template <typename T> inline bool __isAligned32(T *ptr) {
+template <typename T>
+inline bool __isAligned32(T *ptr) {
   size_t offset = ptr - (T *)(nullptr);
   return (0 == (offset & 3));
 }
@@ -114,26 +124,34 @@ inline size_t __align(size_t offset, size_t alignment) {
   return (offset + alignment - 1) & ~(alignment - 1);
 }
 
-template <typename T> inline T *__alignPtr(T *ptr, size_t alignment) {
+template <typename T>
+inline T *__alignPtr(T *ptr, size_t alignment) {
   size_t offset = ptr - (T *)(nullptr);
   return (T *)(nullptr) + ((offset + alignment - 1) & ~(alignment - 1));
 }
 
-template <typename T> inline void __swap(T &a, T &b) {
+template <typename T>
+inline void __swap(T &a, T &b) {
   T c(a);
   a = b;
   b = c;
 }
 
-template <uint64_t N> struct __countbits {
+template <uint64_t N>
+struct __countbits {
   static const uint32_t nbits = __countbits<(N >> 1)>::nbits + 1;
 };
 
-template <> struct __countbits<0> { static const uint32_t nbits = 0; };
+template <>
+struct __countbits<0> { static const uint32_t nbits = 0; };
 
-inline int32_t Clz(int32_t rhs) { return __builtin_clz(rhs); }
+inline int32_t Clz(int32_t rhs) {
+  return __builtin_clz(rhs);
+}
 
-inline int32_t Ctz(int32_t rhs) { return 31 - Clz(rhs & -rhs); }
+inline int32_t Ctz(int32_t rhs) {
+  return 31 - Clz(rhs & -rhs);
+}
 
 #ifndef NDEBUG
 #define __debugMsg(level, ...) DbgPrintf(level, __VA_ARGS__);
@@ -147,4 +165,5 @@ inline int32_t Ctz(int32_t rhs) { return 31 - Clz(rhs & -rhs); }
 #define __no_default assert(false);
 #endif
 
-template <typename... Args> void __unused(Args &&...) {}
+template <typename... Args>
+void __unused(Args &&...) {}

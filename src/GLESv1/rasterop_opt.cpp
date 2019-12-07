@@ -18,10 +18,10 @@
 #include "rasterop_opt.hpp"
 #include "rasterop_opt.inl"
 
-#define MAKE_SCANLINE(flags, states, texture0, texture1)                       \
-  {                                                                            \
-    RASTERID(flags, states, texture0, texture1)                                \
-    , OptimizedScanline<flags, states, texture0, texture1>::Execute           \
+#define MAKE_SCANLINE(flags, states, texture0, texture1)            \
+  {                                                                 \
+    RASTERID(flags, states, texture0, texture1)                     \
+    , OptimizedScanline<flags, states, texture0, texture1>::Execute \
   }
 
 static const struct ScanlineRasterID {

@@ -52,7 +52,9 @@ _EGLConfig::_EGLConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
   this->setAttribute(EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT);
 }
 
-_EGLConfig::~_EGLConfig() { __profileAPI(" - %s()\n", __FUNCTION__); }
+_EGLConfig::~_EGLConfig() {
+  __profileAPI(" - %s()\n", __FUNCTION__);
+}
 
 EGLint _EGLConfig::Create(_EGLConfig **ppConfig, EGLint red, EGLint green,
                           EGLint blue, EGLint alpha, EGLint depth,
@@ -256,19 +258,19 @@ int _EGLConfig::compare(const _EGLConfig *pConfigA,
   assert(pConfigA && pConfigB);
 
   static const EGLint sortedList[] = {
-      EGL_CONFIG_CAVEAT,      
+      EGL_CONFIG_CAVEAT,
       EGL_RED_SIZE,
-      EGL_GREEN_SIZE,         
+      EGL_GREEN_SIZE,
       EGL_BLUE_SIZE,
-      EGL_ALPHA_SIZE,         
+      EGL_ALPHA_SIZE,
       EGL_BUFFER_SIZE,
-      EGL_SAMPLE_BUFFERS,     
+      EGL_SAMPLE_BUFFERS,
       EGL_SAMPLES,
-      EGL_DEPTH_SIZE,         
+      EGL_DEPTH_SIZE,
       EGL_STENCIL_SIZE,
-      EGL_NATIVE_VISUAL_TYPE, 
+      EGL_NATIVE_VISUAL_TYPE,
       EGL_LUMINANCE_SIZE,
-      EGL_ALPHA_MASK_SIZE,    
+      EGL_ALPHA_MASK_SIZE,
       EGL_CONFIG_ID,
   };
 

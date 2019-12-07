@@ -46,11 +46,17 @@ public:
     pRect->bottom = colorDesc_.Height;
   }
 
-  uint32_t getColorFormat() const { return colorDesc_.Format; }
+  uint32_t getColorFormat() const {
+    return colorDesc_.Format;
+  }
 
-  uint32_t getDepthStencilFormat() const { return depthStencilDesc_.Format; }
+  uint32_t getDepthStencilFormat() const {
+    return depthStencilDesc_.Format;
+  }
 
-  uint32_t getAlignment() const { return 1; }
+  uint32_t getAlignment() const {
+    return 1;
+  }
 
   GLint getAttribute(GLint name) const {
     assert(name >= ATTRIBUTES_FIRST && name <= ATTRIBUTES_LAST);
@@ -62,13 +68,21 @@ public:
     attributes_[name - ATTRIBUTES_FIRST] = value;
   }
 
-  uint32_t getWidth() const { return colorDesc_.Width; }
+  uint32_t getWidth() const {
+    return colorDesc_.Width;
+  }
 
-  uint32_t getHeight() const { return colorDesc_.Height; }
+  uint32_t getHeight() const {
+    return colorDesc_.Height;
+  }
 
-  const GLSurfaceDesc &getColorDesc() const { return colorDesc_; }
+  const GLSurfaceDesc &getColorDesc() const {
+    return colorDesc_;
+  }
 
-  const GLSurfaceDesc &getDepthStencilDesc() const { return depthStencilDesc_; }
+  const GLSurfaceDesc &getDepthStencilDesc() const {
+    return depthStencilDesc_;
+  }
 
   GLenum update(const GLSurfaceDesc *pColorDesc,
                 const GLSurfaceDesc *pDepthStencilDesc) {

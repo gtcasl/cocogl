@@ -114,7 +114,7 @@ public:
     static GLubyte left[] = {3, 0, 7, 4};   // left face
     static GLubyte right[] = {6, 5, 2, 1};  // right face
     static GLshort vertices[] = {-5, -5, -5, 5, -5, -5, 5, 5, -5, -5, 5, -5,
-                                 -5, -5, 5,  5, -5, 5,  5, 5, 5,  -5, 5, 5};
+                                 -5, -5, 5, 5, -5, 5, 5, 5, 5, -5, 5, 5};
 
     static float texCoords[] = {0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0};
 

@@ -38,11 +38,17 @@ public:
 
   EGLint copyBuffer(EGLNativePixmapType hPixmap);
 
-  auto getConfig() const { return pConfig_; }
+  auto getConfig() const {
+    return pConfig_;
+  }
 
-  auto getType() const { return surfaceType_; }
+  auto getType() const {
+    return surfaceType_;
+  }
 
-  auto getNativeData() const { return glSurface_; }
+  auto getNativeData() const {
+    return glSurface_;
+  }
 
   EGLint bindTexture();
 

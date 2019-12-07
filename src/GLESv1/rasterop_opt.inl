@@ -80,7 +80,7 @@ uint32_t GetSamplerColor(const Sampler &sampler, fixedRX fU, fixedRX fV, fixedRX
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t EnvMode, uint32_t Format, bool NativeColor>
-ColorARGB GetTexEnvColor(const ColorARGB& cColor, uint32_t texture, const ColorARGB& cEnvColor) {
+ColorARGB GetTexEnvColor(const ColorARGB &cColor, uint32_t texture, const ColorARGB &cEnvColor) {
   ColorARGB ret;
 
   typedef FormatSize<TFormatInfo<Format>> FormatSize;
@@ -115,7 +115,7 @@ ColorARGB GetTexEnvColor(const ColorARGB& cColor, uint32_t texture, const ColorA
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t Format, bool NativeColor>
-inline ColorARGB ApplyFog(const ColorARGB& cColor, ColorARGB cFogColor, fixedRX fFactor) {
+inline ColorARGB ApplyFog(const ColorARGB &cColor, ColorARGB cFogColor, fixedRX fFactor) {
   ColorARGB ret;
 
   auto factor = fFactor.data();
@@ -1883,7 +1883,7 @@ public:
         fU1OverWdA = rasterData.Registers[REG_TEX1 + 0].m[0];
         auto fU1OverWdB = rasterData.Registers[REG_TEX1 + 0].m[1];
         auto fU1OverWdC = rasterData.Registers[REG_TEX1 + 0].m[2];
-        auto fU1OverW =  fU1OverWdA * fOffsetX + fU1OverWdB * fOffsetY + fU1OverWdC;
+        auto fU1OverW = fU1OverWdA * fOffsetX + fU1OverWdB * fOffsetY + fU1OverWdC;
 
         fV1OverWdA = rasterData.Registers[REG_TEX1 + 1].m[0];
         auto fV1OverWdB = rasterData.Registers[REG_TEX1 + 1].m[1];
@@ -2169,7 +2169,7 @@ public:
           if constexpr (Blend) {
             // Execute pixel blend
             color = Blender<ColorFormat, BlendSrc, BlendDst, NativeColor>::Execute(
-                    cColor, dstColor);
+                cColor, dstColor);
           } else {
             if constexpr (NativeColor) {
               color = cColor.b;

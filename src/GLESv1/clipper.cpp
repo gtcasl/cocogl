@@ -16,7 +16,8 @@
 #include "raster.hpp"
 #include "raster.inl"
 
-template <typename R> inline float LerpFactor(float lhs, float rhs) {
+template <typename R>
+inline float LerpFactor(float lhs, float rhs) {
   assert(lhs != rhs);
   return static_cast<R>(lhs / (lhs - rhs));
 }

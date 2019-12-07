@@ -20,7 +20,8 @@ private:
   int rotation_;
 
 public:
-  CubeTest(EGLNativeWindowType window) : Renderer(window) {}
+  CubeTest(EGLNativeWindowType window)
+      : Renderer(window) {}
 
   bool OnInitialize() {
 
@@ -91,7 +92,7 @@ public:
     static GLubyte left[] = {3, 0, 7, 4};   // left face
     static GLubyte right[] = {6, 5, 2, 1};  // right face
     static GLshort vertices[] = {-5, -5, -5, 5, -5, -5, 5, 5, -5, -5, 5, -5,
-                                 -5, -5, 5,  5, -5, 5,  5, 5, 5,  -5, 5, 5};
+                                 -5, -5, 5, 5, -5, 5, 5, 5, 5, -5, 5, 5};
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

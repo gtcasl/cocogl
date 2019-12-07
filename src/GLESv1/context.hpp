@@ -143,7 +143,8 @@ public:
   template <typename T>
   void setMaterial(GLenum face, GLenum pname, const T *pParams);
 
-  template <typename T> void setFog(GLenum pname, const T *pParams);
+  template <typename T>
+  void setFog(GLenum pname, const T *pParams);
 
   template <typename T>
   void setTexParameter(GLenum target, GLenum pname, const T *pParams);
@@ -182,15 +183,20 @@ public:
   const GLubyte *getString(GLenum name);
 
   //--
-  template <typename T> void getClipPlane(GLenum plane, T eqn[4]);
+  template <typename T>
+  void getClipPlane(GLenum plane, T eqn[4]);
 
-  template <typename T> void get(GLenum pname, T *pParams);
+  template <typename T>
+  void get(GLenum pname, T *pParams);
 
-  template <typename T> void getLight(GLenum light, GLenum pname, T *pParams);
+  template <typename T>
+  void getLight(GLenum light, GLenum pname, T *pParams);
 
-  template <typename T> void getMaterial(GLenum face, GLenum pname, T *pParams);
+  template <typename T>
+  void getMaterial(GLenum face, GLenum pname, T *pParams);
 
-  template <typename T> void getTexEnv(GLenum env, GLenum pname, T *pParams);
+  template <typename T>
+  void getTexEnv(GLenum env, GLenum pname, T *pParams);
 
   template <typename T>
   void getTexParameter(GLenum target, GLenum pname, T *pParams);
@@ -200,7 +206,8 @@ public:
   bool isBuffer(GLuint buffer);
   bool isTexture(GLuint texture);
 
-  template <typename T> void setPointParameter(GLenum pname, const T *pParams);
+  template <typename T>
+  void setPointParameter(GLenum pname, const T *pParams);
 
   void clear(GLbitfield mask);
 

@@ -28,7 +28,8 @@ public:
   void destroy();
 
 private:
-  enum { NUMCHARS = 256, SPACE = 32 };
+  enum { NUMCHARS = 256,
+         SPACE = 32 };
 
   struct glyph_t {
     int l;

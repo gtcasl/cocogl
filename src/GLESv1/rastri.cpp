@@ -124,7 +124,7 @@ void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   auto fRndCeil = fixedDDA::make(fixedDDA::MASK) - Math::Half<fixedDDA>();
 
   int y = std::max<int>(Math::Ceil<int>(i4y0 - Math::Half<fixed4>()),
-                          scissorRect_.top);
+                        scissorRect_.top);
   auto i4Y0Diff = fixed4(y) - (i4y0 - Math::Half<fixed4>());
 
 #ifdef COCOGL_RASTER_PROFILE
@@ -139,7 +139,7 @@ void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 
   if (g.i4dy12.data()) {
     int y1 = std::min<int>(Math::Ceil<int>(i4y1 - Math::Half<fixed4>()),
-                             scissorRect_.bottom);
+                           scissorRect_.bottom);
     fdx0 = fixedDDA(g.i4dx12) / g.i4dy12;
     fdx1 = fixedDDA(g.i4dx13) / g.i4dy13;
 
@@ -173,7 +173,7 @@ void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 
   if (g.i4dy23.data()) {
     auto y2 = std::min<int>(Math::Ceil<int>(i4y2 - Math::Half<fixed4>()),
-                              scissorRect_.bottom);
+                            scissorRect_.bottom);
     auto i4Y1Diff = fixed4(y) - (i4y1 - Math::Half<fixed4>());
     auto fdx2 = fixedDDA(g.i4dx23) / g.i4dy23;
     auto fx2 = fixedDDA(i4x1) + fdx2 * i4Y1Diff + fRndCeil;
