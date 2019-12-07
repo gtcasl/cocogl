@@ -150,13 +150,13 @@ GLenum TNL::setupTNLStates(GLenum mode, int first, uint32_t count) {
     return GL_INVALID_OPERATION;
   }
 
-  uint32_t fmtType = (positionArray_.Format - VERTEX_BYTE2) / 4;
-  uint32_t fmtSize = positionArray_.Format - 1 - fmtType * 4;
-  uint32_t func = fmtType * 3 + fmtSize - 1;
+  auto fmtType = (positionArray_.Format - VERTEX_BYTE2) / 4;
+  auto fmtSize = positionArray_.Format - 1 - fmtType * 4;
+  auto func = fmtType * 3 + fmtSize - 1;
   assert(func < __countof(g_decodePosition));
   pfnDecodePosition_ = g_decodePosition[func];
 
-  uint32_t numVertives = count + CLIP_BUFFER_SIZE;
+  auto numVertives = count + CLIP_BUFFER_SIZE;
 
   clipVerticesBaseIndex_ = count;
 
@@ -353,8 +353,8 @@ void TNL::transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
   assert(pRDVertex);
   assert(pvClipPos);
 
-  auto iScaleX = screenXform_.iScaleX;
-  auto iScaleY = screenXform_.iScaleY;
+  auto fScaleX = screenXform_.fScaleX;
+  auto fScaleY = screenXform_.fScaleY;
   auto fScaleZ = screenXform_.fScaleZ;
 
   auto fMinX = screenXform_.fMinX;
@@ -365,17 +365,14 @@ void TNL::transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
     if (!Math::IsAlmostZero(pvClipPos[i].w - Math::One<floatf>())) {
       // Perspective screen space transform
       auto fRhw = Math::Inverse<floatRW>(pvClipPos[i].w);
-      pRDVertex[i].x =
-          fMinX + Math::MulRnd<fixed4>(pvClipPos[i].x, fRhw, iScaleX);
-      pRDVertex[i].y =
-          fMinY + Math::MulRnd<fixed4>(pvClipPos[i].y, fRhw, iScaleY);
-      pRDVertex[i].z =
-          fMinZ + Math::MulRnd<float20>(pvClipPos[i].z, fRhw, fScaleZ);
+      pRDVertex[i].x = fMinX + Math::MulRnd<fixed4>(pvClipPos[i].x, fRhw, fScaleX);
+      pRDVertex[i].y = fMinY + Math::MulRnd<fixed4>(pvClipPos[i].y, fRhw, fScaleY);
+      pRDVertex[i].z = fMinZ + Math::MulRnd<float20>(pvClipPos[i].z, fRhw, fScaleZ);
       pRDVertex[i].rhw = fRhw;
     } else {
       // Affine screen space transform
-      pRDVertex[i].x = fMinX + Math::MulRnd<fixed4>(pvClipPos[i].x, iScaleX);
-      pRDVertex[i].y = fMinY + Math::MulRnd<fixed4>(pvClipPos[i].y, iScaleY);
+      pRDVertex[i].x = fMinX + Math::MulRnd<fixed4>(pvClipPos[i].x, fScaleX);
+      pRDVertex[i].y = fMinY + Math::MulRnd<fixed4>(pvClipPos[i].y, fScaleY);
       pRDVertex[i].z = fMinZ + Math::MulRnd<float20>(pvClipPos[i].z, fScaleZ);
       pRDVertex[i].rhw = Math::One<floatRW>();
     }
@@ -873,7 +870,7 @@ GLenum TNL::updatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
       *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(fixed4), 4);
 
   if (pointSizeDecode_.pBits) {
-    uint32_t func = (pointSizeArray_.Format - VERTEX_FIXED) / 4;
+    auto func = (pointSizeArray_.Format - VERTEX_FIXED) / 4;
 
     if (TNLFlags_.PointSizeQAttn) {
       func += 2;
@@ -918,7 +915,7 @@ GLenum TNL::updateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
     }
   } else {
     if (colorDecode_.pBits) {
-      uint32_t func = (colorArray_.Format - VERTEX_FIXED4) / 4;
+      auto func = (colorArray_.Format - VERTEX_FIXED4) / 4;
       assert(func < __countof(g_processVertexColor));
       pfnColor_ = g_processVertexColor[func];
     } else {
@@ -972,7 +969,7 @@ GLenum TNL::updateLighting(uint8_t **ppbVertexData, int first, uint32_t count) {
     }
   }
 
-  uint32_t func = 0;
+  int func = 0;
 
   if (normalDecode_.pBits) {
     func = 1 + (normalArray_.Format - VERTEX_BYTE3) / 4;
@@ -1025,9 +1022,9 @@ GLenum TNL::updateTexcoords(uint8_t **ppbVertexData, int first,
           *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(TEXCOORD2), 4);
 
       if (texCoordDecodes_[i].pBits) {
-        uint32_t fmtType = (texCoordArrays_[i].Format - VERTEX_BYTE2) / 4;
-        uint32_t fmtSize = texCoordArrays_[i].Format - 1 - fmtType * 4;
-        uint32_t func = fmtType * 3 + fmtSize - 1;
+        auto fmtType = (texCoordArrays_[i].Format - VERTEX_BYTE2) / 4;
+        auto fmtSize = texCoordArrays_[i].Format - 1 - fmtType * 4;
+        auto func = fmtType * 3 + fmtSize - 1;
 
         if (!pMsTexCoords_[i]->isIdentity()) {
           func += 12;
@@ -1067,7 +1064,7 @@ void TNL::updateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
   *ppbVertexData = __alignPtr(
       *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(float20), 4);
 
-  uint32_t func = fog_.Mode;
+  int func = fog_.Mode;
   assert(func < __countof(g_processFog));
   pfnFog_ = g_processFog[func];
 }
@@ -1085,22 +1082,18 @@ void TNL::updateModelViewInvT44() {
 }
 
 void TNL::updateModelViewProj() {
-  Math::Mul(&mModelViewProj_, pMsProjection_->getMatrix(),
-            pMsModelView_->getMatrix());
+  Math::Mul(&mModelViewProj_, pMsProjection_->getMatrix(), pMsModelView_->getMatrix());
   dirtyFlags_.ModelViewProj = 0;
 }
 
 void TNL::updateScreenXform() {
-  screenXform_.fMinX =
-      static_cast<fixed4>((viewport_.left + viewport_.right) / 2);
-  screenXform_.iScaleX = (viewport_.right - viewport_.left) / 2;
+  screenXform_.fMinX = static_cast<fixed4>((viewport_.left + viewport_.right) / 2);
+  screenXform_.fScaleX = float4(viewport_.right - viewport_.left) / 2;
 
-  screenXform_.fMinY =
-      static_cast<fixed4>((viewport_.top + viewport_.bottom) / 2);
-  screenXform_.iScaleY = (viewport_.bottom - viewport_.top) / 2;
+  screenXform_.fMinY = static_cast<fixed4>((viewport_.top + viewport_.bottom) / 2);
+  screenXform_.fScaleY = float4(viewport_.bottom - viewport_.top) / 2;
 
-  screenXform_.fMinZ =
-      static_cast<float20>((depthRange_.fNear + depthRange_.fFar) / 2);
+  screenXform_.fMinZ = static_cast<float20>((depthRange_.fNear + depthRange_.fFar) / 2);
   screenXform_.fScaleZ = (depthRange_.fFar - depthRange_.fNear) / 2;
 
   dirtyFlags_.ScreenXform = 0;
@@ -1114,7 +1107,7 @@ void TNL::updateClipPlanes() {
       this->updateProjectionInvT();
     }
 
-    uint32_t updateMask = dirtyFlags_.ClipPlanesCS & caps_.ClipPlanes;
+    auto updateMask = dirtyFlags_.ClipPlanesCS & caps_.ClipPlanes;
     for (uint32_t i = 0; updateMask; ++i, updateMask >>= 1) {
       if (updateMask & 1) {
         assert(i < vClipPlanesES_.size());

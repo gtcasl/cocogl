@@ -67,7 +67,7 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename T> inline size_t __countof(const T &a) {
+template <typename T> inline int __countof(const T &a) {
   return (sizeof(a) / sizeof(a[0]));
 }
 

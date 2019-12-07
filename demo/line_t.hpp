@@ -18,7 +18,7 @@
 class LineTest : public Renderer {
 public:
   LineTest(EGLNativeWindowType window) : Renderer(window) {}
-  
+
   bool OnInitialize() {
     /*
     Remember: because we are programming for a mobile device, we cant

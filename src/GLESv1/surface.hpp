@@ -75,7 +75,7 @@ public:
     return this->initialize(pColorDesc, pDepthStencilDesc);
   }
 
-  void convertColor(void *pOut, const Color4 &color) const {
+  void convertColor(void *pOut, const ColorARGB &color) const {
     (pfnColorConv_)(pOut, color);
   }
 
@@ -128,7 +128,7 @@ private:
     __unused(rect);
   }
 
-  static void colorConvNoop(void *pColorOut, const Color4 &color) {
+  static void colorConvNoop(void *pColorOut, const ColorARGB &color) {
     __unused(pColorOut);
     __unused(color);
   }

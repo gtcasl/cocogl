@@ -432,7 +432,7 @@ template <uint32_t F, typename T> inline Fixed<F, T> round(Fixed<F, T> rhs) {
 
 namespace Math {
 
-uint32_t iLog2(uint32_t rhs);
+int iLog2(int rhs);
 
 int Mul8(int lhs, int rhs);
 
@@ -478,11 +478,7 @@ template <typename R> R Mul(float fOffset, float fRhw, int iScale);
 
 template <typename R> R Mul(float fOffset, float fRhw, float fScale);
 
-template <typename R> R MulRnd(float lhs, int rhs);
-
 template <typename R> R MulRnd(float lhs, float rhs);
-
-template <typename R> R MulRnd(float a, float b, int c);
 
 template <typename R> R MulRnd(float a, float b, float c);
 
@@ -513,15 +509,9 @@ R FastDiv(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R MulRnd(Fixed<F1, T1> lhs, Fixed<F2, T2> rhs);
 
-template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R MulRnd(Fixed<F1, T1> a, Fixed<F2, T2> b, int c);
-
 template <typename R, uint32_t F1, uint32_t F2, uint32_t F3, typename T1,
           typename T2, typename T3>
 R MulRnd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F3, T3> c);
-
-template <typename R, uint32_t F, typename T>
-R MulRnd(Fixed<F, T> lhs, int rhs);
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
 R MulAdd(Fixed<F1, T1> a, Fixed<F2, T2> b, Fixed<F1, T1> c, Fixed<F2, T2> d);
@@ -809,14 +799,6 @@ inline fixed24 Mul<fixed24>(float fOffset, float fRhw, float fScale) {
 
 template <typename R> inline R MulRnd(float a, float b) {
   return static_cast<R>(a * b);
-}
-
-template <typename R> inline R MulRnd(float lhs, int rhs) {
-  return static_cast<R>(lhs * rhs);
-}
-
-template <typename R> inline R MulRnd(float a, float b, int c) {
-  return static_cast<R>(a * b * c);
 }
 
 template <typename R> inline R MulRnd(float a, float b, float c) {
@@ -1218,17 +1200,21 @@ inline void Translate(MATRIX44 *pmatOut, floatf x, floatf y, floatf z) {
   pmatOut->_43 = z;
 }
 
-inline bool IsPowerOf2(int value) { return 0 == (value & (value - 1)); }
-
-inline floatf DegToRad(floatf rhs) {
-  return rhs * (Math::PI<floatf>() / Math::F180<floatf>());
+inline bool IsPowerOf2(int value) { 
+  return 0 == (value & (value - 1)); 
 }
 
-inline floatf RadToDeg(floatf rhs) {
-  return rhs * (Math::F180<floatf>() / Math::PI<floatf>());
+inline floatf DegToRad(floatf value) {
+  return value * (Math::PI<floatf>() / Math::F180<floatf>());
 }
 
-inline uint32_t iLog2(uint32_t rhs) { return 31 - Clz(rhs); }
+inline floatf RadToDeg(floatf value) {
+  return value * (Math::F180<floatf>() / Math::PI<floatf>());
+}
+
+inline int iLog2(int value) { 
+  return 31 - Clz(value); 
+}
 
 inline void Mul(MATRIX44 *pmatOut, const MATRIX44 &mat1, const MATRIX44 &mat2) {
   assert(pmatOut);
@@ -1450,8 +1436,7 @@ inline void Frustum(MATRIX44 *pmatOut, floatf left, floatf right, floatf bottom,
   pmatOut->_44 = Math::Zero<floatf>();
 }
 
-inline void Rotate(MATRIX44 *pmatOut, floatf angle, floatf x, floatf y,
-                   floatf z) {
+inline void Rotate(MATRIX44 *pmatOut, floatf angle, floatf x, floatf y, floatf z) {
   assert(pmatOut);
 
   VECTOR3 vAxis(x, y, z);

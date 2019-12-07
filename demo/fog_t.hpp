@@ -91,6 +91,7 @@ public:
     glEnable(GL_FOG);
 
     glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture_);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);

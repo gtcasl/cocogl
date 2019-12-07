@@ -467,27 +467,26 @@ inline static const FormatInfo &GetInfo(uint32_t pixelFormat) {
 #undef __formatInfo
 #undef DEF_GET_ENUM_VALUE
 
-typedef void (*pfn_convert_from)(Color4 *pOut, const void *pIn);
+typedef ColorARGB (*pfn_convert_from)(const void *pIn);
 
-typedef void (*pfn_convert_to)(void *pOut, const Color4 &in);
+typedef void (*pfn_convert_to)(void *pOut, const ColorARGB &in);
 
-template <uint32_t PixelFormat> static uint32_t ConvertTo(const Color4 &color);
+template <uint32_t PixelFormat> static uint32_t ConvertTo(const ColorARGB &color);
 
 template <uint32_t PixelFormat>
-static void ConvertTo(void *pOut, const Color4 &in) {
+static void ConvertTo(void *pOut, const ColorARGB &in) {
   *reinterpret_cast<typename TFormatInfo<PixelFormat>::TYPE *>(pOut) =
       static_cast<typename TFormatInfo<PixelFormat>::TYPE>(
           ConvertTo<PixelFormat>(in));
 }
 
 template <uint32_t PixelFormat, bool bForceAlpha>
-static void ConvertFrom(Color4 *pOut, uint32_t in);
+static ColorARGB ConvertFrom(uint32_t in);
 
 template <uint32_t PixelFormat, bool bForceAlpha>
-static void ConvertFrom(Color4 *pOut, const void *pIn) {
-  ConvertFrom<PixelFormat, bForceAlpha>(
-      pOut,
-      *reinterpret_cast<const typename TFormatInfo<PixelFormat>::TYPE *>(pIn));
+static ColorARGB ConvertFrom(const void *pIn) {
+  return ConvertFrom<PixelFormat, bForceAlpha>(
+    *reinterpret_cast<const typename TFormatInfo<PixelFormat>::TYPE *>(pIn));
 }
 
 inline static pfn_convert_to GetConvertTo(uint32_t pixelFormat) {
@@ -620,327 +619,353 @@ inline static uint32_t GetNativeFormat(uint32_t pixelFormat) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_UNKNOWN>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_UNKNOWN>(const ColorARGB &in) {
   __unused(in);
   return 0;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_UNKNOWN, false>(Color4 *pOut, uint32_t in) {
-  __unused(pOut);
+inline ColorARGB ConvertFrom<FORMAT_UNKNOWN, false>(uint32_t in) {
   __unused(in);
+  return 0;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_UNKNOWN, true>(Color4 *pOut, uint32_t in) {
-  __unused(pOut);
+inline ColorARGB ConvertFrom<FORMAT_UNKNOWN, true>(uint32_t in) {
   __unused(in);
+  return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_R5G6B5>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_R5G6B5>(const ColorARGB &in) {
   return ((in.r & 0xf8) << 8) | ((in.g & 0xfc) << 3) | (in.b >> 3);
 }
 
 template <>
-inline void ConvertFrom<FORMAT_R5G6B5, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->r = ((in >> 11) << 3) | (in >> 13);
-  pOut->g = ((in >> 3) & 0xfc) | ((in >> 9) & 0x3);
-  pOut->b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
+inline ColorARGB ConvertFrom<FORMAT_R5G6B5, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.r = ((in >> 11) << 3) | (in >> 13);
+  ret.g = ((in >> 3) & 0xfc) | ((in >> 9) & 0x3);
+  ret.b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_R5G6B5, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = 0xff;
-  pOut->r = ((in >> 11) << 3) | (in >> 13);
-  pOut->g = ((in >> 3) & 0xfc) | ((in >> 9) & 0x3);
-  pOut->b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
+inline ColorARGB ConvertFrom<FORMAT_R5G6B5, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = 0xff;
+  ret.r = ((in >> 11) << 3) | (in >> 13);
+  ret.g = ((in >> 3) & 0xfc) | ((in >> 9) & 0x3);
+  ret.b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A1R5G5B5>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_A1R5G5B5>(const ColorARGB &in) {
   return (in.a ? 0x8000 : 0) | ((in.r & 0xf8) << 7) | ((in.g & 0xf8) << 2) |
          (in.b >> 3);
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A1R5G5B5, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = 0xff * (in >> 15);
-  pOut->r = ((in >> 7) & 0xf8) | ((in << 1) >> 13);
-  pOut->g = ((in >> 2) & 0xf8) | ((in >> 7) & 7);
-  pOut->b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
+inline ColorARGB ConvertFrom<FORMAT_A1R5G5B5, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = 0xff * (in >> 15);
+  ret.r = ((in >> 7) & 0xf8) | ((in << 1) >> 13);
+  ret.g = ((in >> 2) & 0xf8) | ((in >> 7) & 7);
+  ret.b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A1R5G5B5, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = 0xff * (in >> 15);
-  pOut->r = ((in >> 7) & 0xf8) | ((in << 1) >> 13);
-  pOut->g = ((in >> 2) & 0xf8) | ((in >> 7) & 7);
-  pOut->b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
+inline ColorARGB ConvertFrom<FORMAT_A1R5G5B5, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = 0xff * (in >> 15);
+  ret.r = ((in >> 7) & 0xf8) | ((in << 1) >> 13);
+  ret.g = ((in >> 2) & 0xf8) | ((in >> 7) & 7);
+  ret.b = ((in & 0x1f) << 3) | ((in & 0x1c) >> 2);
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_R5G5B5A1>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_R5G5B5A1>(const ColorARGB &in) {
   return ((in.r & 0xf8) << 8) | ((in.g & 0xf8) << 3) | ((in.b & 0xf8) >> 2) |
          (in.a ? 0x1 : 0);
 }
 
 template <>
-inline void ConvertFrom<FORMAT_R5G5B5A1, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = 0xff * (in & 0x1);
-  pOut->r = ((in >> 8) & 0xf8) | (in >> 13);
-  pOut->g = ((in >> 3) & 0xf8) | ((in >> 8) & 7);
-  pOut->b = ((in & 0x3e) << 2) | ((in & 0x3e) >> 3);
+inline ColorARGB ConvertFrom<FORMAT_R5G5B5A1, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = 0xff * (in & 0x1);
+  ret.r = ((in >> 8) & 0xf8) | (in >> 13);
+  ret.g = ((in >> 3) & 0xf8) | ((in >> 8) & 7);
+  ret.b = ((in & 0x3e) << 2) | ((in & 0x3e) >> 3);
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_R5G5B5A1, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = 0xff * (in & 0x1);
-  pOut->r = ((in >> 8) & 0xf8) | (in >> 13);
-  pOut->g = ((in >> 3) & 0xf8) | ((in >> 8) & 7);
-  pOut->b = ((in & 0x3e) << 2) | ((in & 0x3e) >> 3);
+inline ColorARGB ConvertFrom<FORMAT_R5G5B5A1, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = 0xff * (in & 0x1);
+  ret.r = ((in >> 8) & 0xf8) | (in >> 13);
+  ret.g = ((in >> 3) & 0xf8) | ((in >> 8) & 7);
+  ret.b = ((in & 0x3e) << 2) | ((in & 0x3e) >> 3);
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A4R4G4B4>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_A4R4G4B4>(const ColorARGB &in) {
   return ((in.a & 0xf0) << 8) | ((in.r & 0xf0) << 4) | ((in.g & 0xf0) << 0) |
          (in.b >> 4);
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A4R4G4B4, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = ((in >> 8) & 0xf0) | (in >> 12);
-  pOut->r = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
-  pOut->g = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
-  pOut->b = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
+inline ColorARGB ConvertFrom<FORMAT_A4R4G4B4, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = ((in >> 8) & 0xf0) | (in >> 12);
+  ret.r = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
+  ret.g = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
+  ret.b = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A4R4G4B4, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = ((in >> 8) & 0xf0) | (in >> 12);
-  pOut->r = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
-  pOut->g = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
-  pOut->b = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
+inline ColorARGB ConvertFrom<FORMAT_A4R4G4B4, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = ((in >> 8) & 0xf0) | (in >> 12);
+  ret.r = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
+  ret.g = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
+  ret.b = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_R4G4B4A4>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_R4G4B4A4>(const ColorARGB &in) {
   return ((in.r & 0xf0) << 8) | ((in.g & 0xf0) << 4) | ((in.b & 0xf0) << 0) |
          (in.a >> 4);
 }
 
 template <>
-inline void ConvertFrom<FORMAT_R4G4B4A4, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
-  pOut->r = ((in >> 8) & 0xf0) | (in >> 12);
-  pOut->g = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
-  pOut->b = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
+inline ColorARGB ConvertFrom<FORMAT_R4G4B4A4, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
+  ret.r = ((in >> 8) & 0xf0) | (in >> 12);
+  ret.g = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
+  ret.b = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_R4G4B4A4, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
-  pOut->r = ((in >> 8) & 0xf0) | (in >> 12);
-  pOut->g = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
-  pOut->b = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
+inline ColorARGB ConvertFrom<FORMAT_R4G4B4A4, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = ((in & 0x0f) << 4) | ((in & 0x0f) >> 0);
+  ret.r = ((in >> 8) & 0xf0) | (in >> 12);
+  ret.g = ((in >> 4) & 0xf0) | ((in >> 8) & 0x0f);
+  ret.b = ((in & 0xf0) >> 0) | ((in & 0xf0) >> 4);
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_R8G8B8>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_R8G8B8>(const ColorARGB &in) {
   return (in.r << 16) | (in.g << 8) | in.b;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_R8G8B8, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->r = in >> 16;
-  pOut->g = (in >> 8) & 0xff;
-  pOut->b = in & 0xff;
+inline ColorARGB ConvertFrom<FORMAT_R8G8B8, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.r = in >> 16;
+  ret.g = (in >> 8) & 0xff;
+  ret.b = in & 0xff;
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_R8G8B8, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = 0xff;
-  pOut->r = in >> 16;
-  pOut->g = (in >> 8) & 0xff;
-  pOut->b = in & 0xff;
+inline ColorARGB ConvertFrom<FORMAT_R8G8B8, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = 0xff;
+  ret.r = in >> 16;
+  ret.g = (in >> 8) & 0xff;
+  ret.b = in & 0xff;
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_B8G8R8>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_B8G8R8>(const ColorARGB &in) {
   return (in.b << 16) | (in.g << 8) | in.r;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_B8G8R8, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->r = in & 0xff;
-  pOut->g = (in >> 8) & 0xff;
-  pOut->b = in >> 16;
+inline ColorARGB ConvertFrom<FORMAT_B8G8R8, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.r = in & 0xff;
+  ret.g = (in >> 8) & 0xff;
+  ret.b = in >> 16;
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_B8G8R8, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = 0xff;
-  pOut->r = in & 0xff;
-  pOut->g = (in >> 8) & 0xff;
-  pOut->b = in >> 16;
+inline ColorARGB ConvertFrom<FORMAT_B8G8R8, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = 0xff;
+  ret.r = in & 0xff;
+  ret.g = (in >> 8) & 0xff;
+  ret.b = in >> 16;
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A8R8G8B8>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_A8R8G8B8>(const ColorARGB &in) {
   return (in.a << 24) | (in.r << 16) | (in.g << 8) | in.b;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A8R8G8B8, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = in >> 24;
-  pOut->r = (in >> 16) & 0xff;
-  pOut->g = (in >> 8) & 0xff;
-  pOut->b = in & 0xff;
+inline ColorARGB ConvertFrom<FORMAT_A8R8G8B8, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = in >> 24;
+  ret.r = (in >> 16) & 0xff;
+  ret.g = (in >> 8) & 0xff;
+  ret.b = in & 0xff;
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A8R8G8B8, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = in >> 24;
-  pOut->r = (in >> 16) & 0xff;
-  pOut->g = (in >> 8) & 0xff;
-  pOut->b = in & 0xff;
+inline ColorARGB ConvertFrom<FORMAT_A8R8G8B8, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = in >> 24;
+  ret.r = (in >> 16) & 0xff;
+  ret.g = (in >> 8) & 0xff;
+  ret.b = in & 0xff;
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A8B8G8R8>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_A8B8G8R8>(const ColorARGB &in) {
   return (in.a << 24) | (in.b << 16) | (in.g << 8) | in.r;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A8B8G8R8, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = in >> 24;
-  pOut->r = in & 0xff;
-  pOut->g = (in >> 8) & 0xff;
-  pOut->b = (in >> 16) & 0xff;
+inline ColorARGB ConvertFrom<FORMAT_A8B8G8R8, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = in >> 24;
+  ret.r = in & 0xff;
+  ret.g = (in >> 8) & 0xff;
+  ret.b = (in >> 16) & 0xff;
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A8B8G8R8, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = in >> 24;
-  pOut->r = in & 0xff;
-  pOut->g = (in >> 8) & 0xff;
-  pOut->b = (in >> 16) & 0xff;
+inline ColorARGB ConvertFrom<FORMAT_A8B8G8R8, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = in >> 24;
+  ret.r = in & 0xff;
+  ret.g = (in >> 8) & 0xff;
+  ret.b = (in >> 16) & 0xff;
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A8>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_A8>(const ColorARGB &in) {
   return in.a;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A8, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = in;
+inline ColorARGB ConvertFrom<FORMAT_A8, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = in;
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A8, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = in;
+inline ColorARGB ConvertFrom<FORMAT_A8, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = in;
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_L8>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_L8>(const ColorARGB &in) {
   return in.r;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_L8, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->r = in;
-  pOut->g = in;
-  pOut->b = in;
+inline ColorARGB ConvertFrom<FORMAT_L8, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.r = in;
+  ret.g = in;
+  ret.b = in;
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_L8, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = 0xff;
-  pOut->r = in;
-  pOut->g = in;
-  pOut->b = in;
+inline ColorARGB ConvertFrom<FORMAT_L8, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = 0xff;
+  ret.r = in;
+  ret.g = in;
+  ret.b = in;
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_A8L8>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_A8L8>(const ColorARGB &in) {
   return (in.a << 8) | in.r;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A8L8, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = in >> 8;
-  pOut->r = in & 0xff;
-  pOut->g = in & 0xff;
-  pOut->b = in & 0xff;
+inline ColorARGB ConvertFrom<FORMAT_A8L8, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = in >> 8;
+  ret.r = in & 0xff;
+  ret.g = in & 0xff;
+  ret.b = in & 0xff;
+  return ret;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_A8L8, true>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->a = in >> 8;
-  pOut->r = in & 0xff;
-  pOut->g = in & 0xff;
-  pOut->b = in & 0xff;
+inline ColorARGB ConvertFrom<FORMAT_A8L8, true>(uint32_t in) {
+  ColorARGB ret;
+  ret.a = in >> 8;
+  ret.r = in & 0xff;
+  ret.g = in & 0xff;
+  ret.b = in & 0xff;
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_D16>(const Color4 &in) {
-  return in.b;
+template <> inline uint32_t ConvertTo<FORMAT_D16>(const ColorARGB &in) {
+  return in.value;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_D16, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->b = in;
+inline ColorARGB ConvertFrom<FORMAT_D16, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.value = in;
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <> inline uint32_t ConvertTo<FORMAT_X8S8D16>(const Color4 &in) {
+template <> inline uint32_t ConvertTo<FORMAT_X8S8D16>(const ColorARGB &in) {
   return in.b;
 }
 
 template <>
-inline void ConvertFrom<FORMAT_X8S8D16, false>(Color4 *pOut, uint32_t in) {
-  assert(pOut);
-  pOut->b = in;
+inline ColorARGB ConvertFrom<FORMAT_X8S8D16, false>(uint32_t in) {
+  ColorARGB ret;
+  ret.value = in;
+  return ret;
 }
 
 } // namespace Format

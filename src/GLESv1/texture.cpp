@@ -112,7 +112,7 @@ GLenum Surface2D::initialize(uint32_t width, uint32_t height,
 
   uint32_t paletteSize = 1 << formatInfo.PaletteBits;
 
-  auto pColorTable = new Color4[paletteSize];
+  auto pColorTable = new ColorARGB[paletteSize];
   if (nullptr == pColorTable) {
     __glLogError("Surface2D::initialize() failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;
@@ -121,7 +121,7 @@ GLenum Surface2D::initialize(uint32_t width, uint32_t height,
   uint8_t nBPP = formatInfo.BytePerPixel;
   auto pbPixels = reinterpret_cast<const uint8_t *>(pPixels);
   for (uint32_t i = 0; i < paletteSize; ++i) {
-    (pfnConvertFrom)(&pColorTable[i], pbPixels);
+    pColorTable[i] = (pfnConvertFrom)(pbPixels);
     pbPixels += nBPP;
   }
 
@@ -324,7 +324,6 @@ GLenum Texture::generateMipmaps() {
   //
   // Generate mipmaps
   //
-  Color4 c1, c2, c3, c4;
 
   uint8_t *pbMipBuffer = pbMipBuffer_;
 
@@ -362,12 +361,13 @@ GLenum Texture::generateMipmaps() {
         for (uint32_t x = 0; x < width; ++x) {
           auto x0 = 2 * x;
           auto x1 = 2 * x + ((width > 1) ? 1 : 0);  
-          Format::ConvertFrom<FORMAT_A8, false>(&c1, pSrc1 + x0);
-          Format::ConvertFrom<FORMAT_A8, false>(&c2, pSrc1 + x1);
-          Format::ConvertFrom<FORMAT_A8, false>(&c3, pSrc2 + x0);
-          Format::ConvertFrom<FORMAT_A8, false>(&c4, pSrc2 + x1);
 
-          Color4 avg;
+          auto c1 = Format::ConvertFrom<FORMAT_A8, false>(pSrc1 + x0);
+          auto c2 = Format::ConvertFrom<FORMAT_A8, false>(pSrc1 + x1);
+          auto c3 = Format::ConvertFrom<FORMAT_A8, false>(pSrc2 + x0);
+          auto c4 = Format::ConvertFrom<FORMAT_A8, false>(pSrc2 + x1);
+
+          ColorARGB avg;
           avg.a = (c1.a + c2.a + c3.a + c4.a) >> 2;
 
           Format::ConvertTo<FORMAT_A8>(pDst + x + width * y, avg);
@@ -390,12 +390,13 @@ GLenum Texture::generateMipmaps() {
         for (uint32_t x = 0; x < width; ++x) {
           auto x0 = 2 * x;
           auto x1 = 2 * x + ((width > 1) ? 1 : 0);  
-          Format::ConvertFrom<FORMAT_L8, false>(&c1, pSrc1 + x0);
-          Format::ConvertFrom<FORMAT_L8, false>(&c2, pSrc1 + x1);
-          Format::ConvertFrom<FORMAT_L8, false>(&c3, pSrc2 + x0);
-          Format::ConvertFrom<FORMAT_L8, false>(&c4, pSrc2 + x1);
 
-          Color4 avg;
+          auto c1 = Format::ConvertFrom<FORMAT_L8, false>(pSrc1 + x0);
+          auto c2 = Format::ConvertFrom<FORMAT_L8, false>(pSrc1 + x1);
+          auto c3 = Format::ConvertFrom<FORMAT_L8, false>(pSrc2 + x0);
+          auto c4 = Format::ConvertFrom<FORMAT_L8, false>(pSrc2 + x1);
+
+          ColorARGB avg;
           avg.b = (c1.b + c2.b + c3.b + c4.b) >> 2;
 
           Format::ConvertTo<FORMAT_L8>(pDst + x + width * y, avg);
@@ -418,12 +419,13 @@ GLenum Texture::generateMipmaps() {
         for (uint32_t x = 0; x < width; ++x) {
           auto x0 = 2 * x;
           auto x1 = 2 * x + ((width > 1) ? 1 : 0);  
-          Format::ConvertFrom<FORMAT_A8L8, false>(&c1, pSrc1 + x0);
-          Format::ConvertFrom<FORMAT_A8L8, false>(&c2, pSrc1 + x1);
-          Format::ConvertFrom<FORMAT_A8L8, false>(&c3, pSrc2 + x0);
-          Format::ConvertFrom<FORMAT_A8L8, false>(&c4, pSrc2 + x1);
 
-          Color4 avg;
+          auto c1 = Format::ConvertFrom<FORMAT_A8L8, false>(pSrc1 + x0);
+          auto c2 = Format::ConvertFrom<FORMAT_A8L8, false>(pSrc1 + x1);
+          auto c3 = Format::ConvertFrom<FORMAT_A8L8, false>(pSrc2 + x0);
+          auto c4 = Format::ConvertFrom<FORMAT_A8L8, false>(pSrc2 + x1);
+
+          ColorARGB avg;
           avg.a = (c1.a + c2.a + c3.a + c4.a) >> 2;
           avg.b = (c1.b + c2.b + c3.b + c4.b) >> 2;
 
@@ -447,12 +449,13 @@ GLenum Texture::generateMipmaps() {
         for (uint32_t x = 0; x < width; ++x) {
           auto x0 = 2 * x;
           auto x1 = 2 * x + ((width > 1) ? 1 : 0);  
-          Format::ConvertFrom<FORMAT_R5G6B5, false>(&c1, pSrc1 + x0);
-          Format::ConvertFrom<FORMAT_R5G6B5, false>(&c2, pSrc1 + x1);
-          Format::ConvertFrom<FORMAT_R5G6B5, false>(&c3, pSrc2 + x0);
-          Format::ConvertFrom<FORMAT_R5G6B5, false>(&c4, pSrc2 + x1);
 
-          const Color4 avg((c1.r + c2.r + c3.r + c4.r) >> 2,
+          auto c1 = Format::ConvertFrom<FORMAT_R5G6B5, false>(pSrc1 + x0);
+          auto c2 = Format::ConvertFrom<FORMAT_R5G6B5, false>(pSrc1 + x1);
+          auto c3 = Format::ConvertFrom<FORMAT_R5G6B5, false>(pSrc2 + x0);
+          auto c4 = Format::ConvertFrom<FORMAT_R5G6B5, false>(pSrc2 + x1);
+
+          const ColorARGB avg((c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);
 
@@ -476,12 +479,13 @@ GLenum Texture::generateMipmaps() {
         for (uint32_t x = 0; x < width; ++x) {
           auto x0 = 2 * x;
           auto x1 = 2 * x + ((width > 1) ? 1 : 0);  
-          Format::ConvertFrom<FORMAT_A1R5G5B5, false>(&c1, pSrc1 + x0);
-          Format::ConvertFrom<FORMAT_A1R5G5B5, false>(&c2, pSrc1 + x1);
-          Format::ConvertFrom<FORMAT_A1R5G5B5, false>(&c3, pSrc2 + x0);
-          Format::ConvertFrom<FORMAT_A1R5G5B5, false>(&c4, pSrc2 + x1);
+          
+          auto c1 = Format::ConvertFrom<FORMAT_A1R5G5B5, false>(pSrc1 + x0);
+          auto c2 = Format::ConvertFrom<FORMAT_A1R5G5B5, false>(pSrc1 + x1);
+          auto c3 = Format::ConvertFrom<FORMAT_A1R5G5B5, false>(pSrc2 + x0);
+          auto c4 = Format::ConvertFrom<FORMAT_A1R5G5B5, false>(pSrc2 + x1);
 
-          const Color4 avg((c1.a + c2.a + c3.a + c4.a) >> 2,
+          const ColorARGB avg((c1.a + c2.a + c3.a + c4.a) >> 2,
                            (c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);
@@ -506,12 +510,13 @@ GLenum Texture::generateMipmaps() {
         for (uint32_t x = 0; x < width; ++x) {
           auto x0 = 2 * x;
           auto x1 = 2 * x + ((width > 1) ? 1 : 0);  
-          Format::ConvertFrom<FORMAT_A4R4G4B4, false>(&c1, pSrc1 + x0);
-          Format::ConvertFrom<FORMAT_A4R4G4B4, false>(&c2, pSrc1 + x1);
-          Format::ConvertFrom<FORMAT_A4R4G4B4, false>(&c3, pSrc2 + x0);
-          Format::ConvertFrom<FORMAT_A4R4G4B4, false>(&c4, pSrc2 + x1);
 
-          const Color4 avg((c1.a + c2.a + c3.a + c4.a) >> 2,
+          auto c1 = Format::ConvertFrom<FORMAT_A4R4G4B4, false>(pSrc1 + x0);
+          auto c2 = Format::ConvertFrom<FORMAT_A4R4G4B4, false>(pSrc1 + x1);
+          auto c3 = Format::ConvertFrom<FORMAT_A4R4G4B4, false>(pSrc2 + x0);
+          auto c4 = Format::ConvertFrom<FORMAT_A4R4G4B4, false>(pSrc2 + x1);
+
+          const ColorARGB avg((c1.a + c2.a + c3.a + c4.a) >> 2,
                            (c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);
@@ -536,12 +541,13 @@ GLenum Texture::generateMipmaps() {
         for (uint32_t x = 0; x < width; ++x) {
           auto x0 = 2 * x;
           auto x1 = 2 * x + ((width > 1) ? 1 : 0);  
-          Format::ConvertFrom<FORMAT_R8G8B8, false>(&c1, pSrc1 + x0);
-          Format::ConvertFrom<FORMAT_R8G8B8, false>(&c2, pSrc1 + x1);
-          Format::ConvertFrom<FORMAT_R8G8B8, false>(&c3, pSrc2 + x0);
-          Format::ConvertFrom<FORMAT_R8G8B8, false>(&c4, pSrc2 + x1);
 
-          const Color4 avg((c1.r + c2.r + c3.r + c4.r) >> 2,
+          auto c1 = Format::ConvertFrom<FORMAT_R8G8B8, false>(pSrc1 + x0);
+          auto c2 = Format::ConvertFrom<FORMAT_R8G8B8, false>(pSrc1 + x1);
+          auto c3 = Format::ConvertFrom<FORMAT_R8G8B8, false>(pSrc2 + x0);
+          auto c4 = Format::ConvertFrom<FORMAT_R8G8B8, false>(pSrc2 + x1);
+
+          const ColorARGB avg((c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);
 
@@ -565,12 +571,13 @@ GLenum Texture::generateMipmaps() {
         for (uint32_t x = 0; x < width; ++x) {
           auto x0 = 2 * x;
           auto x1 = 2 * x + ((width > 1) ? 1 : 0);  
-          Format::ConvertFrom<FORMAT_A8R8G8B8, false>(&c1, pSrc1 + x0);
-          Format::ConvertFrom<FORMAT_A8R8G8B8, false>(&c2, pSrc1 + x1);
-          Format::ConvertFrom<FORMAT_A8R8G8B8, false>(&c3, pSrc2 + x0);
-          Format::ConvertFrom<FORMAT_A8R8G8B8, false>(&c4, pSrc2 + x1);
 
-          const Color4 avg((c1.a + c2.a + c3.a + c4.a) >> 2,
+          auto c1 = Format::ConvertFrom<FORMAT_A8R8G8B8, false>(pSrc1 + x0);
+          auto c2 = Format::ConvertFrom<FORMAT_A8R8G8B8, false>(pSrc1 + x1);
+          auto c3 = Format::ConvertFrom<FORMAT_A8R8G8B8, false>(pSrc2 + x0);
+          auto c4 = Format::ConvertFrom<FORMAT_A8R8G8B8, false>(pSrc2 + x1);
+
+          const ColorARGB avg((c1.a + c2.a + c3.a + c4.a) >> 2,
                            (c1.r + c2.r + c3.r + c4.r) >> 2,
                            (c1.g + c2.g + c3.g + c4.g) >> 2,
                            (c1.b + c2.b + c3.b + c4.b) >> 2);

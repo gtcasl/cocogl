@@ -20,7 +20,7 @@ private:
   int rotation_;
 
 public:
-   CubeTest(EGLNativeWindowType window) : Renderer(window) {}
+  CubeTest(EGLNativeWindowType window) : Renderer(window) {}
 
   bool OnInitialize() {
 

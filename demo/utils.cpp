@@ -16,18 +16,18 @@
 #include <fstream>
 
 struct __attribute__((__packed__)) tga_header_t {
-  int8_t  idlength;
-  int8_t  colourmaptype;
-  int8_t  datatypecode;
+  int8_t idlength;
+  int8_t colourmaptype;
+  int8_t datatypecode;
   int16_t colourmaporigin;
   int16_t colourmaplength;
-  int8_t  colourmapdepth;
+  int8_t colourmapdepth;
   int16_t x_origin;
   int16_t y_origin;
   int16_t width;
   int16_t height;
-  int8_t  bitsperpixel;
-  int8_t  imagedescriptor;
+  int8_t bitsperpixel;
+  int8_t imagedescriptor;
 };
 
 void Ortho2D(int width, int height) {
@@ -104,19 +104,22 @@ void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
   glTranslatef(-eyex, -eyey, -eyez);
 }
 
-GLuint loadTexture(const std::vector<uint8_t>& pixels, int width, int height, int bpp) {
+GLuint loadTexture(const std::vector<uint8_t> &pixels, int width, int height,
+                   int bpp) {
+  assert(bpp == 32 || bpp == 24);
   GLuint texture;
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, texture);
   glTexParameterx(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
   auto format = (bpp == 32) ? GL_RGBA : GL_RGB;
   glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format,
-                GL_UNSIGNED_BYTE, pixels.data());
+               GL_UNSIGNED_BYTE, pixels.data());
   assert(GL_NO_ERROR == glGetError());
   return texture;
 }
 
-bool LoadTGA(const char *filename, std::vector<uint8_t>& pixels, int* width, int* height, int* bpp) {
+bool LoadTGA(const char *filename, std::vector<uint8_t> &pixels, int *width,
+             int *height, int *bpp) {
   std::ifstream ifs(filename, std::ios::in | std::ios::binary);
   if (!ifs.is_open()) {
     std::cerr << "couldn't open TGA file: " << filename << "!" << std::endl;
@@ -124,8 +127,8 @@ bool LoadTGA(const char *filename, std::vector<uint8_t>& pixels, int* width, int
   }
 
   tga_header_t header;
-  ifs.read(reinterpret_cast<char*>(&header), sizeof(tga_header_t)); 
-   if (ifs.fail()) {
+  ifs.read(reinterpret_cast<char *>(&header), sizeof(tga_header_t));
+  if (ifs.fail()) {
     std::cerr << "invalid TGA file header!" << std::endl;
     return false;
   }
@@ -152,7 +155,7 @@ bool LoadTGA(const char *filename, std::vector<uint8_t>& pixels, int* width, int
     for (int y = 0; y < header.height; ++y) {
       // Read current line of pixels
       auto line = pixels.data() + y * pitch;
-      ifs.read(reinterpret_cast<char*>(line), pitch);
+      ifs.read(reinterpret_cast<char *>(line), pitch);
       if (ifs.fail()) {
         std::cerr << "invalid TGA file!" << std::endl;
         return false;
@@ -176,5 +179,5 @@ bool LoadTGA(const char *filename, std::vector<uint8_t>& pixels, int* width, int
   *height = header.height;
   *bpp = header.bitsperpixel;
 
-  return true;  
+  return true;
 }

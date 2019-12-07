@@ -22,7 +22,8 @@ private:
   float lightRotation_;
 
 public:
-  SceneTest(EGLNativeWindowType window) : Renderer(window), rotation_(0), lightRotation_(0) {}
+  SceneTest(EGLNativeWindowType window)
+      : Renderer(window), rotation_(0), lightRotation_(0) {}
 
   bool OnInitialize() {
     /*Remember: because we are programming for a mobile device, we cant

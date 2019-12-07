@@ -116,22 +116,20 @@ bool Rasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
 
 void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
                                    uint32_t clipUnion) {
-  auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+  auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
-  auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
+  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
 
-  uint32_t iNext = clipVerticesBaseIndex_;
-  uint32_t iFrom = i0;
-  uint32_t iTo = i1;
+  auto iNext = clipVerticesBaseIndex_;
+  auto iFrom = i0;
+  auto iTo = i1;
 
   floatf fDistA, fDistB;
 
-  for (uint32_t plane = 0; clipUnion; clipUnion >>= 1, ++plane) {
+  for (int plane = 0; clipUnion; clipUnion >>= 1, ++plane) {
     if (clipUnion & 0x1) {
-      const VECTOR4 &vFrom = pvClipPos[iFrom];
-      const VECTOR4 &vTo = pvClipPos[iTo];
+      auto &vFrom = pvClipPos[iFrom];
+      auto &vTo = pvClipPos[iTo];
 
       switch (plane) {
       default:
@@ -351,8 +349,7 @@ uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
 void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
                                    floatf fDistB, uint32_t i2) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
-  auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+  auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
   auto factor = LerpFactor<float30>(fDistA, fDistB);
   assert((factor >= Math::Zero<float30>()) &&

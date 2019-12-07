@@ -307,7 +307,7 @@ template <> inline void GLContext::get<int>(GLenum pname, int *pParams) {
     break;
 
   case GL_COMPRESSED_TEXTURE_FORMATS:
-    for (uint32_t i = 0; i < __countof(g_compressedFormats); ++i) {
+    for (int i = 0; i < __countof(g_compressedFormats); ++i) {
       pParams[i] = g_compressedFormats[i];
     }
     break;

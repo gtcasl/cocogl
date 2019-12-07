@@ -24,7 +24,8 @@ private:
   int rotation_;
 
 public:
-  TextureTest(EGLNativeWindowType window) : Renderer(window), offset_(0), rotation_(0) {}
+  TextureTest(EGLNativeWindowType window)
+      : Renderer(window), offset_(0), rotation_(0) {}
 
   ~TextureTest() {}
 
@@ -59,10 +60,10 @@ public:
     Perspective(45.0f, ratio, 1.0f, 40.0f);
     glMatrixMode(GL_MODELVIEW);
 
-     {
+    {
       std::vector<uint8_t> pixels;
       int width, height, bpp;
-      if (!LoadTGA("media/door128.tga", pixels, &width, &height, &bpp))    
+      if (!LoadTGA("media/door128.tga", pixels, &width, &height, &bpp))
         return false;
       texture1_ = loadTexture(pixels, width, height, bpp);
     }
@@ -70,7 +71,7 @@ public:
     {
       std::vector<uint8_t> pixels;
       int width, height, bpp;
-      if (!LoadTGA("media/fire128.tga", pixels, &width, &height, &bpp))    
+      if (!LoadTGA("media/fire128.tga", pixels, &width, &height, &bpp))
         return false;
       texture2_ = loadTexture(pixels, width, height, bpp);
     }

@@ -13,29 +13,48 @@
 //
 #pragma once
 
-class Renderer {
+class GLFont {
 public:
-  Renderer(EGLNativeWindowType window);
+  GLFont();
 
-  virtual ~Renderer();
+  ~GLFont();
 
-  virtual bool OnInitialize();
+  bool initialize(const char *filename);
 
-  virtual void OnRender() = 0;
+  void setColor(float r, float g, float b);
 
-  virtual void OnKeyNext();
+  void drawText(const char *text, float x, float y, float scale);
 
-  virtual void OnKeyPrev();
+  void destroy();
 
-  virtual void OnDestroy();
+private:
+  enum { NUMCHARS = 256, SPACE = 32 };
 
-  void Present();
+  struct glyph_t {
+    int l;
+    int t;
+    int w;
+    int h;
+  };
 
-protected:
-  EGLDisplay glDisplay_;
-  EGLConfig glConfig_;
-  EGLContext glContext_;
-  EGLSurface glSurface_;
-  EGLint width_;
-  EGLint height_;
+  struct vertex_t {
+    GLfloat x;
+    GLfloat y;
+    GLfloat s;
+    GLfloat t;
+  };
+
+  std::vector<vertex_t> vertices_;
+  std::array<uint8_t, 256> widths_;
+
+  float col_factor_;
+  float row_factor_;
+  float inv_width_;
+  int cell_height_;
+
+  float cr_;
+  float cg_;
+  float cb_;
+
+  GLuint texture_;
 };

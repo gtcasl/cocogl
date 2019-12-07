@@ -272,7 +272,7 @@ int _EGLConfig::compare(const _EGLConfig *pConfigA,
       EGL_CONFIG_ID,
   };
 
-  for (uint32_t i = 0; i < __countof(sortedList); ++i) {
+  for (int i = 0; i < __countof(sortedList); ++i) {
     EGLint name = sortedList[i];
     EGLint valueA = pConfigA->getAttribute(name);
     EGLint valueB = pConfigB->getAttribute(name);

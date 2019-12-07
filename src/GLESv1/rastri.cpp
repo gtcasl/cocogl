@@ -23,7 +23,7 @@ void Rasterizer::drawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   uint32_t flags2 = pwFlags[i2];
 
   // Check if we need to clip vertices
-  uint32_t clipUnion = (flags0 | flags1 | flags2) & CLIPPING_MASK;
+  auto clipUnion = (flags0 | flags1 | flags2) & CLIPPING_MASK;
   if (0 == clipUnion) {
     // Do back-face culling in screen space
     if (this->cullScreenSpaceTriangle(i0, i1, i2)) {
@@ -32,7 +32,7 @@ void Rasterizer::drawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
     }
   } else {
     // Discard primitives falling outside of the same plane.
-    uint32_t clipIntersect = (flags0 & flags1 & flags2) & CLIPPING_MASK;
+    auto clipIntersect = (flags0 & flags1 & flags2) & CLIPPING_MASK;
     if (0 == clipIntersect) {
       // Do Back-face culling in clip space
       if (this->cullClipSpaceTriangle(i0, i1, i2)) {
@@ -51,22 +51,22 @@ bool Rasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
   auto &v1 = pvScreenPos[i1];
   auto &v2 = pvScreenPos[i2];
 
-  auto fdx10 = v1.x - v0.x;
-  auto fdy10 = v1.y - v0.y;
-  auto fdx20 = v2.x - v0.x;
-  auto fdy20 = v2.y - v0.y;
+  auto i4dx10 = v1.x - v0.x;
+  auto i4dy10 = v1.y - v0.y;
+  auto i4dx20 = v2.x - v0.x;
+  auto i4dy20 = v2.y - v0.y;
 
   uint32_t culled;
 
   auto cullStates = cullStates_;
   if (CULL_FRONT_AND_BACK != cullStates.CullFace) {
-    auto fSign = Math::FastMul<fixed8>(fdx10, fdy20) -
-                 Math::FastMul<fixed8>(fdx20, fdy10);
+    auto i8Sign = Math::FastMul<fixed8>(i4dx10, i4dy20) -
+                  Math::FastMul<fixed8>(i4dx20, i4dy10);
     if (CULL_BACK == cullStates.CullFace) {
-      culled = static_cast<uint32_t>(fSign < Math::Zero<fixed8>()) ^
+      culled = static_cast<uint32_t>(i8Sign < Math::Zero<fixed8>()) ^
                cullStates.FrontFace;
     } else {
-      culled = static_cast<uint32_t>(fSign > Math::Zero<fixed8>()) ^
+      culled = static_cast<uint32_t>(i8Sign > Math::Zero<fixed8>()) ^
                cullStates.FrontFace;
     }
   } else {
@@ -79,7 +79,7 @@ bool Rasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
     }
   }
 
-  uint32_t colorIndex = cullStates.bTwoSidedLighting && culled;
+  auto colorIndex = cullStates.bTwoSidedLighting && culled;
   pbVertexColor_ = pbVertexData_[VERTEX_COLOR0 + colorIndex];
 
   return true;
@@ -159,8 +159,8 @@ void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
       }
     }
   } else {
-    fixedDDA fdx2 = fixedDDA(g.i4dx13) / g.i4dy13;
-    fixedDDA fx2 = fixedDDA(i4x0) + fdx2 * i4Y0Diff + fRndCeil;
+    auto fdx2 = fixedDDA(g.i4dx13) / g.i4dy13;
+    auto fx2 = fixedDDA(i4x0) + fdx2 * i4Y0Diff + fRndCeil;
 
     if (bMiddleIsRight) {
       fdx0 = fdx2;
@@ -466,7 +466,7 @@ Register *Rasterizer::applyAffineTextureMipmapGradient(Register *pRegister) {
           rasterID_.Flags.TextureMips &= ~(1 << j);
         } else {
           auto fJ = static_cast<fixed16>(fM);
-          uint32_t mipLevel = Math::iLog2(fJ.data()) - fixed16::FRAC;
+          auto mipLevel = Math::iLog2(fJ.data()) - fixed16::FRAC;
           if (mipLevel >= sampler.MaxMipLevel) {
             // Use nearest mipmap filtering
             rasterID_.Textures[j].MipFilter = FILTER_NEAREST;

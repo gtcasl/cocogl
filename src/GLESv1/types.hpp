@@ -305,10 +305,10 @@ struct PolygonOffset {
 
 struct ScreenXform {
   fixed4 fMinX;
-  int iScaleX;
+  float4 fScaleX;
 
   fixed4 fMinY;
-  int iScaleY;
+  float4 fScaleY;
 
   float20 fMinZ;
   floatf fScaleZ;

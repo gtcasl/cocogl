@@ -211,7 +211,7 @@ protected:
                              uint32_t i1, uint32_t i2);
 
   void ensureClearColor() {
-    Color4 tmp(Math::ToUNORM8(Math::Sat(vClearColor_.w)),
+    ColorARGB tmp(Math::ToUNORM8(Math::Sat(vClearColor_.w)),
                Math::ToUNORM8(Math::Sat(vClearColor_.x)),
                Math::ToUNORM8(Math::Sat(vClearColor_.y)),
                Math::ToUNORM8(Math::Sat(vClearColor_.z)));
@@ -225,7 +225,7 @@ protected:
   }
 
   void ensureColorWriteMask() {
-    Color4 tmp(cColorWriteMask_);
+    ColorARGB tmp(cColorWriteMask_);
     pSurfDraw_->convertColor(&rasterData_.ColorWriteMask, tmp);
     dirtyFlags_.ColorWriteMask = 0;
   }

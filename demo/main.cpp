@@ -21,7 +21,6 @@
 // Tests
 #include "clear_t.hpp"
 #include "cube_t.hpp"
-#include "debug_t.hpp"
 #include "fog_t.hpp"
 #include "line_t.hpp"
 #include "quad_t.hpp"
@@ -29,6 +28,7 @@
 #include "stencil_t.hpp"
 #include "texture_t.hpp"
 #include "triangle_t.hpp"
+#include "text_t.hpp"
 
 int testid = 2;
 int width = 640;
@@ -57,8 +57,21 @@ static void parse_args(int argc, char **argv) {
   }
 }
 
-static Renderer* create_test(int tid, EGLNativeWindowType window) {
-  Renderer *test = nullptr;
+Renderer *test = nullptr;
+
+void cleanup() {
+  if (test) {
+    test->OnDestroy();
+    delete test;
+    test = nullptr;
+  }
+}
+
+static void create_test(int tid, EGLNativeWindowType window) {
+  if (test) {
+    cleanup();
+  }
+
   switch (tid) {
   case 0:
     test = new ClearTest(window);
@@ -88,49 +101,43 @@ static Renderer* create_test(int tid, EGLNativeWindowType window) {
     test = new QuadTest(window);
     break;
   case 9:
-    test = new DebugTest(window);
+    test = new TextTest(window);
     break;
   default:
     std::cout << "invalid testid=" << testid << std::endl;
     exit(-1);
   }
+
   if (!test->OnInitialize()) {
-    std::cout << "test initiaklization failed" << std::endl;
-    delete test;
-    exit(1);
+    cleanup();
+    exit(-1);
   }
-  return test;
 }
 
 int main(int argc, char **argv) {
   //--
   parse_args(argc, argv);
 
-
   bool text_enable = true;
   int loop = 1;
   SDL_Event event;
-  
+
   auto glesWindow = SDL_CreateWindow("CocoGL Demo", SDL_WINDOWPOS_CENTERED,
-                                SDL_WINDOWPOS_CENTERED, width, height, 0);
-  
+                                     SDL_WINDOWPOS_CENTERED, width, height, 0);
+
   SDL_SysWMinfo sysInfo;
   SDL_VERSION(&sysInfo.version);
   SDL_GetWindowWMInfo(glesWindow, &sysInfo);
   auto window = static_cast<EGLNativeWindowType>(sysInfo.info.x11.window);
-  
-   // create test
-  auto test = create_test(testid, window);
 
-  // create text renderer
-  auto tr = new TextRenderer();
-  if (!tr->initialize("media/font.tga"))
-    exit(1);
+  // create test
+  create_test(testid, window);
 
-  auto start_time = std::chrono::high_resolution_clock::now();
   uint64_t num_frames = 0;
+  float FPS;
 
   while (loop) {
+    auto start_time = std::chrono::high_resolution_clock::now();
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
       case SDL_KEYDOWN:
@@ -138,18 +145,14 @@ int main(int argc, char **argv) {
         case SDLK_t:
           text_enable = !text_enable;
           break;
-        case SDLK_PAGEUP:          
+        case SDLK_PAGEUP:
           if (testid > 0) {
-            test->OnDestroy();
-            delete test;
-            test = create_test(--testid, window);
+            create_test(--testid, window);
           }
           break;
         case SDLK_PAGEDOWN:
           if (testid < 9) {
-            test->OnDestroy();
-            delete test;
-            test = create_test(++testid, window);
+            create_test(++testid, window);
           }
           break;
         case SDLK_LEFT:
@@ -168,24 +171,28 @@ int main(int argc, char **argv) {
     }
 
     test->OnRender();
-    if (text_enable) {
-      tr->drawText("o", 0, 0, 1.0f / 640);
-    }
+
     test->Present();
-    ++num_frames;    
+
+    ++num_frames;
+    if (0 == (num_frames % 16)) {
+      auto end_time = std::chrono::high_resolution_clock::now();
+      auto elapsed_time =
+          std::chrono::duration_cast<std::chrono::duration<float>>(end_time -
+                                                                   start_time);
+      FPS = 16 / elapsed_time.count();
+
+      char text[64];
+      snprintf(text, 64, "CocoGL Demo: [%d] %.2f fps", testid, FPS);
+      SDL_SetWindowTitle(glesWindow, text);
+    }
   }
 
-  auto end_time = std::chrono::high_resolution_clock::now();
-  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(
-      end_time - start_time);
-  auto FPS = num_frames / elapsed_time.count();
   std::cout << "FPS: " << FPS << std::endl;
+  std::cout << "Total frames: " << num_frames << std::endl;
 
   // Cleaning
-  tr->destroy();
-  delete tr;
-  test->OnDestroy();  
-  delete test;
+  cleanup();
 
   SDL_DestroyWindow(glesWindow);
 

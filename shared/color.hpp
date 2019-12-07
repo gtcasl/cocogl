@@ -54,62 +54,11 @@ struct ColorARGB {
     this->r = static_cast<uint8_t>(r);
   }
 
-  ColorARGB(int value) { this->value = value; }
-};
+  ColorARGB(int value) { 
+    this->value = value; 
+  }  
 
-///////////////////////////////////////////////////////////////////////////////
-
-struct Color4 {
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
-  union {
-    struct {
-      int b, g, r, a;
-    };
-    struct {
-      int m[4];
-    };
-  };
-  DISABLE_WARNING_POP
-
-  Color4() {}
-
-  Color4(int a, int r, int g, int b) {
-    assert((a >= 0) && (a <= 0xff));
-    assert((r >= 0) && (r <= 0xff));
-    assert((g >= 0) && (g <= 0xff));
-    assert((b >= 0) && (b <= 0xff));
-    this->b = b;
-    this->g = g;
-    this->r = r;
-    this->a = a;
-  }
-
-  Color4(int r, int g, int b) {
-    assert((r >= 0) && (r <= 0xff));
-    assert((g >= 0) && (g <= 0xff));
-    assert((b >= 0) && (b <= 0xff));
-    this->b = b;
-    this->g = g;
-    this->r = r;
-  }
-
-  Color4(const ColorARGB color) {
-    this->b = color.b;
-    this->g = color.g;
-    this->r = color.r;
-    this->a = color.a;
-  }
-
-  Color4(int a, int rgb) {
-    this->b = rgb;
-    this->a = a;
-  }
-
-  void operator=(const Color4 &rhs) {
-    this->b = rhs.b;
-    this->g = rhs.g;
-    this->r = rhs.r;
-    this->a = rhs.a;
+  void operator=(const ColorARGB &rhs) {
+    this->value = rhs.value;
   }
 };

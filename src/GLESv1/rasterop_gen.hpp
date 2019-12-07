@@ -16,22 +16,22 @@
 
 typedef bool (*Pfncompare)(uint32_t a, uint32_t b);
 
-typedef void (*PfnGetTexelColor)(Color4 *pOut, const SurfaceDesc &surface,
+typedef ColorARGB (*PfnGetTexelColor)(const SurfaceDesc &surface,
                                  fixedRX fU, fixedRX fV);
 
-typedef void (*PfnGetSamplerColor)(Color4 *pOut,
+typedef ColorARGB (*PfnGetSamplerColor)(
                                    PfnGetTexelColor pfnGetTexelColorMin,
                                    PfnGetTexelColor pfnGetTexelColorMag,
                                    const Sampler &sampler, fixedRX fU,
                                    fixedRX fV, fixedRX fM);
 
-typedef void (*PfnGetTexEnvColor)(Color4 *pInOut, const Color4 &cTexture,
-                                  ColorARGB cEnvColor);
+typedef ColorARGB (*PfnGetTexEnvColor)(const ColorARGB& cColor, const ColorARGB &cTexture,
+                                  const  ColorARGB& cEnvColor);
 
-typedef void (*PfnBlend)(Color4 *pInOut, const uint8_t *pCB);
+typedef ColorARGB (*PfnBlend)(const ColorARGB& cColor, const uint8_t *pCB);
 
 typedef void (*PfnWriteColor)(const RasterData &rasterData,
-                              const Color4 &cSrcColor, uint8_t *pCB);
+                              const ColorARGB &cSrcColor, uint8_t *pCB);
 
 class GenericRasterOp : public IRasterOp {
 public:
@@ -48,24 +48,22 @@ public:
 
   uint8_t getDepthStencilStride() const { return depthStencilStride_; }
 
-  void getSamplerColor(Color4 *pOut, uint32_t unit,
-                       const RasterData &rasterData, fixedRX fU,
+  ColorARGB getSamplerColor(uint32_t unit, const RasterData &rasterData, fixedRX fU,
                        fixedRX fV) const {
-    (samplers_[unit].pfnGetTexelColorMag)(
-        pOut, rasterData.Samplers[unit].pMipLevels[0], fU, fV);
+    return (samplers_[unit].pfnGetTexelColorMag)(
+        rasterData.Samplers[unit].pMipLevels[0], fU, fV);
   }
 
-  void getSamplerColor(Color4 *pOut, uint32_t unit,
+  ColorARGB getSamplerColor(uint32_t unit,
                        const RasterData &rasterData, fixedRX fU, fixedRX fV,
                        fixedRX fM) const;
 
-  void getTexEnvColor(Color4 *pInOut, const Color4 &in, uint32_t unit,
+  ColorARGB getTexEnvColor(const ColorARGB& cColor, const ColorARGB &in, uint32_t unit,
                       const RasterData &rasterData) const {
-    (samplers_[unit].pfnGetTexEnvColor)(
-        pInOut, in, rasterData.Samplers[unit].cEnvColor_MaxMipLevel);
+    return(samplers_[unit].pfnGetTexEnvColor)(cColor, in, rasterData.Samplers[unit].cEnvColor_MaxMipLevel);
   }
 
-  bool doAlphaTest(const RasterData &rasterData, const Color4 &cColor) const {
+  bool doAlphaTest(const RasterData &rasterData, const ColorARGB &cColor) const {
     return (pfnAlphaTest_)(cColor.a, rasterData.AlphaRef);
   }
 
@@ -78,14 +76,14 @@ public:
                            *reinterpret_cast<const uint16_t *>(pDSBuffer));
   }
 
-  static void applyFog(const RasterData &rasterData, Color4 *pInOut,
+  static ColorARGB applyFog(const RasterData &rasterData, const ColorARGB& cColor,
                        fixedRX fFactor);
 
-  void doBlend(Color4 *pInOut, const uint8_t *pCB) const {
-    (pfnBlend_)(pInOut, pCB);
+  ColorARGB doBlend(const ColorARGB& cColor, const uint8_t *pCB) const {
+    return (pfnBlend_)(cColor, pCB);
   }
 
-  void writeColor(const RasterData &rasterData, const Color4 &cColor,
+  void writeColor(const RasterData &rasterData, const ColorARGB &cColor,
                   uint8_t *pCB) const {
     (pfnWriteColor_)(rasterData, cColor, pCB);
   }

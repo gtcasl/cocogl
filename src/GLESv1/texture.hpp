@@ -171,7 +171,9 @@ public:
 
   TexUnit() : pTexture_(nullptr) {}
 
-  ~TexUnit() { __safeRelease(pTexture_); }
+  ~TexUnit() { 
+    __safeRelease(pTexture_); 
+  }
 
   Texture *getTexture() const { return pTexture_; }
 
@@ -179,11 +181,9 @@ public:
     if (pTexture) {
       pTexture->addRef();
     }
-
     if (pTexture_) {
       pTexture_->release();
     }
-
     pTexture_ = pTexture;
   }
 

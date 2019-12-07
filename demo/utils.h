@@ -21,7 +21,8 @@ void LookAtf(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
              GLfloat centery, GLfloat centerz, GLfloat upx, GLfloat upy,
              GLfloat upz);
 
-GLuint loadTexture(const std::vector<uint8_t>& pixels, int width, int height, int bpp);
+GLuint loadTexture(const std::vector<uint8_t> &pixels, int width, int height,
+                   int bpp);
 
-bool LoadTGA(const char *filename, std::vector<uint8_t>& pixels, int* width, int* height, int* bpp);
-
+bool LoadTGA(const char *filename, std::vector<uint8_t> &pixels, int *width,
+             int *height, int *bpp);

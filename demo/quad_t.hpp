@@ -34,10 +34,10 @@ public:
     */
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-     {
+    {
       std::vector<uint8_t> pixels;
       int width, height, bpp;
-      if (!LoadTGA("media/lady.tga", pixels, &width, &height, &bpp))    
+      if (!LoadTGA("media/lady.tga", pixels, &width, &height, &bpp))
         return false;
       texture_ = loadTexture(pixels, width, height, bpp);
     }
@@ -354,9 +354,7 @@ public:
     if (testcase_ > 0) {
       --testcase_;
     }
-  }  
-
-  void OnDestroy() {
-    glDeleteTextures(1, &texture_);  
   }
+
+  void OnDestroy() { glDeleteTextures(1, &texture_); }
 };

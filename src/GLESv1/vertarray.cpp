@@ -24,14 +24,14 @@ GLenum VertexArray::prepare(VertexDecoder *pDecoder, int first,
                             uint32_t count) {
   assert(pDecoder);
 
-  int offset = first * this->Stride;
+  auto offset = first * this->Stride;
   auto pBits = this->pBuffer->getBits();
   if (pBits) {
     pDecoder->pBits = pBits;
     offset += reinterpret_cast<uintptr_t>(this->pPointer);
-    uint32_t dataSize = VertexDataSize(this->Format);
-    int padding = this->Stride - offset - dataSize;
-    uint32_t bufSize = count * this->Stride - padding;
+    auto dataSize = VertexDataSize(this->Format);
+    auto padding = this->Stride - offset - dataSize;
+    auto bufSize = count * this->Stride - padding;
     if (bufSize <= this->pBuffer->getSize()) {
       pDecoder->pBits = pBits;
     } else {
