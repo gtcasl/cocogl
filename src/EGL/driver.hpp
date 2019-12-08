@@ -18,61 +18,43 @@ class _EGLSurface;
 class _EGLDriver {
 public:
   _EGLDriver();
+
   ~_EGLDriver();
 
   EGLint getDisplay(uint32_t *phandle, EGLNativeDisplayType display_id);
 
   void setError(EGLint error);
+
   EGLint getError() const;
+
+  void makeCurrent(_EGLContext *pContext, 
+                   std::thread::id threadID,
+                   _EGLSurface *pSurfDraw, 
+                   _EGLSurface *pSurfRead);
+
+  _EGLContext *getCurrentContext() const;
 
   template <typename T>
   inline T getObject(void *handle) const {
     return reinterpret_cast<T>(
-        handles_->getObject(reinterpret_cast<intptr_t>(handle), this));
-  }
-
-  template <typename T>
-  inline T getObject(void *handle, void *pOwner) const {
-    return reinterpret_cast<T>(
-        handles_->getObject(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_.getObject(reinterpret_cast<intptr_t>(handle)));
   }
 
   EGLint registerObject(uint32_t *phandle, void *pObject, uint8_t type) {
     return EGLERROR_FROM_HRESULT(
-        handles_->insert(phandle, pObject, type, this));
-  }
-
-  EGLint registerObject(uint32_t *phandle, void *pObject, uint8_t type,
-                        void *pOwner) {
-    return EGLERROR_FROM_HRESULT(
-        handles_->insert(phandle, pObject, type, pOwner));
+        handles_.insert(phandle, pObject, type));
   }
 
   template <typename T>
-  inline T unregisterObject(void *handle) const {
+  inline T unregisterObject(void *handle) {
     return reinterpret_cast<T>(
-        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
-  }
-
-  template <typename T>
-  inline T unregisterObject(void *handle, void *pOwner) const {
-    return reinterpret_cast<T>(
-        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_.deleteHandle(reinterpret_cast<intptr_t>(handle)));
   }
 
   uint32_t getHandle(const void *pObject) {
-    return handles_->findHandle(pObject, this);
+    return handles_.findHandle(pObject);
   }
-
-  uint32_t getHandle(const void *pObject, void *pOwner) {
-    return handles_->findHandle(pObject, pOwner);
-  }
-
-  void makeCurrent(_EGLContext *pContext, std::thread::id threadID,
-                   _EGLSurface *pSurfDraw, _EGLSurface *pSurfRead);
-
-  _EGLContext *getCurrentContext() const;
 
 private:
-  HandleTable *handles_;
+  HandleTable handles_;
 };

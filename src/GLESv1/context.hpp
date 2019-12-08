@@ -19,8 +19,9 @@
 class GLContext : public Rasterizer {
 public:
   //--
-  static GLenum Create(GLContext **ppContext, HandleTable *pHandles,
-                       RasterCache *pRasterCache, GLContext *pCtxShared);
+  static GLenum Create(GLContext **ppContext, 
+                       RasterCache *pRasterCache, 
+                       GLContext *pCtxShared);
 
   //--
   void setDrawSurface(GLSurface *pSurface);
@@ -220,8 +221,7 @@ public:
   void finish();
 
 private:
-  GLContext(HandleTable *pHandles, RasterCache *pRasterCache,
-            GLContext *pSharedCtx);
+  GLContext(RasterCache *pRasterCache, GLContext *pCtxShared);
 
   ~GLContext();
 

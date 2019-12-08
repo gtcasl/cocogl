@@ -19,13 +19,16 @@ class _EGLSurface;
 
 class _EGLContext : public Object {
 public:
-  static EGLint Create(_EGLContext **ppContext, _EGLDisplay *pDisplay,
-                       _EGLConfig *pConfig, _EGLContext *pCtxShared);
+  static EGLint Create(_EGLContext **ppContext, 
+                       _EGLDisplay *pDisplay,
+                       _EGLConfig *pConfig, 
+                       _EGLContext *pCtxShared);
 
   EGLint getAttribute(EGLint name, EGLint *pValue);
 
-  void setBindings(std::thread::id threadID, _EGLSurface *pSurfDraw,
-                   _EGLSurface *pSurfRead);
+  void setBindings(std::thread::id threadID, 
+                   _EGLSurface *pSurfDraw,
+                   _EGLSurface *pSurfRead);  
 
   auto getDisplay() const {
     return pDisplay_;
@@ -56,7 +59,9 @@ public:
   }
 
 private:
+
   _EGLContext(_EGLDisplay *pDisplay, _EGLConfig *pConfig);
+
   ~_EGLContext();
 
   EGLint initialize(_EGLContext *pCtxShared);

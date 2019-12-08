@@ -15,52 +15,54 @@
 #include "stdafx.h"
 #include "handle.hpp"
 
-void *HandleTable::getObject(uint32_t handle, const void *pOwner) {
-  std::lock_guard<std::mutex> lock(cs_);
+HandleTable::HandleTable()
+  : capacity_(0)
+  , entries_(nullptr)
+  , activelist_(nullptr)
+  , size_(0)
+{}
 
+HandleTable::~HandleTable() {
+  this->clear();
+}
+
+void *HandleTable::getObject(uint32_t handle) const {
   // Retrieve the corresponding table entry
   auto pEntry = this->getEntry(handle);
-  if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
+  if (pEntry) {
     return pEntry->pObject;
   }
-
   return nullptr;
 }
 
-uint8_t HandleTable::getType(uint32_t handle, const void *pOwner) {
-  std::lock_guard<std::mutex> lock(cs_);
-
+uint8_t HandleTable::getType(uint32_t handle) const {
   // Retrieve the corresponding table entry
   auto pEntry = this->getEntry(handle);
-  if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
+  if (pEntry) {
     return pEntry->Type;
   }
 
   return 0;
 }
 
-HRESULT HandleTable::insert(uint32_t *phandle, void *pObject, uint8_t type,
-                            void *pOwner) {
-  std::lock_guard<std::mutex> lock(cs_);
-
-  if ((nullptr == pObject) || (0 == type) || (nullptr == phandle)) {
+HRESULT HandleTable::insert(uint32_t *phandle, void *pObject, uint8_t type) {
+  if ((nullptr == pObject) || (0 == type) || (nullptr == phandle))
     return E_FAIL;
-  }
 
   uint32_t index;
 
-  if (count_ < size_) {
+  if (size_ < capacity_) {
     // Find next free handle entry int he table
-    for (index = 0; index < size_; ++index) {
+    for (index = 0; index < capacity_; ++index) {
       if (0 == entries_[index].Type) {
         break;
       }
     }
   } else {
-    index = size_;
+    index = capacity_;
 
     // Calculate the table new size
-    uint32_t newSize = size_ + GROW_INCREMENT;
+    uint32_t newSize = capacity_ + GROW_INCREMENT;
     if (newSize > HANDLE_INDEX_MASK)
       return E_FAIL;
 
@@ -90,9 +92,8 @@ HRESULT HandleTable::insert(uint32_t *phandle, void *pObject, uint8_t type,
     }
 
     // Reset newly allocated entries
-    for (uint32_t i = size_; i < newSize; ++i) {
+    for (uint32_t i = capacity_; i < newSize; ++i) {
       Entry &entry = pEntries[i];
-      entry.pOwner = nullptr;
       entry.Type = 0;
       entry.Reuse = 0;
       entry.pObject = nullptr;
@@ -100,18 +101,17 @@ HRESULT HandleTable::insert(uint32_t *phandle, void *pObject, uint8_t type,
     }
 
     entries_ = pEntries;
-    size_ = newSize;
+    capacity_ = newSize;
   }
 
   // Update the new handle entry
   auto pEntryNew = entries_ + index;
-  pEntryNew->pOwner = pOwner;
   pEntryNew->Type = static_cast<uint8_t>(type);
   pEntryNew->pObject = pObject;
   ++pEntryNew->Reuse;
   pEntryNew->pNext = nullptr;
 
-  // Add the entry to the active list ( sorted by address )
+  // Add the entry to the active list
   Entry *pPrevEntry = nullptr;
   auto pCurEntry = activelist_;
   while (pCurEntry && (pCurEntry < pEntryNew)) {
@@ -127,7 +127,7 @@ HRESULT HandleTable::insert(uint32_t *phandle, void *pObject, uint8_t type,
   }
 
   // Update the handle count
-  ++count_;
+  ++size_;
 
   // Return the new handle
   *phandle = (pEntryNew->Serial << HANDLE_SERIAL_SHIFT) | index;
@@ -135,12 +135,10 @@ HRESULT HandleTable::insert(uint32_t *phandle, void *pObject, uint8_t type,
   return S_OK;
 }
 
-void *HandleTable::deleteHandle(uint32_t handle, const void *pOwner) {
-  std::lock_guard<std::mutex> lock(cs_);
-
+void *HandleTable::deleteHandle(uint32_t handle) {
   // Retrieve the corresponding table entry
   auto pEntry = this->getEntry(handle);
-  if (pEntry && ((nullptr == pOwner) || (pEntry->pOwner == pOwner))) {
+  if (pEntry) {
     // Get the object pointer
     auto pObject = pEntry->pObject;
 
@@ -150,22 +148,19 @@ void *HandleTable::deleteHandle(uint32_t handle, const void *pOwner) {
     // Return the object
     return pObject;
   }
-
   return nullptr;
 }
 
 void HandleTable::optimize() {
-  std::lock_guard<std::mutex> lock(cs_);
-
   // Check if we need to optimize the table
-  if ((size_ - count_) < GROW_INCREMENT) {
+  if ((capacity_ - size_) < GROW_INCREMENT) {
     return;
   }
 
   uint32_t freeSlots = 0;
 
   // Calculate the size of consecutive free slots starting at the end
-  for (uint32_t i = size_; i--;) {
+  for (uint32_t i = capacity_; i--;) {
     if (entries_[i].Type != 0) {
       break;
     }
@@ -174,11 +169,11 @@ void HandleTable::optimize() {
   }
 
   if (freeSlots >= GROW_INCREMENT) {
-    size_ -= GROW_INCREMENT * (freeSlots / GROW_INCREMENT);
-    if (size_) {
+    capacity_ -= GROW_INCREMENT * (freeSlots / GROW_INCREMENT);
+    if (capacity_) {
       // Shrink the table's buffer
       entries_ =
-          reinterpret_cast<Entry *>(realloc(entries_, size_ * sizeof(Entry)));
+          reinterpret_cast<Entry *>(realloc(entries_, capacity_ * sizeof(Entry)));
       assert(entries_);
     } else {
       // Destroy table's buffer
@@ -190,7 +185,6 @@ void HandleTable::optimize() {
 
 HandleTable::Entry *HandleTable::deleteEntry(HandleTable::Entry *pEntry) {
   assert(pEntry);
-
   // Save the next entry
   auto pNextEntry = pEntry->pNext;
 
@@ -212,29 +206,46 @@ HandleTable::Entry *HandleTable::deleteEntry(HandleTable::Entry *pEntry) {
 
   // Reset the entry
   pEntry->Type = 0;
-  pEntry->pOwner = nullptr;
   pEntry->pObject = nullptr;
   pEntry->pNext = nullptr;
 
   // Update the handle count
-  --count_;
+  --size_;
 
   // Return the next entry
   return pNextEntry;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-HandleTable::Enumerator::Enumerator(HandleTable *pHandles, const void *pOwner) {
-  assert(pHandles);
-  std::lock_guard<std::mutex> lock(pHandles->cs_);
-
-  handles_ = pHandles;
-  list_ = pHandles->activelist_;
-  owner_ = pOwner;
-
-  // Find the next owned entry
-  while (list_ && pOwner && (list_->pOwner != pOwner)) {
-    list_ = list_->pNext;
+uint32_t HandleTable::findHandle(const void *pObject) {
+  auto enumerator = this->getEnumerator();
+  while (!enumerator.isEnd()) {
+    if (pObject == enumerator.getObject()) {
+      return this->getHandle(enumerator);
+    }
+    enumerator.moveNext();
   }
+  return 0;
+}
+
+HandleTable::Entry *HandleTable::getEntry(uint32_t handle) const {
+  // Get the handle entry from the table
+  auto index = this->getHandleIndex(handle);
+  if (index < capacity_) {
+    // Validate the handle serial
+    auto pEntry = entries_ + index;
+    if (pEntry->Serial == this->getHandleSerial(handle)) {
+      return pEntry;
+    }
+  }
+  return nullptr;
+}
+
+void HandleTable::clear() {
+  if (entries_) {
+    free(entries_);
+    entries_ = nullptr;
+  }
+  activelist_ = nullptr;
+  capacity_ = 0;    
+  size_ = 0;
 }

@@ -38,7 +38,7 @@ void GLContext::genTextures(GLsizei n, GLuint *phTextures) {
 
     uint32_t handle;
     err = GLERROR_FROM_HRESULT(
-        handles_->insert(&handle, pTexture, HANDLE_TEXTURE, this));
+        handles_.insert(&handle, pTexture, HANDLE_TEXTURE));
     if (__glFailed(err)) {
       __safeRelease(pTexture);
       __glError(err, "HandleTable::insert() failed, err = %d.\r\n", err);
@@ -63,11 +63,10 @@ void GLContext::bindTexture(GLenum target, GLuint texture) {
   Texture *pTexture = nullptr;
   if (texture) {
     // First lookup owned textures
-    pTexture = reinterpret_cast<Texture *>(handles_->getObject(texture, this));
+    pTexture = reinterpret_cast<Texture *>(handles_.getObject(texture));
     if ((nullptr == pTexture) && pCtxShared_) {
       // Second lookup the shared context textures
-      pTexture = reinterpret_cast<Texture *>(
-          handles_->getObject(texture, pCtxShared_));
+      pTexture = pCtxShared_->getObject<Texture *>(texture);
     }
 
     if (nullptr == pTexture) {
@@ -546,8 +545,7 @@ void GLContext::deleteTextures(GLsizei n, const GLuint *phTextures) {
        phTex != phEnd; ++phTex) {
     GLuint handle = *phTex;
     if (handle) {
-      auto pTexture =
-          reinterpret_cast<Texture *>(handles_->deleteHandle(handle, this));
+      auto pTexture = reinterpret_cast<Texture *>(handles_.deleteHandle(handle));
       if (pTexture) {
         // Unbind the texture if bound.
         for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {

@@ -21,7 +21,7 @@ _EGLContext::_EGLContext(_EGLDisplay *pDisplay, _EGLConfig *pConfig) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   assert(pDisplay);
-  pDisplay->addRef();
+  // pDisplay->addRef(); - prevent cyclic reference with display
   pDisplay_ = pDisplay;
 
   assert(pConfig);
@@ -44,11 +44,13 @@ _EGLContext::~_EGLContext() {
   __safeRelease(pSurfDraw_);
   __safeRelease(pSurfRead_);
   __safeRelease(pConfig_);
-  __safeRelease(pDisplay_);
+  //__safeRelease(pDisplay_);
 }
 
-EGLint _EGLContext::Create(_EGLContext **ppGLContext, _EGLDisplay *pDisplay,
-                           _EGLConfig *pConfig, _EGLContext *pCtxShared) {
+EGLint _EGLContext::Create(_EGLContext **ppGLContext, 
+                           _EGLDisplay *pDisplay,
+                           _EGLConfig *pConfig, 
+                           _EGLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
@@ -118,8 +120,10 @@ EGLint _EGLContext::getAttribute(EGLint name, EGLint *pValue) {
   return EGL_SUCCESS;
 }
 
-void _EGLContext::setBindings(std::thread::id threadID, _EGLSurface *pSurfDraw,
+void _EGLContext::setBindings(std::thread::id threadID, 
+                              _EGLSurface *pSurfDraw,
                               _EGLSurface *pSurfRead) {
+  
   threadID_ = threadID;
 
   if (pSurfDraw) {

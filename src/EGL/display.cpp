@@ -15,19 +15,18 @@
 #include "display.hpp"
 #include "config.hpp"
 
-_EGLDisplay::_EGLDisplay(EGLNativeDisplayType hNative, HandleTable *pHandles) {
+_EGLDisplay::_EGLDisplay(EGLNativeDisplayType hNative, bool isDefault) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
-  assert(pHandles);
-  pHandles->addRef();
-  handles_ = pHandles;
-
   hNative_ = hNative;
-  bInitialized_ = false;
+  isDefault = isDefault;
+  isInitialized_ = false;  
 }
 
 _EGLDisplay::~_EGLDisplay() {
   __profileAPI(" - %s()\n", __FUNCTION__);
+
+  this->terminate();
 
   if (hNative_) {
 #if defined(_WIN32)
@@ -36,23 +35,27 @@ _EGLDisplay::~_EGLDisplay() {
     XCloseDisplay(hNative_);
 #endif
   }
-
-  auto enumerator = handles_->getEnumerator(this);
-  while (!enumerator.isEnd()) {
-    reinterpret_cast<IObject *>(enumerator.removeNext())->release();
-  }
-
-  __safeRelease(handles_);
 }
 
-EGLint _EGLDisplay::Create(_EGLDisplay **ppDisplay, EGLNativeDisplayType hDC,
-                           HandleTable *pHandles) {
+EGLint _EGLDisplay::Create(_EGLDisplay **ppDisplay, EGLNativeDisplayType display_id) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
-  assert(pHandles && ppDisplay);
+  assert(ppDisplay);
+
+  bool isDefault = false;
+
+  if (EGL_DEFAULT_DISPLAY == display_id) {
+    // Set the default display ID
+    isDefault = true;
+#if defined(_WIN32)
+    display_id = GetDC(nullptr);
+#elif defined(__linux__)
+    display_id = XOpenDisplay(nullptr);
+#endif
+  }
 
   // Create a new display object
-  auto pDisplay = new _EGLDisplay(hDC, pHandles);
+  auto pDisplay = new _EGLDisplay(display_id, isDefault);
   if (nullptr == pDisplay) {
     __eglLogError("EGLDisplay allocation failed, out of memory");
     return EGL_BAD_ALLOC;
@@ -70,7 +73,7 @@ EGLint _EGLDisplay::initialize(EGLint *pMajor, EGLint *pMinor) {
 
   EGLint err;
 
-  if (!bInitialized_) {
+  if (!isInitialized_) {
 #if defined(COCOGL_RASTER_R5G6B5)
     err = this->createConfig(5, 6, 5, 0, 0, 0);
     if (__eglFailed(err)) {
@@ -109,7 +112,7 @@ EGLint _EGLDisplay::initialize(EGLint *pMajor, EGLint *pMinor) {
     }
 #endif
 
-    bInitialized_ = true;
+    isInitialized_ = true;
   }
 
   if (pMajor) {
@@ -153,7 +156,7 @@ EGLint _EGLDisplay::createConfig(EGLint red, EGLint green, EGLint blue,
 
   // Add the config object into handle table
   err = EGLERROR_FROM_HRESULT(
-      handles_->insert(&handle, pConfig, HANDLE_CONFIG, this));
+      handles_.insert(&handle, pConfig, HANDLE_CONFIG));
   if (__eglFailed(err)) {
     __eglLogError("HandleTable::insert() failed, err = %d.\r\n", err);
     __safeRelease(pConfig);
@@ -170,7 +173,7 @@ EGLint _EGLDisplay::queryString(const char **plpValue, EGLint name) {
   assert(plpValue);
 
   // Verify that the display was initialized
-  if (!bInitialized_) {
+  if (!isInitialized_) {
     __eglLogError("The display was not initialized.\r\n");
     return EGL_NOT_INITIALIZED;
   }
@@ -197,12 +200,13 @@ EGLint _EGLDisplay::queryString(const char **plpValue, EGLint name) {
 }
 
 EGLint _EGLDisplay::chooseConfig(const EGLint *pAttrib_list,
-                                 EGLConfig *pConfigs, EGLint config_size,
+                                 EGLConfig *pConfigs, 
+                                 EGLint config_size,
                                  EGLint *pNum_config) {
   EGLint err;
 
   // Verify that the display was initialized
-  if (!bInitialized_) {
+  if (!isInitialized_) {
     __eglLogError("The display was not initialized.\r\n");
     return EGL_NOT_INITIALIZED;
   }
@@ -226,7 +230,7 @@ EGLint _EGLDisplay::chooseConfig(const EGLint *pAttrib_list,
 
     if (bResult) {
       if (pConfigs) {
-        auto handle = handles_->findHandle(pConfig, this);
+        auto handle = handles_.findHandle(pConfig);
         assert(handle);
         pConfigs[num_config] = reinterpret_cast<EGLConfig>(handle);
       }
@@ -239,4 +243,16 @@ EGLint _EGLDisplay::chooseConfig(const EGLint *pAttrib_list,
   *pNum_config = num_config;
 
   return EGL_SUCCESS;
+}
+
+void _EGLDisplay::terminate() {
+  if (isInitialized_) {
+    auto enumerator = handles_.getEnumerator();
+    while (!enumerator.isEnd()) {
+      reinterpret_cast<IObject *>(enumerator.getObject())->release();
+      enumerator.moveNext();
+    }
+    handles_.clear();
+    isInitialized_ = false;
+  }
 }

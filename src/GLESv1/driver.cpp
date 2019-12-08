@@ -19,19 +19,10 @@
 
 thread_local GLContext *tls_glctx = nullptr;
 
-GLDriver::GLDriver()
-    : handles_(nullptr), pRasterCache_(nullptr) {
+GLDriver::GLDriver() : pRasterCache_(nullptr) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
-
-  // Create the handle table
-  handles_ = new HandleTable();
-  handles_->addRef();
-
-  // Create the thread pool
-  threadpool_ = new ThreadPool();
-  threadpool_->addRef();
 
   // Create the raster cache
   err = RasterCache::Create(&pRasterCache_);
@@ -47,29 +38,12 @@ GLDriver::~GLDriver() {
   __safeRelease(tls_glctx);
   __safeRelease(pRasterCache_);
   __safeRelease(threadpool_);
-
-  if (handles_) {
-    {
-      // Release all generated driver handles
-      auto enumerator = handles_->getEnumerator(this);
-      while (!enumerator.isEnd()) {
-        reinterpret_cast<IObject *>(enumerator.removeNext())->release();
-      }
-    }
-
-    {
-      // Release all other generated handles
-      auto enumerator = handles_->getEnumerator(nullptr);
-      while (!enumerator.isEnd()) {
-        reinterpret_cast<IObject *>(enumerator.removeNext())->release();
-      }
-    }
-
-    // The handle table should now be empty
-    assert(0 == handles_->getNumHandles());
-
-    // Release the handle table
-    handles_->release();
+    
+  // Release all handles
+  auto enumerator = handles_.getEnumerator();
+  while (!enumerator.isEnd()) {
+    reinterpret_cast<IObject *>(enumerator.getObject())->release();
+    enumerator.moveNext();
   }
 }
 
@@ -77,7 +51,8 @@ GLContext *GLDriver::getCurrentContext() const {
   return tls_glctx;
 }
 
-void GLDriver::makeCurrent(GLContext *pContext, GLSurface *pSurfDraw,
+void GLDriver::makeCurrent(GLContext *pContext, 
+                           GLSurface *pSurfDraw,
                            GLSurface *pSurfRead) {
   GLContext *pCtxCurr = this->getCurrentContext();
   if (pCtxCurr != pContext) {

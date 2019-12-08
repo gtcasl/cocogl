@@ -79,8 +79,10 @@ bool Rasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1,
     }
   }
 
-  auto colorIndex = cullStates.bTwoSidedLighting && culled;
-  pbVertexColor_ = pbVertexData_[VERTEX_COLOR0 + colorIndex];
+  if (rasterID_.Flags.Color) {
+    auto colorIndex = cullStates.bTwoSidedLighting && culled;
+    pbVertexColor_ = pbVertexData_[VERTEX_COLOR0 + colorIndex];
+  }
 
   return true;
 }

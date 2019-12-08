@@ -21,8 +21,13 @@ public:
     ATTRIBUTES_SIZE = (ATTRIBUTES_LAST - ATTRIBUTES_FIRST) + 1,
   };
 
-  static EGLint Create(_EGLConfig **ppConfig, EGLint red, EGLint green,
-                       EGLint blue, EGLint alpha, EGLint depth, EGLint stencil);
+  static EGLint Create(_EGLConfig **ppConfig, 
+                       EGLint red, 
+                       EGLint green,
+                       EGLint blue, 
+                       EGLint alpha, 
+                       EGLint depth, 
+                       EGLint stencil);
 
   EGLint getAttribute(EGLint name) const {
     assert((name >= ATTRIBUTES_FIRST) && (name <= ATTRIBUTES_LAST));
@@ -41,8 +46,13 @@ public:
   static int compare(const _EGLConfig *pConfigA, const _EGLConfig *pConfigB);
 
 private:
-  _EGLConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha, EGLint depth,
+  _EGLConfig(EGLint red, 
+             EGLint green, 
+             EGLint blue, 
+             EGLint alpha, 
+             EGLint depth,
              EGLint stencil);
+             
   ~_EGLConfig();
 
   EGLint attributes_[ATTRIBUTES_SIZE];

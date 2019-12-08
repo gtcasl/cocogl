@@ -38,7 +38,7 @@ void GLContext::genBuffers(GLsizei n, GLuint *phBuffers) {
 
     uint32_t handle;
     err = GLERROR_FROM_HRESULT(
-        handles_->insert(&handle, pBuffer, HANDLE_BUFFER, this));
+        handles_.insert(&handle, pBuffer, HANDLE_BUFFER));
     if (__glFailed(err)) {
       __glError(err, "HandleTable::insert() failed, err = %d.\r\n", err);
       __safeRelease(pBuffer);
@@ -63,12 +63,11 @@ void GLContext::bindBuffer(GLenum target, GLuint buffer) {
   GLBuffer *pBuffer = nullptr;
   if (buffer) {
     // First, lookup buffers from the current context
-    pBuffer = reinterpret_cast<GLBuffer *>(handles_->getObject(buffer, this));
+    pBuffer = reinterpret_cast<GLBuffer *>(handles_.getObject(buffer));
     if (nullptr == pBuffer) {
       if (pCtxShared_) {
         // Else, lookup buffers from the shared context
-        pBuffer = reinterpret_cast<GLBuffer *>(
-            handles_->getObject(buffer, pCtxShared_));
+        pBuffer = pCtxShared_->getObject<GLBuffer *>(buffer);
       }
 
       if (nullptr == pBuffer) {
@@ -197,8 +196,7 @@ void GLContext::deleteBuffers(GLsizei n, const GLuint *phBuffers) {
        phBuf != phEnd; ++phBuf) {
     GLuint handle = *phBuf;
     if (handle) {
-      auto pBuffer =
-          reinterpret_cast<GLBuffer *>(handles_->deleteHandle(handle, this));
+      auto pBuffer = reinterpret_cast<GLBuffer *>(handles_.deleteHandle(handle));
       if (pBuffer) {
         // Unbind the buffer if bound.
         if (pBuffer == this->getBufferObject(GL_ARRAY_BUFFER)) {

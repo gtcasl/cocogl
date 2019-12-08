@@ -184,9 +184,9 @@ bool GLContext::isEnabled(GLenum cap) {
 }
 
 bool GLContext::isBuffer(GLuint buffer) {
-  return (HANDLE_BUFFER == handles_->getType(buffer));
+  return (HANDLE_BUFFER == handles_.getType(buffer));
 }
 
 bool GLContext::isTexture(GLuint texture) {
-  return (HANDLE_TEXTURE == handles_->getType(texture));
+  return (HANDLE_TEXTURE == handles_.getType(texture));
 }

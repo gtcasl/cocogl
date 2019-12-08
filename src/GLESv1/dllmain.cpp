@@ -1219,8 +1219,7 @@ GL_API GLenum GL_APIENTRY __glCreateContext(__GLContext shared_context,
   }
 
   GLContext *pContext;
-  err = GLContext::Create(&pContext, g_driver.getHandles(),
-                          g_driver.getRasterCache(), pCtxShared);
+  err = GLContext::Create(&pContext, g_driver.getRasterCache(), pCtxShared);
   if (__glFailed(err)) {
     __glLogError("GLContext::Create() failed, err = %d.\r\n", err);
     return err;

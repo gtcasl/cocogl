@@ -14,8 +14,12 @@
 #include "stdafx.h"
 #include "config.hpp"
 
-_EGLConfig::_EGLConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
-                       EGLint depth, EGLint stencil) {
+_EGLConfig::_EGLConfig(EGLint red, 
+                       EGLint green, 
+                       EGLint blue, 
+                       EGLint alpha,
+                       EGLint depth, 
+                       EGLint stencil) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   this->setAttribute(EGL_BUFFER_SIZE, red + green + blue + alpha);
@@ -56,8 +60,12 @@ _EGLConfig::~_EGLConfig() {
   __profileAPI(" - %s()\n", __FUNCTION__);
 }
 
-EGLint _EGLConfig::Create(_EGLConfig **ppConfig, EGLint red, EGLint green,
-                          EGLint blue, EGLint alpha, EGLint depth,
+EGLint _EGLConfig::Create(_EGLConfig **ppConfig, 
+                          EGLint red,
+                          EGLint green,
+                          EGLint blue, 
+                          EGLint alpha, 
+                          EGLint depth,
                           EGLint stencil) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
@@ -253,8 +261,7 @@ EGLint _EGLConfig::matches(const EGLint *pAttrib_list, bool *pbResult) const {
   return EGL_SUCCESS;
 }
 
-int _EGLConfig::compare(const _EGLConfig *pConfigA,
-                        const _EGLConfig *pConfigB) {
+int _EGLConfig::compare(const _EGLConfig *pConfigA, const _EGLConfig *pConfigB) {
   assert(pConfigA && pConfigB);
 
   static const EGLint sortedList[] = {

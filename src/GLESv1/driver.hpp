@@ -23,14 +23,9 @@ public:
   GLDriver();
   ~GLDriver();
 
-  void makeCurrent(GLContext *pContext, GLSurface *pSurfDraw,
-                   GLSurface *pSurfRead);
+  void makeCurrent(GLContext *pContext, GLSurface *pSurfDraw, GLSurface *pSurfRead);
 
   GLContext *getCurrentContext() const;
-
-  HandleTable *getHandles() const {
-    return handles_;
-  }
 
   RasterCache *getRasterCache() const {
     return pRasterCache_;
@@ -39,39 +34,21 @@ public:
   template <typename T>
   inline T getObject(void *handle) const {
     return reinterpret_cast<T>(
-        handles_->getObject(reinterpret_cast<intptr_t>(handle), this));
-  }
-
-  template <typename T>
-  inline T getObject(void *handle, void *pOwner) const {
-    return reinterpret_cast<T>(
-        handles_->getObject(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_.getObject(reinterpret_cast<intptr_t>(handle)));
   }
 
   GLenum registerObject(uint32_t *phandle, void *pObject, uint8_t type) {
-    return GLERROR_FROM_HRESULT(handles_->insert(phandle, pObject, type, this));
-  }
-
-  GLenum registerObject(uint32_t *phandle, void *pObject, uint8_t type,
-                        void *pOwner) {
-    return GLERROR_FROM_HRESULT(
-        handles_->insert(phandle, pObject, type, pOwner));
+    return GLERROR_FROM_HRESULT(handles_.insert(phandle, pObject, type));
   }
 
   template <typename T>
-  inline T unregisterObject(void *handle) const {
+  inline T unregisterObject(void *handle) {
     return reinterpret_cast<T>(
-        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), this));
-  }
-
-  template <typename T>
-  inline T unregisterObject(void *handle, void *pOwner) const {
-    return reinterpret_cast<T>(
-        handles_->deleteHandle(reinterpret_cast<intptr_t>(handle), pOwner));
+        handles_.deleteHandle(reinterpret_cast<intptr_t>(handle)));
   }
 
 private:
-  HandleTable *handles_;
+  HandleTable handles_;
   ThreadPool *threadpool_;
   RasterCache *pRasterCache_;
 };

@@ -14,10 +14,7 @@
 //
 #pragma once
 
-#include "object.hpp"
-#include <mutex>
-
-class HandleTable : public Object {
+class HandleTable {
 private:
   enum {
     GROW_INCREMENT = 64,
@@ -38,11 +35,11 @@ private:
     };
     DISABLE_WARNING_POP
     void *pObject; // Object pointer
-    void *pOwner;  // Object owner
     Entry *pNext;  // Next active entry
   };
 
 public:
+
   class Enumerator {
   public:
     uint8_t getType() const {
@@ -53,88 +50,54 @@ public:
       return list_->pObject;
     }
 
-    void *getOwner() const {
-      return list_->pOwner;
-    }
-
-    uint32_t getHandle() const {
-      return (list_->Serial << HANDLE_SERIAL_SHIFT) |
-             ((list_ - handles_->entries_) & HANDLE_INDEX_MASK);
-    }
-
     bool isEnd() const {
       return (nullptr == list_);
     }
 
     void moveNext() {
-      if (list_) {
-        do {
-          list_ = list_->pNext;
-        } while (list_ && owner_ && (list_->pOwner != owner_));
-      }
-    }
-
-    void *removeNext() {
-      if (list_) {
-        auto pObject = list_->pObject;
-        list_ = handles_->deleteEntry(list_);
-        while (list_ && owner_ && (list_->pOwner != owner_)) {
-          list_ = list_->pNext;
-        }
-        return pObject;
-      }
-      return nullptr;
+      list_ = list_->pNext;
     }
 
   private:
-    Enumerator(HandleTable *pHandles, const void *pOwner);
+    Enumerator(Entry * list) : list_(list) {}
 
-    HandleTable *handles_;
     Entry *list_;
-    const void *owner_;
 
     friend class HandleTable;
-  };
+  };  
 
-  HandleTable()
-      : size_(0), entries_(nullptr), activelist_(nullptr), count_(0) {}
+  HandleTable();
 
-  void *getObject(uint32_t handle, const void *pOwner = nullptr);
+  ~HandleTable();
 
-  uint8_t getType(uint32_t handle, const void *pOwner = nullptr);
+  void *getObject(uint32_t handle) const;
 
-  HRESULT insert(uint32_t *phandle, void *pObject, uint8_t type,
-                 void *pOwner = nullptr);
+  uint8_t getType(uint32_t handle) const;
 
-  void *deleteHandle(uint32_t handle, const void *pOwner = nullptr);
+  HRESULT insert(uint32_t *phandle, void *pObject, uint8_t typer);
+
+  void *deleteHandle(uint32_t handle);
 
   void optimize();
 
-  auto getEnumerator(const void *pOwner = nullptr) {
-    return Enumerator(this, pOwner);
+  auto getEnumerator() {
+    return Enumerator(activelist_);
   }
 
-  uint32_t getNumHandles() const {
-    return count_;
+  uint32_t getHandle(const Enumerator& e) const {
+    return (e.list_->Serial << HANDLE_SERIAL_SHIFT) |
+            ((e.list_ - entries_) & HANDLE_INDEX_MASK);
   }
 
-  uint32_t findHandle(const void *pObject, const void *pOwner = nullptr) {
-    auto enumerator = this->getEnumerator(pOwner);
-    while (!enumerator.isEnd()) {
-      if (pObject == enumerator.getObject()) {
-        return enumerator.getHandle();
-      }
-      enumerator.moveNext();
-    }
-    return 0;
+  uint32_t getSize() const {
+    return size_;
   }
+
+  uint32_t findHandle(const void *pObject);
+
+  void clear();
 
 private:
-  ~HandleTable() {
-    if (entries_) {
-      free(entries_);
-    }
-  }
 
   static uint32_t getHandleIndex(uint32_t handle) {
     return (handle & HANDLE_INDEX_MASK);
@@ -144,24 +107,12 @@ private:
     return (handle & HANDLE_SERIAL_MASK) >> HANDLE_SERIAL_SHIFT;
   }
 
-  Entry *getEntry(uint32_t handle) const {
-    // Get the handle entry from the table
-    auto index = this->getHandleIndex(handle);
-    if (index < size_) {
-      // Validate the handle serial
-      auto pEntry = entries_ + index;
-      if (pEntry->Serial == this->getHandleSerial(handle)) {
-        return pEntry;
-      }
-    }
-    return nullptr;
-  }
+  Entry *getEntry(uint32_t handle) const;
 
   Entry *deleteEntry(Entry *pEntry);
 
-  std::mutex cs_;
-  uint32_t size_;
+  uint32_t capacity_;
   Entry *entries_;
   Entry *activelist_;
-  uint32_t count_;
+  uint32_t size_;
 };

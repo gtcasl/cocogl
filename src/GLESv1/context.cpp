@@ -17,13 +17,9 @@
 #include "context_rast.inl"
 #include "context_tnl.inl"
 
-GLContext::GLContext(HandleTable *pHandles, RasterCache *pRasterCache,
+GLContext::GLContext(RasterCache *pRasterCache,
                      GLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
-
-  assert(pHandles);
-  pHandles->addRef();
-  handles_ = pHandles;
 
   assert(pRasterCache);
   pRasterCache->addRef();
@@ -70,24 +66,25 @@ GLContext::~GLContext() {
   __safeRelease(pSurfDraw_);
   __safeRelease(pSurfRead_);
 
-  auto enumerator = handles_->getEnumerator(this);
+  // release all handles
+  auto enumerator = handles_.getEnumerator();
   while (!enumerator.isEnd()) {
-    reinterpret_cast<IObject *>(enumerator.removeNext())->release();
+    reinterpret_cast<IObject *>(enumerator.getObject())->release();
+    enumerator.moveNext();
   }
-
-  __safeRelease(handles_);
 }
 
-GLenum GLContext::Create(GLContext **ppContext, HandleTable *pHandles,
-                         RasterCache *pRasterCache, GLContext *pCtxShared) {
+GLenum GLContext::Create(GLContext **ppContext, 
+                         RasterCache *pRasterCache, 
+                         GLContext *pCtxShared) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   GLenum err;
 
-  assert(pHandles && ppContext);
+  assert(ppContext);
 
   // Create a new context object
-  auto pContext = new GLContext(pHandles, pRasterCache, pCtxShared);
+  auto pContext = new GLContext(pRasterCache, pCtxShared);
   if (nullptr == pContext) {
     __glLogError("GLContext allocation failed, out of memory.\r\n");
     return GL_OUT_OF_MEMORY;

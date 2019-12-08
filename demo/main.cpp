@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
   create_test(testid, window);
 
   uint64_t num_frames = 0;
-  float FPS;
+  float FPS = 0.0f;
 
   while (loop) {
     auto start_time = std::chrono::high_resolution_clock::now();
@@ -177,9 +177,7 @@ int main(int argc, char **argv) {
     ++num_frames;
     if (0 == (num_frames % 16)) {
       auto end_time = std::chrono::high_resolution_clock::now();
-      auto elapsed_time =
-          std::chrono::duration_cast<std::chrono::duration<float>>(end_time -
-                                                                   start_time);
+      auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(end_time - start_time);
       FPS = 16 / elapsed_time.count();
 
       char text[64];

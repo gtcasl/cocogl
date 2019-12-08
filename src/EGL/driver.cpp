@@ -20,13 +20,8 @@
 thread_local _EGLContext *tls_eglctx = nullptr;
 thread_local EGLint tls_eglerror = EGL_SUCCESS;
 
-_EGLDriver::_EGLDriver()
-    : handles_(nullptr) {
+_EGLDriver::_EGLDriver() {
   __profileAPI(" - %s()\n", __FUNCTION__);
-
-  // Create the handle table
-  handles_ = new HandleTable();
-  handles_->addRef();
 }
 
 _EGLDriver::~_EGLDriver() {
@@ -34,34 +29,25 @@ _EGLDriver::~_EGLDriver() {
 
   __safeRelease(tls_eglctx);
 
-  if (handles_) {
-    // Release all generated driver handles
-    auto enumerator = handles_->getEnumerator(this);
-    while (!enumerator.isEnd()) {
-      reinterpret_cast<IObject *>(enumerator.removeNext())->release();
-    }
-
-    // The handle table should now be empty
-    assert(0 == handles_->getNumHandles());
-
-    // Release the handle table
-    handles_->release();
+  // Release all handles
+  auto enumerator = handles_.getEnumerator();
+  while (!enumerator.isEnd()) {
+    reinterpret_cast<IObject *>(enumerator.getObject())->release();
+    enumerator.moveNext();
   }
 }
 
-void _EGLDriver::makeCurrent(_EGLContext *pContext, std::thread::id threadID,
-                             _EGLSurface *pSurfDraw, _EGLSurface *pSurfRead) {
+void _EGLDriver::makeCurrent(_EGLContext *pContext, 
+                             std::thread::id threadID,
+                             _EGLSurface *pSurfDraw, 
+                             _EGLSurface *pSurfRead) {
 
   auto pCtxCurr = tls_eglctx;
   if (pCtxCurr != pContext) {
     if (pContext) {
       pContext->addRef();
     }
-
-    if (pCtxCurr) {
-      pCtxCurr->setBindings(threadID, nullptr, nullptr);
-      pCtxCurr->release();
-    }
+    __safeRelease(pCtxCurr);
     tls_eglctx = pContext;
   }
 
@@ -90,35 +76,26 @@ EGLint _EGLDriver::getDisplay(uint32_t *phandle,
 
   EGLint err;
 
-  assert(phandle);
+  assert(phandle);  
 
-  if (EGL_DEFAULT_DISPLAY == display_id) {
-// Set the default display ID
-#if defined(_WIN32)
-    display_id = GetDC(nullptr);
-#elif defined(__linux__)
-    display_id = XOpenDisplay(nullptr);
-#endif
-  }
-
-  // Look up for an existing display
-  auto enumerator = handles_->getEnumerator(this);
+  // Look up existing displays
+  auto enumerator = handles_.getEnumerator();
   while (!enumerator.isEnd()) {
     if (HANDLE_DISPLAY == enumerator.getType()) {
       auto pDisplay = reinterpret_cast<_EGLDisplay *>(enumerator.getObject());
-      if (display_id == pDisplay->getNativeHandle()) {
-        *phandle = enumerator.getHandle();
+      if (display_id == pDisplay->getNativeHandle()
+       || (EGL_DEFAULT_DISPLAY == display_id && pDisplay->isDefault())) {
+        *phandle = handles_.getHandle(enumerator);
         return EGL_SUCCESS;
       }
     }
-
     enumerator.moveNext();
   }
 
   _EGLDisplay *pDisplay;
 
   // Create a new display object
-  err = _EGLDisplay::Create(&pDisplay, display_id, handles_);
+  err = _EGLDisplay::Create(&pDisplay, display_id);
   if (nullptr == pDisplay) {
     __eglLogError("_EGLDisplay::Create() failed, err = %d.\r\n", err);
     return err;
@@ -126,7 +103,7 @@ EGLint _EGLDriver::getDisplay(uint32_t *phandle,
 
   // Add the display to the handle table
   err = EGLERROR_FROM_HRESULT(
-      handles_->insert(phandle, pDisplay, HANDLE_DISPLAY, this));
+      handles_.insert(phandle, pDisplay, HANDLE_DISPLAY));
   if (__eglFailed(err)) {
     __eglLogError("HandleTable::insert() failed, err = %x.\r\n", err);
     __safeRelease(pDisplay);

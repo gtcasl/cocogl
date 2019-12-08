@@ -59,6 +59,7 @@ public:
   void present();
 
 private:
+
   enum {
     MAX_WIDTH = 480,
     MAX_HEIGHT = 480,

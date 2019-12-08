@@ -16,7 +16,8 @@
 #include "config.hpp"
 #include "display.hpp"
 
-_EGLSurface::_EGLSurface(_EGLDisplay *pDisplay, EGLint surfaceType,
+_EGLSurface::_EGLSurface(_EGLDisplay *pDisplay, 
+                          EGLint surfaceType,
                          _EGLConfig *pConfig) {
   __profileAPI(" - %s()\n", __FUNCTION__);
   assert(pDisplay);
@@ -80,19 +81,22 @@ _EGLSurface::~_EGLSurface() {
     DeletObject(hBitmap_);
 }
 #elif defined(__linux__)
-  if (pImage_) {
-    XDestroyImage(pImage_);
-  }
   if (gc_) {
     XFreeGC(pDisplay_->getNativeHandle(), gc_);
+  }
+  if (pImage_) {
+    XDestroyImage(pImage_);
   }
 #endif
 
 __safeRelease(pConfig_);
+//__safeRelease(pDisplay_);
 }
 
-EGLint _EGLSurface::CreateWND(_EGLSurface **ppSurface, _EGLDisplay *display,
-                              EGLint surfaceType, _EGLConfig *pConfig,
+EGLint _EGLSurface::CreateWND(_EGLSurface **ppSurface, 
+                              _EGLDisplay *display,
+                              EGLint surfaceType, 
+                              _EGLConfig *pConfig,
                               EGLNativeWindowType hWnd) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
@@ -122,8 +126,10 @@ EGLint _EGLSurface::CreateWND(_EGLSurface **ppSurface, _EGLDisplay *display,
   return EGL_SUCCESS;
 }
 
-EGLint _EGLSurface::CreatePXM(_EGLSurface **ppSurface, _EGLDisplay *display,
-                              EGLint surfaceType, _EGLConfig *pConfig,
+EGLint _EGLSurface::CreatePXM(_EGLSurface **ppSurface, 
+                              _EGLDisplay *display,
+                              EGLint surfaceType, 
+                              _EGLConfig *pConfig,
                               EGLNativePixmapType hPixmap) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
@@ -153,11 +159,16 @@ EGLint _EGLSurface::CreatePXM(_EGLSurface **ppSurface, _EGLDisplay *display,
   return EGL_SUCCESS;
 }
 
-EGLint _EGLSurface::CreatePBF(_EGLSurface **ppSurface, _EGLDisplay *display,
-                              EGLint surfaceType, _EGLConfig *pConfig,
-                              EGLint width, EGLint height,
-                              EGLint largestPBuffer, EGLint texTarget,
-                              EGLint texFormat, EGLint bGenMipMaps) {
+EGLint _EGLSurface::CreatePBF(_EGLSurface **ppSurface, 
+                              _EGLDisplay *display,
+                              EGLint surfaceType, 
+                              _EGLConfig *pConfig,
+                              EGLint width, 
+                              EGLint height,
+                              EGLint largestPBuffer, 
+                              EGLint texTarget,
+                              EGLint texFormat, 
+                              EGLint bGenMipMaps) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
@@ -520,8 +531,7 @@ EGLint _EGLSurface::InitializePBF(EGLint width, EGLint height,
     }
   } else {
     // Create the GL surface
-    err =
-        EGLERROR_FROM_HRESULT(__glCreateSurface(nullptr, nullptr, &glSurface_));
+    err = EGLERROR_FROM_HRESULT(__glCreateSurface(nullptr, nullptr, &glSurface_));
     if (__eglFailed(err)) {
       __eglLogError("__glCreateSurface() failed, err = %d.\r\n", err);
       return err;

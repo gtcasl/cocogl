@@ -23,6 +23,23 @@
 #include "rastdata.hpp"
 
 class Device : public Object {
+public:
+
+  template <typename T>
+  inline T getObject(uint32_t handle) const {
+    return reinterpret_cast<T>(handles_.getObject(handle));
+  }
+
+  GLenum registerObject(uint32_t *phandle, void *pObject, uint8_t type) {
+    return GLERROR_FROM_HRESULT(handles_.insert(phandle, pObject, type));
+  }
+
+  template <typename T>
+  inline T unregisterObject(void *handle) {
+    return reinterpret_cast<T>(
+        handles_.deleteHandle(reinterpret_cast<intptr_t>(handle)));
+  }
+
 protected:
   enum {
     BUFFER_OBJECTS_FIRST = GL_ARRAY_BUFFER,
@@ -81,11 +98,12 @@ protected:
 
   mutable GLenum error_;
 
+  HandleTable handles_;
+
   const Device *pCtxShared_;
   GLSurface *pSurfDraw_;
   GLSurface *pSurfRead_;
-  HandleTable *handles_;
-
+  
   GLBuffer *bufferObjects_[BUFFER_OBJECTS_SIZE];
   Texture *pTexDefault_;
   GLBuffer *pBufDefault_;

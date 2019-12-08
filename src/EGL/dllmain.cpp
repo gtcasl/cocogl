@@ -155,14 +155,14 @@ EGLAPI EGLBoolean EGLAPIENTRY eglTerminate(EGLDisplay display) {
   __profileAPI(" - %s( display=%d )\n", __FUNCTION__, display);
 
   // Remove the display object from the handle table
-  auto pDisplay = g_driver.unregisterObject<_EGLDisplay *>(display);
+  auto pDisplay = g_driver.getObject<_EGLDisplay *>(display);
   if (nullptr == pDisplay) {
     __eglError(EGL_BAD_DISPLAY, "Invalid display handle.\r\n");
     return EGL_FALSE;
   }
 
-  // Delete the display
-  pDisplay->release();
+  // terminate the display
+  pDisplay->terminate();
 
   return EGL_TRUE;
 }
@@ -228,8 +228,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglChooseConfig(EGLDisplay display,
   }
 
   // Choose the display configurations
-  err =
-      pDisplay->chooseConfig(pAttrib_list, pConfigs, config_size, pNum_config);
+  err = pDisplay->chooseConfig(pAttrib_list, pConfigs, config_size, pNum_config);
   if (__eglFailed(err)) {
     __eglError(err, "Display::chooseConfig() failed, err = %d.\r\n", err);
     return EGL_FALSE;
@@ -267,7 +266,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglGetConfigAttrib(EGLDisplay display,
   }
 
   // Find the config object from the handle table
-  auto pConfig = g_driver.getObject<_EGLConfig *>(config, pDisplay);
+  auto pConfig = pDisplay->getObject<_EGLConfig *>(config);
   if (nullptr == pConfig) {
     __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_FALSE;
@@ -284,8 +283,10 @@ EGLAPI EGLBoolean EGLAPIENTRY eglGetConfigAttrib(EGLDisplay display,
 }
 
 EGLAPI EGLSurface EGLAPIENTRY
-eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
-                       EGLNativeWindowType hWnd, const EGLint *pAttrib_list) {
+eglCreateWindowSurface(EGLDisplay display, 
+                       EGLConfig config,
+                       EGLNativeWindowType hWnd, 
+                       const EGLint *pAttrib_list) {
   __profileAPI(" - %s( display=%d, config=%d, hWnd=0x%p, pAttrib_list=0x%p )\n",
                __FUNCTION__, display, config, hWnd, pAttrib_list);
 
@@ -312,7 +313,7 @@ eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
   }
 
   // Find the config object from the handle table
-  auto pConfig = g_driver.getObject<_EGLConfig *>(config, pDisplay);
+  auto pConfig = pDisplay->getObject<_EGLConfig *>(config);
   if (nullptr == pConfig) {
     __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_NO_SURFACE;
@@ -327,8 +328,7 @@ eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
 
   // Create a window surface
   _EGLSurface *pSurface;
-  err = _EGLSurface::CreateWND(&pSurface, pDisplay, EGL_WINDOW_BIT, pConfig,
-                               hWnd);
+  err = _EGLSurface::CreateWND(&pSurface, pDisplay, EGL_WINDOW_BIT, pConfig, hWnd);
   if (__eglFailed(err)) {
     __eglError(err, "_EGLSurface::Create() failed, err = %d.\r\n", err);
     return EGL_NO_SURFACE;
@@ -336,7 +336,7 @@ eglCreateWindowSurface(EGLDisplay display, EGLConfig config,
 
   // Create the new surface handle
   uint32_t handle;
-  err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE, pDisplay);
+  err = pDisplay->registerObject(&handle, pSurface, HANDLE_SURFACE);
   if (__eglFailed(err)) {
     __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
@@ -376,7 +376,7 @@ eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
   }
 
   // Find the config object from the handle table
-  auto pConfig = g_driver.getObject<_EGLConfig *>(config, pDisplay);
+  auto pConfig = pDisplay->getObject<_EGLConfig *>(config);
   if (nullptr == pConfig) {
     __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_NO_SURFACE;
@@ -400,7 +400,7 @@ eglCreatePixmapSurface(EGLDisplay display, EGLConfig config,
 
   // Create the new surface handle
   uint32_t handle;
-  err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE, pDisplay);
+  err = pDisplay->registerObject(&handle, pSurface, HANDLE_SURFACE);
   if (__eglFailed(err)) {
     __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
@@ -431,7 +431,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
   }
 
   // Find the config object from the handle table
-  auto pConfig = g_driver.getObject<_EGLConfig *>(config, pDisplay);
+  auto pConfig = pDisplay->getObject<_EGLConfig *>(config);
   if (nullptr == pConfig) {
     __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_NO_SURFACE;
@@ -501,7 +501,7 @@ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferSurface(
 
   // Create the new surface handle
   uint32_t handle;
-  err = g_driver.registerObject(&handle, pSurface, HANDLE_SURFACE, pDisplay);
+  err = pDisplay->registerObject(&handle, pSurface, HANDLE_SURFACE);
   if (__eglFailed(err)) {
     __eglError(err, "EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pSurface);
@@ -530,7 +530,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglDestroySurface(EGLDisplay display,
   }
 
   // Remove the surface object from the handle table
-  auto pSurface = g_driver.unregisterObject<_EGLSurface *>(surface, pDisplay);
+  auto pSurface = pDisplay->unregisterObject<_EGLSurface *>(surface);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
@@ -566,7 +566,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQuerySurface(EGLDisplay display,
   }
 
   // Find the surface object from the handle table
-  auto pSurface = g_driver.getObject<_EGLSurface *>(surface, pDisplay);
+  auto pSurface = pDisplay->getObject<_EGLSurface *>(surface);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
@@ -608,7 +608,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib(EGLDisplay display,
   }
 
   // Find the surface object from the handle table
-  auto pSurface = g_driver.getObject<_EGLSurface *>(surface, pDisplay);
+  auto pSurface = pDisplay->getObject<_EGLSurface *>(surface);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE,
                "eglSurfaceAttrib() failed, invalid surface handle.\r\n");
@@ -657,7 +657,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage(EGLDisplay display,
   }
 
   // Find the surface object from the handle table
-  auto pSurface = g_driver.getObject<_EGLSurface *>(surface, pDisplay);
+  auto pSurface = pDisplay->getObject<_EGLSurface *>(surface);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE,
                "eglBindTexImage() failed, invalid surface handle.\r\n");
@@ -709,7 +709,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage(EGLDisplay display,
   }
 
   // Find the surface object from the handle table
-  auto pSurface = g_driver.getObject<_EGLSurface *>(surface, pDisplay);
+  auto pSurface = pDisplay->getObject<_EGLSurface *>(surface);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
@@ -799,7 +799,7 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
   }
 
   // Find the config object from the handle table
-  auto pConfig = g_driver.getObject<_EGLConfig *>(config, pDisplay);
+  auto pConfig = pDisplay->getObject<_EGLConfig *>(config);
   if (nullptr == pConfig) {
     __eglError(EGL_BAD_CONFIG, "Invalid config handle.\r\n");
     return EGL_NO_CONTEXT;
@@ -808,7 +808,7 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
   _EGLContext *pCtxShared = nullptr;
 
   if (EGL_NO_CONTEXT != share_context) {
-    pCtxShared = g_driver.getObject<_EGLContext *>(share_context, pDisplay);
+    pCtxShared = pDisplay->getObject<_EGLContext *>(share_context);
     if (nullptr == pCtxShared) {
       __eglError(EGL_BAD_CONTEXT, "Invalid shared context handle.\r\n");
       return EGL_NO_CONTEXT;
@@ -823,7 +823,7 @@ EGLAPI EGLContext EGLAPIENTRY eglCreateContext(EGLDisplay display,
   }
 
   uint32_t handle;
-  err = g_driver.registerObject(&handle, pContext, HANDLE_CONTEXT, pDisplay);
+  err = pDisplay->registerObject(&handle, pContext, HANDLE_CONTEXT);
   if (__eglFailed(err)) {
     __eglError(err, "_EGLDriver::registerObject() failed, err = %d.\r\n", err);
     __safeRelease(pContext);
@@ -852,7 +852,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglDestroyContext(EGLDisplay display,
   }
 
   // Remove the context object from the handle table
-  auto pContext = g_driver.unregisterObject<_EGLContext *>(context, pDisplay);
+  auto pContext = pDisplay->unregisterObject<_EGLContext *>(context);
   if (nullptr == pContext) {
     __eglError(EGL_BAD_CONTEXT, "Invalid context handle.\r\n");
     return EGL_FALSE;
@@ -888,7 +888,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
   _EGLSurface *pSurfDraw = nullptr;
   if (draw != EGL_NO_SURFACE) {
     // Find the draw surface object from the handle table
-    pSurfDraw = g_driver.getObject<_EGLSurface *>(draw, pDisplay);
+    pSurfDraw = pDisplay->getObject<_EGLSurface *>(draw);
     if (nullptr == pSurfDraw) {
       __eglError(EGL_BAD_SURFACE, "Invalid draw surface handle.\r\n");
       return EGL_FALSE;
@@ -898,7 +898,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
   _EGLSurface *pSurfRead = nullptr;
   if (read != EGL_NO_SURFACE) {
     // Find the read surface object from the handle table
-    pSurfRead = g_driver.getObject<_EGLSurface *>(read, pDisplay);
+    pSurfRead = pDisplay->getObject<_EGLSurface *>(read);
     if (nullptr == pSurfRead) {
       __eglError(EGL_BAD_SURFACE, "Invalid read surface handle.\r\n");
       return EGL_FALSE;
@@ -908,7 +908,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
   _EGLContext *pContext = nullptr;
   if (context != EGL_NO_CONTEXT) {
     // Find the context object from the handle table
-    pContext = g_driver.getObject<_EGLContext *>(context, pDisplay);
+    pContext = pDisplay->getObject<_EGLContext *>(context);
     if (nullptr == pContext) {
       __eglError(EGL_BAD_SURFACE, "Invalid context handle.\r\n");
       return EGL_FALSE;
@@ -974,8 +974,8 @@ EGLAPI EGLContext EGLAPIENTRY eglGetCurrentContext() {
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
-    return reinterpret_cast<EGLContext>(
-        g_driver.getHandle(pContext, pContext->getDisplay()));
+    auto pDisplay = pContext->getDisplay();
+    return reinterpret_cast<EGLContext>(pDisplay->getHandle(pContext));
   }
 
   return EGL_NO_CONTEXT;
@@ -987,14 +987,15 @@ EGLAPI EGLSurface EGLAPIENTRY eglGetCurrentSurface(EGLint readdraw) {
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {
+    auto pDisplay = pContext->getDisplay();
     switch (readdraw) {
     case EGL_DRAW:
-      return reinterpret_cast<EGLSurface>(g_driver.getHandle(
-          pContext->getDrawSurface(), pContext->getDisplay()));
+      return reinterpret_cast<EGLSurface>(pDisplay->getHandle(
+          pContext->getDrawSurface()));
 
     case EGL_READ:
-      return reinterpret_cast<EGLSurface>(g_driver.getHandle(
-          pContext->getReadSurface(), pContext->getDisplay()));
+      return reinterpret_cast<EGLSurface>(pDisplay->getHandle(
+          pContext->getReadSurface()));
     }
   }
 
@@ -1036,7 +1037,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQueryContext(EGLDisplay display,
   }
 
   // Find the context object from the handle table
-  auto pContext = g_driver.getObject<_EGLContext *>(context, pDisplay);
+  auto pContext = pDisplay->getObject<_EGLContext *>(context);
   if (nullptr == pContext) {
     __eglError(EGL_BAD_CONTEXT, "Invalid context handle.\r\n");
     return EGL_FALSE;
@@ -1103,7 +1104,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
   }
 
   // Find the surface object from the handle table
-  auto pSurface = g_driver.getObject<_EGLSurface *>(surface, pDisplay);
+  auto pSurface = pDisplay->getObject<_EGLSurface *>(surface);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
@@ -1155,7 +1156,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers(EGLDisplay display,
   }
 
   // Find the surface object from the handle table
-  auto pSurface = g_driver.getObject<_EGLSurface *>(surface, pDisplay);
+  auto pSurface = pDisplay->getObject<_EGLSurface *>(surface);
   if (nullptr == pSurface) {
     __eglError(EGL_BAD_SURFACE, "Invalid surface handle.\r\n");
     return EGL_FALSE;
