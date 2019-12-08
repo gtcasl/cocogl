@@ -33,6 +33,7 @@ GLSurface::GLSurface() {
 
 GLSurface::~GLSurface() {
   __profileAPI(" - %s()\n", __FUNCTION__);
+   assert(pfnColorConv_ != nullptr);
 }
 
 GLenum GLSurface::Create(GLSurface **ppSurface, const GLSurfaceDesc *pColorDesc,

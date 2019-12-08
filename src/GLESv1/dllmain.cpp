@@ -1254,7 +1254,8 @@ GL_API GLenum GL_APIENTRY __glDestroyContext(__GLContext context) {
   return GL_NO_ERROR;
 }
 
-GL_API GLenum GL_APIENTRY __glMakeCurrent(__GLContext context, __GLSurface draw,
+GL_API GLenum GL_APIENTRY __glMakeCurrent(__GLContext context, 
+                                          __GLSurface draw,
                                           __GLSurface read) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
@@ -1800,7 +1801,7 @@ GL_API void GL_APIENTRY glTexParameterf(GLenum target, GLenum pname,
                                         GLfloat param) {
   __profileAPI(" - %s( target=%s, pname=%s, param=%s )\n", __FUNCTION__,
                TextureTypeToString(target), TexParamToString(pname),
-               TexParamValueToString(static_cast<float>(GLint > (param))));
+               TexParamValueToString(static_cast<float>(param)));
 
   auto pContext = g_driver.getCurrentContext();
   if (pContext) {

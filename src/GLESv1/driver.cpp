@@ -54,7 +54,7 @@ GLContext *GLDriver::getCurrentContext() const {
 void GLDriver::makeCurrent(GLContext *pContext, 
                            GLSurface *pSurfDraw,
                            GLSurface *pSurfRead) {
-  GLContext *pCtxCurr = this->getCurrentContext();
+  auto pCtxCurr = this->getCurrentContext();
   if (pCtxCurr != pContext) {
     if (pContext) {
       pContext->addRef();

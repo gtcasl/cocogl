@@ -21,7 +21,9 @@ private:
 
 public:
   CubeTest(EGLNativeWindowType window)
-      : Renderer(window) {}
+      : Renderer(window)
+      , rotation_(0) 
+  {}
 
   bool OnInitialize() {
 

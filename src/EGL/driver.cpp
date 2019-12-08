@@ -37,39 +37,6 @@ _EGLDriver::~_EGLDriver() {
   }
 }
 
-void _EGLDriver::makeCurrent(_EGLContext *pContext, 
-                             std::thread::id threadID,
-                             _EGLSurface *pSurfDraw, 
-                             _EGLSurface *pSurfRead) {
-
-  auto pCtxCurr = tls_eglctx;
-  if (pCtxCurr != pContext) {
-    if (pContext) {
-      pContext->addRef();
-    }
-    __safeRelease(pCtxCurr);
-    tls_eglctx = pContext;
-  }
-
-  if (pContext) {
-    pContext->setBindings(threadID, pSurfDraw, pSurfRead);
-  }
-}
-
-_EGLContext *_EGLDriver::getCurrentContext() const {
-  return tls_eglctx;
-}
-
-void _EGLDriver::setError(EGLint error) {
-  tls_eglerror = error;
-}
-
-EGLint _EGLDriver::getError() const {
-  auto error = tls_eglerror;
-  tls_eglerror = EGL_SUCCESS;
-  return error;
-}
-
 EGLint _EGLDriver::getDisplay(uint32_t *phandle,
                               EGLNativeDisplayType display_id) {
   __profileAPI(" - %s()\n", __FUNCTION__);
@@ -111,4 +78,56 @@ EGLint _EGLDriver::getDisplay(uint32_t *phandle,
   }
 
   return EGL_SUCCESS;
+}
+
+EGLint  _EGLDriver::makeCurrent(_EGLContext *pContext, 
+                                std::thread::id threadID,
+                                _EGLSurface *pSurfDraw, 
+                                _EGLSurface *pSurfRead) {
+
+  // Set the current GL context first    
+  if (pContext) {
+    auto err = EGLERROR_FROM_HRESULT(__glMakeCurrent(pContext->getNativeData(),
+                                                     pSurfDraw->getNativeData(),
+                                                     pSurfRead->getNativeData()));
+    if (__eglFailed(err)) {
+      __eglLogError("__glMakeCurrent() failed, err = %d.\r\n", err);
+      return err;
+    }
+  } else {
+    auto err = EGLERROR_FROM_HRESULT(__glMakeCurrent(nullptr, nullptr, nullptr));
+    if (__eglFailed(err)) {
+      __eglLogError("__glMakeCurrent() failed, err = %d.\r\n", err);
+      return err;
+    }
+  }
+  
+  auto pCtxCurr = tls_eglctx;
+  if (pCtxCurr != pContext) {
+    if (pContext) {
+      pContext->addRef();
+    }
+    __safeRelease(pCtxCurr);
+    tls_eglctx = pContext;
+  }
+
+  if (pContext) {
+    pContext->setBindings(threadID, pSurfDraw, pSurfRead);
+  }
+
+  return EGL_SUCCESS;
+}
+
+_EGLContext *_EGLDriver::getCurrentContext() const {
+  return tls_eglctx;
+}
+
+void _EGLDriver::setError(EGLint error) {
+  tls_eglerror = error;
+}
+
+EGLint _EGLDriver::getError() const {
+  auto error = tls_eglerror;
+  tls_eglerror = EGL_SUCCESS;
+  return error;
 }

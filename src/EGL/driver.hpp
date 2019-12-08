@@ -27,10 +27,10 @@ public:
 
   EGLint getError() const;
 
-  void makeCurrent(_EGLContext *pContext, 
-                   std::thread::id threadID,
-                   _EGLSurface *pSurfDraw, 
-                   _EGLSurface *pSurfRead);
+  EGLint makeCurrent(_EGLContext *pContext, 
+                     std::thread::id threadID,
+                     _EGLSurface *pSurfDraw, 
+                     _EGLSurface *pSurfRead);
 
   _EGLContext *getCurrentContext() const;
 

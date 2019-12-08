@@ -21,7 +21,6 @@ private:
   GLfloat _box[12 * 6];
   GLfloat _floorVertices[12];
 
-  GLuint texture_;
   float xrot_;
   float yrot_;
   float yval_;
@@ -185,9 +184,5 @@ public:
     glDisable(GL_BLEND);
 
     drawCube();
-  }
-
-  void OnDestroy() {
-    glDeleteTextures(1, &texture_);
-  }
+  }  
 };

@@ -942,29 +942,21 @@ EGLAPI EGLBoolean EGLAPIENTRY eglMakeCurrent(EGLDisplay display,
           EGL_BAD_MATCH,
           "The context and read surface configurations do not match.\r\n");
       return EGL_FALSE;
-    }
-
-    // Set the current GL context
-    err = EGLERROR_FROM_HRESULT(__glMakeCurrent(pContext->getNativeData(),
-                                                pSurfDraw->getNativeData(),
-                                                pSurfRead->getNativeData()));
-    if (__eglFailed(err)) {
-      __eglError(err, "__glMakeCurrent() failed, err = %d.\r\n", err);
-      return EGL_FALSE;
-    }
+    }    
   } else {
     if (pSurfDraw || pSurfRead) {
       __eglError(EGL_BAD_MATCH,
                  "The context and surface handles are not compatible.\r\n");
       return EGL_FALSE;
     }
-
-    // Clear the current GL context
-    __glMakeCurrent(nullptr, nullptr, nullptr);
   }
 
   // Set the current EGL context
-  g_driver.makeCurrent(pContext, curThreadID, pSurfDraw, pSurfRead);
+  err = g_driver.makeCurrent(pContext, curThreadID, pSurfDraw, pSurfRead);
+  if (__eglFailed(err)) {
+    __eglError(err, "EGLDriver::makeCurrent() failed, err = %d.\r\n", err);
+    return EGL_FALSE;
+  }
 
   return EGL_TRUE;
 }

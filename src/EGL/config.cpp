@@ -58,6 +58,7 @@ _EGLConfig::_EGLConfig(EGLint red,
 
 _EGLConfig::~_EGLConfig() {
   __profileAPI(" - %s()\n", __FUNCTION__);
+  assert(attributes_[EGL_BUFFER_SIZE-ATTRIBUTES_FIRST] != 0);
 }
 
 EGLint _EGLConfig::Create(_EGLConfig **ppConfig, 

@@ -19,7 +19,7 @@ _EGLDisplay::_EGLDisplay(EGLNativeDisplayType hNative, bool isDefault) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   hNative_ = hNative;
-  isDefault = isDefault;
+  isDefault_ = isDefault;
   isInitialized_ = false;  
 }
 
@@ -253,6 +253,7 @@ void _EGLDisplay::terminate() {
       enumerator.moveNext();
     }
     handles_.clear();
+    configs_.clear();
     isInitialized_ = false;
   }
 }

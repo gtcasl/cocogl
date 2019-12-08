@@ -400,8 +400,7 @@ EGLint _EGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
 
   colorDesc.Format = _EGLSurface::getColorFormat(image->bits_per_pixel);
   colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data) +
-                    image->bytes_per_line * (image->height - 1);
-  ;
+                    image->bytes_per_line * (image->height - 1);  
   colorDesc.Width = image->width;
   colorDesc.Height = image->height;
   colorDesc.Pitch = -image->bytes_per_line;

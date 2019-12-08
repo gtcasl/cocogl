@@ -86,8 +86,7 @@ EGLint _EGLContext::initialize(_EGLContext *pCtxShared) {
 
   // Create the GL context
   if (pCtxShared) {
-    err = EGLERROR_FROM_HRESULT(
-        __glCreateContext(pCtxShared->glContext_, &glContext_));
+    err = EGLERROR_FROM_HRESULT(__glCreateContext(pCtxShared->glContext_, &glContext_));
   } else {
     err = EGLERROR_FROM_HRESULT(__glCreateContext(nullptr, &glContext_));
   }
