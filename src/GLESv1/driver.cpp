@@ -15,7 +15,6 @@
 #include "stdafx.h"
 #include "driver.hpp"
 #include "context.hpp"
-#include "threadpool.hpp"
 
 thread_local GLContext *tls_glctx = nullptr;
 
@@ -37,7 +36,6 @@ GLDriver::~GLDriver() {
 
   __safeRelease(tls_glctx);
   __safeRelease(pRasterCache_);
-  __safeRelease(threadpool_);
     
   // Release all handles
   auto enumerator = handles_.getEnumerator();

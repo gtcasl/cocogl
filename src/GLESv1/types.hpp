@@ -934,8 +934,7 @@ struct ProfileCounter {
   uint32_t DrawnPixels;
   float RenderTime;
 
-  ProfileCounter()
-      : Invocations(0), DrawnPixels(0), RenderTime(0.0f) {}
+  ProfileCounter() : Invocations(0), DrawnPixels(0), RenderTime(0.0f) {}
 
   bool operator<(const ProfileCounter &rhs) const {
     return (this->RenderTime < rhs.RenderTime);

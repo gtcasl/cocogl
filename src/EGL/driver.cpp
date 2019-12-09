@@ -37,8 +37,7 @@ _EGLDriver::~_EGLDriver() {
   }
 }
 
-EGLint _EGLDriver::getDisplay(uint32_t *phandle,
-                              EGLNativeDisplayType display_id) {
+EGLint _EGLDriver::getDisplay(uint32_t *phandle, EGLNativeDisplayType display_id) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;

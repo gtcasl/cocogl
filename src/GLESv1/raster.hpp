@@ -21,43 +21,30 @@ public:
   GLenum renderPrimitive(GLenum mode, uint32_t count);
 
   template <typename T>
-  GLenum renderIndexedPrimitive(GLenum mode, const T *pIndices, uint32_t count,
-                                uint32_t startVertex);
+  GLenum renderIndexedPrimitive(GLenum mode, const T *pIndices, uint32_t count, uint32_t startVertex);
 
   void postRender();
 
 protected:
+
   struct TriangleGradient {
+    fixed4 i4x0; 
+    fixed4 i4y0;
+    fixed4 i4x1;    
+    fixed4 i4y1;
+    fixed4 i4x2;    
+    fixed4 i4y2;
     fixed4 i4dx12;
     fixed4 i4dy12;
     fixed4 i4dx13;
     fixed4 i4dy13;
     fixed4 i4dx23;
-    fixed4 i4dy23;
+    fixed4 i4dy23;    
     floatQ fRatio;
 
-    bool init(fixed4 i4x0, fixed4 i4y0, fixed4 i4x1, fixed4 i4y1, fixed4 i4x2,
-              fixed4 i4y2) {
-      this->i4dx12 = (i4x1 - i4x0);
-      this->i4dy12 = (i4y1 - i4y0);
-      this->i4dx13 = (i4x2 - i4x0);
-
-      this->i4dy13 = (i4y2 - i4y0);
-      this->i4dx23 = (i4x2 - i4x1);
-      this->i4dy23 = (i4y2 - i4y1);
-
-      // Calculate the edge direction
-      auto i8Area = Math::FastMul<fixed8>(this->i4dx12, this->i4dy13) -
-                    Math::FastMul<fixed8>(this->i4dx13, this->i4dy12);
-
-      // Reject small areas (1/4 x 1/4 = 1/16)
-      auto u8Area = std::abs(i8Area);
-      if (u8Area.data() < 16)
-        return false;
-
-      fRatio = Math::Inverse<floatQ>(i8Area);
-      return true;
-    }
+#ifdef COCOGL_RASTER_PROFILE
+    fixed8 i8Area;
+#endif
 
     template <typename T, typename D>
     T calcDeltaX(D delta0, D delta1) const {
@@ -68,8 +55,7 @@ protected:
       int64_t uv1 = static_cast<int64_t>(delta1.data()) * this->i4dy12.data();
       return T::make(((uv0 - uv1) * this->fRatio.data() + half) >> FRAC);
 #else
-      return static_cast<T>((delta0 * this->i4dy13 - delta1 * this->i4dy12) *
-                            this->fRatio);
+      return static_cast<T>((delta0 * this->i4dy13 - delta1 * this->i4dy12) * this->fRatio);
 #endif
     }
 
@@ -82,8 +68,7 @@ protected:
       int64_t uv1 = static_cast<int64_t>(delta0.data()) * this->i4dx13.data();
       return T::make(((uv0 - uv1) * this->fRatio.data() + half) >> FRAC);
 #else
-      return static_cast<T>((delta1 * this->i4dx12 - delta0 * this->i4dx13) *
-                            this->fRatio);
+      return static_cast<T>((delta1 * this->i4dx12 - delta0 * this->i4dx13) * this->fRatio);
 #endif
     }
 
@@ -113,6 +98,12 @@ protected:
   };
 
   struct LineGradient {
+    fixed4 i4x0; 
+    fixed4 i4x1;
+    fixed4 i4y0;
+    fixed4 i4y1;
+    fixed4 i4dx;
+    fixed4 i4dy;
     floatQ fRatio;
 
     template <typename T, typename D>
@@ -133,9 +124,7 @@ protected:
       int half = 1 << (FRAC - 1);
       return T::make((delta * this->fRatio.data() + half) >> FRAC);
 #else
-      return T::make(
-          static_cast<Fixed<T::FRAC - fixed8::FRAC>>(delta * this->fRatio)
-              .data());
+      return T::make(static_cast<Fixed<T::FRAC - fixed8::FRAC>>(delta * this->fRatio).data());
 #endif
     }
   };
@@ -166,14 +155,11 @@ protected:
   void rasterClippedLine(uint32_t i0, uint32_t i1, uint32_t clipUnion);
 
   template <eClipFlags ClipFlags>
-  uint32_t clipTriangle(uint32_t nNumVertices, uint32_t *pSrc, uint32_t *pDst,
-                        uint32_t *pTmp);
+  uint32_t clipTriangle(uint32_t nNumVertices, uint32_t *pSrc, uint32_t *pDst, uint32_t *pTmp);
 
-  uint32_t clipTriangle(uint32_t plane, uint32_t nNumVertices, uint32_t *pSrc,
-                        uint32_t *pDst, uint32_t *pTmp);
+  uint32_t clipTriangle(uint32_t plane, uint32_t nNumVertices, uint32_t *pSrc, uint32_t *pDst, uint32_t *pTmp);
 
-  void interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA, floatf fDistB,
-                         uint32_t i2);
+  void interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA, floatf fDistB, uint32_t i2);
 
   void rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
 
@@ -181,40 +167,46 @@ protected:
 
   void rasterPoint(uint32_t index);
 
-  bool setupLineAttributes(LineGradient *pGradient, uint32_t i0, uint32_t i1);
+  bool setupLineAttributes(LineGradient *g, uint32_t i0, uint32_t i1);
 
-  bool setupTriangleAttributes(const TriangleGradient &gradient, uint32_t i0,
-                               uint32_t i1, uint32_t i2);
+  bool setupTriangleAttributes(TriangleGradient *g, uint32_t i0, uint32_t i1, uint32_t i2);
 
   Register *applyDepthGradient(Register *pRegister,
-                               const TriangleGradient &gradient,
-                               const RDVECTOR &v0, const RDVECTOR &v1,
+                               const TriangleGradient &g,
+                               const RDVECTOR &v0, 
+                               const RDVECTOR &v1,
                                const RDVECTOR &v2);
 
   void applyPolygonOffset(Register *pRegister);
 
   Register *applyColorGradient(Register *pRegister,
-                               const TriangleGradient &gradient, uint32_t i0,
-                               uint32_t i1, uint32_t i2);
+                               const TriangleGradient &g, 
+                               uint32_t i0,
+                               uint32_t i1, 
+                               uint32_t i2);
 
   Register *applyAffineTextureGradient(Register *pRegister,
-                                       const TriangleGradient &gradient,
-                                       uint32_t i0, uint32_t i1, uint32_t i2);
+                                       const TriangleGradient &g,
+                                       uint32_t i0, 
+                                       uint32_t i1, 
+                                       uint32_t i2);
 
   Register *applyPerspectiveTextureGradient(Register *pRegister,
-                                            const TriangleGradient &gradient,
+                                            const TriangleGradient &g,
                                             uint32_t i0, uint32_t i1,
                                             uint32_t i2);
 
   Register *applyAffineTextureMipmapGradient(Register *pRegister);
 
   Register *applyPerspectiveTextureMipmapGradient(
-      Register *pRegister, const TriangleGradient &gradient, const RDVECTOR &v0,
+      Register *pRegister, const TriangleGradient &g, const RDVECTOR &v0,
       const RDVECTOR &v1, const RDVECTOR &v2, floatRW rhws[3]);
 
   Register *applyFogGradient(Register *pRegister,
-                             const TriangleGradient &gradient, uint32_t i0,
-                             uint32_t i1, uint32_t i2);
+                             const TriangleGradient &g, 
+                             uint32_t i0,
+                             uint32_t i1, 
+                             uint32_t i2);
 
   void ensureClearColor() {
     ColorARGB tmp(Math::ToUNORM8(Math::Sat(vClearColor_.w)),
@@ -237,14 +229,10 @@ protected:
   }
 
   void ensureFogColor() {
-    rasterData_.cFogColor.a =
-        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.w)));
-    rasterData_.cFogColor.r =
-        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.x)));
-    rasterData_.cFogColor.g =
-        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.y)));
-    rasterData_.cFogColor.b =
-        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.z)));
+    rasterData_.cFogColor.a = static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.w)));
+    rasterData_.cFogColor.r = static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.x)));
+    rasterData_.cFogColor.g = static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.y)));
+    rasterData_.cFogColor.b = static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.z)));
     dirtyFlags_.FogColor = 0;
   }
 

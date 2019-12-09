@@ -404,6 +404,8 @@ EGLint _EGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   colorDesc.Width = image->width;
   colorDesc.Height = image->height;
   colorDesc.Pitch = -image->bytes_per_line;
+
+  memset(image->data, 0, image->bytes_per_line * image->height);
 #endif
 
   // Check if the config matches the window bpp
@@ -437,9 +439,12 @@ EGLint _EGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   return EGL_SUCCESS;
 }
 
-EGLint _EGLSurface::InitializePBF(EGLint width, EGLint height,
-                                  EGLint largestPBuffer, EGLint texTarget,
-                                  EGLint texFormat, EGLint bGenMipMaps) {
+EGLint _EGLSurface::InitializePBF(EGLint width, 
+                                  EGLint height,
+                                  EGLint largestPBuffer, 
+                                  EGLint texTarget,
+                                  EGLint texFormat, 
+                                  EGLint bGenMipMaps) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
@@ -540,138 +545,44 @@ EGLint _EGLSurface::InitializePBF(EGLint width, EGLint height,
   return EGL_SUCCESS;
 }
 
-EGLint _EGLSurface::bindTexture() {
-  EGLint err;
+EGLint _EGLSurface::InitDepthStencil(uint32_t width, uint32_t height,
+                                     GLSurfaceDesc *pSurfaceDesc) {
+  __profileAPI(" - %s()\n", __FUNCTION__);
 
-  // Check if we have a texture bindable surface
-  if ((EGL_PBUFFER_BIT != surfaceType_) || (EGL_TEXTURE_2D != texTarget_)) {
-    __eglLogError("Surface::bindTexture() failed, the surface is not a "
-                  "pbuffer supporting texture binding.\r\n");
-    return EGL_BAD_SURFACE;
-  }
+  assert(pSurfaceDesc);
 
-  if (bBoundTexture_) {
-    __eglLogError("Surface::bindTexture() failed, the buffer is "
-                  "already bound to a texture.\r\n");
-    return EGL_BAD_ACCESS;
-  }
+  pSurfaceDesc->Width = width;
+  pSurfaceDesc->Height = height;
 
-  if (EGL_NO_TEXTURE == texFormat_) {
-    __eglLogError("Surface::bindTexture() failed, the surface attribute "
-                  "EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n");
-    return EGL_BAD_MATCH;
-  }
-
-  bool bGenMipmaps = (0 == mipLevel_) && (mipLevels_ > 1);
-
-  err = EGLERROR_FROM_HRESULT(__glBindTexImage(glSurface_, bGenMipmaps));
-  if (__eglFailed(err)) {
-    __eglLogError("__glBindTexImage() failed, err = %d.\r\n", err);
-    return err;
-  }
-
-  bBoundTexture_ = true;
-
-  return EGL_SUCCESS;
-}
-
-EGLint _EGLSurface::releaseTexBound() {
-  // Check if we have a texture bindable surface
-  if ((EGL_PBUFFER_BIT != surfaceType_) || (EGL_TEXTURE_2D != texTarget_)) {
-    __eglLogError(
-        "Surface::releaseTexBound() failed, the surface is not an EGL "
-        "surface, or is not a bound pbuffer surface.\r\n");
-    return EGL_BAD_SURFACE;
-  }
-
-  // Verify the texture format
-  if (EGL_NO_TEXTURE == texFormat_) {
-    __eglLogError("Surface::releaseTexBound() failed, the surface attribute "
-                  "EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n");
-    return EGL_BAD_MATCH;
-  }
-
-  if (bBoundTexture_) {
-    __glReleaseTexImage(glSurface_);
-    bBoundTexture_ = false;
-  }
-
-  return EGL_SUCCESS;
-}
-
-EGLint _EGLSurface::getAttribute(EGLint *pValue, EGLint attribute) const {
-  EGLint value;
-
-  switch (attribute) {
-  case EGL_CONFIG_ID:
-    value = pConfig_->getAttribute(EGL_CONFIG_ID);
+  auto stride = (pConfig_->getAttribute(EGL_DEPTH_SIZE) +
+                 pConfig_->getAttribute(EGL_STENCIL_SIZE)) >>  3;
+  switch (stride) {
+  case 3:
+    pSurfaceDesc->Format = FORMAT_X8S8D16;
+    stride = 4;
     break;
-
-  case EGL_HEIGHT:
-    value = height_;
+  case 2:
+    pSurfaceDesc->Format = FORMAT_D16;
     break;
-
-  case EGL_WIDTH:
-    value = width_;
-    break;
-
-  case EGL_LARGEST_PBUFFER:
-    value = largestPBuffer_;
-    break;
-
-  case EGL_TEXTURE_FORMAT:
-    value = texFormat_;
-    break;
-
-  case EGL_MIPMAP_TEXTURE:
-    value = mipTexture_;
-    break;
-
-  case EGL_MIPMAP_LEVEL:
-    value = mipLevel_;
-    break;
-
   default:
-    __eglLogError("Surface::getAttribute() failed, invalid attribute: %d.\r\n",
-                  attribute);
-    return EGL_BAD_ATTRIBUTE;
+    pSurfaceDesc->Format = FORMAT_UNKNOWN;
+    break;
   }
 
-  if (pValue) {
-    *pValue = value;
-  }
-
-  return EGL_SUCCESS;
-}
-
-EGLint _EGLSurface::setAttribute(EGLint attribute, EGLint value) {
-  EGLint err;
-
-  switch (attribute) {
-  case EGL_MIPMAP_LEVEL: {
-    mipLevel_ = value;
-
-    if (ppBuffers_) {
-      GLSurfaceDesc surfDesc;
-      this->getPBufferDesc(&surfDesc);
-
-      // Update the GL surface
-      err = EGLERROR_FROM_HRESULT(
-          __glUpdateSurface(glSurface_, &surfDesc, nullptr));
-      if (__eglFailed(err)) {
-        __eglLogError("__glCreateSurface() failed, err = %d.\r\n", err);
-        return err;
-      }
+  if (pSurfaceDesc->Format != FORMAT_UNKNOWN) {
+    pDepthStencilBits_ = new uint8_t[stride * pSurfaceDesc->Width * pSurfaceDesc->Height];
+    if (nullptr == pDepthStencilBits_) {
+      __eglLogError(
+          "Depth stencil buffer allocation failed, out of memory.\r\n");
+      return EGL_BAD_ALLOC;
     }
+
+    pSurfaceDesc->pBits = pDepthStencilBits_;
+  } else {
+    pSurfaceDesc->pBits = nullptr;
   }
 
-  break;
-
-  default:
-    __eglLogError("Surface::setAttribute() failed, invalid attribute: %d.\r\n",
-                  attribute);
-    return EGL_BAD_ATTRIBUTE;
-  }
+  pSurfaceDesc->Pitch = stride * pSurfaceDesc->Width;
 
   return EGL_SUCCESS;
 }
@@ -768,16 +679,144 @@ EGLint _EGLSurface::copyBuffer(EGLNativePixmapType hPixmap) {
 
 void _EGLSurface::present() {
 #if defined(_WIN32)
-  ::BitBlt(pDisplay_->getDgetNativeHandleC(), 0, 0, width_, height_, hDC_, 0, 0,
-           SRCCOPY);
+  BitBlt(pDisplay_->getDgetNativeHandleC(), 0, 0, width_, height_, hDC_, 0, 0, SRCCOPY);
 #elif defined(__linux__)
-  XPutImage(pDisplay_->getNativeHandle(), drawable_, gc_, pImage_, 0, 0, 0, 0,
-            width_, height_);
+  XPutImage(pDisplay_->getNativeHandle(), drawable_, gc_, pImage_, 0, 0, 0, 0, width_, height_);
 #endif
 }
 
-HRESULT _EGLSurface::saveBitmap(const char *filename) {
-  return __glSaveBitmap(glSurface_, filename);
+EGLint _EGLSurface::bindTexture() {
+  EGLint err;
+
+  // Check if we have a texture bindable surface
+  if ((EGL_PBUFFER_BIT != surfaceType_) || (EGL_TEXTURE_2D != texTarget_)) {
+    __eglLogError("Surface::bindTexture() failed, the surface is not a "
+                  "pbuffer supporting texture binding.\r\n");
+    return EGL_BAD_SURFACE;
+  }
+
+  if (bBoundTexture_) {
+    __eglLogError("Surface::bindTexture() failed, the buffer is "
+                  "already bound to a texture.\r\n");
+    return EGL_BAD_ACCESS;
+  }
+
+  if (EGL_NO_TEXTURE == texFormat_) {
+    __eglLogError("Surface::bindTexture() failed, the surface attribute "
+                  "EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n");
+    return EGL_BAD_MATCH;
+  }
+
+  bool bGenMipmaps = (0 == mipLevel_) && (mipLevels_ > 1);
+
+  err = EGLERROR_FROM_HRESULT(__glBindTexImage(glSurface_, bGenMipmaps));
+  if (__eglFailed(err)) {
+    __eglLogError("__glBindTexImage() failed, err = %d.\r\n", err);
+    return err;
+  }
+
+  bBoundTexture_ = true;
+
+  return EGL_SUCCESS;
+}
+
+EGLint _EGLSurface::releaseTexBound() {
+  // Check if we have a texture bindable surface
+  if ((EGL_PBUFFER_BIT != surfaceType_) || (EGL_TEXTURE_2D != texTarget_)) {
+    __eglLogError(
+        "Surface::releaseTexBound() failed, the surface is not an EGL "
+        "surface, or is not a bound pbuffer surface.\r\n");
+    return EGL_BAD_SURFACE;
+  }
+
+  // Verify the texture format
+  if (EGL_NO_TEXTURE == texFormat_) {
+    __eglLogError("Surface::releaseTexBound() failed, the surface attribute "
+                  "EGL_TEXTURE_FORMAT is set to EGL_NO_TEXTURE.\r\n");
+    return EGL_BAD_MATCH;
+  }
+
+  if (bBoundTexture_) {
+    __glReleaseTexImage(glSurface_);
+    bBoundTexture_ = false;
+  }
+
+  return EGL_SUCCESS;
+}
+
+EGLint _EGLSurface::setAttribute(EGLint attribute, EGLint value) {
+  EGLint err;
+
+  switch (attribute) {
+  case EGL_MIPMAP_LEVEL: {
+    mipLevel_ = value;
+
+    if (ppBuffers_) {
+      GLSurfaceDesc surfDesc;
+      this->getPBufferDesc(&surfDesc);
+
+      // Update the GL surface
+      err = EGLERROR_FROM_HRESULT(
+          __glUpdateSurface(glSurface_, &surfDesc, nullptr));
+      if (__eglFailed(err)) {
+        __eglLogError("__glCreateSurface() failed, err = %d.\r\n", err);
+        return err;
+      }
+    }
+  }
+
+  break;
+
+  default:
+    __eglLogError("Surface::setAttribute() failed, invalid attribute: %d.\r\n", attribute);
+    return EGL_BAD_ATTRIBUTE;
+  }
+
+  return EGL_SUCCESS;
+}
+
+EGLint _EGLSurface::getAttribute(EGLint *pValue, EGLint attribute) const {
+  EGLint value;
+
+  switch (attribute) {
+  case EGL_CONFIG_ID:
+    value = pConfig_->getAttribute(EGL_CONFIG_ID);
+    break;
+
+  case EGL_HEIGHT:
+    value = height_;
+    break;
+
+  case EGL_WIDTH:
+    value = width_;
+    break;
+
+  case EGL_LARGEST_PBUFFER:
+    value = largestPBuffer_;
+    break;
+
+  case EGL_TEXTURE_FORMAT:
+    value = texFormat_;
+    break;
+
+  case EGL_MIPMAP_TEXTURE:
+    value = mipTexture_;
+    break;
+
+  case EGL_MIPMAP_LEVEL:
+    value = mipLevel_;
+    break;
+
+  default:
+    __eglLogError("Surface::getAttribute() failed, invalid attribute: %d.\r\n", attribute);
+    return EGL_BAD_ATTRIBUTE;
+  }
+
+  if (pValue) {
+    *pValue = value;
+  }
+
+  return EGL_SUCCESS;
 }
 
 uint8_t _EGLSurface::getColorFormat(uint32_t cBitsPerPixel) {
@@ -792,72 +831,31 @@ uint8_t _EGLSurface::getColorFormat(uint32_t cBitsPerPixel) {
   return FORMAT_UNKNOWN;
 }
 
-EGLint _EGLSurface::InitDepthStencil(uint32_t width, uint32_t height,
-                                     GLSurfaceDesc *pSurfaceDesc) {
-  __profileAPI(" - %s()\n", __FUNCTION__);
-
-  assert(pSurfaceDesc);
-
-  pSurfaceDesc->Width = width;
-  pSurfaceDesc->Height = height;
-
-  uint32_t stride = (pConfig_->getAttribute(EGL_DEPTH_SIZE) +
-                     pConfig_->getAttribute(EGL_STENCIL_SIZE)) >>
-                    3;
-  switch (stride) {
-  case 3:
-    pSurfaceDesc->Format = FORMAT_X8S8D16;
-    stride = 4;
-    break;
-  case 2:
-    pSurfaceDesc->Format = FORMAT_D16;
-    break;
-  default:
-    pSurfaceDesc->Format = FORMAT_UNKNOWN;
-    break;
-  }
-
-  if (pSurfaceDesc->Format != FORMAT_UNKNOWN) {
-    pDepthStencilBits_ =
-        new uint8_t[stride * pSurfaceDesc->Width * pSurfaceDesc->Height];
-    if (nullptr == pDepthStencilBits_) {
-      __eglLogError(
-          "Depth stencil buffer allocation failed, out of memory.\r\n");
-      return EGL_BAD_ALLOC;
-    }
-
-    pSurfaceDesc->pBits = pDepthStencilBits_;
-  } else {
-    pSurfaceDesc->pBits = nullptr;
-  }
-
-  pSurfaceDesc->Pitch = stride * pSurfaceDesc->Width;
-
-  return EGL_SUCCESS;
-}
-
 void _EGLSurface::getPBufferDesc(GLSurfaceDesc *pSurfaceDesc) {
   assert(pSurfaceDesc);
 
-  auto mipLevel = std::clamp<uint32_t>(mipLevel_, 0, mipLevels_ - 1);
-  uint32_t width = width_;
-  uint32_t height = height_;
+  auto mipLevel = std::clamp<int32_t>(mipLevel_, 0, mipLevels_ - 1);
+  auto width = width_;
+  auto height = height_;
 
-  for (uint32_t i = 0; i < mipLevel; ++i) {
+  for (int32_t i = 0; i < mipLevel; ++i) {
     if (width > 1) {
       width >>= 1;
     }
-
     if (height > 1) {
       height >>= 1;
     }
   }
 
-  uint32_t nBPP = pConfig_->getAttribute(EGL_BUFFER_SIZE);
+  auto nBPP = pConfig_->getAttribute(EGL_BUFFER_SIZE);
 
   pSurfaceDesc->Format = _EGLSurface::getColorFormat(nBPP);
-  pSurfaceDesc->pBits = ppBuffers_[mipLevel];
-  pSurfaceDesc->Width = width;
+  pSurfaceDesc->pBits  = ppBuffers_[mipLevel];
+  pSurfaceDesc->Width  = width;
   pSurfaceDesc->Height = height;
-  pSurfaceDesc->Pitch = width * (nBPP / 8);
+  pSurfaceDesc->Pitch  = width * (nBPP / 8);
+}
+
+HRESULT _EGLSurface::saveBitmap(const char *filename) {
+  return __glSaveBitmap(glSurface_, filename);
 }

@@ -18,18 +18,27 @@ class _EGLDisplay;
 
 class _EGLSurface : public Object {
 public:
-  static EGLint CreateWND(_EGLSurface **ppSurface, _EGLDisplay *display,
-                          EGLint surfaceType, _EGLConfig *pConfig,
+  static EGLint CreateWND(_EGLSurface **ppSurface, 
+                          _EGLDisplay *display,
+                          EGLint surfaceType, 
+                          _EGLConfig *pConfig,
                           EGLNativeWindowType hWnd);
 
-  static EGLint CreatePXM(_EGLSurface **ppSurface, _EGLDisplay *display,
-                          EGLint surfaceType, _EGLConfig *pConfig,
+  static EGLint CreatePXM(_EGLSurface **ppSurface, 
+                          _EGLDisplay *display,
+                          EGLint surfaceType, 
+                          _EGLConfig *pConfig,
                           EGLNativePixmapType hPixmap);
 
-  static EGLint CreatePBF(_EGLSurface **ppSurface, _EGLDisplay *display,
-                          EGLint surfaceType, _EGLConfig *pConfig, EGLint width,
-                          EGLint height, EGLint largestPBuffer,
-                          EGLint texTarget, EGLint texFormat,
+  static EGLint CreatePBF(_EGLSurface **ppSurface, 
+                          _EGLDisplay *display,
+                          EGLint surfaceType, 
+                          _EGLConfig *pConfig, 
+                          EGLint width,
+                          EGLint height, 
+                          EGLint largestPBuffer,
+                          EGLint texTarget, 
+                          EGLint texFormat,
                           EGLint bGenMipMaps);
 
   EGLint getAttribute(EGLint *pValue, EGLint name) const;
@@ -73,10 +82,15 @@ private:
 
   EGLint InitializePXM(EGLNativePixmapType hPixmap);
 
-  EGLint InitializePBF(EGLint width, EGLint height, EGLint largestPBuffer,
-                       EGLint texTarget, EGLint texFormat, EGLint bGenMipMaps);
+  EGLint InitializePBF(EGLint width,  
+                       EGLint height, 
+                       EGLint largestPBuffer,
+                       EGLint texTarget, 
+                       EGLint texFormat, 
+                       EGLint bGenMipMaps);
 
-  EGLint InitDepthStencil(uint32_t width, uint32_t height,
+  EGLint InitDepthStencil(uint32_t width, 
+                          uint32_t height,
                           GLSurfaceDesc *pSurfaceDesc);
 
   void getPBufferDesc(GLSurfaceDesc *pSurfaceDesc);
@@ -88,6 +102,7 @@ private:
   EGLint surfaceType_;
 
   bool bBoundTexture_;
+  EGLint pitch_;
   EGLint width_;
   EGLint height_;
   EGLint largestPBuffer_;

@@ -15,6 +15,7 @@
 
 class _EGLConfig : public Object {
 public:
+
   enum {
     ATTRIBUTES_FIRST = EGL_BUFFER_SIZE,
     ATTRIBUTES_LAST = EGL_RENDERABLE_TYPE,
@@ -46,6 +47,7 @@ public:
   static int compare(const _EGLConfig *pConfigA, const _EGLConfig *pConfigB);
 
 private:
+
   _EGLConfig(EGLint red, 
              EGLint green, 
              EGLint blue, 

@@ -25,7 +25,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/demo/demo",
-            "args": ["-t0"],
+            "args": ["-t1"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/demo",
             "environment": [{

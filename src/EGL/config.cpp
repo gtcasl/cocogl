@@ -108,8 +108,8 @@ EGLint _EGLConfig::matches(const EGLint *pAttrib_list, bool *pbResult) const {
 
   if (pAttrib_list) {
     while (EGL_NONE != *pAttrib_list) {
-      EGLint name = *pAttrib_list++;
-      EGLint refValue = *pAttrib_list++;
+      auto name = *pAttrib_list++;
+      auto refValue = *pAttrib_list++;
 
       EGLint curValue;
       err = this->getAtttribute(name, &curValue);
@@ -283,9 +283,9 @@ int _EGLConfig::compare(const _EGLConfig *pConfigA, const _EGLConfig *pConfigB) 
   };
 
   for (int i = 0; i < __countof(sortedList); ++i) {
-    EGLint name = sortedList[i];
-    EGLint valueA = pConfigA->getAttribute(name);
-    EGLint valueB = pConfigB->getAttribute(name);
+    auto name = sortedList[i];
+    auto valueA = pConfigA->getAttribute(name);
+    auto valueB = pConfigB->getAttribute(name);
 
     switch (name) {
     case EGL_CONFIG_CAVEAT:

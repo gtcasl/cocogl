@@ -115,8 +115,7 @@ bool Rasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   return true;
 }
 
-void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
-                                   uint32_t clipUnion) {
+void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1, uint32_t clipUnion) {
   auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
   auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
@@ -207,13 +206,10 @@ void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1,
   this->rasterLine(iFrom, iTo);
 }
 
-void Rasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
-                                       uint32_t clipUnion) {
-  auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+void Rasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2, uint32_t clipUnion) {
+  auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
-  auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
+  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
 
   uint32_t clipVertices[2][CLIP_BUFFER_SIZE];
   uint32_t iTmpVertices = clipVerticesBaseIndex_;
@@ -361,7 +357,7 @@ void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
   pvClipPos[i2].z = Math::Lerpf(pvClipPos[i0].z, pvClipPos[i1].z, factor);
   pvClipPos[i2].w = Math::Lerpf(pvClipPos[i0].w, pvClipPos[i1].w, factor);
 
-  RASTERFLAGS rasterFlags = rasterID_.Flags;
+  auto rasterFlags = rasterID_.Flags;
 
   if (rasterFlags.Color) {
     auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_);

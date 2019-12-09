@@ -35,8 +35,7 @@ void IRasterOp::logProfile(const RASTERID &rasterID) {
   float fMPs = profile_.DrawnPixels / fRenderTime;
 
   DbgPrintf(1,
-            "Profile_PS(%d,%d,%d,%d): Calls=%ld, Pixels=%ld, Time=%.6f "
-            "ms, MPs=%.6f - ",
+            "Profile_PS(%d,%d,%d,%d): Calls=%ld, Pixels=%ld, Time=%.6f ms, MPs=%.6f - ",
             rasterID.Flags.Value, rasterID.States.Value,
             rasterID.Textures[0].Value, rasterID.Textures[1].Value,
             profile_.Invocations, profile_.DrawnPixels, fRenderTime, fMPs);

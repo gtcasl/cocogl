@@ -1118,7 +1118,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers(EGLDisplay display,
   static int s_fileno = 0;
   char filePath[360];
   if (s_fileno++ < COCOGL_SNAPSHOTS) {
-    _sntprintf(filePath, 360, "snapshot%d.bmp", s_fileno);
+    snprintf(filePath, 360, "snapshot%d.bmp", s_fileno);
     pSurface->saveBitmap(filePath);
   }
 #endif

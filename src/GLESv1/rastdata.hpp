@@ -54,34 +54,36 @@ public:
       __glLog("END MAKE_SCANLINE().\r\n");
     }
 #endif
+
 #ifdef COCOGL_RASTER_PROFILE
     {
-      // Copy the cache list
-      Cache::List sortedList;
-      if (SUCCEEDED(map_.ToList(&sortedList))) {
-        // Sort the list
-        sortedList.Sort(Profilecompare);
+      std::vector<std::map<RASTERID, IRasterOp *>::const_iterator> rops;
+      rops.reserve(rasterops_.size());
+      for (auto iter = rasterops_.begin(), end = rasterops_.end(); iter != end; ++iter) {
+        rops.push_back(iter);
+      }
+      
+      // Sort the list
+      std::sort(rops.begin(), rops.end(), [](auto& lhs, auto& rhs) -> bool { 
+                return (lhs->second->getProfile() < rhs->second->getProfile()); });
 
-        // Dump the profile result
-        for (Cache::Iter iter = sortedList.getBegin(),
-                         iterEnd = sortedList.getEnd();
-             iter != iterEnd; ++iter) {
-          iter->Second->LogProfile(iter->First);
-        }
+      // Dump the profile result
+      for (auto& iter : rops) {
+        iter->second->logProfile(iter->first);
       }
     }
 #endif
 
     // Delete cache entries
-    for (auto &it : map_) {
+    for (auto &it : rasterops_) {
       __safeRelease(it.second);
     }
   }
 
   bool lookup(const RASTERID &rasterID, IRasterOp **ppRasterOp) {
     assert(ppRasterOp);
-    auto it = map_.find(rasterID);
-    if (it == map_.end())
+    auto it = rasterops_.find(rasterID);
+    if (it == rasterops_.end())
       return false;
     *ppRasterOp = it->second;
     return true;
@@ -92,11 +94,11 @@ public:
     if (cbTotalSize > MAX_CACHE_SIZE) {
       uint32_t compactSize = cbTotalSize / COMPACT_RATIO;
       if (cbTotalSize > compactSize) {
-        for (auto iter = map_.rbegin(); cbTotalSize > compactSize;) {
+        for (auto iter = rasterops_.rbegin(); cbTotalSize > compactSize;) {
           auto iterCur = iter--;
           cbTotalSize -= iterCur->second->getCbSize();
           __safeRelease(iterCur->second);
-          map_.erase(iterCur->first);
+          rasterops_.erase(iterCur->first);
         }
         cbTotalSize_ = cbTotalSize;
       }
@@ -104,7 +106,7 @@ public:
 
     uint32_t cbSize = pRasterOp->getCbSize();
     cbTotalSize_ += cbSize;
-    map_.insert(std::make_pair(rasterID, pRasterOp));
+    rasterops_.insert(std::make_pair(rasterID, pRasterOp));
   }
 
   static GLenum Create(RasterCache **ppRasterCache) {
@@ -135,14 +137,6 @@ public:
   }
 
 private:
-#ifdef COCOGL_RASTER_PROFILE
-
-  static bool profilecompare(const Cache::List::Type &lhs,
-                             const Cache::List::Type &rhs) {
-    return (lhs.Second->getProfile() < rhs.Second->getProfile());
-  }
-
-#endif
 
   enum {
     MAX_CACHE_SIZE = 0x20000,
@@ -153,7 +147,7 @@ private:
     cbTotalSize_ = 0;
   }
 
-  std::map<RASTERID, IRasterOp *> map_;
+  std::map<RASTERID, IRasterOp *> rasterops_;
 
   std::list<RASTERID> slowRasterIDs_;
 
@@ -193,6 +187,5 @@ struct RasterData {
 
   IRasterOp *pRasterOp;
 
-  RasterData()
-      : pRasterOp(nullptr) {}
+  RasterData() : pRasterOp(nullptr) {}
 };

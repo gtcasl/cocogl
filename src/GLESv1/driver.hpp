@@ -15,7 +15,6 @@
 
 class GLContext;
 class GLSurface;
-class ThreadPool;
 class RasterCache;
 
 class GLDriver {
@@ -49,6 +48,5 @@ public:
 
 private:
   HandleTable handles_;
-  ThreadPool *threadpool_;
   RasterCache *pRasterCache_;
 };

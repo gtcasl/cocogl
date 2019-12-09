@@ -45,8 +45,7 @@ ColorARGB Blender(const ColorARGB &cColor, const uint8_t *pCB) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <ePixelFormat Format, bool bWriteMask, eLogicOp LogicOp>
-void DoWriteColor(const RasterData &rasterData, const ColorARGB &cColor,
-                  uint8_t *pCB) {
+void DoWriteColor(const RasterData &rasterData, const ColorARGB &cColor, uint8_t *pCB) {
   uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB);
   auto result = Format::ConvertTo<Format>(cColor);
   result = ApplyLogicOp<LogicOp>(result, dstColor);
@@ -65,8 +64,7 @@ void DoWriteColor(const RasterData &rasterData, const ColorARGB &cColor,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <bool Depth, bool Color, uint32_t Texture0, uint32_t Texture1,
-          bool Fog>
+template <bool Depth, bool Color, uint32_t Texture0, uint32_t Texture1, bool Fog>
 class GenericScanlineA {
 public:
   enum {
@@ -88,26 +86,20 @@ public:
     REG_SIZE = REG_FOG + FOG_SIZE,
   };
 
-  inline static void Execute(const RasterData &rasterData, int y, int lx,
-                             int rx) {
-    if constexpr (Texture0 != 0) {
+  inline static void Execute(const RasterData &rasterData, int y, int lx, int rx) {
+    if constexpr (Color != 0 || Texture0 != 0) {
       GenericScanlineA<Depth, Color, Texture0, Texture1, Fog>::__Execute(rasterData, y, lx, rx);
     } else {
-      if constexpr (Color) {
-        GenericScanlineA<Depth, Color, 0, 0, Fog>::__Execute(rasterData, y, lx, rx);
-      } else {
-        __unused(rasterData);
-        __unused(y);
-        __unused(lx);
-        __unused(rx);
-      }
+      __unused(rasterData);
+      __unused(y);
+      __unused(lx);
+      __unused(rx);
     }
   }
 
-  inline static void __Execute(const RasterData &rasterData, int y, int lx,
-                               int rx) {
+  inline static void __Execute(const RasterData &rasterData, int y, int lx, int rx) {
     auto pRasterOp = reinterpret_cast<const GenericRasterOp *>(rasterData.pRasterOp);
-    RASTERFLAGS rasterFlags = pRasterOp->getRasterID().Flags;
+    auto rasterFlags = pRasterOp->getRasterID().Flags;
 
     auto pColorBits = rasterData.pColorBits;
     auto colorPitch = rasterData.ColorPitch;
@@ -262,8 +254,7 @@ public:
           if constexpr (Depth) {
             if (rasterFlags.DepthWrite) {
               // Write output depth
-              *reinterpret_cast<uint16_t *>(pDS) =
-                  static_cast<uint16_t>(depthValue);
+              *reinterpret_cast<uint16_t *>(pDS) = static_cast<uint16_t>(depthValue);
             }
           }
         }
@@ -316,8 +307,7 @@ public:
   }
 };
 
-template <bool Depth, bool Color, uint32_t Texture0, uint32_t Texture1,
-          bool Fog>
+template <bool Depth, bool Color, uint32_t Texture0, uint32_t Texture1, bool Fog>
 class GenericScanlineP {
 public:
   enum {
@@ -341,8 +331,7 @@ public:
     REG_SIZE = REG_FOG + FOG_SIZE,
   };
 
-  inline static void Execute(const RasterData &rasterData, int y, int lx,
-                             int rx) {
+  inline static void Execute(const RasterData &rasterData, int y, int lx, int rx) {
     if constexpr (Texture0 != 0) {
       GenericScanlineP<Depth, Color, Texture0, Texture1, Fog>::__Execute(rasterData, y, lx, rx);
     } else {
@@ -353,8 +342,7 @@ public:
     }
   }
 
-  inline static void __Execute(const RasterData &rasterData, int y, int lx,
-                               int rx) {
+  inline static void __Execute(const RasterData &rasterData, int y, int lx, int rx) {
     auto pRasterOp = reinterpret_cast<const GenericRasterOp *>(rasterData.pRasterOp);
     auto rasterFlags = pRasterOp->getRasterID().Flags;
 
@@ -619,8 +607,7 @@ public:
             if constexpr (Depth) {
               if (rasterFlags.DepthWrite) {
                 // Write output depth
-                *reinterpret_cast<uint16_t *>(pDS) =
-                    static_cast<uint16_t>(depthValue);
+                *reinterpret_cast<uint16_t *>(pDS) = static_cast<uint16_t>(depthValue);
               }
             }
           }

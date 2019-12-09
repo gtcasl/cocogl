@@ -17,7 +17,7 @@
 
 void Rasterizer::drawPoint(uint32_t index) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
-  uint32_t flags = pwFlags[index];
+  auto flags = pwFlags[index];
 
   // Check if the vertex is clipped
   if (flags & CLIPPING_MASK) {
@@ -29,28 +29,23 @@ void Rasterizer::drawPoint(uint32_t index) {
 }
 
 void Rasterizer::rasterPoint(uint32_t index) {
-  auto pvScreenPos =
-      reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
-  auto pfPointSize =
-      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEX_POINTSIZE]);
+  __profileAPI(" - %s()\n", __FUNCTION__);
+
+  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
+  auto pfPointSize = reinterpret_cast<fixed4 *>(pbVertexData_[VERTEX_POINTSIZE]);
 
   auto &vertex = pvScreenPos[index];
   auto fPointSize = pfPointSize[index];
   auto fHalfSize = fPointSize >> 1;
 
-  auto ymin = std::max<int>(Math::Roundi<int>(vertex.y - fHalfSize),
-                            scissorRect_.top);
-  auto ymax = std::min<int>(Math::Roundi<int>(vertex.y + fHalfSize),
-                            scissorRect_.bottom);
-  auto xmin = std::max<int>(Math::Roundi<int>(vertex.x - fHalfSize),
-                            scissorRect_.left);
-  auto xmax = std::min<int>(Math::Roundi<int>(vertex.x + fHalfSize),
-                            scissorRect_.right);
+  auto ymin = std::max<int>(Math::Roundi<int>(vertex.y - fHalfSize), scissorRect_.top);
+  auto ymax = std::min<int>(Math::Roundi<int>(vertex.y + fHalfSize), scissorRect_.bottom);
+  auto xmin = std::max<int>(Math::Roundi<int>(vertex.x - fHalfSize), scissorRect_.left);
+  auto xmax = std::min<int>(Math::Roundi<int>(vertex.x + fHalfSize), scissorRect_.right);
 
   // Early out if the point has no size
-  if ((xmin >= xmax) || (ymin >= ymax)) {
+  if ((xmin >= xmax) || (ymin >= ymax))
     return;
-  }
 
   if (!this->generateRasterOp()) {
     __glLogError("Rasterizer::generateRasterOp() failed.\r\n");
@@ -111,9 +106,8 @@ void Rasterizer::rasterPoint(uint32_t index) {
         pRegisters[1].m[1] = fDelta;
         pRegisters[1].m[2] = (fDelta >> 1) - fDelta * ymin;
       } else {
-        auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(
-            pbVertexData_[VERTEX_TEXCOORD0 + i]);
-        const TEXCOORD2 &vTexCoord = vTexCoords[index];
+        auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEX_TEXCOORD0 + i]);
+        auto &vTexCoord = vTexCoords[index];
 
         pRegisters[0].m[0] = Math::Zero<fixedRX>();
         pRegisters[0].m[1] = Math::Zero<fixedRX>();
@@ -144,7 +138,7 @@ void Rasterizer::rasterPoint(uint32_t index) {
 
 #ifdef COCOGL_RASTER_PROFILE
   auto start_time = std::chrono::high_resolution_clock::now();
-  rasterData_.pRasterOp->StartProfile((ymax - ymin) * (xmax - xmin));
+  rasterData_.pRasterOp->startProfile((ymax - ymin) * (xmax - xmin));
 #endif
 
   for (int y = ymin; y < ymax; ++y) {
@@ -154,8 +148,7 @@ void Rasterizer::rasterPoint(uint32_t index) {
 
 #ifdef COCOGL_RASTER_PROFILE
   auto end_time = std::chrono::high_resolution_clock::now();
-  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(
-      end_time - start_time);
-  rasterData_.pRasterOp->EndProfile(elapsed_time.count());
+  auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(end_time - start_time);
+  rasterData_.pRasterOp->endProfile(elapsed_time.count());
 #endif
 }
