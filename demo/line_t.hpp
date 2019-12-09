@@ -51,7 +51,7 @@ public:
 
   void OnRender() {
     GLshort vertexArray[6] = {50, -25, 0, -50, 25, 0};
-    GLubyte colorArray[8] = {0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0x00, 0xff};
+    GLubyte colorArray[8] = {0xff, 0xff, 0x0, 0x00, 0xff, 0x00, 0x00, 0xff};
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();

@@ -177,8 +177,8 @@ bool Rasterizer::setupLineAttributes(LineGradient *g, uint32_t i0, uint32_t i1) 
           pRegister[i].m[attribIdx] = g->calcDelta<fixedRX>(delta);
           pRegister[i].m[attribIdx ^ 0x1] = Math::Zero<fixedRX>();
         } else {
-          pRegister->m[0] = Math::Zero<fixedRX>();
-          pRegister->m[1] = Math::Zero<fixedRX>();
+          pRegister[i].m[0] = Math::Zero<fixedRX>();
+          pRegister[i].m[1] = Math::Zero<fixedRX>();
           interpolateMask &= ~(1 << i);
         }
         pRegister[i].m[2] = static_cast<fixedRX>(c0.m[i]) >> fixed8::FRAC;
