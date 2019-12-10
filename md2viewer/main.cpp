@@ -43,8 +43,9 @@ static void parse_args(int argc, char **argv) {
       background = optarg;
       break;
     case '?':
-      printf("MD2Viewer Demo.\n");
+      printf("MD2 Viewer.\n");
       printf("Usage: filename [-w width][-h height][-b background]\n");
+      printf("Press keys '<-', '->' to change animation.\n");
       [[fallthrough]];
     default:
       exit(1);

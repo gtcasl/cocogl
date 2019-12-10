@@ -50,6 +50,7 @@ static void parse_args(int argc, char **argv) {
     case '?':
       printf("CocoGL Demo.\n");
       printf("Usage: [-t: testno] [-h: help]\n");
+      printf("Press keys 'pageup', 'pagedown' to change test.\n");
       [[fallthrough]];
     default:
       exit(1);
@@ -118,7 +119,6 @@ int main(int argc, char **argv) {
   //--
   parse_args(argc, argv);
 
-  bool text_enable = true;
   int loop = 1;
   SDL_Event event;
 
@@ -142,9 +142,6 @@ int main(int argc, char **argv) {
       switch (event.type) {
       case SDL_KEYDOWN:
         switch (event.key.keysym.sym) {
-        case SDLK_t:
-          text_enable = !text_enable;
-          break;
         case SDLK_PAGEUP:
           if (testid > 0) {
             create_test(--testid, window);
