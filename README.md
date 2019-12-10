@@ -24,41 +24,38 @@ Default Build Instructions (Ubuntu Trusty)
 
 GCC 7.1 Install:
   
-    sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-    sudo apt-get update
-    sudo apt-get install gcc-7 g++-7
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+    $ sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+    $ sudo apt-get update
+    $ sudo apt-get install gcc-7 g++-7
+    $ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
 Xlib 11 Install:
 
-    sudo apt install libx11-dev
+    $ sudo apt install libx11-dev
 
 SDL 2.0 Install:
 
-    sudo apt-get install libsdl2-dev
+    $ sudo apt-get install libsdl2-dev
 
 To use CocoGL you must clone the repository and build the sources
 
-    git clone https://github.com/gtcasl/cocogl.git
-    cd cocogl
-    make -C shared
-    make -C src/GLES_CM
-    make -C demo   
+    $ git clone https://github.com/gtcasl/cocogl.git
+    $ cd cocogl
+    $ build.sh all
+    $ source env.sh   
 
 MD2 Viewer    
 
-    cd md2viewer
-    source ../env.sh
-    ./md2viewer -?
-    ./md2viewer -b models/quake.tga models/tekkaman.md2
+    $ cd md2viewer
+    $ ./md2viewer -?
+    $ ./md2viewer -b models/quake.tga models/tekkaman.md2
     
 ![Screenshot2](screenshot3.png)
 
 Demo App
 
-    cd demo
-    source ../env.sh
-    ./demo -?
-    ./demo -t7
+    $ cd demo
+    $ ./demo -?
+    $ ./demo -t7
 
 ![Screenshot1](screenshot1.png) ![Screenshot2](screenshot2.png) 
