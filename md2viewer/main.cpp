@@ -29,6 +29,12 @@ int height = SCREEN_HEIGHT;
 char* background = nullptr;
 char* model = nullptr;
 
+static void print_usage() {
+  printf("MD2 Viewer.\n");
+  printf("Usage: filename [-w width][-h height][-b background]\n");
+  printf("Press keys '<-', '->' to change animation.\n");
+}
+
 static void parse_args(int argc, char **argv) {
   int c;
   while ((c = getopt(argc, argv, "w:h:b:?")) != -1) {
@@ -43,9 +49,7 @@ static void parse_args(int argc, char **argv) {
       background = optarg;
       break;
     case '?':
-      printf("MD2 Viewer.\n");
-      printf("Usage: filename [-w width][-h height][-b background]\n");
-      printf("Press keys '<-', '->' to change animation.\n");
+      print_usage();
       [[fallthrough]];
     default:
       exit(1);
@@ -54,6 +58,9 @@ static void parse_args(int argc, char **argv) {
   //--
   if (optind < argc) {
     model = argv[optind++];
+  } else {
+    print_usage();
+    exit(1);
   }
 }
 
