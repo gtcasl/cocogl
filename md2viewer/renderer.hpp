@@ -13,6 +13,14 @@
 //
 #pragma once
 
+#include "md2.hpp"
+
+enum class ShadeMode {
+  flat,
+  gourand,
+  texture
+};
+
 class Renderer {
 public:
   
@@ -20,9 +28,9 @@ public:
 
   virtual ~Renderer();
 
-  virtual bool OnInitialize();
+  virtual bool OnInitialize(const char* model, const char* background);
 
-  virtual void OnRender() = 0;
+  virtual void OnRender();
 
   virtual void OnKeyNext();
 
@@ -32,6 +40,12 @@ public:
 
   void Present();
 
+  void resize(int width, int height);
+
+  const char* getAnimation() const {
+    return md2_.getAnimation(animKey_);
+  }
+
 protected:
 
   EGLDisplay glDisplay_;
@@ -40,4 +54,14 @@ protected:
   EGLSurface glSurface_;
   EGLint width_;
   EGLint height_;
+
+   GLuint background_;
+
+  md2::MD2Model md2_;
+
+  vec3_t translation_;
+  vec3_t rotation_;
+  float scaling_;
+
+  int animKey_;
 };

@@ -60,7 +60,7 @@ GLenum Rasterizer::setupRasterStates(GLenum mode) {
 
   cullStates_.bCullFaceEnabled = caps_.CullFace ? true : false;
 
-  RASTERID rasterID;
+  RASTERID rasterID(0, 0, 0, 0);
 
   rasterID.Flags.ColorFormat = rasterData_.ColorFormat;
 

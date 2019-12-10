@@ -13,31 +13,16 @@
 //
 #pragma once
 
-class Renderer {
-public:
-  
-  Renderer(EGLNativeWindowType window);
+#include <chrono>
+#include <iostream>
+#include <vector>
+#include <array>
+#include <cstring>
+#include <assert.h>
+#include <algorithm>
 
-  virtual ~Renderer();
+#include <EGL/egl.h>
+#include <GLES/gl.h>
+#include <GLES/glext.h>
 
-  virtual bool OnInitialize();
-
-  virtual void OnRender() = 0;
-
-  virtual void OnKeyNext();
-
-  virtual void OnKeyPrev();
-
-  virtual void OnDestroy();
-
-  void Present();
-
-protected:
-
-  EGLDisplay glDisplay_;
-  EGLConfig glConfig_;
-  EGLContext glContext_;
-  EGLSurface glSurface_;
-  EGLint width_;
-  EGLint height_;
-};
+#include "utils.h"

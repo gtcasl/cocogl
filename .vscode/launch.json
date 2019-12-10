@@ -3,13 +3,20 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
+    "configurations": [    
         {
-            "name": "valgrind",
+            "name": "demo", 
             "type": "cppdbg",
-            "request": "attach",
-            "program": "/usr/lib/valgrind/../../bin/vgdb",
-            "processId": "${command:pickProcess}",
+            "request": "launch",
+            "program": "${workspaceFolder}/demo/demo",
+            "args": ["-t1"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/demo",
+            "environment": [{
+                "name": "LD_LIBRARY_PATH",
+                "value": "${workspaceFolder}/src/GLES_CM"
+            }],
+            "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -21,13 +28,13 @@
         },
     
         {
-            "name": "demo", 
+            "name": "md2viewer", 
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/demo/demo",
-            "args": ["-t1"],
+            "program": "${workspaceFolder}/md2viewer/md2viewer",
+            "args": ["models/tekkaman.md2", "-bmodels/quake.tga"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/demo",
+            "cwd": "${workspaceFolder}/md2viewer",
             "environment": [{
                 "name": "LD_LIBRARY_PATH",
                 "value": "${workspaceFolder}/src/GLES_CM"

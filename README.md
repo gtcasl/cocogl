@@ -45,11 +45,20 @@ To use CocoGL you must clone the repository and build the sources
     make -C src/GLES_CM
     make -C demo   
 
-Testing
+Demo App
 
     cd demo
-    source env.sh
+    source ../env.sh
     ./demo -?
     ./demo -t7
+
+![Screenshot1](screenshot1.png) ![Screenshot2](screenshot2.png) 
+
+MD2 Viewer    
+
+    cd md2viewer
+    source ../env.sh
+    ./md2viewer -?
+    ./md2viewer -b models/quake.tga models/tekkaman.md2
     
-![Screenshot1](screenshot1.png) ![Screenshot2](screenshot2.png)
+![Screenshot2](screenshot3.png)
