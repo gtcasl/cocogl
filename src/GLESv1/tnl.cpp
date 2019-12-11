@@ -214,13 +214,12 @@ GLenum TNL::setupTNLStates(GLenum mode, int first, uint32_t count) {
     this->updateFog(&pbVertexData, first, count);
   }
 
-  uint32_t buffSize = pbVertexData - (uint8_t *)nullptr;
-
+  auto buffSize = reinterpret_cast<uintptr_t>(pbVertexData);
   vertexBuffer_.resize(buffSize);
 
   // Update vertex buffer offsets
   {
-    uint32_t offset = vertexBuffer_.data() - (uint8_t *)nullptr;
+    auto offset = reinterpret_cast<uintptr_t>(vertexBuffer_.data());
     for (uint32_t i = 0; i < VERTEX_SIZE; ++i) {
       pbVertexData_[i] += offset;
     }
@@ -301,8 +300,6 @@ uint32_t TNL::CalcClipFlags(const VECTOR4 &vPosition) {
   auto cz = vPosition.z;
   auto cw = vPosition.w;
 
-  uint32_t clipFlags;
-
   auto dl = cw + cx;
   auto dr = cw - cx;
   auto db = cw + cy;
@@ -310,12 +307,13 @@ uint32_t TNL::CalcClipFlags(const VECTOR4 &vPosition) {
   auto df = cw + cz;
   auto dk = cw - cz;
 
-  clipFlags = (*(const uint32_t *)&dl >> 31) << CLIP_LEFT;
-  clipFlags |= (*(const uint32_t *)&dr >> 31) << CLIP_RIGHT;
-  clipFlags |= (*(const uint32_t *)&db >> 31) << CLIP_BOTTOM;
-  clipFlags |= (*(const uint32_t *)&dt >> 31) << CLIP_TOP;
-  clipFlags |= (*(const uint32_t *)&df >> 31) << CLIP_FRONT;
-  clipFlags |= (*(const uint32_t *)&dk >> 31) << CLIP_BACK;
+  uint32_t clipFlags;
+  clipFlags =  (dl < Math::Zero<floatf>()) << CLIP_LEFT;
+  clipFlags |= (dr < Math::Zero<floatf>()) << CLIP_RIGHT;
+  clipFlags |= (db < Math::Zero<floatf>()) << CLIP_BOTTOM;
+  clipFlags |= (dt < Math::Zero<floatf>()) << CLIP_TOP;
+  clipFlags |= (df < Math::Zero<floatf>()) << CLIP_FRONT;
+  clipFlags |= (dk < Math::Zero<floatf>()) << CLIP_BACK;
 
   return clipFlags;
 }
@@ -324,20 +322,17 @@ uint32_t TNL::calcUserClipFlags(uint32_t count) {
   uint32_t clipUnion = 0;
 
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
-  auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+  auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
   for (uint32_t i = 0; i < count; ++i) {
     uint32_t clipFlags = 0;
-
     auto &vClipPos = pvClipPos[i];
 
-    for (uint32_t j = 0, activeMask = caps_.ClipPlanes; activeMask;
-         ++j, activeMask >>= 1) {
-      if (activeMask & 1) {
+    for (uint32_t j = 0, m = caps_.ClipPlanes; m; ++j, m >>= 1) {
+      if (m & 1) {
         assert(j < vClipPlanesCS_.size());
         auto fDist = Math::Dot<floatf>(vClipPos, vClipPlanesCS_[j]);
-        clipFlags |= (*(const uint32_t *)&fDist >> 31) << (CLIP_PLANE0 + j);
+        clipFlags |= (fDist < Math::Zero<floatf>()) << (CLIP_PLANE0 + j);
       }
     }
 
@@ -348,7 +343,8 @@ uint32_t TNL::calcUserClipFlags(uint32_t count) {
   return clipUnion;
 }
 
-void TNL::transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
+void TNL::transformScreenSpace(RDVECTOR *pRDVertex, 
+                               const VECTOR4 *pvClipPos,
                                uint32_t count) {
   assert(pRDVertex);
   assert(pvClipPos);
@@ -381,9 +377,7 @@ void TNL::transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
 
 void TNL::transformEyeSpace(uint32_t count) {
   auto &matEyeXform = pMsModelView_->getMatrix();
-
-  auto pvWorldPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_WORLDPOS]);
+  auto pvWorldPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_WORLDPOS]);
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
 
   if (TNLFlags_.EyeSpace) {
@@ -393,17 +387,17 @@ void TNL::transformEyeSpace(uint32_t count) {
   } else {
     for (uint32_t i = 0; i < count; ++i) {
       pvEyePos[i].z = Math::MulAdd(
-          pvWorldPos[i].x, matEyeXform._31, pvWorldPos[i].y, matEyeXform._32,
-          pvWorldPos[i].z, matEyeXform._33, pvWorldPos[i].w, matEyeXform._34);
+          pvWorldPos[i].x, matEyeXform._31, 
+          pvWorldPos[i].y, matEyeXform._32,
+          pvWorldPos[i].z, matEyeXform._33, 
+          pvWorldPos[i].w, matEyeXform._34);
     }
   }
 }
 
 void TNL::processPointSize(uint32_t count) {
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
-  auto pfPointSizes =
-      reinterpret_cast<fixed4 *>(pbVertexData_[VERTEX_POINTSIZE]);
-
+  auto pfPointSizes = reinterpret_cast<fixed4 *>(pbVertexData_[VERTEX_POINTSIZE]);
   auto &vAttenuation = pointParams_.vAttenuation;
 
   auto fPointSize = fPointSize_;
@@ -426,7 +420,7 @@ void TNL::processPointSize(uint32_t count) {
       }
     }
 
-    pfPointSizes[i] = static_cast<fixed4>(std::max<floatf>(fPointSize, Math::One<floatf>()));
+    pfPointSizes[i] = std::max(static_cast<fixed4>(fPointSize), Math::One<fixed4>());
   }
 }
 
@@ -866,8 +860,8 @@ GLenum TNL::updatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
   }
 
   pbVertexData_[VERTEX_POINTSIZE] = *ppbVertexData;
-  *ppbVertexData = __alignPtr(
-      *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(fixed4), 4);
+  *ppbVertexData = __alignPtr(*ppbVertexData + 
+                        (count + CLIP_BUFFER_SIZE) * sizeof(fixed4), 4);
 
   if (pointSizeDecode_.pBits) {
     auto func = (pointSizeArray_.Format - VERTEX_FIXED) / 4;
@@ -902,8 +896,8 @@ GLenum TNL::updateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
 
   pbVertexData_[VERTEX_FRONTCOLOR] = *ppbVertexData;
   pbVertexColor_ = *ppbVertexData;
-  *ppbVertexData = __alignPtr(
-      *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
+  *ppbVertexData = __alignPtr(*ppbVertexData + 
+                      (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
 
   cullStates_.bTwoSidedLighting = false;
 
@@ -964,7 +958,9 @@ GLenum TNL::updateLighting(uint8_t **ppbVertexData, int first, uint32_t count) {
   if (pActiveLights_) {
     TNLFlags_.EyeSpace = 1;
 
-    if (dirtyLights_.Ambient || dirtyLights_.Diffuse || dirtyLights_.Specular) {
+    if (dirtyLights_.Ambient 
+     || dirtyLights_.Diffuse 
+     || dirtyLights_.Specular) {
       this->updateLights();
     }
   }
@@ -989,8 +985,8 @@ GLenum TNL::updateLighting(uint8_t **ppbVertexData, int first, uint32_t count) {
     cullStates_.bTwoSidedLighting = true;
 
     pbVertexData_[VERTEX_BACKCOLOR] = *ppbVertexData;
-    *ppbVertexData = __alignPtr(
-        *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
+    *ppbVertexData = __alignPtr(*ppbVertexData + 
+                        (count + CLIP_BUFFER_SIZE) * sizeof(ColorARGB), 4);
 
     func += 5 * 5;
   }
@@ -1018,8 +1014,8 @@ GLenum TNL::updateTexcoords(uint8_t **ppbVertexData, int first,
       }
 
       pbVertexData_[VERTEX_TEXCOORD0 + j++] = *ppbVertexData;
-      *ppbVertexData = __alignPtr(
-          *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(TEXCOORD2), 4);
+      *ppbVertexData = __alignPtr(*ppbVertexData + 
+                          (count + CLIP_BUFFER_SIZE) * sizeof(TEXCOORD2), 4);
 
       if (texCoordDecodes_[i].pBits) {
         auto fmtType = (texCoordArrays_[i].Format - VERTEX_BYTE2) / 4;
@@ -1061,8 +1057,8 @@ void TNL::updateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
   }
 
   pbVertexData_[VERTEX_FOG] = *ppbVertexData;
-  *ppbVertexData = __alignPtr(
-      *ppbVertexData + (count + CLIP_BUFFER_SIZE) * sizeof(float20), 4);
+  *ppbVertexData = __alignPtr(*ppbVertexData + 
+                      (count + CLIP_BUFFER_SIZE) * sizeof(float20), 4);
 
   int func = fog_.Mode;
   assert(func < __countof(g_processFog));
@@ -1133,7 +1129,8 @@ void TNL::updateModelViewInvT33() {
   Math::Inverse33(&matTmp, pMsModelView_->getMatrix());
 
   if (caps_.RescaleNormal) {
-    auto fSum = (matTmp._31 * matTmp._31) + (matTmp._32 * matTmp._32) +
+    auto fSum = (matTmp._31 * matTmp._31) + 
+                (matTmp._32 * matTmp._32) +
                 (matTmp._33 * matTmp._33);
 
     if (!Math::IsAlmostZero(fSum - Math::One<floatf>())) {
@@ -1240,16 +1237,14 @@ void TNL::updateLights() {
 
         // Compute the halfway vector
         VECTOR3 vDir(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>());
-        Math::Add(&pLight->vHalfway,
-                  reinterpret_cast<const VECTOR3 &>(pLight->vPosition), vDir);
+        Math::Add(&pLight->vHalfway, reinterpret_cast<const VECTOR3 &>(pLight->vPosition), vDir);
 
         // Normalize the halfway vector
         Math::Normalize(&pLight->vHalfway);
       } else {
-        if (Math::IsAlmostZero(pLight->getAttenuation(GL_CONSTANT_ATTENUATION) -
-                               Math::One<floatf>()) &&
-            Math::IsAlmostZero(pLight->getAttenuation(GL_LINEAR_ATTENUATION)) &&
-            Math::IsAlmostZero(pLight->getAttenuation(GL_QUADRATIC_ATTENUATION))) {
+        if (Math::IsAlmostZero(pLight->getAttenuation(GL_CONSTANT_ATTENUATION) - Math::One<floatf>())
+         && Math::IsAlmostZero(pLight->getAttenuation(GL_LINEAR_ATTENUATION)) 
+         && Math::IsAlmostZero(pLight->getAttenuation(GL_QUADRATIC_ATTENUATION))) {
           pLight->Flags.Attenuation = 0;
         } else {
           pLight->Flags.Attenuation = 1;

@@ -40,12 +40,10 @@ struct detector<Default, std::void_t<Op<Args...>>, Op, Args...> {
 } // namespace detail
 
 template <template <class...> class Op, class... Args>
-using detected_t =
-    typename detail::detector<detail::nonesuch, void, Op, Args...>::type;
+using detected_t = typename detail::detector<detail::nonesuch, void, Op, Args...>::type;
 
 template <typename Default, template <class...> class Op, class... Args>
-using detected_or_t =
-    typename detail::detector<Default, void, Op, Args...>::type;
+using detected_or_t = typename detail::detector<Default, void, Op, Args...>::type;
 
 template <template <class...> class Op, class... Args>
 constexpr bool is_detected_v =
@@ -116,8 +114,7 @@ inline void __safeFree(T *&p) {
 
 template <typename T>
 inline bool __isAligned32(T *ptr) {
-  size_t offset = ptr - (T *)(nullptr);
-  return (0 == (offset & 3));
+  return (0 == (reinterpret_cast<uintptr_t>(ptr) & 3));
 }
 
 inline size_t __align(size_t offset, size_t alignment) {
@@ -126,8 +123,8 @@ inline size_t __align(size_t offset, size_t alignment) {
 
 template <typename T>
 inline T *__alignPtr(T *ptr, size_t alignment) {
-  size_t offset = ptr - (T *)(nullptr);
-  return (T *)(nullptr) + ((offset + alignment - 1) & ~(alignment - 1));
+  auto offset = reinterpret_cast<uintptr_t>(ptr);
+  return reinterpret_cast<T *>((offset + alignment - 1) & ~(alignment - 1));
 }
 
 template <typename T>

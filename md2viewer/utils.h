@@ -13,7 +13,7 @@
 //
 #pragma once
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+#define BUFFER_OFFSET(i) (reinterpret_cast<void *>(nullptr) + (i))
 
 struct vec3_t {
   float x;

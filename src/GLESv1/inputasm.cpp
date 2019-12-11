@@ -30,8 +30,7 @@ GLenum InputAssembler::prepareIndices(GLenum type, const GLvoid **ppvIndices,
   if (pBits) {
     uint32_t stride = GLSizeOf(type);
     uint32_t size = pBufElements->getSize();
-    auto offset = static_cast<const uint8_t *>(pvIndices) -
-                  static_cast<const uint8_t *>(nullptr);
+    auto offset = reinterpret_cast<uintptr_t>(pvIndices);
     if ((offset + stride * count) <= size) {
       pvIndices = pBits + offset;
     } else {

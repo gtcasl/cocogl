@@ -32,20 +32,19 @@ public:
   void OnRender() {
     glClear(GL_COLOR_BUFFER_BIT);
     font_.setColor(0.0f, 0.0f, 0.0f);
-    font_.drawText("Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
-                   4.0f, 0.0f, 0.5f);
+    font_.drawText("Lorem ipsum dolor sit amet, consectetur adipiscing elit,", 
+                   4.0f, 0.0f, 0.9f);
     font_.setColor(1.0f, 0.0f, 0.0f);
-    font_.drawText(
-        "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        4.0f, 16.0f, 0.5f);
+    font_.drawText("sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
+                   4.0f, 16.0f, 0.8f);
     font_.setColor(0.0f, 1.0f, 0.0f);
     font_.drawText("quis nostrud exercitation ullamco laboris nisi ut aliquip "
                    "ex ea commodo consequat.",
-                   4.0f, 32.0f, 0.5f);
+                   4.0f, 32.0f, 0.7f);
     font_.setColor(1.0f, 1.0f, 0.0f);
     font_.drawText("Duis aute irure dolor in reprehenderit in voluptate velit "
                    "esse cillum dolore eu fugiat nulla pariatur.",
-                   4.0f, 48.0f, 0.5f);
+                   4.0f, 48.0f, 0.6f);
     font_.setColor(1.0f, 1.0f, 1.0f);
     font_.drawText("Excepteur sint occaecat cupidatat non proident, sunt in "
                    "culpa qui officia deserunt mollit anim id est laborum.",
