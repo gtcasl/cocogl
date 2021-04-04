@@ -229,55 +229,65 @@ inline int DoAddressing(int x) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface, fixedRX fU,
+inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface, 
+                                 fixedRX fU,
                                  fixedRX fV) {
   auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(surface.getBits());
-  auto logWidth = surface.getLogWidth();
+  auto logWidth  = surface.getLogWidth();
   auto logHeight = surface.getLogHeight();
+
+  // addressing mode
 
   auto u = DoAddressing<AddressU>(fU.data());
   auto v = DoAddressing<AddressV>(fV.data());
 
+  // address generation
+
   auto x = u >> (fixedRX::FRAC - logWidth);
   auto y = v >> (fixedRX::FRAC - logHeight);
   auto offset = x + (y << logWidth);
+
+  // memory lookup
 
   return *(pBits + offset);
 }
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline NColor<Format> GetTexelColorLnX(const SurfaceDesc &surface,
-                                       fixedRX fU, fixedRX fV) {
+                                       fixedRX fU, 
+                                       fixedRX fV) {
   auto lerpBits = TFormatInfo<Format>::LERP;
   auto lerpMask = (1 << lerpBits) - 1;
 
   auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(surface.getBits());
-  auto logWidth = surface.getLogWidth();
+  auto logWidth  = surface.getLogWidth();
   auto logHeight = surface.getLogHeight();
 
-  auto v0 = DoAddressing<AddressV>(fV.data() - (fixedRX::HALF >> logHeight));
-  auto v1 = DoAddressing<AddressV>(fV.data() + (fixedRX::HALF >> logHeight));
+  // addressing mode
+
   auto u0 = DoAddressing<AddressU>(fU.data() - (fixedRX::HALF >> logWidth));
   auto u1 = DoAddressing<AddressU>(fU.data() + (fixedRX::HALF >> logWidth));
+  auto v0 = DoAddressing<AddressV>(fV.data() - (fixedRX::HALF >> logHeight));
+  auto v1 = DoAddressing<AddressV>(fV.data() + (fixedRX::HALF >> logHeight));
 
-  auto logHeightN = fixedRX::FRAC - (logHeight + lerpBits);
-  auto y1 = v1 >> logHeightN;
-  auto y0 = v0 >> logHeightN;
-  auto beta = y0 & lerpMask;
-  auto y3 = (y1 >> lerpBits) << logWidth;
-  auto y2 = (y0 >> lerpBits) << logWidth;
+  // address generation
 
-  auto logWidthN = fixedRX::FRAC - (logWidth + lerpBits);
-  auto x1 = u1 >> logWidthN;
-  auto x0 = u0 >> logWidthN;
+  auto x0 = u0 >> (fixedRX::FRAC - logWidth);
+  auto x1 = u1 >> (fixedRX::FRAC - logWidth);
+  auto y0 = v0 >> (fixedRX::FRAC - logHeight);
+  auto y1 = v1 >> (fixedRX::FRAC - logHeight);
+
+  // memory lookup
+
+  auto c0 = pBits[x0 + (y0 << logWidth)];
+  auto c1 = pBits[x1 + (y0 << logWidth)];
+  auto c2 = pBits[x0 + (y1 << logWidth)];
+  auto c3 = pBits[x1 + (y1 << logWidth)];
+
+  // filtering
+
   auto alpha = x0 & lerpMask;
-  auto x3 = x1 >> lerpBits;
-  auto x2 = x0 >> lerpBits;
-
-  auto c0 = pBits[y2 + x2];
-  auto c1 = pBits[y2 + x3];
-  auto c2 = pBits[y3 + x2];
-  auto c3 = pBits[y3 + x3];
+  auto beta  = y0 & lerpMask;  
 
   NColor<Format> nc0(c0);
   NColor<Format> nc1(c1);
