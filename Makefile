@@ -13,6 +13,12 @@ demo:
 
 md2viewer:
 	$(MAKE) -C md2viewer
+
+run-demo:
+	$(MAKE) -C demo run
+
+run-md2viewer:
+	$(MAKE) -C md2viewer run
 	
 clean:
 	$(MAKE) -C shared clean
