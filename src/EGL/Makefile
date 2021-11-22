@@ -1,4 +1,6 @@
-CXXFLAGS += -std=c++17 -fPIC -O0 -g -Wall -Wextra -pedantic -Wfatal-errors -I../../shared -I../../include
+CXXFLAGS += -std=c++17 -fPIC -O3 -Wall -Wextra -pedantic -Wfatal-errors -I../../shared -I../../include
+#CXXFLAGS += -std=c++17 -fPIC -O0 -g -DCOCOGL_API_PROFILE -Wall -Wextra -pedantic -Wfatal-errors -I../../shared -I../../include
+
 LDFLAGS += -shared -L../../shared -lshared
 
 PROJECT = libEGL.so

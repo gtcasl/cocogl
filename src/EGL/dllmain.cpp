@@ -114,6 +114,17 @@ EGLAPI void (*EGLAPIENTRY eglGetProcAddress(const char *procName))() {
   return nullptr;
 }
 
+EGLAPI EGLenum EGLAPIENTRY eglQueryAPI(void) {
+  return EGL_OPENGL_ES_API;
+}
+
+EGLAPI EGLBoolean EGLAPIENTRY eglBindAPI(EGLenum api) {
+  __profileAPI(" - %s( api=%d )\n", __FUNCTION__, api);
+  if (api != EGL_OPENGL_ES_API)
+    return EGL_FALSE; 
+  return EGL_TRUE;
+}
+
 EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(EGLNativeDisplayType display_id) {
   __profileAPI(" - %s( display_id=%d )\n", __FUNCTION__, display_id);
 

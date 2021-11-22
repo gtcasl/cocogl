@@ -27,13 +27,16 @@ Renderer::Renderer(EGLNativeWindowType window) {
   EGLint numConfigs, majorVersion, minorVersion;
 
   glDisplay_ = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  eglInitialize(glDisplay_, &majorVersion, &minorVersion);
+  eglInitialize(glDisplay_, &majorVersion, &minorVersion); 
+  auto ret = eglBindAPI(EGL_OPENGL_ES_API);
+  assert(ret == EGL_TRUE);
   eglChooseConfig(glDisplay_, egl_config_attr, &glConfig_, 1, &numConfigs);
   glContext_ = eglCreateContext(glDisplay_, glConfig_, EGL_NO_CONTEXT, nullptr);
   glSurface_ = eglCreateWindowSurface(glDisplay_, glConfig_, window, 0);
   eglQuerySurface(glDisplay_, glSurface_, EGL_WIDTH, &width_);
   eglQuerySurface(glDisplay_, glSurface_, EGL_HEIGHT, &height_);
   eglMakeCurrent(glDisplay_, glSurface_, glSurface_, glContext_);
+  assert(EGL_SUCCESS == eglGetError());
 
   translation_ = {0, 0, -100};
   rotation_ = {-90, 0, -90};

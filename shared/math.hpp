@@ -412,54 +412,106 @@ struct TMatrix44 {
   }
 };
 
-typedef Fixed<4> fixed4;
-typedef Fixed<4> fixed6;
-typedef Fixed<8> fixed8;
+typedef Fixed<1>  fixed1;
+typedef Fixed<2>  fixed2;
+typedef Fixed<3>  fixed3;
+typedef Fixed<4>  fixed4;
+typedef Fixed<5>  fixed5;
+typedef Fixed<6>  fixed6;
+typedef Fixed<7>  fixed7;
+typedef Fixed<8>  fixed8;
+typedef Fixed<9>  fixed9;
 typedef Fixed<10> fixed10;
+typedef Fixed<11> fixed11;
 typedef Fixed<12> fixed12;
+typedef Fixed<13> fixed13;
 typedef Fixed<14> fixed14;
+typedef Fixed<15> fixed15;
 typedef Fixed<16> fixed16;
+typedef Fixed<17> fixed17;
 typedef Fixed<18> fixed18;
+typedef Fixed<19> fixed19;
 typedef Fixed<20> fixed20;
+typedef Fixed<21> fixed21;
 typedef Fixed<22> fixed22;
+typedef Fixed<23> fixed23;
 typedef Fixed<24> fixed24;
+typedef Fixed<25> fixed25;
 typedef Fixed<26> fixed26;
+typedef Fixed<27> fixed27;
 typedef Fixed<28> fixed28;
+typedef Fixed<29> fixed29;
 typedef Fixed<30> fixed30;
 
 #ifdef COCOGL_PIXEDPOINT
 
-typedef fixed4 float4;
-typedef fixed6 float6;
-typedef fixed8 float8;
-typedef fixed10 float10;
-typedef fixed12 float12;
-typedef fixed14 float14;
-typedef fixed16 floatf;
-typedef fixed18 float18;
-typedef fixed20 float20;
-typedef fixed24 float24;
-typedef fixed26 float26;
-typedef fixed28 float28;
-typedef fixed30 float30;
+typedef Fixed<1>  float1;
+typedef Fixed<2>  float2;
+typedef Fixed<3>  float3;
+typedef Fixed<4>  float4;
+typedef Fixed<5>  float5;
+typedef Fixed<6>  float6;
+typedef Fixed<7>  float7;
+typedef Fixed<8>  float8;
+typedef Fixed<9>  float9;
+typedef Fixed<10> float10;
+typedef Fixed<11> float11;
+typedef Fixed<12> float12;
+typedef Fixed<13> float13;
+typedef Fixed<14> float14;
+typedef Fixed<15> float15;
+typedef Fixed<16> float16;
+typedef Fixed<17> float17;
+typedef Fixed<18> float18;
+typedef Fixed<19> float19;
+typedef Fixed<20> float20;
+typedef Fixed<21> float21;
+typedef Fixed<22> float22;
+typedef Fixed<23> float23;
+typedef Fixed<24> float24;
+typedef Fixed<25> float25;
+typedef Fixed<26> float26;
+typedef Fixed<27> float27;
+typedef Fixed<28> float28;
+typedef Fixed<29> float29;
+typedef Fixed<30> float30;
 
 #else
 
+typedef float float1;
+typedef float float2;
+typedef float float3;
 typedef float float4;
+typedef float float5;
 typedef float float6;
+typedef float float7;
 typedef float float8;
+typedef float float9;
 typedef float float10;
+typedef float float11;
 typedef float float12;
+typedef float float13;
 typedef float float14;
-typedef float floatf;
+typedef float float15;
+typedef float float16;
+typedef float float17;
 typedef float float18;
+typedef float float19;
 typedef float float20;
+typedef float float21;
+typedef float float22;
+typedef float float23;
 typedef float float24;
+typedef float float25;
 typedef float float26;
+typedef float float27;
 typedef float float28;
+typedef float float29;
 typedef float float30;
 
 #endif
+
+typedef float16 floatf;
 
 typedef TVector1<floatf> VECTOR1;
 typedef TVector2<floatf> VECTOR2;
@@ -840,12 +892,6 @@ template <>
 inline fixed16 FromUNORM8<fixed16>(int rhs) {
   return fixed16::make((rhs << fixed16::FRAC) / 255);
 }
-
-template <>
-inline fixed20 FromUNORM8<fixed20>(int rhs) {
-  return fixed20::make((rhs << fixed20::FRAC) / 255);
-}
-
 template <>
 inline int FromUNORM8<int>(int rhs) {
   return rhs;
@@ -939,21 +985,6 @@ inline float Lerpf(float lhs, float rhs, float scalar) {
 inline int Lerp(int lhs, int rhs, float scalar) {
   assert((scalar >= 0.0f) && (scalar <= 1.0f));
   return lhs + static_cast<int>((rhs - lhs) * scalar);
-}
-
-template <>
-inline fixed4 Mul<fixed4>(float fOffset, float fRhw, int iScale) {
-  return fixed4(fOffset * fRhw * iScale);
-}
-
-template <>
-inline fixed20 Mul<fixed20>(float fOffset, float fRhw, float fScale) {
-  return fixed20(fOffset * fRhw * fScale);
-}
-
-template <>
-inline fixed24 Mul<fixed24>(float fOffset, float fRhw, float fScale) {
-  return fixed24(fOffset * fRhw * fScale);
 }
 
 template <typename R>

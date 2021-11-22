@@ -726,16 +726,18 @@ bool GenericRasterOp::doStencilTest(const RasterData &rasterData,
 }
 
 ColorARGB GenericRasterOp::getSamplerColor(uint32_t unit,
-                                           const RasterData &rasterData, fixedRX fU,
-                                           fixedRX fV, fixedRX fM) const {
+                                           const RasterData &rasterData, 
+                                           fixedRX fU,
+                                           fixedRX fV, 
+                                           fixedRX fM) const {
   ColorARGB color;
   auto &sampler = rasterData.Samplers[unit];
+  auto fJ = fixed16::make(fM.data()); // fM is actually stored as 16:16
 
   switch (rasterID_.Textures[unit].MipFilter) {
   default:
     __no_default;
   case FILTER_NONE: {
-    auto fJ = fixed16::make(fM.data());
     if (fJ > Math::One<fixed16>()) {
       color = (samplers_[unit].pfnGetTexelColorMin)(sampler.pMipLevels[0], fU, fV);
     } else {
@@ -744,7 +746,6 @@ ColorARGB GenericRasterOp::getSamplerColor(uint32_t unit,
     break;
   }
   case FILTER_NEAREST: {
-    auto fJ = fixed16::make(fM.data());
     if (fJ > Math::One<fixed16>()) {
       auto mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
       color = (samplers_[unit].pfnGetTexelColorMin)(sampler.pMipLevels[mipLevel], fU, fV);
@@ -755,7 +756,6 @@ ColorARGB GenericRasterOp::getSamplerColor(uint32_t unit,
   }
 
   case FILTER_LINEAR: {
-    auto fJ = fixed16::make(fM.data());
     if (fJ > Math::One<fixed16>()) {
       auto mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
       auto mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
@@ -777,7 +777,8 @@ ColorARGB GenericRasterOp::getSamplerColor(uint32_t unit,
   return color;
 }
 
-ColorARGB GenericRasterOp::applyFog(const RasterData &rasterData, const ColorARGB &cColor,
+ColorARGB GenericRasterOp::applyFog(const RasterData &rasterData, 
+                                    const ColorARGB &cColor,
                                     fixedRX fFactor) {
   ColorARGB ret;
   auto factor = fFactor.data();

@@ -381,7 +381,7 @@ void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
   }
 
   if (rasterFlags.Fog) {
-    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);
+    auto pfFogs = reinterpret_cast<floatRX *>(pbVertexData_[VERTEX_FOG]);
     pfFogs[i2] = Math::Lerpf(pfFogs[i0], pfFogs[i1], factor);
   }
 

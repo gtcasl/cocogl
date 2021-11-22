@@ -27,8 +27,6 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
     return;
   }
 
-  VECTOR4 vParam;
-
   uint32_t index = light - GL_LIGHT0;
   Light &_light = lights_[index];
 
@@ -37,10 +35,12 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
   case GL_DIFFUSE:
   case GL_SPECULAR:
   case GL_POSITION: {
-    vParam.x = static_cast<floatf>(pParams[0]);
-    vParam.y = static_cast<floatf>(pParams[1]);
-    vParam.z = static_cast<floatf>(pParams[2]);
-    vParam.w = static_cast<floatf>(pParams[3]);
+    VECTOR4 vParam(
+      static_cast<floatf>(pParams[0]),
+      static_cast<floatf>(pParams[1]),
+      static_cast<floatf>(pParams[2]),
+      static_cast<floatf>(pParams[3])
+    );
 
     if (GL_POSITION == pname) {
       _light.Flags.DirectionalLight = Math::IsAlmostZero(vParam.w) ? 1 : 0;
@@ -55,22 +55,23 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
   break;
 
   case GL_SPOT_DIRECTION: {
-    vParam.x = static_cast<floatf>(pParams[0]);
-    vParam.y = static_cast<floatf>(pParams[1]);
-    vParam.z = static_cast<floatf>(pParams[2]);
+    VECTOR3 vParam(
+      static_cast<floatf>(pParams[0]),
+      static_cast<floatf>(pParams[1]),
+      static_cast<floatf>(pParams[2])
+    );
 
     if (dirtyFlags_.ModelViewInvT33) {
       this->updateModelViewInvT33();
     }
 
-    Math::Mul(&_light.vSpotDirection, reinterpret_cast<const VECTOR3 &>(vParam),
-              mModelViewInvT_);
+    Math::Mul(&_light.vSpotDirection, vParam, mModelViewInvT_);
   }
 
   break;
 
   case GL_SPOT_EXPONENT: {
-    vParam.x = static_cast<floatf>(pParams[0]);
+    VECTOR1 vParam(static_cast<floatf>(pParams[0]));
     if ((vParam.x < Math::Zero<floatf>()) || (vParam.x > Math::F128<floatf>())) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setLightParameter() failed, invalid param "
@@ -85,7 +86,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
   break;
 
   case GL_SPOT_CUTOFF: {
-    vParam.x = static_cast<floatf>(pParams[0]);
+    VECTOR1 vParam(static_cast<floatf>(pParams[0]));
     if (((vParam.x < Math::Zero<floatf>()) || (vParam.x > Math::F90<floatf>())) && (vParam.x != Math::F180<floatf>())) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setLightParameter() failed, invalid param "
@@ -103,7 +104,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
   case GL_CONSTANT_ATTENUATION:
   case GL_LINEAR_ATTENUATION:
   case GL_QUADRATIC_ATTENUATION: {
-    vParam.x = static_cast<floatf>(pParams[0]);
+    VECTOR1 vParam(static_cast<floatf>(pParams[0]));
     if (vParam.x < Math::Zero<floatf>()) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setLightParameter() failed, invalid param "
@@ -111,7 +112,6 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
                 vParam.x);
       return;
     }
-
     _light.setAttenuation(pname, vParam.x);
   }
 

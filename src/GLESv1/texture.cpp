@@ -277,7 +277,7 @@ GLenum Texture::releaseSurface(GLSurface *pSurface) {
 }
 
 void Texture::freeSurfaces() {
-  for (uint32_t i = 0; i < MAX_TEXTURE_LEVELS; ++i) {
+  for (uint32_t i = 0; i <= MAX_TEXTURE_LEVELS; ++i) {
     surfaces_[i].destroy();
   }
 
@@ -396,7 +396,7 @@ GLenum Texture::generateMipmaps() {
           auto c3 = Format::ConvertFrom<FORMAT_L8, false>(pSrc2 + x0);
           auto c4 = Format::ConvertFrom<FORMAT_L8, false>(pSrc2 + x1);
 
-          ColorARGB avg;
+          ColorARGB avg(0);
           avg.b = (c1.b + c2.b + c3.b + c4.b) >> 2;
 
           Format::ConvertTo<FORMAT_L8>(pDst + x + width * y, avg);
@@ -425,7 +425,7 @@ GLenum Texture::generateMipmaps() {
           auto c3 = Format::ConvertFrom<FORMAT_A8L8, false>(pSrc2 + x0);
           auto c4 = Format::ConvertFrom<FORMAT_A8L8, false>(pSrc2 + x1);
 
-          ColorARGB avg;
+          ColorARGB avg(0);
           avg.a = (c1.a + c2.a + c3.a + c4.a) >> 2;
           avg.b = (c1.b + c2.b + c3.b + c4.b) >> 2;
 

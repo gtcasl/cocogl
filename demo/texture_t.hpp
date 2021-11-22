@@ -33,13 +33,18 @@ public:
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
     the fixed point version (they finish in 'x'*/
+    assert(GL_NO_ERROR == glGetError());
+
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    assert(GL_NO_ERROR == glGetError());
 
     // Do not want to see smoothed colors, only a plain color for face
     glShadeModel(GL_FLAT);
+    assert(GL_NO_ERROR == glGetError());
 
     // Enable the depth test in order to see the cube correctly
     glEnable(GL_DEPTH_TEST);
+    assert(GL_NO_ERROR == glGetError());
 
     /*Taking care of specifying correctly the winding order of the
     vertices (counter clock wise order), we can cull all back faces.
@@ -47,18 +52,27 @@ public:
     because, by this way, we avoid a lot of computations that wont be
     reflected in the screen. Use  glEnable(GL_CULL_FACE) to do the work*/
     glEnable(GL_CULL_FACE);
+    assert(GL_NO_ERROR == glGetError());
 
     /*In order to set a viewport that fits entirely our window, we need
     to know the window dimensions. They could be obtained through the
     WinCE call GetWindowRect, using our window handle*/
     glViewport(0, 0, width_, height_);
+    assert(GL_NO_ERROR == glGetError());
 
     // Set perspective
     float ratio = static_cast<float>(width_) / height_;
     glMatrixMode(GL_PROJECTION);
+    assert(GL_NO_ERROR == glGetError());
+
     glLoadIdentity();
+    assert(GL_NO_ERROR == glGetError());
+
     Perspective(45.0f, ratio, 1.0f, 40.0f);
+    assert(GL_NO_ERROR == glGetError());
+
     glMatrixMode(GL_MODELVIEW);
+    assert(GL_NO_ERROR == glGetError());
 
     {
       std::vector<uint8_t> pixels;

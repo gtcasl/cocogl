@@ -217,7 +217,7 @@ inline uint32_t DoStencilOp(uint32_t stencilValue, uint32_t stencilRef) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t Address>
-inline int DoAddressing(int x) {
+inline uint32_t DoAddressing(int32_t x) {
   if constexpr (Address == ADDRESS_WRAP) {
     return x & fixedRX::MASK;
   }
@@ -233,19 +233,19 @@ inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface,
                                  fixedRX fU,
                                  fixedRX fV) {
   auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(surface.getBits());
-  auto logWidth  = surface.getLogWidth();
-  auto logHeight = surface.getLogHeight();
+  uint32_t logWidth  = surface.getLogWidth();
+  uint32_t logHeight = surface.getLogHeight();
 
   // addressing mode
 
-  auto u = DoAddressing<AddressU>(fU.data());
-  auto v = DoAddressing<AddressV>(fV.data());
+  uint32_t u = DoAddressing<AddressU>(fU.data());
+  uint32_t v = DoAddressing<AddressV>(fV.data());
 
   // address generation
 
-  auto x = u >> (fixedRX::FRAC - logWidth);
-  auto y = v >> (fixedRX::FRAC - logHeight);
-  auto offset = x + (y << logWidth);
+  uint32_t x = u >> (fixedRX::FRAC - logWidth);
+  uint32_t y = v >> (fixedRX::FRAC - logHeight);
+  uint32_t offset = x + (y << logWidth);
 
   // memory lookup
 
@@ -258,24 +258,30 @@ inline NColor<Format> GetTexelColorLnX(const SurfaceDesc &surface,
                                        fixedRX fV) {
   auto lerpBits = TFormatInfo<Format>::LERP;
   auto lerpMask = (1 << lerpBits) - 1;
-
+  
   auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(surface.getBits());
-  auto logWidth  = surface.getLogWidth();
-  auto logHeight = surface.getLogHeight();
+  uint32_t logWidth  = surface.getLogWidth();
+  uint32_t logHeight = surface.getLogHeight();
 
   // addressing mode
 
-  auto u0 = DoAddressing<AddressU>(fU.data() - (fixedRX::HALF >> logWidth));
-  auto u1 = DoAddressing<AddressU>(fU.data() + (fixedRX::HALF >> logWidth));
-  auto v0 = DoAddressing<AddressV>(fV.data() - (fixedRX::HALF >> logHeight));
-  auto v1 = DoAddressing<AddressV>(fV.data() + (fixedRX::HALF >> logHeight));
+  uint32_t delta_u = (fixedRX::HALF >> logWidth);
+  uint32_t delta_v = (fixedRX::HALF >> logHeight);
+
+  uint32_t u0 = DoAddressing<AddressU>(fU.data() - delta_u);
+  uint32_t u1 = DoAddressing<AddressU>(fU.data() + delta_u);
+  uint32_t v0 = DoAddressing<AddressV>(fV.data() - delta_v);
+  uint32_t v1 = DoAddressing<AddressV>(fV.data() + delta_v);
 
   // address generation
 
-  auto x0 = u0 >> (fixedRX::FRAC - logWidth);
-  auto x1 = u1 >> (fixedRX::FRAC - logWidth);
-  auto y0 = v0 >> (fixedRX::FRAC - logHeight);
-  auto y1 = v1 >> (fixedRX::FRAC - logHeight);
+  uint32_t x0s = u0 >> (fixedRX::FRAC - lerpBits - logWidth);
+  uint32_t y0s = v0 >> (fixedRX::FRAC - lerpBits - logHeight);  
+
+  uint32_t x0 = x0s >> lerpBits;  
+  uint32_t y0 = y0s >> lerpBits;  
+  uint32_t x1 = u1 >> (fixedRX::FRAC - logWidth);
+  uint32_t y1 = v1 >> (fixedRX::FRAC - logHeight);
 
   // memory lookup
 
@@ -286,8 +292,8 @@ inline NColor<Format> GetTexelColorLnX(const SurfaceDesc &surface,
 
   // filtering
 
-  auto alpha = x0 & lerpMask;
-  auto beta  = y0 & lerpMask;  
+  uint32_t alpha = x0s & lerpMask;
+  uint32_t beta  = y0s & lerpMask;
 
   NColor<Format> nc0(c0);
   NColor<Format> nc1(c1);
@@ -303,7 +309,8 @@ inline NColor<Format> GetTexelColorLnX(const SurfaceDesc &surface,
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t Filter, uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-inline uint32_t GetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
+inline uint32_t GetMinFilterN(const SurfaceDesc &surface, 
+                              fixedRX fU,
                               fixedRX fV) {
   if constexpr (Filter == FILTER_NEAREST) {
     return GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV);
@@ -316,7 +323,8 @@ inline uint32_t GetMinFilterN(const SurfaceDesc &surface, fixedRX fU,
 
 template <uint32_t Filter, uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline NColor<Format> GetMinFilterX(const SurfaceDesc &surface,
-                                    fixedRX fU, fixedRX fV) {
+                                    fixedRX fU, 
+                                    fixedRX fV) {
   if constexpr (Filter == FILTER_NEAREST) {
     return NColor<Format>(
         GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
@@ -329,14 +337,17 @@ inline NColor<Format> GetMinFilterX(const SurfaceDesc &surface,
 
 template <uint32_t MipFilter, uint32_t MinFilter, uint32_t MagFilter,
           uint32_t Format, uint32_t AddressU, uint32_t AddressV>
-inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
+inline uint32_t GetMipFilterN(const Sampler &sampler, 
+                              fixedRX fU, 
+                              fixedRX fV,
                               fixedRX fM) {
+  auto fJ = fixed16::make(fM.data()); // fM is actually stored as 16:16
+
   if constexpr (MipFilter == FILTER_NONE) {
     if constexpr (MinFilter == MagFilter) {
       return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[0], fU, fV);
-    } else {
-      auto fJ = fixed16::make(fM.data());
+    } else {      
       if (fJ > Math::One<fixed16>()) {
         return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[0], fU, fV);
@@ -349,18 +360,13 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
 
   if constexpr (MipFilter == FILTER_NEAREST) {
     if constexpr (MinFilter == MagFilter) {
-      auto fJ = std::max<fixed16>(fixed16::make(fM.data()), Math::One<fixed16>());
-      auto mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
-                                    sampler.MaxMipLevel);
-
+      fJ = std::max<fixed16>(fJ, Math::One<fixed16>());
+      uint32_t mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
       return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[mipLevel], fU, fV);
     } else {
-      auto fJ = fixed16::make(fM.data());
       if (fJ > Math::One<fixed16>()) {
-        int mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC,
-                                     sampler.MaxMipLevel);
-
+        uint32_t mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
         return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[mipLevel], fU, fV);
       } else {
@@ -373,25 +379,21 @@ inline uint32_t GetMipFilterN(const Sampler &sampler, fixedRX fU, fixedRX fV,
   if constexpr (MipFilter == FILTER_LINEAR) {
     auto lerpBits = TFormatInfo<Format>::LERP;
     auto lerpMask = (1 << lerpBits) - 1;
-
     if constexpr (MinFilter == MagFilter) {
-      auto fJ = std::max<fixed16>(fixed16::make(fM.data()), Math::One<fixed16>());
-      auto mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
-      auto mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
-      auto mipLerp = (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
-
+      fJ = std::max<fixed16>(fJ, Math::One<fixed16>());
+      uint32_t mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+      uint32_t mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
+      uint32_t mipLerp   = fJ.data() >> (mipLevel0 + fixed16::FRAC - TFormatInfo<Format>::LERP);
       auto c0 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[mipLevel0], fU, fV);
       auto c1 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[mipLevel1], fU, fV);
       return c0.Lerp(c1, mipLerp);
     } else {
-      auto fJ = fixed16::make(fM.data());
       if (fJ > Math::One<fixed16>()) {
-        auto mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
-        auto mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
-        auto mipLerp = (fJ.data() >> (mipLevel0 + fixed16::FRAC - lerpBits)) & lerpMask;
-
+        uint32_t mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+        uint32_t mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
+        uint32_t mipLerp   = fJ.data() >> (mipLevel0 + fixed16::FRAC - TFormatInfo<Format>::LERP);
         auto c0 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[mipLevel0], fU, fV);
         auto c1 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
@@ -478,7 +480,8 @@ ColorARGB GetTexEnvColorRGB(const ColorARGB &cColor, const ColorARGB &cTexture,
 }
 
 template <uint32_t EnvMode>
-ColorARGB GetTexEnvColorARGB(const ColorARGB &cColor, const ColorARGB &cTexture,
+ColorARGB GetTexEnvColorARGB(const ColorARGB &cColor, 
+                             const ColorARGB &cTexture,
                              const ColorARGB &cEnvColor) {
   ColorARGB ret;
 
@@ -527,8 +530,10 @@ ColorARGB GetTexEnvColorARGB(const ColorARGB &cColor, const ColorARGB &cTexture,
 //////////////////////////////////////////////////////////////////////////////
 
 template <uint32_t BlendOp>
-ColorARGB GetBlendCoeff(const ColorARGB &cColor, const ColorARGB &cSrc, const ColorARGB &cDst) {
-  ColorARGB ret;
+ColorARGB GetBlendCoeff(const ColorARGB &cColor, 
+                        const ColorARGB &cSrc, 
+                        const ColorARGB &cDst) {
+  ColorARGB ret(0);
 
   if constexpr (BlendOp == BLEND_ZERO) {
     __unused(cSrc);

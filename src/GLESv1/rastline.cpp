@@ -218,7 +218,7 @@ bool Rasterizer::setupLineAttributes(LineGradient *g, uint32_t i0, uint32_t i1) 
   }
 
   if (rasterFlags.Fog) {
-    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);
+    auto pfFogs = reinterpret_cast<floatRX *>(pbVertexData_[VERTEX_FOG]);
     auto fFog0 = pfFogs[i0];
     auto fFog1 = pfFogs[i1];
 

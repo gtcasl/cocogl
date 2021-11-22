@@ -16,8 +16,8 @@
 
 #define MAX_TEXTURES 2
 #define MAX_TEXTURES_MASK 2
-#define MAX_TEXTURE_LEVELS 12
-#define MAX_TEXTURE_SIZE (1 << MAX_TEXTURE_LEVELS)
+#define MAX_TEXTURE_LEVELS 15
+#define MAX_TEXTURE_SIZE   (1 << MAX_TEXTURE_LEVELS)
 #define MAX_CLIPPLANES 6
 #define CLIPPLANES_MASK 63
 #define MAX_LIGHTS 8
@@ -31,17 +31,18 @@
 #define IMPLEMENTATION_COLOR_READ_TYPE_OES GL_UNSIGNED_SHORT_5_6_5
 #define IMPLEMENTATION_COLOR_READ_FORMAT_OES GL_RGB
 
-#define fixedRX fixed20
-#define fixedRF float20
-#define fixedW fixed12
+#define fixedRX  fixed23
+#define floatRX  float23
+
+#define fixedW   fixed12
 #define fixedDDA fixed16
 
 #ifdef COCOGL_PIXEDPOINT
 #define floatRW Fixed<28, int64_t>
-#define floatQ Fixed<30, int64_t>
+#define floatQ  Fixed<30, int64_t>
 #else
 #define floatRW float
-#define floatQ float
+#define floatQ  float
 #endif
 
 #define EGL_CONFIG_VENDOR "Blaise Tine"
@@ -225,7 +226,7 @@ struct VECTOR4S {
 
 struct TEXCOORD2 {
   enum { DIM = 2 };
-  float20 m[DIM];
+  floatRX m[DIM];
 
   TEXCOORD2() {}
 
@@ -313,12 +314,14 @@ struct PolygonOffset {
 
 struct ScreenXform {
   fixed4 fMinX;
-  float4 fScaleX;
+  float4
+ fScaleX;
 
   fixed4 fMinY;
-  float4 fScaleY;
+  float4
+ fScaleY;
 
-  float20 fMinZ;
+  floatRX fMinZ;
   floatf fScaleZ;
 };
 
@@ -351,7 +354,7 @@ private:
   floatf factors_[FACTORS_SIZE];
 
 public:
-  fixedRF fRatio;
+  floatRX fRatio;
 };
 
 struct PointParams {
@@ -593,7 +596,7 @@ struct DirtyLights {
 struct RDVECTOR {
   fixed4 x;
   fixed4 y;
-  float20 z;
+  floatRX z;
   floatRW rhw;
 
   RDVECTOR() {}

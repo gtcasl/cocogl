@@ -100,7 +100,7 @@ void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
   auto pTexture = this->getTexture(activeTexture_);
   assert(pTexture);
 
-  if ((level < 0) || (level >= MAX_TEXTURE_LEVELS)) {
+  if ((level < 0) || (level > MAX_TEXTURE_LEVELS)) {
     __glError(
         GL_INVALID_VALUE,
         "GLContext::setTexImage2D() failed, invalid level parameter: %d.\r\n",
@@ -207,7 +207,7 @@ void GLContext::setTexSubImage2D(GLenum target, GLint level, GLint xoffset,
   auto pTexture = this->getTexture(activeTexture_);
   assert(pTexture);
 
-  if ((level < 0) || (level >= MAX_TEXTURE_LEVELS)) {
+  if ((level < 0) || (level > MAX_TEXTURE_LEVELS)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::setTexSubImage2D() failed, "
               "invalid level parameter: %d.\r\n",
@@ -285,7 +285,7 @@ void GLContext::copyTexImage2D(GLenum target, GLint level,
   auto pTexture = this->getTexture(activeTexture_);
   assert(pTexture);
 
-  if ((level < 0) || (level >= MAX_TEXTURE_LEVELS)) {
+  if ((level < 0) || (level > MAX_TEXTURE_LEVELS)) {
     __glError(
         GL_INVALID_VALUE,
         "GLContext::setTexImage2D() failed, invalid level parameter: %d.\r\n",
@@ -370,7 +370,7 @@ void GLContext::copyTexSubImage2D(GLenum target, GLint level, GLint xoffset,
   auto pTexture = this->getTexture(activeTexture_);
   assert(pTexture);
 
-  if ((level < 0) || (level >= MAX_TEXTURE_LEVELS)) {
+  if ((level < 0) || (level > MAX_TEXTURE_LEVELS)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::setTexSubImage2D() failed, "
               "invalid level parameter: %d.\r\n",
@@ -608,7 +608,7 @@ void GLContext::compressedTexImage2D(GLenum target, GLint level,
     return;
   }
 
-  if ((level > 0) || (-level > MAX_TEXTURE_LEVELS)) {
+  if ((level < 0) || (level > MAX_TEXTURE_LEVELS)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::compressedTexImage2D() "
               "failed, invalid level parameter: %d.\r\n",
@@ -776,7 +776,7 @@ void GLContext::compressedTexSubImage2D(GLenum target, GLint level,
     return;
   }
 
-  if ((level > 0) || (-level > MAX_TEXTURE_LEVELS)) {
+  if ((level < 0) || (level > MAX_TEXTURE_LEVELS)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::compressedTexSubImage2D() "
               "failed, invalid level parameter: %d.\r\n",

@@ -16,27 +16,31 @@
 
 Renderer::Renderer(EGLNativeWindowType window) {
   EGLint egl_config_attr[] = {
-      EGL_BUFFER_SIZE, 32,
-      EGL_DEPTH_SIZE, 16,
+      EGL_BUFFER_SIZE,  32,
+      EGL_DEPTH_SIZE,   16,
       EGL_STENCIL_SIZE, 0,
-      EGL_SURFACE_TYPE,
-      EGL_WINDOW_BIT,
+      EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+      //EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
       EGL_NONE};
 
   EGLint numConfigs, majorVersion, minorVersion;
 
   glDisplay_ = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  eglInitialize(glDisplay_, &majorVersion, &minorVersion);
-  eglChooseConfig(glDisplay_, egl_config_attr, &glConfig_, 1, &numConfigs);
-  glContext_ = eglCreateContext(glDisplay_, glConfig_, EGL_NO_CONTEXT, nullptr);
-  glSurface_ = eglCreateWindowSurface(glDisplay_, glConfig_, window, 0);
-  eglQuerySurface(glDisplay_, glSurface_, EGL_WIDTH, &width_);
-  eglQuerySurface(glDisplay_, glSurface_, EGL_HEIGHT, &height_);
+  eglInitialize(glDisplay_, &majorVersion, &minorVersion); 
+  auto ret = eglBindAPI(EGL_OPENGL_ES_API);
+  assert(ret == EGL_TRUE);
+  eglChooseConfig(glDisplay_, egl_config_attr, &glConfig_, 1, &numConfigs);  
+  assert(numConfigs == 1);
+  glContext_ = eglCreateContext(glDisplay_, glConfig_, EGL_NO_CONTEXT, nullptr);  
+  glSurface_ = eglCreateWindowSurface(glDisplay_, glConfig_, window, 0);  
+  eglQuerySurface(glDisplay_, glSurface_, EGL_WIDTH, &width_);  
+  eglQuerySurface(glDisplay_, glSurface_, EGL_HEIGHT, &height_);  
   eglMakeCurrent(glDisplay_, glSurface_, glSurface_, glContext_);
+  assert(EGL_SUCCESS == eglGetError());
 }
 
 Renderer::~Renderer() {
-  eglDestroySurface(glDisplay_, glSurface_);
+  eglDestroySurface(glDisplay_, glSurface_);  
   eglDestroyContext(glDisplay_, glContext_);
   eglTerminate(glDisplay_);
 }
@@ -51,6 +55,7 @@ void Renderer::OnDestroy() {
 
 void Renderer::Present() {
   eglSwapBuffers(glDisplay_, glSurface_);
+  assert(EGL_SUCCESS == eglGetError());
 }
 
 void Renderer::OnKeyNext() {

@@ -123,7 +123,7 @@ void Rasterizer::rasterPoint(uint32_t index) {
   }
 
   if (rasterFlags.Fog) {
-    auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);
+    auto pfFogs = reinterpret_cast<floatRX *>(pbVertexData_[VERTEX_FOG]);
     auto fFog = pfFogs[index];
 
     pRegisters->m[0] = Math::Zero<fixedRX>();

@@ -30,9 +30,9 @@
 #include "triangle_t.hpp"
 #include "text_t.hpp"
 
-int testid = 2;
-int width = 640;
-int height = 480;
+int testid = 3;
+int width = 800;
+int height = 600;
 
 static void parse_args(int argc, char **argv) {
   int c;
@@ -142,12 +142,12 @@ int main(int argc, char **argv) {
       switch (event.type) {
       case SDL_KEYDOWN:
         switch (event.key.keysym.sym) {
-        case SDLK_PAGEUP:
+        case SDLK_UP:
           if (testid > 0) {
             create_test(--testid, window);
           }
           break;
-        case SDLK_PAGEDOWN:
+        case SDLK_DOWN:
           if (testid < 9) {
             create_test(++testid, window);
           }

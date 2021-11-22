@@ -129,7 +129,7 @@ public:
   static GLenum Create(Texture **ppTexture);
 
   const Surface2D &getSurface(uint32_t level) const {
-    assert(level < MAX_TEXTURE_LEVELS);
+    assert(level <= MAX_TEXTURE_LEVELS);
     return surfaces_[level];
   }
 
@@ -193,7 +193,7 @@ private:
 
   ~Texture();
 
-  Surface2D surfaces_[MAX_TEXTURE_LEVELS];
+  Surface2D surfaces_[MAX_TEXTURE_LEVELS+1];
   uint8_t *pbMipBuffer_;
   GLSurface *pBoundSurface_;
   uint32_t handle_;

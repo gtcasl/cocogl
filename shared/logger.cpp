@@ -44,25 +44,14 @@ HRESULT Logger::open(const char *fileName, const char *mode) {
 }
 
 HRESULT Logger::write(const char *format, ...) {
-  if (nullptr == file_)
-    return E_FAIL;
-
-  if ((nullptr == format) || (0 == *format))
-    return S_OK;
-
-  uint32_t indent = indent_;
-  while (indent--) {
-    fprintf(file_, "  ");
-  }
-
   va_list arglist;
   va_start(arglist, format);
 
-  vfprintf(file_, format, arglist);
+  auto hr = this->write(format, arglist);
 
   va_end(arglist);
 
-  return S_OK;
+  return hr;
 }
 
 HRESULT Logger::write(const char *format, va_list arglist) {
@@ -78,6 +67,7 @@ HRESULT Logger::write(const char *format, va_list arglist) {
   }
 
   vfprintf(file_, format, arglist);
+  fflush(file_);
 
   return S_OK;
 }

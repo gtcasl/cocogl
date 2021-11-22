@@ -432,8 +432,8 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count)
       }
     }
 
-    pvTexCoords[i].m[0] = static_cast<float20>(vIn.x);
-    pvTexCoords[i].m[1] = static_cast<float20>(vIn.y);
+    pvTexCoords[i].m[0] = static_cast<floatRX>(vIn.x);
+    pvTexCoords[i].m[1] = static_cast<floatRX>(vIn.y);
   }
 }
 
@@ -479,7 +479,7 @@ template <eFogMode FogMode>
 void TNL::processFog(uint32_t count) {
 
   auto pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
-  auto pfFogs = reinterpret_cast<float20 *>(pbVertexData_[VERTEX_FOG]);
+  auto pfFogs = reinterpret_cast<floatRX *>(pbVertexData_[VERTEX_FOG]);
 
   if constexpr (FogMode == FogLinear) {
     auto fFogEnd = fog_.getFactor(GL_FOG_END);
@@ -496,7 +496,7 @@ void TNL::processFog(uint32_t count) {
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fTmp = fEyeDist * fFogDensity;
-      pfFogs[i] = static_cast<fixedRF>(Math::Sat(std::exp(-fTmp)));
+      pfFogs[i] = static_cast<floatRX>(Math::Sat(std::exp(-fTmp)));
     }
   }
   if constexpr (FogMode == FogExp2) {
@@ -505,7 +505,7 @@ void TNL::processFog(uint32_t count) {
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fTmp = fEyeDist * fFogDensity;
-      pfFogs[i] = static_cast<fixedRF>(Math::Sat(std::exp(-(fTmp * fTmp))));
+      pfFogs[i] = static_cast<floatRX>(Math::Sat(std::exp(-(fTmp * fTmp))));
     }
   }
 }

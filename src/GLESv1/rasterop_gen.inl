@@ -16,12 +16,14 @@
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 ColorARGB GetTexelColorPt(const SurfaceDesc &surface, fixedRX fU, fixedRX fV) {
-  return Format::ConvertFrom<Format, false>(GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV));
+  auto color = GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV);
+  return Format::ConvertFrom<Format, false>(color);
 }
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 ColorARGB GetTexelColorLn(const SurfaceDesc &surface, fixedRX fU, fixedRX fV) {
-  return Format::ConvertFrom<Format, false>(GetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV));
+  auto color = GetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
+  return Format::ConvertFrom<Format, false>(color);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -45,7 +47,9 @@ ColorARGB Blender(const ColorARGB &cColor, const uint8_t *pCB) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <ePixelFormat Format, bool bWriteMask, eLogicOp LogicOp>
-void DoWriteColor(const RasterData &rasterData, const ColorARGB &cColor, uint8_t *pCB) {
+void DoWriteColor(const RasterData &rasterData, 
+                  const ColorARGB &cColor,
+                  uint8_t *pCB) {
   uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB);
   auto result = Format::ConvertTo<Format>(cColor);
   result = ApplyLogicOp<LogicOp>(result, dstColor);
@@ -164,21 +168,21 @@ public:
       if constexpr (2 == Texture0) {
         fM0 = rasterData.Registers[REG_MIP0 + 0].m[2];
       }
+    }
 
-      if constexpr (Texture1 != 0) {
-        fU1dA = rasterData.Registers[REG_TEX1 + 0].m[0];
-        fixedRX fU1dB = rasterData.Registers[REG_TEX1 + 0].m[1];
-        fixedRX fU1dC = rasterData.Registers[REG_TEX1 + 0].m[2];
-        fU1 = fU1dA * fOffsetX + fU1dB * fOffsetY + fU1dC;
+    if constexpr (Texture1 != 0) {
+      fU1dA = rasterData.Registers[REG_TEX1 + 0].m[0];
+      fixedRX fU1dB = rasterData.Registers[REG_TEX1 + 0].m[1];
+      fixedRX fU1dC = rasterData.Registers[REG_TEX1 + 0].m[2];
+      fU1 = fU1dA * fOffsetX + fU1dB * fOffsetY + fU1dC;
 
-        fV1dA = rasterData.Registers[REG_TEX1 + 1].m[0];
-        fixedRX fV1dB = rasterData.Registers[REG_TEX1 + 1].m[1];
-        fixedRX fV1dC = rasterData.Registers[REG_TEX1 + 1].m[2];
-        fV1 = fV1dA * fOffsetX + fV1dB * fOffsetY + fV1dC;
+      fV1dA = rasterData.Registers[REG_TEX1 + 1].m[0];
+      fixedRX fV1dB = rasterData.Registers[REG_TEX1 + 1].m[1];
+      fixedRX fV1dC = rasterData.Registers[REG_TEX1 + 1].m[2];
+      fV1 = fV1dA * fOffsetX + fV1dB * fOffsetY + fV1dC;
 
-        if constexpr (2 == Texture1) {
-          fM1 = rasterData.Registers[REG_MIP1 + 0].m[2];
-        }
+      if constexpr (2 == Texture1) {
+        fM1 = rasterData.Registers[REG_MIP1 + 0].m[2];
       }
     }
 
@@ -397,12 +401,14 @@ public:
     fixedRX fM0OverW2, fM1OverW2;
     fixedRX fM0OverW2dA, fM1OverW2dA;
 
-    if constexpr (Texture0 != 0) {
+    if constexpr ((Texture0 != 0) || (Texture1 != 0)) {
       fRhwdA = rasterData.Registers[REG_RHW + 0].m[0];
       fixedRX fRhwdB = rasterData.Registers[REG_RHW + 0].m[1];
       fixedRX fRhwdC = rasterData.Registers[REG_RHW + 0].m[2];
       fRhw = fRhwdA * fOffsetX + fRhwdB * fOffsetY + fRhwdC;
+    }
 
+    if constexpr (Texture0 != 0) {
       fU0OverWdA = rasterData.Registers[REG_TEX0 + 0].m[0];
       fixedRX fU0OverWdB = rasterData.Registers[REG_TEX0 + 0].m[1];
       fixedRX fU0OverWdC = rasterData.Registers[REG_TEX0 + 0].m[2];
@@ -422,26 +428,26 @@ public:
           fM0OverW2 += fM0OverW2dA * fOffsetX + fM0OverW2dB * fOffsetY;
         }
       }
+    }
 
-      if constexpr (Texture1 != 0) {
-        fU1OverWdA = rasterData.Registers[REG_TEX1 + 0].m[0];
-        fixedRX fU1OverWdB = rasterData.Registers[REG_TEX1 + 0].m[1];
-        fixedRX fU1OverWdC = rasterData.Registers[REG_TEX1 + 0].m[2];
-        fU1OverW = fU1OverWdA * fOffsetX + fU1OverWdB * fOffsetY + fU1OverWdC;
+    if constexpr (Texture1 != 0) {
+      fU1OverWdA = rasterData.Registers[REG_TEX1 + 0].m[0];
+      fixedRX fU1OverWdB = rasterData.Registers[REG_TEX1 + 0].m[1];
+      fixedRX fU1OverWdC = rasterData.Registers[REG_TEX1 + 0].m[2];
+      fU1OverW = fU1OverWdA * fOffsetX + fU1OverWdB * fOffsetY + fU1OverWdC;
 
-        fV1OverWdA = rasterData.Registers[REG_TEX1 + 1].m[0];
-        fixedRX fV1OverWdB = rasterData.Registers[REG_TEX1 + 1].m[1];
-        fixedRX fV1OverWdC = rasterData.Registers[REG_TEX1 + 1].m[2];
-        fV1OverW = fV1OverWdA * fOffsetX + fV1OverWdB * fOffsetY + fV1OverWdC;
+      fV1OverWdA = rasterData.Registers[REG_TEX1 + 1].m[0];
+      fixedRX fV1OverWdB = rasterData.Registers[REG_TEX1 + 1].m[1];
+      fixedRX fV1OverWdC = rasterData.Registers[REG_TEX1 + 1].m[2];
+      fV1OverW = fV1OverWdA * fOffsetX + fV1OverWdB * fOffsetY + fV1OverWdC;
 
-        if constexpr (2 == Texture1) {
-          fM1OverW2dA = rasterData.Registers[REG_MIP1 + 0].m[0];
-          fM1OverW2 = rasterData.Registers[REG_MIP1 + 0].m[2];
+      if constexpr (2 == Texture1) {
+        fM1OverW2dA = rasterData.Registers[REG_MIP1 + 0].m[0];
+        fM1OverW2 = rasterData.Registers[REG_MIP1 + 0].m[2];
 
-          if (rasterFlags.InterpolateMips & 2) {
-            fixedRX fM1OverW2dB = rasterData.Registers[REG_MIP1 + 0].m[1];
-            fM1OverW2 += fM1OverW2dA * fOffsetX + fM1OverW2dB * fOffsetY;
-          }
+        if (rasterFlags.InterpolateMips & 2) {
+          fixedRX fM1OverW2dB = rasterData.Registers[REG_MIP1 + 0].m[1];
+          fM1OverW2 += fM1OverW2dA * fOffsetX + fM1OverW2dB * fOffsetY;
         }
       }
     }

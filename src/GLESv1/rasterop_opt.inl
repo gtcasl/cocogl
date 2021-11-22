@@ -22,16 +22,18 @@ template <bool DepthTest,
           uint32_t StencilFail,
           uint32_t StencilZFail, 
           bool StencilWrite>
-bool DoStencilTest(uint32_t depthValue, uint32_t stencilRef,
-                   uint32_t stencilMask, uint32_t stencilWriteMask,
+bool DoStencilTest(uint32_t depthValue, 
+                   uint32_t stencilRef,
+                   uint32_t stencilMask, 
+                   uint32_t stencilWriteMask,
                    void *pDSBuffer) {
   assert(pDSBuffer);
 
-  auto depthStencilValue = *reinterpret_cast<uint32_t *>(pDSBuffer);
-  auto stencilValue = depthStencilValue >> 16;
-  auto _depthValue = depthStencilValue & 0xffff;
-  auto _stencilValue = stencilValue & stencilMask;
-  auto _stencilRef = stencilRef & stencilMask;
+  uint32_t depthStencilValue = *reinterpret_cast<uint32_t *>(pDSBuffer);
+  uint32_t stencilValue  = depthStencilValue >> 16;
+  uint32_t _depthValue   = depthStencilValue & 0xffff;
+  uint32_t _stencilValue = stencilValue & stencilMask;
+  uint32_t _stencilRef   = stencilRef & stencilMask;
 
   uint32_t stencilResult;
   uint32_t writeMask = 0;
@@ -42,9 +44,7 @@ bool DoStencilTest(uint32_t depthValue, uint32_t stencilRef,
 
   auto bStencilTest = DoCompare<StencilFunc>(_stencilRef, _stencilValue);
   if (bStencilTest) {
-    if (DoCompare<(DepthTest ? DepthFunc
-                             : static_cast<uint32_t>(COMPARE_ALWAYS))>(
-            depthValue, _depthValue)) {
+    if (DoCompare<(DepthTest ? DepthFunc : static_cast<uint32_t>(COMPARE_ALWAYS))>(depthValue, _depthValue)) {
       stencilResult = DoStencilOp<StencilPass>(stencilValue, stencilRef);
 
       if constexpr (DepthTest && DepthWrite) {
@@ -86,8 +86,7 @@ template <uint32_t MipFilter,
           uint32_t AddressU, 
           uint32_t AddressV>
 uint32_t GetSamplerColor(const Sampler &sampler, fixedRX fU, fixedRX fV, fixedRX fM) {
-  return GetMipFilterN<MipFilter, MinFilter, MagFilter, Format, AddressU,
-                       AddressV>(sampler, fU, fV, fM);
+  return GetMipFilterN<MipFilter, MinFilter, MagFilter, Format, AddressU, AddressV>(sampler, fU, fV, fM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -195,13 +194,13 @@ private:
     }
 
     if constexpr (BlendOp == BLEND_SRC_ALPHA) {
-      auto alpha = srcAlpha >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
+      uint32_t alpha = srcAlpha >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
       const NColor<FORMAT_R5G6B5> c0(inColor);
       return c0.multiply(alpha);
     }
 
     if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
-      auto alpha = (0xff - srcAlpha) >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
+      uint32_t alpha = (0xff - srcAlpha) >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
       const NColor<FORMAT_R5G6B5> c0(inColor);
       return c0.multiply(alpha);
     }
@@ -227,14 +226,14 @@ public:
       }
 
       if constexpr (AlphaBlendSrc) {
-        auto alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
+        uint32_t alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const NColor<FORMAT_R5G6B5> c0(dstColor);
         const NColor<FORMAT_R5G6B5> c1(srcColor);
         return c0.lerp(c1, alpha);
       }
 
       if constexpr (AlphaBlendDst) {
-        auto alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
+        uint32_t alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
         const NColor<FORMAT_R5G6B5> c0(srcColor);
         const NColor<FORMAT_R5G6B5> c1(dstColor);
         return c0.lerp(c1, alpha);

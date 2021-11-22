@@ -363,13 +363,13 @@ void TNL::transformScreenSpace(RDVECTOR *pRDVertex,
       auto fRhw = Math::Inverse<floatRW>(pvClipPos[i].w);
       pRDVertex[i].x = fMinX + Math::MulRnd<fixed4>(pvClipPos[i].x, fRhw, fScaleX);
       pRDVertex[i].y = fMinY + Math::MulRnd<fixed4>(pvClipPos[i].y, fRhw, fScaleY);
-      pRDVertex[i].z = fMinZ + Math::MulRnd<float20>(pvClipPos[i].z, fRhw, fScaleZ);
+      pRDVertex[i].z = fMinZ + Math::MulRnd<floatRX>(pvClipPos[i].z, fRhw, fScaleZ);
       pRDVertex[i].rhw = fRhw;
     } else {
       // Affine screen space transform
       pRDVertex[i].x = fMinX + Math::MulRnd<fixed4>(pvClipPos[i].x, fScaleX);
       pRDVertex[i].y = fMinY + Math::MulRnd<fixed4>(pvClipPos[i].y, fScaleY);
-      pRDVertex[i].z = fMinZ + Math::MulRnd<float20>(pvClipPos[i].z, fScaleZ);
+      pRDVertex[i].z = fMinZ + Math::MulRnd<floatRX>(pvClipPos[i].z, fScaleZ);
       pRDVertex[i].rhw = Math::One<floatRW>();
     }
   }
@@ -835,8 +835,8 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
   }
 
   for (uint32_t k = 0; k < count; ++k) {
-    pvTexCoords[k].m[0] = static_cast<float20>(vIn.x);
-    pvTexCoords[k].m[1] = static_cast<float20>(vIn.y);
+    pvTexCoords[k].m[0] = static_cast<floatRX>(vIn.x);
+    pvTexCoords[k].m[1] = static_cast<floatRX>(vIn.y);
   }
 }
 
@@ -1048,9 +1048,9 @@ void TNL::updateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
     auto fFogEnd = fog_.getFactor(GL_FOG_END);
 
     if (fFogStart != fFogEnd) {
-      fog_.fRatio = Math::Inverse<fixedRF>(fFogEnd - fFogStart);
+      fog_.fRatio = Math::Inverse<floatRX>(fFogEnd - fFogStart);
     } else {
-      fog_.fRatio = Math::Zero<fixedRF>();
+      fog_.fRatio = Math::Zero<floatRX>();
     }
 
     dirtyFlags_.FogRatio = 0;
@@ -1058,7 +1058,7 @@ void TNL::updateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
 
   pbVertexData_[VERTEX_FOG] = *ppbVertexData;
   *ppbVertexData = __alignPtr(*ppbVertexData + 
-                      (count + CLIP_BUFFER_SIZE) * sizeof(float20), 4);
+                      (count + CLIP_BUFFER_SIZE) * sizeof(floatRX), 4);
 
   int func = fog_.Mode;
   assert(func < __countof(g_processFog));
@@ -1089,7 +1089,7 @@ void TNL::updateScreenXform() {
   screenXform_.fMinY = static_cast<fixed4>((viewport_.top + viewport_.bottom) / 2);
   screenXform_.fScaleY = float4(viewport_.bottom - viewport_.top) / 2;
 
-  screenXform_.fMinZ = static_cast<float20>((depthRange_.fNear + depthRange_.fFar) / 2);
+  screenXform_.fMinZ = static_cast<floatRX>((depthRange_.fNear + depthRange_.fFar) / 2);
   screenXform_.fScaleZ = (depthRange_.fFar - depthRange_.fNear) / 2;
 
   dirtyFlags_.ScreenXform = 0;
@@ -1237,7 +1237,8 @@ void TNL::updateLights() {
 
         // Compute the halfway vector
         VECTOR3 vDir(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>());
-        Math::Add(&pLight->vHalfway, reinterpret_cast<const VECTOR3 &>(pLight->vPosition), vDir);
+        VECTOR3 vPos(pLight->vPosition.x, pLight->vPosition.y, pLight->vPosition.z);
+        Math::Add(&pLight->vHalfway, vPos, vDir);
 
         // Normalize the halfway vector
         Math::Normalize(&pLight->vHalfway);

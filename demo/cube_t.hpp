@@ -30,7 +30,9 @@ public:
     /*Remember: because we are programming for a mobile device, we cant
     use any of the OpenGL ES functions that finish in 'f', we must use
     the fixed point version (they finish in 'x'*/
+    assert(GL_NO_ERROR == glGetError());
     glClearColor(0, 0, 0, 0);
+    assert(GL_NO_ERROR == glGetError());    
 
     // Do not want to see smoothed colors, only a plain color for face
     glShadeModel(GL_FLAT);
