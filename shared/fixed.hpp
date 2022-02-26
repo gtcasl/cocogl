@@ -315,8 +315,8 @@ public:
   }
 
   friend auto operator*(Fixed lhs, uint32_t rhs) {
-    auto value = static_cast<T>(lhs.data_ << rhs);
-    assert((lhs.data_ << static_cast<int64_t>(rhs)) == value);
+    auto value = static_cast<T>(lhs.data_ * rhs);
+    assert((lhs.data_ * static_cast<int64_t>(rhs)) == value);
     return Fixed::make(value);
   }
 

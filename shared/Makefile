@@ -1,7 +1,13 @@
-CXXFLAGS += -std=c++17 -fPIC -O3 -Wall -Wextra -pedantic -Wfatal-errors
-#CXXFLAGS += -std=c++17 -fPIC -O0 -g -Wall -Wextra -pedantic -Wfatal-errors
+CXXFLAGS += -std=c++17 -fPIC -Wall -Wextra -pedantic -Wfatal-errors
 
 LDFLAGS += 
+
+# Debugigng
+ifdef DEBUG
+	CXXFLAGS += -g -O0
+else    
+	CXXFLAGS += -O2 -DNDEBUG
+endif
 
 PROJECT = libshared.a
 

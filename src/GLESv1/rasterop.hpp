@@ -275,13 +275,16 @@ inline NColor<Format> GetTexelColorLnX(const SurfaceDesc &surface,
 
   // address generation
 
-  uint32_t x0s = u0 >> (fixedRX::FRAC - lerpBits - logWidth);
-  uint32_t y0s = v0 >> (fixedRX::FRAC - lerpBits - logHeight);  
+  uint32_t shift_u = (fixedRX::FRAC - logWidth);
+  uint32_t shift_v = (fixedRX::FRAC - logHeight);
+
+  uint32_t x0s = (u0 << lerpBits) >> shift_u;
+  uint32_t y0s = (v0 << lerpBits) >> shift_v;  
 
   uint32_t x0 = x0s >> lerpBits;  
   uint32_t y0 = y0s >> lerpBits;  
-  uint32_t x1 = u1 >> (fixedRX::FRAC - logWidth);
-  uint32_t y1 = v1 >> (fixedRX::FRAC - logHeight);
+  uint32_t x1 = u1 >> shift_u;
+  uint32_t y1 = v1 >> shift_v;
 
   // memory lookup
 
@@ -361,14 +364,14 @@ inline uint32_t GetMipFilterN(const Sampler &sampler,
   if constexpr (MipFilter == FILTER_NEAREST) {
     if constexpr (MinFilter == MagFilter) {
       fJ = std::max<fixed16>(fJ, Math::One<fixed16>());
-      uint32_t mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+      uint32_t l = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
       return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
-          sampler.pMipLevels[mipLevel], fU, fV);
+          sampler.pMipLevels[l], fU, fV);
     } else {
       if (fJ > Math::One<fixed16>()) {
-        uint32_t mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+        uint32_t l = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
         return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
-            sampler.pMipLevels[mipLevel], fU, fV);
+            sampler.pMipLevels[l], fU, fV);
       } else {
         return GetMinFilterN<MagFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[0], fU, fV);
@@ -381,24 +384,24 @@ inline uint32_t GetMipFilterN(const Sampler &sampler,
     auto lerpMask = (1 << lerpBits) - 1;
     if constexpr (MinFilter == MagFilter) {
       fJ = std::max<fixed16>(fJ, Math::One<fixed16>());
-      uint32_t mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
-      uint32_t mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
-      uint32_t mipLerp   = fJ.data() >> (mipLevel0 + fixed16::FRAC - TFormatInfo<Format>::LERP);
+      uint32_t l0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+      uint32_t l1 = std::min<int>(l0 + 1, sampler.MaxMipLevel);
+      uint32_t f  = (fJ.data() - (1 << (l0 + fixed16::FRAC))) >> (l0 + fixed16::FRAC - TFormatInfo<Format>::LERP);
       auto c0 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-          sampler.pMipLevels[mipLevel0], fU, fV);
+          sampler.pMipLevels[l0], fU, fV);
       auto c1 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-          sampler.pMipLevels[mipLevel1], fU, fV);
-      return c0.Lerp(c1, mipLerp);
+          sampler.pMipLevels[l1], fU, fV);
+      return c0.Lerp(c1, f);
     } else {
       if (fJ > Math::One<fixed16>()) {
-        uint32_t mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
-        uint32_t mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
-        uint32_t mipLerp   = fJ.data() >> (mipLevel0 + fixed16::FRAC - TFormatInfo<Format>::LERP);
+        uint32_t l0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+        uint32_t l1 = std::min<int>(l0 + 1, sampler.MaxMipLevel);
+        uint32_t f  = (fJ.data() - (1 << (l0 + fixed16::FRAC))) >> (l0 + fixed16::FRAC - TFormatInfo<Format>::LERP);
         auto c0 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-            sampler.pMipLevels[mipLevel0], fU, fV);
+            sampler.pMipLevels[l0], fU, fV);
         auto c1 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
-            sampler.pMipLevels[mipLevel1], fU, fV);
-        return c0.Lerp(c1, mipLerp);
+            sampler.pMipLevels[l1], fU, fV);
+        return c0.Lerp(c1, f);
       } else {
         return GetMinFilterN<MagFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[0], fU, fV);

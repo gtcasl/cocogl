@@ -35,7 +35,7 @@ private:
   T value_;
 };
 
-#ifndef COCOGL_API_PROFILE
+#ifndef COCOGL_API_TRACE
 #define __profileAPI(func, ...)
 #else
 #define __profileAPI(func, ...) AutoLog profiler(g_logger, func, __VA_ARGS__);
