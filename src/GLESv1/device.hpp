@@ -52,7 +52,7 @@ protected:
     CLIP_BUFFER_SIZE = CLIP_PLANES + 3,
   };
 
-  Device() {}
+  Device() : frames_(0) {}
   ~Device() {}
 
   GLBuffer *getBufferObject(GLenum target) const {
@@ -127,4 +127,6 @@ protected:
   HINTS hints_;
   DirtyFlags dirtyFlags_;
   DirtyLights dirtyLights_;
+
+  uint64_t frames_;
 };

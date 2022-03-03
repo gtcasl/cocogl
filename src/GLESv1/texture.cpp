@@ -45,8 +45,8 @@ GLenum Surface2D::initialize(uint32_t width, uint32_t height,
     __safeDeleteArray(pbBits_);
   }
 
-  logWidth_ = static_cast<uint8_t>(Math::iLog2(width));
-  logHeight_ = static_cast<uint8_t>(Math::iLog2(height));
+  logWidth_ = static_cast<uint8_t>(iLog2(width));
+  logHeight_ = static_cast<uint8_t>(iLog2(height));
   pitch_ = nBPP << logWidth_;
   pbBits_ = pbBits;
   format_ = static_cast<uint8_t>(format);
@@ -77,8 +77,8 @@ GLenum Surface2D::initialize(uint32_t width, uint32_t height, int32_t pitch,
     __safeDeleteArray(pbBits_);
   }
 
-  logWidth_ = static_cast<uint8_t>(Math::iLog2(width));
-  logHeight_ = static_cast<uint8_t>(Math::iLog2(height));
+  logWidth_ = static_cast<uint8_t>(iLog2(width));
+  logHeight_ = static_cast<uint8_t>(iLog2(height));
   pbBits_ = reinterpret_cast<uint8_t *>(pPixels);
   pitch_ = pitch;
   format_ = static_cast<uint8_t>(format);
@@ -163,8 +163,8 @@ GLenum Surface2D::initialize(uint32_t width, uint32_t height,
     __safeDeleteArray(pbBits_);
   }
 
-  logWidth_ = static_cast<uint8_t>(Math::iLog2(width));
-  logHeight_ = static_cast<uint8_t>(Math::iLog2(height));
+  logWidth_ = static_cast<uint8_t>(iLog2(width));
+  logHeight_ = static_cast<uint8_t>(iLog2(height));
   pitch_ = nBPP << logWidth_;
   pbBits_ = reinterpret_cast<uint8_t *>(pbBits);
   format_ = static_cast<uint8_t>(format);

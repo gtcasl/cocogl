@@ -17,13 +17,13 @@
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 ColorARGB GetTexelColorPt(const SurfaceDesc &surface, fixedRX fU, fixedRX fV) {
   auto color = GetTexelColorPtN<Format, AddressU, AddressV>(surface, fU, fV);
-  return Format::ConvertFrom<Format, false>(color);
+  return Format::ConvertFrom<(ePixelFormat)Format, false>(color);
 }
 
 template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 ColorARGB GetTexelColorLn(const SurfaceDesc &surface, fixedRX fU, fixedRX fV) {
   auto color = GetTexelColorLnX<Format, AddressU, AddressV>(surface, fU, fV);
-  return Format::ConvertFrom<Format, false>(color);
+  return Format::ConvertFrom<(ePixelFormat)Format, false>(color);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,14 +32,14 @@ template <ePixelFormat Format, eBlendOp OpSrc, eBlendOp OpDst>
 ColorARGB Blender(const ColorARGB &cColor, const uint8_t *pCB) {
   ColorARGB ret;
 
-  auto cDstColor = Format::ConvertFrom<Format, true>(pCB);
+  auto cDstColor = Format::ConvertFrom<(ePixelFormat)Format, true>(pCB);
   auto srcCoeff = GetBlendCoeff<OpSrc>(cColor, cColor, cDstColor);
   auto dstCoeff = GetBlendCoeff<OpDst>(cDstColor, cColor, cDstColor);
 
-  ret.r = Math::Add8(srcCoeff.r, dstCoeff.r);
-  ret.g = Math::Add8(srcCoeff.g, dstCoeff.g);
-  ret.b = Math::Add8(srcCoeff.b, dstCoeff.b);
-  ret.a = Math::Add8(srcCoeff.a, dstCoeff.a);
+  ret.r = Add8(srcCoeff.r, dstCoeff.r);
+  ret.g = Add8(srcCoeff.g, dstCoeff.g);
+  ret.b = Add8(srcCoeff.b, dstCoeff.b);
+  ret.a = Add8(srcCoeff.a, dstCoeff.a);
 
   return ret;
 }
@@ -50,8 +50,8 @@ template <ePixelFormat Format, bool bWriteMask, eLogicOp LogicOp>
 void DoWriteColor(const RasterData &rasterData, 
                   const ColorARGB &cColor,
                   uint8_t *pCB) {
-  uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB);
-  auto result = Format::ConvertTo<Format>(cColor);
+  uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<(ePixelFormat)Format>::TYPE *>(pCB);
+  auto result = Format::ConvertTo<(ePixelFormat)Format>(cColor);
   result = ApplyLogicOp<LogicOp>(result, dstColor);
 
   if constexpr (bWriteMask) {
@@ -62,8 +62,8 @@ void DoWriteColor(const RasterData &rasterData,
     __unused(dstColor);
   }
 
-  *reinterpret_cast<typename TFormatInfo<Format>::TYPE *>(pCB) =
-      static_cast<typename TFormatInfo<Format>::TYPE>(result);
+  *reinterpret_cast<typename TFormatInfo<(ePixelFormat)Format>::TYPE *>(pCB) =
+      static_cast<typename TFormatInfo<(ePixelFormat)Format>::TYPE>(result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -461,7 +461,7 @@ public:
       fFog = fFogdA * fOffsetX + fFogdB * fOffsetY + fFogdC;
     }
 
-    fixedW fW = Math::Inverse<fixedW>(fRhw);
+    fixedW fW = Inverse<fixedW>(fRhw);
     fixedW fW2;
 
     if constexpr ((2 == Texture0) || (2 == Texture1)) {
@@ -506,7 +506,7 @@ public:
 
     do {
       uint32_t blockWidth1 = std::min(width, MAX_BLOCK_SIZE);
-      uint32_t log2width = Math::iLog2(blockWidth1);
+      uint32_t log2width = iLog2(blockWidth1);
       uint32_t blockWidth = 1 << log2width;
       width -= blockWidth;
       auto pCBEnd = pCB + blockWidth * colorStride;
@@ -516,7 +516,7 @@ public:
 
       if (log2width) {
         fRhw += fRhwdA << log2width;
-        fixedW fWr = Math::Inverse<fixedW>(fRhw);
+        fixedW fWr = Inverse<fixedW>(fRhw);
         fixedW fWr2;
 
         if constexpr ((2 == Texture0) || (2 == Texture1)) {
@@ -534,7 +534,7 @@ public:
               fM0OverW2 += fM0OverW2dA << log2width;
               fdMr0 = (fM0OverW2 * fWr2 - fM0) >> log2width;
             } else {
-              fdMr0 = Math::Zero<fixedRX>();
+              fdMr0 = Zero<fixedRX>();
             }
           }
         }
@@ -550,7 +550,7 @@ public:
               fM1OverW2 += fM1OverW2dA << log2width;
               fdMr1 = (fM1OverW2 * fWr2 - fM1) >> log2width;
             } else {
-              fdMr1 = Math::Zero<fixedRX>();
+              fdMr1 = Zero<fixedRX>();
             }
           }
         }

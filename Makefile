@@ -1,9 +1,9 @@
-.PHONY: shared src demo md2viewer
+.PHONY: third_party src demo md2viewer
 
-all: shared src demo md2viewer
+all: third_party src demo md2viewer
 
-shared:
-	$(MAKE) -C shared
+third_party:
+	$(MAKE) -C third_party
 
 src:
 	$(MAKE) -C src
@@ -21,7 +21,7 @@ run-md2viewer:
 	$(MAKE) -C md2viewer run
 	
 clean:
-	$(MAKE) -C shared clean
+	$(MAKE) -C third_party clean
 	$(MAKE) -C src clean
 	$(MAKE) -C demo clean
 	$(MAKE) -C md2viewer clean

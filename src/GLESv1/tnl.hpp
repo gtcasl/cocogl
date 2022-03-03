@@ -133,6 +133,10 @@ protected:
 
   void updateMatrixDirtyFlags();
 
+#ifdef DUMP_FRAME
+  void dumpVertices(uint32_t count);
+#endif
+
   std::vector<uint8_t> vertexBuffer_;
 
   MatrixStack *pMsModelView_;

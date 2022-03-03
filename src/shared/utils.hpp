@@ -150,6 +150,14 @@ inline int32_t Ctz(int32_t rhs) {
   return 31 - Clz(rhs & -rhs);
 }
 
+inline int iLog2(int value) {
+  return 31 - Clz(value);
+}
+
+inline bool IsPowerOf2(int value) {
+  return 0 == (value & (value - 1));
+}
+
 #ifndef NDEBUG
 #define __debugMsg(level, ...) DbgPrintf(level, __VA_ARGS__);
 #else

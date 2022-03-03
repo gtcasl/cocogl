@@ -153,13 +153,13 @@ inline void GLContext::setTexEnv(GLenum env, GLenum pname, const T *pParams) {
 
     case GL_TEXTURE_ENV_COLOR:
       texUnit.cEnvColor.b = static_cast<uint8_t>(
-          Math::ToUNORM8(Math::Sat(static_cast<floatf>(pParams[0]))));
+          ToUNORM8(Sat(static_cast<floatf>(pParams[0]))));
       texUnit.cEnvColor.g = static_cast<uint8_t>(
-          Math::ToUNORM8(Math::Sat(static_cast<floatf>(pParams[1]))));
+          ToUNORM8(Sat(static_cast<floatf>(pParams[1]))));
       texUnit.cEnvColor.r = static_cast<uint8_t>(
-          Math::ToUNORM8(Math::Sat(static_cast<floatf>(pParams[2]))));
+          ToUNORM8(Sat(static_cast<floatf>(pParams[2]))));
       texUnit.cEnvColor.a = static_cast<uint8_t>(
-          Math::ToUNORM8(Math::Sat(static_cast<floatf>(pParams[3]))));
+          ToUNORM8(Sat(static_cast<floatf>(pParams[3]))));
       break;
     }
 
@@ -198,7 +198,7 @@ inline void GLContext::setPointParameter(GLenum pname, const T *pParams) {
   case GL_POINT_SIZE_MAX:
   case GL_POINT_FADE_THRESHOLD_SIZE: {
     auto param = static_cast<floatf>(pParams[0]);
-    if (param < Math::Zero<floatf>()) {
+    if (param < Zero<floatf>()) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setPointParameter() failed, "
                 "invalid param parameter: %d.\r\n",

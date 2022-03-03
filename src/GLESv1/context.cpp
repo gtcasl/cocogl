@@ -152,10 +152,10 @@ GLenum GLContext::initialize() {
   //--
   this->setShadeModel(GL_SMOOTH);
 
-  this->clearColor(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>());
+  this->clearColor(Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), Zero<floatf>());
   this->setColorMask(true, true, true, true);
 
-  this->clearDepth(Math::One<floatf>());
+  this->clearDepth(One<floatf>());
   this->setDepthMask(true);
 
   this->clearStencil(0);
@@ -194,76 +194,76 @@ GLenum GLContext::initialize() {
     this->setTexCoordPointer(4, GL_FLOAT, 0, nullptr);
   }
 
-  this->setNormal(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>());
+  this->setNormal(Zero<floatf>(), Zero<floatf>(), One<floatf>());
 
-  this->setColor(Math::One<floatf>(), Math::One<floatf>(), Math::One<floatf>(), Math::One<floatf>());
+  this->setColor(One<floatf>(), One<floatf>(), One<floatf>(), One<floatf>());
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
-    this->setMultiTexCoord(GL_TEXTURE0 + i, Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>());
+    this->setMultiTexCoord(GL_TEXTURE0 + i, Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), One<floatf>());
   }
 
   for (uint32_t i = 0; i < MAX_LIGHTS; ++i) {
     GLenum light = GL_LIGHT0 + i;
 
     this->setLightParameter<floatf>(light, GL_AMBIENT,
-                                    VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>()).m);
+                                    VECTOR4(Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), One<floatf>()).m);
 
     if (GL_LIGHT0 == light) {
       this->setLightParameter<floatf>(light, GL_DIFFUSE,
-                                      VECTOR4(Math::One<floatf>(), Math::One<floatf>(), Math::One<floatf>(), Math::One<floatf>()).m);
+                                      VECTOR4(One<floatf>(), One<floatf>(), One<floatf>(), One<floatf>()).m);
       this->setLightParameter<floatf>(light, GL_SPECULAR,
-                                      VECTOR4(Math::One<floatf>(), Math::One<floatf>(), Math::One<floatf>(), Math::One<floatf>()).m);
+                                      VECTOR4(One<floatf>(), One<floatf>(), One<floatf>(), One<floatf>()).m);
     } else {
       this->setLightParameter<floatf>(light, GL_DIFFUSE,
-                                      VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>()).m);
+                                      VECTOR4(Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), Zero<floatf>()).m);
       this->setLightParameter<floatf>(light, GL_SPECULAR,
-                                      VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>()).m);
+                                      VECTOR4(Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), Zero<floatf>()).m);
     }
 
     this->setLightParameter<floatf>(light, GL_POSITION,
-                                    VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>(), Math::Zero<floatf>()).m);
+                                    VECTOR4(Zero<floatf>(), Zero<floatf>(), One<floatf>(), Zero<floatf>()).m);
     this->setLightParameter<floatf>(light, GL_SPOT_DIRECTION,
-                                    VECTOR3(Math::Zero<floatf>(), Math::Zero<floatf>(), -Math::One<floatf>()).m);
+                                    VECTOR3(Zero<floatf>(), Zero<floatf>(), -One<floatf>()).m);
     this->setLightParameter<floatf>(light, GL_SPOT_EXPONENT,
-                                    AddressOf<floatf>(Math::Zero<floatf>()));
+                                    AddressOf<floatf>(Zero<floatf>()));
     this->setLightParameter<floatf>(light, GL_SPOT_CUTOFF,
-                                    AddressOf<floatf>(Math::F180<floatf>()));
+                                    AddressOf<floatf>(F180<floatf>()));
     this->setLightParameter<floatf>(light, GL_CONSTANT_ATTENUATION,
-                                    AddressOf<floatf>(Math::One<floatf>()));
+                                    AddressOf<floatf>(One<floatf>()));
     this->setLightParameter<floatf>(light, GL_LINEAR_ATTENUATION,
-                                    AddressOf<floatf>(Math::Zero<floatf>()));
+                                    AddressOf<floatf>(Zero<floatf>()));
     this->setLightParameter<floatf>(light, GL_QUADRATIC_ATTENUATION,
-                                    AddressOf<floatf>(Math::Zero<floatf>()));
+                                    AddressOf<floatf>(Zero<floatf>()));
   }
 
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_AMBIENT,
-                            VECTOR4(Math::F02<floatf>(), Math::F02<floatf>(), Math::F02<floatf>(), Math::One<floatf>()).m);
+                            VECTOR4(F02<floatf>(), F02<floatf>(), F02<floatf>(), One<floatf>()).m);
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_DIFFUSE,
-                            VECTOR4(Math::F08<floatf>(), Math::F08<floatf>(), Math::F08<floatf>(), Math::One<floatf>()).m);
+                            VECTOR4(F08<floatf>(), F08<floatf>(), F08<floatf>(), One<floatf>()).m);
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_SPECULAR,
-                            VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>()).m);
+                            VECTOR4(Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), One<floatf>()).m);
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_EMISSION,
-                            VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>()).m);
+                            VECTOR4(Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), One<floatf>()).m);
   this->setMaterial<floatf>(GL_FRONT_AND_BACK, GL_SHININESS,
-                            AddressOf<floatf>(Math::Zero<floatf>()));
+                            AddressOf<floatf>(Zero<floatf>()));
 
   this->setFog<fixed16>(GL_FOG_MODE,
                         AddressOf<fixed16>(fixed16::make(GL_EXP)));
-  this->setFog<floatf>(GL_FOG_DENSITY, AddressOf<floatf>(Math::One<floatf>()));
-  this->setFog<floatf>(GL_FOG_START, AddressOf<floatf>(Math::Zero<floatf>()));
-  this->setFog<floatf>(GL_FOG_END, AddressOf<floatf>(Math::One<floatf>()));
-  this->setFog<floatf>(GL_FOG_COLOR, VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>()).m);
+  this->setFog<floatf>(GL_FOG_DENSITY, AddressOf<floatf>(One<floatf>()));
+  this->setFog<floatf>(GL_FOG_START, AddressOf<floatf>(Zero<floatf>()));
+  this->setFog<floatf>(GL_FOG_END, AddressOf<floatf>(One<floatf>()));
+  this->setFog<floatf>(GL_FOG_COLOR, VECTOR4(Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), Zero<floatf>()).m);
 
   this->setLightParameterModel<floatf>(GL_LIGHT_MODEL_TWO_SIDE,
-                                       AddressOf<floatf>(Math::Zero<floatf>()));
+                                       AddressOf<floatf>(Zero<floatf>()));
   this->setLightParameterModel<floatf>(GL_LIGHT_MODEL_AMBIENT,
-                                       VECTOR4(Math::F02<floatf>(), Math::F02<floatf>(), Math::F02<floatf>(), Math::One<floatf>()).m);
+                                       VECTOR4(F02<floatf>(), F02<floatf>(), F02<floatf>(), One<floatf>()).m);
 
   for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
-    this->setClipPlane(GL_CLIP_PLANE0 + i, VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>()));
+    this->setClipPlane(GL_CLIP_PLANE0 + i, VECTOR4(Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), Zero<floatf>()));
   }
 
-  this->setDepthRange(Math::Zero<floatf>(), Math::One<floatf>());
+  this->setDepthRange(Zero<floatf>(), One<floatf>());
 
   this->setFrontFace(GL_CCW);
   this->setCullFace(GL_BACK);
@@ -280,20 +280,20 @@ GLenum GLContext::initialize() {
                              AddressOf<fixed16>(fixed16::make(GL_MODULATE)));
 
     this->setTexEnv<floatf>(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,
-                            VECTOR4(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>()).m);
+                            VECTOR4(Zero<floatf>(), Zero<floatf>(), Zero<floatf>(), Zero<floatf>()).m);
 
     this->setTexEnv<fixed16>(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES,
                              AddressOf<fixed16>(fixed16::make(GL_FALSE)));
   }
 
-  this->setAlphaFunc(GL_ALWAYS, Math::Zero<floatf>());
+  this->setAlphaFunc(GL_ALWAYS, Zero<floatf>());
   this->setStencilFunc(GL_ALWAYS, 0, 0xffffffff);
   this->setStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
   this->setDepthFunc(GL_LESS);
   this->setBlendFunc(GL_ONE, GL_ZERO);
   this->setLogicOp(GL_COPY);
 
-  this->setSampleCoverage(Math::One<floatf>(), GL_FALSE);
+  this->setSampleCoverage(One<floatf>(), GL_FALSE);
 
   this->hint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
   this->hint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
@@ -301,16 +301,16 @@ GLenum GLContext::initialize() {
   this->hint(GL_FOG_HINT, GL_DONT_CARE);
   this->hint(GL_GENERATE_MIPMAP_HINT, GL_DONT_CARE);
 
-  this->setPolygonOffset(Math::Zero<floatf>(), Math::Zero<floatf>());
+  this->setPolygonOffset(Zero<floatf>(), Zero<floatf>());
 
-  this->setPointSize(Math::One<floatf>());
-  this->setPointParameter<floatf>(GL_POINT_SIZE_MIN, AddressOf<floatf>(Math::Zero<floatf>()));
-  this->setPointParameter<floatf>(GL_POINT_SIZE_MAX, AddressOf<floatf>(Math::One<floatf>()));
+  this->setPointSize(One<floatf>());
+  this->setPointParameter<floatf>(GL_POINT_SIZE_MIN, AddressOf<floatf>(Zero<floatf>()));
+  this->setPointParameter<floatf>(GL_POINT_SIZE_MAX, AddressOf<floatf>(One<floatf>()));
   this->setPointParameter<floatf>(GL_POINT_FADE_THRESHOLD_SIZE,
-                                  AddressOf<floatf>(Math::One<floatf>()));
+                                  AddressOf<floatf>(One<floatf>()));
   this->setPointParameter<floatf>(GL_POINT_DISTANCE_ATTENUATION,
-                                  VECTOR3(Math::One<floatf>(), Math::Zero<floatf>(), Math::Zero<floatf>()).m);
-  this->setLineWidth(Math::One<floatf>());
+                                  VECTOR3(One<floatf>(), Zero<floatf>(), Zero<floatf>()).m);
+  this->setLineWidth(One<floatf>());
 
   //--
   this->activate(GL_FOG, false);

@@ -409,7 +409,7 @@ EGLint _EGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
 #endif
 
   // Check if the config matches the window bpp
-  auto cBPP = Format::GetInfo(colorDesc.Format).BytePerPixel * 8;
+  auto cBPP = Format::GetInfo((ePixelFormat)colorDesc.Format).BytePerPixel * 8;
   if (cBPP != pConfig_->getAttribute(EGL_BUFFER_SIZE)) {
     __eglLogError("The config's buffer size doesn't match the window's "
                   "bits per pixel.\r\n");
@@ -461,7 +461,7 @@ EGLint _EGLSurface::InitializePBF(EGLint width,
 
     if (EGL_TEXTURE_2D == texTarget) {
       if ((width < 0) || (width > MAX_PBUFFER_WIDTH) ||
-          (!Math::IsPowerOf2(width))) {
+          (!IsPowerOf2(width))) {
         __eglLogError("Surface::initialize() failed, invalid width "
                       "parameter: %d.\r\n",
                       width);
@@ -469,7 +469,7 @@ EGLint _EGLSurface::InitializePBF(EGLint width,
       }
 
       if ((height < 0) || (height > MAX_PBUFFER_HEIGHT) ||
-          !Math::IsPowerOf2(height)) {
+          !IsPowerOf2(height)) {
         __eglLogError("Surface::initialize() failed, invalid height "
                       "parameter: %d.\r\n",
                       height);
@@ -477,7 +477,7 @@ EGLint _EGLSurface::InitializePBF(EGLint width,
       }
 
       if (bGenMipMaps) {
-        mipLevels_ = std::max(Math::iLog2(width), Math::iLog2(height));
+        mipLevels_ = std::max(iLog2(width), iLog2(height));
       }
     }
 

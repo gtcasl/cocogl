@@ -38,8 +38,8 @@
 #define fixedDDA fixed16
 
 #ifdef COCOGL_PIXEDPOINT
-#define floatRW Fixed<28, int64_t>
-#define floatQ  Fixed<30, int64_t>
+#define floatRW TFixed<28, int64_t>
+#define floatQ  TFixed<30, int64_t>
 #else
 #define floatRW float
 #define floatQ  float
@@ -598,6 +598,8 @@ struct RDVECTOR {
   fixed4 y;
   floatRX z;
   floatRW rhw;
+  
+  VECTOR4 clipPos;
 
   RDVECTOR() {}
 };

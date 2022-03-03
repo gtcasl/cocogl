@@ -23,27 +23,27 @@ inline float LerpFactor(float lhs, float rhs) {
 }
 
 template <typename R, uint32_t T>
-inline R LerpFactor(Fixed<T> lhs, Fixed<T> rhs) {
+inline R LerpFactor(TFixed<T> lhs, TFixed<T> rhs) {
   assert(lhs.data() != rhs.data());
   int diff = lhs.data() - rhs.data();
   return R::make((static_cast<int64_t>(lhs.data()) << R::FRAC) / diff);
 }
 
 template <uint32_t T>
-inline int CullSign(Fixed<T> x0, Fixed<T> y0, Fixed<T> w0, Fixed<T> x1,
-                    Fixed<T> y1, Fixed<T> w1, Fixed<T> x2, Fixed<T> y2,
-                    Fixed<T> w2) {
+inline int CullSign(TFixed<T> x0, TFixed<T> y0, TFixed<T> w0, TFixed<T> x1,
+                    TFixed<T> y1, TFixed<T> w1, TFixed<T> x2, TFixed<T> y2,
+                    TFixed<T> w2) {
   auto _x0 = static_cast<int64_t>(x0.data());
   auto _x1 = static_cast<int64_t>(x1.data());
   auto _x2 = static_cast<int64_t>(x2.data());
 
-  int SHIFT = 2 * Fixed<T>::FRAC - 12;
+  int SHIFT = 2 * TFixed<T>::FRAC - 12;
 
   int64_t sign12 =
       (w0.data() * ((_x1 * y2.data() - _x2 * y1.data()) >> SHIFT) -
        w1.data() * ((_x0 * y2.data() - _x2 * y0.data()) >> SHIFT) +
        w2.data() * ((_x0 * y1.data() - _x1 * y0.data()) >> SHIFT)) >>
-      Fixed<T>::FRAC;
+      TFixed<T>::FRAC;
 
   if (sign12 < 0) {
     return -1;
@@ -172,19 +172,19 @@ void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1, uint32_t clipUnion)
       case CLIP_PLANE4:
       case CLIP_PLANE5:
         assert(plane < __countof(vClipPlanesCS_));
-        fDistA = Math::Dot<floatf>(vFrom, vClipPlanesCS_[plane]);
-        fDistB = Math::Dot<floatf>(vTo, vClipPlanesCS_[plane]);
+        fDistA = Dot<floatf>(vFrom, vClipPlanesCS_[plane]);
+        fDistB = Dot<floatf>(vTo, vClipPlanesCS_[plane]);
         break;
       }
 
-      if (fDistA >= Math::Zero<floatf>()) {
-        if (fDistB >= Math::Zero<floatf>()) {
+      if (fDistA >= Zero<floatf>()) {
+        if (fDistB >= Zero<floatf>()) {
           continue;
         }
 
         this->interpolateVertex(iTo, iFrom, fDistA, fDistB, iNext);
         iTo = iNext++;
-      } else if (fDistB < Math::Zero<floatf>()) {
+      } else if (fDistB < Zero<floatf>()) {
         continue;
       }
 
@@ -314,19 +314,19 @@ uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
   plane -= CLIP_PLANE0;
   assert(plane < vClipPlanesCS_.size());
 
-  for (fDistB = Math::Dot<floatf>(pvClipPos[iVB], vClipPlanesCS_[plane]);
+  for (fDistB = Dot<floatf>(pvClipPos[iVB], vClipPlanesCS_[plane]);
        nNumVertices--; iVB = iVA, fDistB = fDistA) {
     iVA = *pSrc++;
-    fDistA = Math::Dot<floatf>(pvClipPos[iVA], vClipPlanesCS_[plane]);
+    fDistA = Dot<floatf>(pvClipPos[iVA], vClipPlanesCS_[plane]);
 
-    if (fDistB >= Math::Zero<floatf>()) {
+    if (fDistB >= Zero<floatf>()) {
       // Add vertex to the current list
       assert(nClipVertices < CLIP_BUFFER_SIZE);
       pDst[nClipVertices++] = iVB;
-      if (fDistA >= Math::Zero<floatf>()) {
+      if (fDistA >= Zero<floatf>()) {
         continue;
       }
-    } else if (fDistA < Math::Zero<floatf>()) {
+    } else if (fDistA < Zero<floatf>()) {
       continue;
     }
 
@@ -349,13 +349,13 @@ void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
   auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
   auto factor = LerpFactor<float30>(fDistA, fDistB);
-  assert((factor >= Math::Zero<float30>()) &&
-         (factor <= Math::One<float30>()));
+  assert((factor >= Zero<float30>()) &&
+         (factor <= One<float30>()));
 
-  pvClipPos[i2].x = Math::Lerpf(pvClipPos[i0].x, pvClipPos[i1].x, factor);
-  pvClipPos[i2].y = Math::Lerpf(pvClipPos[i0].y, pvClipPos[i1].y, factor);
-  pvClipPos[i2].z = Math::Lerpf(pvClipPos[i0].z, pvClipPos[i1].z, factor);
-  pvClipPos[i2].w = Math::Lerpf(pvClipPos[i0].w, pvClipPos[i1].w, factor);
+  pvClipPos[i2].x = Lerpf(pvClipPos[i0].x, pvClipPos[i1].x, factor);
+  pvClipPos[i2].y = Lerpf(pvClipPos[i0].y, pvClipPos[i1].y, factor);
+  pvClipPos[i2].z = Lerpf(pvClipPos[i0].z, pvClipPos[i1].z, factor);
+  pvClipPos[i2].w = Lerpf(pvClipPos[i0].w, pvClipPos[i1].w, factor);
 
   auto rasterFlags = rasterID_.Flags;
 
@@ -363,10 +363,10 @@ void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
     auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_);
 
     pcColors[i2] =
-        ColorARGB(Math::Lerp(pcColors[i0].a, pcColors[i1].a, factor),
-                  Math::Lerp(pcColors[i0].r, pcColors[i1].r, factor),
-                  Math::Lerp(pcColors[i0].g, pcColors[i1].g, factor),
-                  Math::Lerp(pcColors[i0].b, pcColors[i1].b, factor));
+        ColorARGB(Lerp(pcColors[i0].a, pcColors[i1].a, factor),
+                  Lerp(pcColors[i0].r, pcColors[i1].r, factor),
+                  Lerp(pcColors[i0].g, pcColors[i1].g, factor),
+                  Lerp(pcColors[i0].b, pcColors[i1].b, factor));
   }
 
   if (rasterFlags.NumTextures) {
@@ -374,15 +374,15 @@ void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
       auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
           pbVertexData_[VERTEX_TEXCOORD0 + i]);
       pvTexCoords[i2].m[0] =
-          Math::Lerpf(pvTexCoords[i0].m[0], pvTexCoords[i1].m[0], factor);
+          Lerpf(pvTexCoords[i0].m[0], pvTexCoords[i1].m[0], factor);
       pvTexCoords[i2].m[1] =
-          Math::Lerpf(pvTexCoords[i0].m[1], pvTexCoords[i1].m[1], factor);
+          Lerpf(pvTexCoords[i0].m[1], pvTexCoords[i1].m[1], factor);
     }
   }
 
   if (rasterFlags.Fog) {
     auto pfFogs = reinterpret_cast<floatRX *>(pbVertexData_[VERTEX_FOG]);
-    pfFogs[i2] = Math::Lerpf(pfFogs[i0], pfFogs[i1], factor);
+    pfFogs[i2] = Lerpf(pfFogs[i0], pfFogs[i1], factor);
   }
 
   pwFlags[i2] = 1;

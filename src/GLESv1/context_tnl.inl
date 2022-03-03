@@ -43,8 +43,8 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
     );
 
     if (GL_POSITION == pname) {
-      _light.Flags.DirectionalLight = Math::IsAlmostZero(vParam.w) ? 1 : 0;
-      Math::Mul(&_light.vPosition, vParam, pMsModelView_->getMatrix());
+      _light.Flags.DirectionalLight = IsAlmostZero(vParam.w) ? 1 : 0;
+      Mul(&_light.vPosition, vParam, pMsModelView_->getMatrix());
     } else {
       _light.setColor(pname, vParam);
     }
@@ -65,14 +65,14 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
       this->updateModelViewInvT33();
     }
 
-    Math::Mul(&_light.vSpotDirection, vParam, mModelViewInvT_);
+    Mul(&_light.vSpotDirection, vParam, mModelViewInvT_);
   }
 
   break;
 
   case GL_SPOT_EXPONENT: {
     VECTOR1 vParam(static_cast<floatf>(pParams[0]));
-    if ((vParam.x < Math::Zero<floatf>()) || (vParam.x > Math::F128<floatf>())) {
+    if ((vParam.x < Zero<floatf>()) || (vParam.x > F128<floatf>())) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setLightParameter() failed, invalid param "
                 "parameter: %d.\r\n",
@@ -87,7 +87,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
 
   case GL_SPOT_CUTOFF: {
     VECTOR1 vParam(static_cast<floatf>(pParams[0]));
-    if (((vParam.x < Math::Zero<floatf>()) || (vParam.x > Math::F90<floatf>())) && (vParam.x != Math::F180<floatf>())) {
+    if (((vParam.x < Zero<floatf>()) || (vParam.x > F90<floatf>())) && (vParam.x != F180<floatf>())) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setLightParameter() failed, invalid param "
                 "parameter: %d.\r\n",
@@ -96,7 +96,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
     }
 
     _light.fSpotCutOff = vParam.x;
-    _light.fSpotCutOffCos = std::cos(Math::DegToRad(vParam.x));
+    _light.fSpotCutOffCos = std::cos(DegToRad(vParam.x));
   }
 
   break;
@@ -105,7 +105,7 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
   case GL_LINEAR_ATTENUATION:
   case GL_QUADRATIC_ATTENUATION: {
     VECTOR1 vParam(static_cast<floatf>(pParams[0]));
-    if (vParam.x < Math::Zero<floatf>()) {
+    if (vParam.x < Zero<floatf>()) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setLightParameter() failed, invalid param "
                 "parameter: %d.\r\n",
@@ -132,7 +132,7 @@ inline void GLContext::setLightParameterModel(GLenum pname, const T *pParams) {
 
   switch (pname) {
   case GL_LIGHT_MODEL_TWO_SIDE:
-    caps_.TwoSidedLighting = (static_cast<floatf>(pParams[0]) != Math::Zero<floatf>());
+    caps_.TwoSidedLighting = (static_cast<floatf>(pParams[0]) != Zero<floatf>());
     break;
 
   case GL_LIGHT_MODEL_AMBIENT:
@@ -198,7 +198,7 @@ inline void GLContext::setMaterial(GLenum face, GLenum pname,
 
   case GL_SHININESS: {
     vParam.x = static_cast<floatf>(pParams[0]);
-    if ((vParam.x < Math::Zero<floatf>()) || (vParam.x > Math::F128<floatf>())) {
+    if ((vParam.x < Zero<floatf>()) || (vParam.x > F128<floatf>())) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setMaterial() failed, invalid "
                 "param parameter: %d.\r\n",

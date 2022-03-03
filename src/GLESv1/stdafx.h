@@ -15,6 +15,8 @@
 
 #pragma once
 
+//#define DUMP_FRAME 1
+
 #include <list>
 #include <map>
 #include <cstring>
@@ -26,16 +28,20 @@
 #include <GLES/gl.h>
 #include <GLES/glext.h>
 #include <glcommon.hpp>
-#include <bitmap.hpp>
+
 #include <color.hpp>
 #include <fixed.hpp>
 #include <format.hpp>
-#include <handle.hpp>
-#include <int24.hpp>
-#include <logger.hpp>
+#include <uint24.hpp>
 #include <math.hpp>
+
+#include <handle.hpp>
+#include <logger.hpp>
 #include <object.hpp>
-#include <rect.hpp>
+#include <bitmap.hpp>
+
+using namespace cocogfx;
+
 #include "types.hpp"
 #include "utility.hpp"
 

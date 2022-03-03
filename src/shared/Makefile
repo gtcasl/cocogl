@@ -1,6 +1,5 @@
 CXXFLAGS += -std=c++17 -fPIC -Wall -Wextra -pedantic -Wfatal-errors
-
-LDFLAGS += 
+CXXFLAGS += -I../../third_party/cocogfx/include
 
 # Debugigng
 ifdef DEBUG

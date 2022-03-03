@@ -98,6 +98,9 @@ void GLContext::clear(GLbitfield mask) {
   } else if (GL_STENCIL_BUFFER_BIT == mask) {
     pSurfDraw_->clearStencil(clearStencil_, stencilWriteMask_, scissorRect_);
   }
+
+  // increment frames
+  ++frames_;
 }
 
 void GLContext::drawArrays(GLenum mode, GLint first, GLsizei count) {

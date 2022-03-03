@@ -245,7 +245,7 @@ void TNL::processVertices(uint32_t count) {
 
   for (uint32_t i = 0; i < count; ++i) {
     // Tranform vertex position to clip space
-    Math::Mul(&pvClipPos[i], pvWorldPos[i], mModelViewProj_);
+    Mul(&pvClipPos[i], pvWorldPos[i], mModelViewProj_);
 
     // Compute frustum clipping flags
     auto clipFlags = this->CalcClipFlags(pvClipPos[i]);
@@ -292,7 +292,49 @@ void TNL::processVertices(uint32_t count) {
   if (flags.Fog) {
     (this->*pfnFog_)(count);
   }
+
+#ifdef DUMP_FRAME
+  // dump tranformed vertives
+  this->dumpVertices(count);
+#endif
 }
+
+#ifdef DUMP_FRAME
+void TNL::dumpVertices(uint32_t count) {  
+  if (frames_ != DUMP_FRAME)
+    return;
+
+  auto flags = TNLFlags_;
+  
+  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
+  auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_); 
+
+  for (uint32_t i = 0; i < count; ++i) {
+    auto& vertex = pvScreenPos[i];  
+    
+    printf("*** Vertex: {");
+    printf("%f, %f, %f, %f", vertex.clipPos.x, vertex.clipPos.y, vertex.clipPos.z, vertex.clipPos.w);
+
+    if (flags.Color) {
+      auto& color = pcColors[i];
+      printf(", 0x%x", color.value);
+    } else {
+      printf(", 0xffffffff");
+    }
+
+    if (flags.TexCoords) {
+      auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEX_TEXCOORD0]);
+      auto &uv = vTexCoords[i];   
+      printf(", %f", uv.m[0]);
+      printf(", %f", uv.m[1]);
+    } else {
+      printf(", 0.0f");
+      printf(", 0.0f");
+    }
+    printf("}\n");
+  }  
+}
+#endif
 
 uint32_t TNL::CalcClipFlags(const VECTOR4 &vPosition) {
   auto cx = vPosition.x;
@@ -308,12 +350,12 @@ uint32_t TNL::CalcClipFlags(const VECTOR4 &vPosition) {
   auto dk = cw - cz;
 
   uint32_t clipFlags;
-  clipFlags =  (dl < Math::Zero<floatf>()) << CLIP_LEFT;
-  clipFlags |= (dr < Math::Zero<floatf>()) << CLIP_RIGHT;
-  clipFlags |= (db < Math::Zero<floatf>()) << CLIP_BOTTOM;
-  clipFlags |= (dt < Math::Zero<floatf>()) << CLIP_TOP;
-  clipFlags |= (df < Math::Zero<floatf>()) << CLIP_FRONT;
-  clipFlags |= (dk < Math::Zero<floatf>()) << CLIP_BACK;
+  clipFlags =  (dl < Zero<floatf>()) << CLIP_LEFT;
+  clipFlags |= (dr < Zero<floatf>()) << CLIP_RIGHT;
+  clipFlags |= (db < Zero<floatf>()) << CLIP_BOTTOM;
+  clipFlags |= (dt < Zero<floatf>()) << CLIP_TOP;
+  clipFlags |= (df < Zero<floatf>()) << CLIP_FRONT;
+  clipFlags |= (dk < Zero<floatf>()) << CLIP_BACK;
 
   return clipFlags;
 }
@@ -331,8 +373,8 @@ uint32_t TNL::calcUserClipFlags(uint32_t count) {
     for (uint32_t j = 0, m = caps_.ClipPlanes; m; ++j, m >>= 1) {
       if (m & 1) {
         assert(j < vClipPlanesCS_.size());
-        auto fDist = Math::Dot<floatf>(vClipPos, vClipPlanesCS_[j]);
-        clipFlags |= (fDist < Math::Zero<floatf>()) << (CLIP_PLANE0 + j);
+        auto fDist = Dot<floatf>(vClipPos, vClipPlanesCS_[j]);
+        clipFlags |= (fDist < Zero<floatf>()) << (CLIP_PLANE0 + j);
       }
     }
 
@@ -358,20 +400,23 @@ void TNL::transformScreenSpace(RDVECTOR *pRDVertex,
   auto fMinZ = screenXform_.fMinZ;
 
   for (uint32_t i = 0; i < count; ++i) {
-    if (!Math::IsAlmostZero(pvClipPos[i].w - Math::One<floatf>())) {
+    if (!IsAlmostZero(pvClipPos[i].w - One<floatf>())) {
       // Perspective screen space transform
-      auto fRhw = Math::Inverse<floatRW>(pvClipPos[i].w);
-      pRDVertex[i].x = fMinX + Math::MulRnd<fixed4>(pvClipPos[i].x, fRhw, fScaleX);
-      pRDVertex[i].y = fMinY + Math::MulRnd<fixed4>(pvClipPos[i].y, fRhw, fScaleY);
-      pRDVertex[i].z = fMinZ + Math::MulRnd<floatRX>(pvClipPos[i].z, fRhw, fScaleZ);
+      auto fRhw = Inverse<floatRW>(pvClipPos[i].w);
+      pRDVertex[i].x = fMinX + MulRnd<fixed4>(pvClipPos[i].x, fRhw, fScaleX);
+      pRDVertex[i].y = fMinY + MulRnd<fixed4>(pvClipPos[i].y, fRhw, fScaleY);
+      pRDVertex[i].z = fMinZ + MulRnd<floatRX>(pvClipPos[i].z, fRhw, fScaleZ);
       pRDVertex[i].rhw = fRhw;
     } else {
       // Affine screen space transform
-      pRDVertex[i].x = fMinX + Math::MulRnd<fixed4>(pvClipPos[i].x, fScaleX);
-      pRDVertex[i].y = fMinY + Math::MulRnd<fixed4>(pvClipPos[i].y, fScaleY);
-      pRDVertex[i].z = fMinZ + Math::MulRnd<floatRX>(pvClipPos[i].z, fScaleZ);
-      pRDVertex[i].rhw = Math::One<floatRW>();
+      pRDVertex[i].x = fMinX + MulRnd<fixed4>(pvClipPos[i].x, fScaleX);
+      pRDVertex[i].y = fMinY + MulRnd<fixed4>(pvClipPos[i].y, fScaleY);
+      pRDVertex[i].z = fMinZ + MulRnd<floatRX>(pvClipPos[i].z, fScaleZ);
+      pRDVertex[i].rhw = One<floatRW>();
     }
+
+    // save original clip-space position
+    pRDVertex[i].clipPos = pvClipPos[i];
   }
 }
 
@@ -382,11 +427,11 @@ void TNL::transformEyeSpace(uint32_t count) {
 
   if (TNLFlags_.EyeSpace) {
     for (uint32_t i = 0; i < count; ++i) {
-      Math::Mul(&pvEyePos[i], pvWorldPos[i], matEyeXform);
+      Mul(&pvEyePos[i], pvWorldPos[i], matEyeXform);
     }
   } else {
     for (uint32_t i = 0; i < count; ++i) {
-      pvEyePos[i].z = Math::MulAdd(
+      pvEyePos[i].z = MulAdd(
           pvWorldPos[i].x, matEyeXform._31, 
           pvWorldPos[i].y, matEyeXform._32,
           pvWorldPos[i].z, matEyeXform._33, 
@@ -403,8 +448,8 @@ void TNL::processPointSize(uint32_t count) {
   auto fPointSize = fPointSize_;
 
   if (!TNLFlags_.PointSizeQAttn) {
-    if (!Math::IsAlmostZero(vAttenuation.x - Math::One<floatf>())) {
-      fPointSize *= Math::RSqrt(vAttenuation.x);
+    if (!IsAlmostZero(vAttenuation.x - One<floatf>())) {
+      fPointSize *= RSqrt(vAttenuation.x);
     } else {
       fPointSize *= vAttenuation.x;
     }
@@ -415,12 +460,12 @@ void TNL::processPointSize(uint32_t count) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
                      vAttenuation.y * fEyeDist + vAttenuation.x;
-      if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
-        fPointSize *= Math::RSqrt(fInvAtt);
+      if (!IsAlmostZero(fInvAtt - One<floatf>())) {
+        fPointSize *= RSqrt(fInvAtt);
       }
     }
 
-    pfPointSizes[i] = std::max(static_cast<fixed4>(fPointSize), Math::One<fixed4>());
+    pfPointSizes[i] = std::max(static_cast<fixed4>(fPointSize), One<fixed4>());
   }
 }
 
@@ -429,10 +474,10 @@ void TNL::processColor(uint32_t count) {
       reinterpret_cast<ColorARGB *>(pbVertexData_[VERTEX_FRONTCOLOR]);
 
   // Clamp the color
-  ColorARGB cColor(Math::ToUNORM8(Math::Sat(vColor_.w)),
-                   Math::ToUNORM8(Math::Sat(vColor_.x)),
-                   Math::ToUNORM8(Math::Sat(vColor_.y)),
-                   Math::ToUNORM8(Math::Sat(vColor_.z)));
+  ColorARGB cColor(ToUNORM8(Sat(vColor_.w)),
+                   ToUNORM8(Sat(vColor_.x)),
+                   ToUNORM8(Sat(vColor_.y)),
+                   ToUNORM8(Sat(vColor_.z)));
 
   for (uint32_t i = 0; i < count; ++i) {
     pcFrontColors[i] = cColor;
@@ -444,7 +489,7 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                 const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;                      // Light vector
-    auto fAtt = Math::One<floatf>(); // Attenuation distance
+    auto fAtt = One<floatf>(); // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
       // Get the light direction
@@ -458,9 +503,9 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       vL.z = pLight->vPosition.z - vEyePos.z;
 
       // Normalize the light position
-      auto fDistSq = Math::Dot<floatf>(vL, vL);
-      if (!Math::IsAlmostZero(fDistSq - Math::One<floatf>())) {
-        auto fInvDist = Math::RSqrt(fDistSq);
+      auto fDistSq = Dot<floatf>(vL, vL);
+      if (!IsAlmostZero(fDistSq - One<floatf>())) {
+        auto fInvDist = RSqrt(fDistSq);
         vL.x *= fInvDist;
         vL.y *= fInvDist;
         vL.z *= fInvDist;
@@ -473,14 +518,14 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
             pLight->getAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
             pLight->getAttenuation(GL_LINEAR_ATTENUATION) * fDist +
             pLight->getAttenuation(GL_CONSTANT_ATTENUATION);
-        if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
-          fAtt = Math::Inverse<floatf>(fInvAtt);
+        if (!IsAlmostZero(fInvAtt - One<floatf>())) {
+          fAtt = Inverse<floatf>(fInvAtt);
         }
       }
 
       // Compute the spot light attenuation
       if (pLight->Flags.SpotLight) {
-        auto fCos = -Math::Dot<floatf>(vL, pLight->vSpotDirection);
+        auto fCos = -Dot<floatf>(vL, pLight->vSpotDirection);
         if (fCos >= pLight->fSpotCutOffCos) {
           fAtt *= std::pow(fCos, pLight->fSpotExponent);
         } else {
@@ -491,8 +536,8 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 
     VECTOR3 vFrontDS = pLight->vScaledAmbient;
 
-    auto fDotNL = Math::Dot<floatf>(vNormal, vL);
-    if (fDotNL > Math::Zero<floatf>()) {
+    auto fDotNL = Dot<floatf>(vNormal, vL);
+    if (fDotNL > Zero<floatf>()) {
       auto &vLightDiffuse = pLight->getColor(GL_DIFFUSE);
       vFrontDS.x += vVertexColor.x * vLightDiffuse.x * fDotNL;
       vFrontDS.y += vVertexColor.y * vLightDiffuse.y * fDotNL;
@@ -504,16 +549,16 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       if (pLight->Flags.DirectionalLight) {
         vH = pLight->vHalfway;
       } else {
-        VECTOR3 vDir(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>());
-        Math::Add(&vH, vL, vDir);
-        Math::Normalize(&vH);
+        VECTOR3 vDir(Zero<floatf>(), Zero<floatf>(), One<floatf>());
+        Add(&vH, vL, vDir);
+        Normalize(&vH);
       }
 
-      auto fDotNH = Math::Dot<floatf>(vNormal, vH);
-      if (fDotNH > Math::Zero<floatf>()) {
+      auto fDotNH = Dot<floatf>(vNormal, vH);
+      if (fDotNH > Zero<floatf>()) {
         // Compute the specular coefficient
         auto fCoeff = std::pow(fDotNH, fMatShininess_);
-        if (!Math::IsAlmostZero(fCoeff)) {
+        if (!IsAlmostZero(fCoeff)) {
           vFrontDS.x += pLight->vScaledSpecular.x * fCoeff;
           vFrontDS.y += pLight->vScaledSpecular.y * fCoeff;
           vFrontDS.z += pLight->vScaledSpecular.z * fCoeff;
@@ -531,7 +576,7 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
                                 const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;                      // Light vector
-    auto fAtt = Math::One<floatf>(); // Attenuation distance
+    auto fAtt = One<floatf>(); // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
       // Get the light direction
@@ -545,9 +590,9 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       vL.z = pLight->vPosition.z - vEyePos.z;
 
       // Normalize the light position
-      auto fDistSq = Math::Dot<floatf>(vL, vL);
-      if (!Math::IsAlmostZero(fDistSq - Math::One<floatf>())) {
-        auto fInvDist = Math::RSqrt(fDistSq);
+      auto fDistSq = Dot<floatf>(vL, vL);
+      if (!IsAlmostZero(fDistSq - One<floatf>())) {
+        auto fInvDist = RSqrt(fDistSq);
         vL.x *= fInvDist;
         vL.y *= fInvDist;
         vL.z *= fInvDist;
@@ -560,14 +605,14 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
             pLight->getAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
             pLight->getAttenuation(GL_LINEAR_ATTENUATION) * fDist +
             pLight->getAttenuation(GL_CONSTANT_ATTENUATION);
-        if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
-          fAtt = Math::Inverse<floatf>(fInvAtt);
+        if (!IsAlmostZero(fInvAtt - One<floatf>())) {
+          fAtt = Inverse<floatf>(fInvAtt);
         }
       }
 
       // Compute the spot light attenuation
       if (pLight->Flags.SpotLight) {
-        auto fCos = -Math::Dot<floatf>(vL, pLight->vSpotDirection);
+        auto fCos = -Dot<floatf>(vL, pLight->vSpotDirection);
         if (fCos >= pLight->fSpotCutOffCos) {
           fAtt *= std::pow(fCos, pLight->fSpotExponent);
         } else {
@@ -578,8 +623,8 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
 
     auto vFrontDS = pLight->vScaledAmbient;
 
-    auto fDotNL = Math::Dot<floatf>(vNormal, vL);
-    if (fDotNL > Math::Zero<floatf>()) {
+    auto fDotNL = Dot<floatf>(vNormal, vL);
+    if (fDotNL > Zero<floatf>()) {
       vFrontDS.x += pLight->vScaledDiffuse.x * fDotNL;
       vFrontDS.y += pLight->vScaledDiffuse.y * fDotNL;
       vFrontDS.z += pLight->vScaledDiffuse.z * fDotNL;
@@ -590,16 +635,16 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       if (pLight->Flags.DirectionalLight) {
         vH = pLight->vHalfway;
       } else {
-        VECTOR3 vDir(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>());
-        Math::Add(&vH, vL, vDir);
-        Math::Normalize(&vH);
+        VECTOR3 vDir(Zero<floatf>(), Zero<floatf>(), One<floatf>());
+        Add(&vH, vL, vDir);
+        Normalize(&vH);
       }
 
-      auto fDotNH = Math::Dot<floatf>(vNormal, vH);
-      if (fDotNH > Math::Zero<floatf>()) {
+      auto fDotNH = Dot<floatf>(vNormal, vH);
+      if (fDotNH > Zero<floatf>()) {
         // Compute the specular coefficient
         auto fCoeff = std::pow(fDotNH, fMatShininess_);
-        if (!Math::IsAlmostZero(fCoeff)) {
+        if (!IsAlmostZero(fCoeff)) {
           vFrontDS.x += pLight->vScaledSpecular.x * fCoeff;
           vFrontDS.y += pLight->vScaledSpecular.y * fCoeff;
           vFrontDS.z += pLight->vScaledSpecular.z * fCoeff;
@@ -619,7 +664,7 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;                      // Light vector
     VECTOR3 vH;                      // Halfway vector
-    auto fAtt = Math::One<floatf>(); // Attenuation distance
+    auto fAtt = One<floatf>(); // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
       // Get the light direction
@@ -636,18 +681,18 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       vL.z = pLight->vPosition.z - vEyePos.z;
 
       // Normalize the light position
-      auto fDistSq = Math::Dot<floatf>(vL, vL);
-      if (!Math::IsAlmostZero(fDistSq - Math::One<floatf>())) {
-        auto fInvDist = Math::RSqrt(fDistSq);
+      auto fDistSq = Dot<floatf>(vL, vL);
+      if (!IsAlmostZero(fDistSq - One<floatf>())) {
+        auto fInvDist = RSqrt(fDistSq);
         vL.x *= fInvDist;
         vL.y *= fInvDist;
         vL.z *= fInvDist;
       }
 
       // Compute the halfway vector
-      VECTOR3 vDir(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>());
-      Math::Add(&vH, vL, vDir);
-      Math::Normalize(&vH);
+      VECTOR3 vDir(Zero<floatf>(), Zero<floatf>(), One<floatf>());
+      Add(&vH, vL, vDir);
+      Normalize(&vH);
 
       // Compute the distance attenuation
       if (pLight->Flags.Attenuation) {
@@ -656,14 +701,14 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
             pLight->getAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
             pLight->getAttenuation(GL_LINEAR_ATTENUATION) * fDist +
             pLight->getAttenuation(GL_CONSTANT_ATTENUATION);
-        if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
-          fAtt = Math::Inverse<floatf>(fInvAtt);
+        if (!IsAlmostZero(fInvAtt - One<floatf>())) {
+          fAtt = Inverse<floatf>(fInvAtt);
         }
       }
 
       // Compute the spot light attenuation
       if (pLight->Flags.SpotLight) {
-        auto fCos = -Math::Dot<floatf>(vL, pLight->vSpotDirection);
+        auto fCos = -Dot<floatf>(vL, pLight->vSpotDirection);
         if (fCos >= pLight->fSpotCutOffCos) {
           fAtt *= std::pow(fCos, pLight->fSpotExponent);
         } else {
@@ -676,30 +721,30 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
     auto vFrontDS = pLight->vScaledAmbient;
     auto vBackDS = vFrontDS;
 
-    auto fDotNL = Math::Dot<floatf>(vNormal, vL);
-    auto fDiffFactor = (fDotNL > Math::Zero<floatf>()) ? fDotNL : -fDotNL;
+    auto fDotNL = Dot<floatf>(vNormal, vL);
+    auto fDiffFactor = (fDotNL > Zero<floatf>()) ? fDotNL : -fDotNL;
 
     auto &vLightDiffuse = pLight->getColor(GL_DIFFUSE);
     vColor.x = vVertexColor.x * vLightDiffuse.x * fDiffFactor;
     vColor.y = vVertexColor.y * vLightDiffuse.y * fDiffFactor;
     vColor.z = vVertexColor.z * vLightDiffuse.z * fDiffFactor;
 
-    auto fDotNH = Math::Dot<floatf>(vNormal, vH);
-    if (fDotNL <= Math::Zero<floatf>()) {
+    auto fDotNH = Dot<floatf>(vNormal, vH);
+    if (fDotNL <= Zero<floatf>()) {
       fDotNH = -fDotNH;
     }
 
-    if (fDotNH > Math::Zero<floatf>()) {
+    if (fDotNH > Zero<floatf>()) {
       // Compute the specular coefficient
       auto fCoeff = std::pow(fDotNH, fMatShininess_);
-      if (!Math::IsAlmostZero(fCoeff)) {
+      if (!IsAlmostZero(fCoeff)) {
         vColor.x += pLight->vScaledSpecular.x * fCoeff;
         vColor.y += pLight->vScaledSpecular.y * fCoeff;
         vColor.z += pLight->vScaledSpecular.z * fCoeff;
       }
     }
 
-    if (fDotNL > Math::Zero<floatf>()) {
+    if (fDotNL > Zero<floatf>()) {
       vFrontDS.x += vColor.x;
       vFrontDS.y += vColor.y;
       vFrontDS.z += vColor.z;
@@ -724,7 +769,7 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;                      // Light vector
     VECTOR3 vH;                      // Halfway vector
-    auto fAtt = Math::One<floatf>(); // Attenuation distance
+    auto fAtt = One<floatf>(); // Attenuation distance
 
     if (pLight->Flags.DirectionalLight) {
       // Get the light direction
@@ -741,18 +786,18 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
       vL.z = pLight->vPosition.z - vEyePos.z;
 
       // Normalize the light position
-      auto fDistSq = Math::Dot<floatf>(vL, vL);
-      if (!Math::IsAlmostZero(fDistSq - Math::One<floatf>())) {
-        auto fInvDist = Math::RSqrt(fDistSq);
+      auto fDistSq = Dot<floatf>(vL, vL);
+      if (!IsAlmostZero(fDistSq - One<floatf>())) {
+        auto fInvDist = RSqrt(fDistSq);
         vL.x *= fInvDist;
         vL.y *= fInvDist;
         vL.z *= fInvDist;
       }
 
       // Compute the halfway vector
-      VECTOR3 vDir(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>());
-      Math::Add(&vH, vL, vDir);
-      Math::Normalize(&vH);
+      VECTOR3 vDir(Zero<floatf>(), Zero<floatf>(), One<floatf>());
+      Add(&vH, vL, vDir);
+      Normalize(&vH);
 
       // Compute the distance attenuation
       if (pLight->Flags.Attenuation) {
@@ -761,14 +806,14 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
             pLight->getAttenuation(GL_QUADRATIC_ATTENUATION) * fDistSq +
             pLight->getAttenuation(GL_LINEAR_ATTENUATION) * fDist +
             pLight->getAttenuation(GL_CONSTANT_ATTENUATION);
-        if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
-          fAtt = Math::Inverse<floatf>(fInvAtt);
+        if (!IsAlmostZero(fInvAtt - One<floatf>())) {
+          fAtt = Inverse<floatf>(fInvAtt);
         }
       }
 
       // Compute the spot light attenuation
       if (pLight->Flags.SpotLight) {
-        auto fCos = -Math::Dot<floatf>(vL, pLight->vSpotDirection);
+        auto fCos = -Dot<floatf>(vL, pLight->vSpotDirection);
         if (fCos >= pLight->fSpotCutOffCos) {
           fAtt *= std::pow(fCos, pLight->fSpotExponent);
         } else {
@@ -781,29 +826,29 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
     auto vFrontDS = pLight->vScaledAmbient;
     auto vBackDS = vFrontDS;
 
-    auto fDotNL = Math::Dot<floatf>(vNormal, vL);
-    auto fDiffFactor = (fDotNL > Math::Zero<floatf>()) ? fDotNL : -fDotNL;
+    auto fDotNL = Dot<floatf>(vNormal, vL);
+    auto fDiffFactor = (fDotNL > Zero<floatf>()) ? fDotNL : -fDotNL;
 
     vColor.x = pLight->vScaledDiffuse.x * fDiffFactor;
     vColor.y = pLight->vScaledDiffuse.y * fDiffFactor;
     vColor.z = pLight->vScaledDiffuse.z * fDiffFactor;
 
-    auto fDotNH = Math::Dot<floatf>(vNormal, vH);
-    if (fDotNL <= Math::Zero<floatf>()) {
+    auto fDotNH = Dot<floatf>(vNormal, vH);
+    if (fDotNL <= Zero<floatf>()) {
       fDotNH = -fDotNH;
     }
 
-    if (fDotNH > Math::Zero<floatf>()) {
+    if (fDotNH > Zero<floatf>()) {
       // Compute the specular coefficient
       auto fCoeff = std::pow(fDotNH, fMatShininess_);
-      if (!Math::IsAlmostZero(fCoeff)) {
+      if (!IsAlmostZero(fCoeff)) {
         vColor.x += pLight->vScaledSpecular.x * fCoeff;
         vColor.y += pLight->vScaledSpecular.y * fCoeff;
         vColor.z += pLight->vScaledSpecular.z * fCoeff;
       }
     }
 
-    if (fDotNL > Math::Zero<floatf>()) {
+    if (fDotNL > Zero<floatf>()) {
       vFrontDS.x += vColor.x;
       vFrontDS.y += vColor.y;
       vFrontDS.z += vColor.z;
@@ -831,13 +876,13 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
   auto vIn = vTexCoords_[srcIndex];
 
   if (!pMsTexCoords_[srcIndex]->isIdentity()) {
-    Math::Mul(&vIn, vIn, pMsTexCoords_[srcIndex]->getMatrix());
+    Mul(&vIn, vIn, pMsTexCoords_[srcIndex]->getMatrix());
   }
 
   for (uint32_t k = 0; k < count; ++k) {
     pvTexCoords[k].m[0] = static_cast<floatRX>(vIn.x);
     pvTexCoords[k].m[1] = static_cast<floatRX>(vIn.y);
-  }
+  }  
 }
 
 GLenum TNL::updatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
@@ -853,8 +898,8 @@ GLenum TNL::updatePoints(uint8_t **ppbVertexData, int first, uint32_t count) {
     pointSizeDecode_.pBits = nullptr;
   }
 
-  if (!Math::IsAlmostZero(pointParams_.vAttenuation.y) ||
-      !Math::IsAlmostZero(pointParams_.vAttenuation.z)) {
+  if (!IsAlmostZero(pointParams_.vAttenuation.y) ||
+      !IsAlmostZero(pointParams_.vAttenuation.z)) {
     TNLFlags_.PointSizeQAttn = 1;
     TNLFlags_.EyeSpaceZ = 1;
   }
@@ -917,7 +962,7 @@ GLenum TNL::updateColor(uint8_t **ppbVertexData, int first, uint32_t count) {
     }
   }
 
-  TNLFlags_.Color = 1;
+  TNLFlags_.Color = 1;  
 
   return GL_NO_ERROR;
 }
@@ -1048,9 +1093,9 @@ void TNL::updateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
     auto fFogEnd = fog_.getFactor(GL_FOG_END);
 
     if (fFogStart != fFogEnd) {
-      fog_.fRatio = Math::Inverse<floatRX>(fFogEnd - fFogStart);
+      fog_.fRatio = Inverse<floatRX>(fFogEnd - fFogStart);
     } else {
-      fog_.fRatio = Math::Zero<floatRX>();
+      fog_.fRatio = Zero<floatRX>();
     }
 
     dirtyFlags_.FogRatio = 0;
@@ -1067,8 +1112,8 @@ void TNL::updateFog(uint8_t **ppbVertexData, int /*first*/, uint32_t count) {
 
 void TNL::updateModelViewInvT44() {
   MATRIX44 matTmp;
-  Math::Inverse(&matTmp, pMsModelView_->getMatrix());
-  Math::Transpose(&mModelViewInvT_, matTmp);
+  Inverse(&matTmp, pMsModelView_->getMatrix());
+  Transpose(&mModelViewInvT_, matTmp);
   dirtyFlags_.ModelViewInvT44 = 0;
 
   if (!caps_.RescaleNormal) {
@@ -1078,7 +1123,7 @@ void TNL::updateModelViewInvT44() {
 }
 
 void TNL::updateModelViewProj() {
-  Math::Mul(&mModelViewProj_, pMsProjection_->getMatrix(), pMsModelView_->getMatrix());
+  Mul(&mModelViewProj_, pMsProjection_->getMatrix(), pMsModelView_->getMatrix());
   dirtyFlags_.ModelViewProj = 0;
 }
 
@@ -1108,7 +1153,7 @@ void TNL::updateClipPlanes() {
       if (updateMask & 1) {
         assert(i < vClipPlanesES_.size());
         assert(i < vClipPlanesCS_.size());
-        Math::Mul(&vClipPlanesCS_[i], vClipPlanesES_[i], mProjectionInvT_);
+        Mul(&vClipPlanesCS_[i], vClipPlanesES_[i], mProjectionInvT_);
       }
     }
 
@@ -1118,23 +1163,23 @@ void TNL::updateClipPlanes() {
 
 void TNL::updateProjectionInvT() {
   MATRIX44 matTmp;
-  Math::Inverse(&matTmp, pMsProjection_->getMatrix());
-  Math::Transpose(&mProjectionInvT_, matTmp);
+  Inverse(&matTmp, pMsProjection_->getMatrix());
+  Transpose(&mProjectionInvT_, matTmp);
 
   dirtyFlags_.ProjectionInvT = 0;
 }
 
 void TNL::updateModelViewInvT33() {
   MATRIX44 matTmp;
-  Math::Inverse33(&matTmp, pMsModelView_->getMatrix());
+  Inverse33(&matTmp, pMsModelView_->getMatrix());
 
   if (caps_.RescaleNormal) {
     auto fSum = (matTmp._31 * matTmp._31) + 
                 (matTmp._32 * matTmp._32) +
                 (matTmp._33 * matTmp._33);
 
-    if (!Math::IsAlmostZero(fSum - Math::One<floatf>())) {
-      auto fFactor = Math::RSqrt(fSum);
+    if (!IsAlmostZero(fSum - One<floatf>())) {
+      auto fFactor = RSqrt(fSum);
 
       mModelViewInvT_._11 = matTmp._11 * fFactor;
       mModelViewInvT_._21 = matTmp._21 * fFactor;
@@ -1158,10 +1203,10 @@ void TNL::updateModelViewInvT33() {
 
 void TNL::updateNormal() {
   // Transform the normal to world space
-  Math::Mul(&vNormNormal_, vNormal_, mModelViewInvT_);
+  Mul(&vNormNormal_, vNormal_, mModelViewInvT_);
 
   // Normalize the normal
-  Math::Normalize(&vNormNormal_);
+  Normalize(&vNormNormal_);
 
   dirtyFlags_.NormalizeNormal = 0;
 }
@@ -1233,25 +1278,25 @@ void TNL::updateLights() {
     if (dirtyLights.Position & mask) {
       if (pLight->Flags.DirectionalLight) {
         // Normalize the position
-        Math::Normalize(reinterpret_cast<VECTOR3 *>(&pLight->vPosition));
+        Normalize(reinterpret_cast<VECTOR3 *>(&pLight->vPosition));
 
         // Compute the halfway vector
-        VECTOR3 vDir(Math::Zero<floatf>(), Math::Zero<floatf>(), Math::One<floatf>());
+        VECTOR3 vDir(Zero<floatf>(), Zero<floatf>(), One<floatf>());
         VECTOR3 vPos(pLight->vPosition.x, pLight->vPosition.y, pLight->vPosition.z);
-        Math::Add(&pLight->vHalfway, vPos, vDir);
+        Add(&pLight->vHalfway, vPos, vDir);
 
         // Normalize the halfway vector
-        Math::Normalize(&pLight->vHalfway);
+        Normalize(&pLight->vHalfway);
       } else {
-        if (Math::IsAlmostZero(pLight->getAttenuation(GL_CONSTANT_ATTENUATION) - Math::One<floatf>())
-         && Math::IsAlmostZero(pLight->getAttenuation(GL_LINEAR_ATTENUATION)) 
-         && Math::IsAlmostZero(pLight->getAttenuation(GL_QUADRATIC_ATTENUATION))) {
+        if (IsAlmostZero(pLight->getAttenuation(GL_CONSTANT_ATTENUATION) - One<floatf>())
+         && IsAlmostZero(pLight->getAttenuation(GL_LINEAR_ATTENUATION)) 
+         && IsAlmostZero(pLight->getAttenuation(GL_QUADRATIC_ATTENUATION))) {
           pLight->Flags.Attenuation = 0;
         } else {
           pLight->Flags.Attenuation = 1;
         }
 
-        if (Math::IsAlmostZero(pLight->fSpotCutOff - Math::F180<floatf>())) {
+        if (IsAlmostZero(pLight->fSpotCutOff - F180<floatf>())) {
           pLight->Flags.SpotLight = 0;
         } else {
           pLight->Flags.SpotLight = 1;

@@ -49,7 +49,7 @@ void GLContext::setScissor(GLint x, GLint y, GLsizei width, GLsizei height) {
 }
 
 void GLContext::setSampleCoverage(floatf value, GLboolean invert) {
-  sampleCoverage_.fValue = Math::Sat(value);
+  sampleCoverage_.fValue = Sat(value);
   sampleCoverage_.bInvert = invert ? true : false;
 }
 
@@ -59,7 +59,7 @@ void GLContext::setPolygonOffset(floatf factor, floatf units) {
 }
 
 void GLContext::setPointSize(floatf size) {
-  if (size <= Math::Zero<floatf>()) {
+  if (size <= Zero<floatf>()) {
     __glError(
         GL_INVALID_VALUE,
         "GLContext::setPointSize() failed, invalid size parameter: %d.\r\n",
@@ -71,7 +71,7 @@ void GLContext::setPointSize(floatf size) {
 }
 
 void GLContext::setLineWidth(floatf width) {
-  if (width <= Math::Zero<floatf>()) {
+  if (width <= Zero<floatf>()) {
     __glError(
         GL_INVALID_VALUE,
         "GLContext::setLineWidth() failed, invalid width parameter: %d.\r\n",
@@ -94,7 +94,7 @@ void GLContext::setAlphaFunc(GLenum func, floatf ref) {
   case GL_ALWAYS:
     rasterStates_.AlphaFunc = compareFuncFromEnum(func);
     rasterData_.AlphaRef =
-        static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(ref)));
+        static_cast<uint8_t>(ToUNORM8(Sat(ref)));
     break;
 
   default:

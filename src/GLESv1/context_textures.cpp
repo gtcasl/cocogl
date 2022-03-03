@@ -116,7 +116,7 @@ void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
     return;
   }
 
-  if ((width < 0) || !Math::IsPowerOf2(width)) {
+  if ((width < 0) || !IsPowerOf2(width)) {
     __glError(
         GL_INVALID_VALUE,
         "GLContext::setTexImage2D() failed, invalid width parameter: %d.\r\n",
@@ -124,7 +124,7 @@ void GLContext::setTexImage2D(GLenum target, GLint level, GLint internalformat,
     return;
   }
 
-  if ((height < 0) || !Math::IsPowerOf2(height)) {
+  if ((height < 0) || !IsPowerOf2(height)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::setTexImage2D() failed, invalid "
               "height parameter: %d.\r\n",
@@ -301,7 +301,7 @@ void GLContext::copyTexImage2D(GLenum target, GLint level,
     return;
   }
 
-  if ((width < 0) || !Math::IsPowerOf2(width)) {
+  if ((width < 0) || !IsPowerOf2(width)) {
     __glError(
         GL_INVALID_VALUE,
         "GLContext::setTexImage2D() failed, invalid width parameter: %d.\r\n",
@@ -309,7 +309,7 @@ void GLContext::copyTexImage2D(GLenum target, GLint level,
     return;
   }
 
-  if ((height < 0) || !Math::IsPowerOf2(height)) {
+  if ((height < 0) || !IsPowerOf2(height)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::setTexImage2D() failed, invalid "
               "height parameter: %d.\r\n",
@@ -624,7 +624,7 @@ void GLContext::compressedTexImage2D(GLenum target, GLint level,
     return;
   }
 
-  if ((width < 0) || !Math::IsPowerOf2(width)) {
+  if ((width < 0) || !IsPowerOf2(width)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::compressedTexImage2D() "
               "failed, invalid width parameter: %d.\r\n",
@@ -632,7 +632,7 @@ void GLContext::compressedTexImage2D(GLenum target, GLint level,
     return;
   }
 
-  if ((height < 0) || !Math::IsPowerOf2(height)) {
+  if ((height < 0) || !IsPowerOf2(height)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::compressedTexImage2D() "
               "failed, invalid height parameter: %d.\r\n",
@@ -784,7 +784,7 @@ void GLContext::compressedTexSubImage2D(GLenum target, GLint level,
     return;
   }
 
-  if ((width < 0) || !Math::IsPowerOf2(width)) {
+  if ((width < 0) || !IsPowerOf2(width)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::compressedTexSubImage2D() "
               "failed, invalid width parameter: %d.\r\n",
@@ -792,7 +792,7 @@ void GLContext::compressedTexSubImage2D(GLenum target, GLint level,
     return;
   }
 
-  if ((height < 0) || !Math::IsPowerOf2(height)) {
+  if ((height < 0) || !IsPowerOf2(height)) {
     __glError(GL_INVALID_VALUE,
               "GLContext::compressedTexSubImage2D() "
               "failed, invalid height parameter: %d.\r\n",

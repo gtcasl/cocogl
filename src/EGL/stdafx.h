@@ -24,16 +24,20 @@
 #include <GLES/gl.h>
 #include <GLES/glext.h>
 #include <glcommon.hpp>
-#include <bitmap.hpp>
+
 #include <color.hpp>
 #include <fixed.hpp>
 #include <format.hpp>
-#include <handle.hpp>
-#include <int24.hpp>
+#include <uint24.hpp>
+
 #include <logger.hpp>
 #include <math.hpp>
 #include <object.hpp>
-#include <rect.hpp>
+#include <handle.hpp>
+#include <bitmap.hpp>
+
+using namespace cocogfx;
+
 #include "types.hpp"
 #include "utility.hpp"
 

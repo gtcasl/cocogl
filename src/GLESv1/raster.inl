@@ -35,14 +35,14 @@ inline uint32_t Rasterizer::clipTriangle(uint32_t nNumVertices, uint32_t *pSrc,
       iVA = *pSrc++;
       fDistA = pvClipPos[iVA].w - pvClipPos[iVA].m[coord];
 
-      if (fDistB >= Math::Zero<floatf>()) {
+      if (fDistB >= Zero<floatf>()) {
         // Add vertex to the current list
         assert(nClipVertices < CLIP_BUFFER_SIZE);
         pDst[nClipVertices++] = iVB;
-        if (fDistA >= Math::Zero<floatf>()) {
+        if (fDistA >= Zero<floatf>()) {
           continue;
         }
-      } else if (fDistA < Math::Zero<floatf>()) {
+      } else if (fDistA < Zero<floatf>()) {
         continue;
       }
 
@@ -59,14 +59,14 @@ inline uint32_t Rasterizer::clipTriangle(uint32_t nNumVertices, uint32_t *pSrc,
       iVA = *pSrc++;
       fDistA = pvClipPos[iVA].w + pvClipPos[iVA].m[coord];
 
-      if (fDistB >= Math::Zero<floatf>()) {
+      if (fDistB >= Zero<floatf>()) {
         // Add vertex to the current list
         assert(nClipVertices < CLIP_BUFFER_SIZE);
         pDst[nClipVertices++] = iVB;
-        if (fDistA >= Math::Zero<floatf>()) {
+        if (fDistA >= Zero<floatf>()) {
           continue;
         }
-      } else if (fDistA < Math::Zero<floatf>()) {
+      } else if (fDistA < Zero<floatf>()) {
         continue;
       }
 

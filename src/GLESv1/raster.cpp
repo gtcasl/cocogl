@@ -128,9 +128,9 @@ GLenum Rasterizer::setupRasterStates(GLenum mode) {
       ||
       !((ENVMODE_REPLACE == rasterID.Textures[0].EnvMode) // tex0 replaces color
         &&
-        (Format::GetInfo(rasterID.Textures[0].Format).Alpha // Tex0 has alpha
+        (Format::GetInfo((ePixelFormat)rasterID.Textures[0].Format).Alpha // Tex0 has alpha
          ||
-         !(Format::GetInfo(rasterID.Flags.ColorFormat).Alpha // Alpha not used
+         !(Format::GetInfo((ePixelFormat)rasterID.Flags.ColorFormat).Alpha // Alpha not used
            || caps_.AlphaTest || caps_.Blend)))) {
     rasterID.Flags.Color = 1;
     rasterID.Flags.InterpolateColor = (caps_.ShadeModel) ? 1 : 0;
@@ -138,7 +138,7 @@ GLenum Rasterizer::setupRasterStates(GLenum mode) {
   }
 
   if (caps_.DepthTest &&
-      Format::GetInfo(rasterData_.DepthStencilFormat).Depth) {
+      Format::GetInfo((ePixelFormat)rasterData_.DepthStencilFormat).Depth) {
     rasterID.Flags.DepthTest = 1;
     rasterID.Flags.DepthWrite = depthWriteMask_;
     rasterID.Flags.DepthStencilFormat = rasterData_.DepthStencilFormat;
@@ -146,7 +146,7 @@ GLenum Rasterizer::setupRasterStates(GLenum mode) {
   }
 
   if (caps_.StencilTest &&
-      Format::GetInfo(rasterData_.DepthStencilFormat).Stencil) {
+      Format::GetInfo((ePixelFormat)rasterData_.DepthStencilFormat).Stencil) {
     rasterID.Flags.StencilTest = 1;
     rasterID.Flags.StencilWrite = stencilWriteMask_ ? 1 : 0;
     rasterID.Flags.DepthStencilFormat = rasterData_.DepthStencilFormat;
@@ -194,7 +194,7 @@ void Rasterizer::updateScissorRect() {
   if (caps_.ScissorTest) {
     Rect rect;
     pSurfDraw_->getRect(&rect);
-    ::IntersectRect(&scissorRect_, &scissor_, &rect);
+    Intersect(&scissorRect_, &scissor_, &rect);
   } else {
     pSurfDraw_->getRect(&scissorRect_);
   }
@@ -243,7 +243,7 @@ bool Rasterizer::generateRasterOp() {
 
 void Rasterizer::postRender() {
   // Free the rasterop
-  __safeRelease(rasterData_.pRasterOp);
+  __safeRelease(rasterData_.pRasterOp);  
 }
 
 GLenum Rasterizer::renderPrimitive(GLenum mode, uint32_t count) {

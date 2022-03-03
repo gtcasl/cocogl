@@ -124,7 +124,7 @@ protected:
       int half = 1 << (FRAC - 1);
       return T::make((delta * this->fRatio.data() + half) >> FRAC);
 #else
-      return T::make(static_cast<Fixed<T::FRAC - fixed8::FRAC>>(delta * this->fRatio).data());
+      return T::make(static_cast<TFixed<T::FRAC - fixed8::FRAC>>(delta * this->fRatio).data());
 #endif
     }
   };
@@ -209,16 +209,16 @@ protected:
                              uint32_t i2);
 
   void ensureClearColor() {
-    ColorARGB tmp(Math::ToUNORM8(Math::Sat(vClearColor_.w)),
-                  Math::ToUNORM8(Math::Sat(vClearColor_.x)),
-                  Math::ToUNORM8(Math::Sat(vClearColor_.y)),
-                  Math::ToUNORM8(Math::Sat(vClearColor_.z)));
+    ColorARGB tmp(ToUNORM8(Sat(vClearColor_.w)),
+                  ToUNORM8(Sat(vClearColor_.x)),
+                  ToUNORM8(Sat(vClearColor_.y)),
+                  ToUNORM8(Sat(vClearColor_.z)));
     pSurfDraw_->convertColor(&clearColor_, tmp);
     dirtyFlags_.ClearColor = 0;
   }
 
   void ensureClearDepth() {
-    clearDepth_ = Math::ToUNORM16(Math::Sat(fClearDepth_));
+    clearDepth_ = ToUNORM16(Sat(fClearDepth_));
     dirtyFlags_.ClearDepth = 0;
   }
 
@@ -229,12 +229,16 @@ protected:
   }
 
   void ensureFogColor() {
-    rasterData_.cFogColor.a = static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.w)));
-    rasterData_.cFogColor.r = static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.x)));
-    rasterData_.cFogColor.g = static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.y)));
-    rasterData_.cFogColor.b = static_cast<uint8_t>(Math::ToUNORM8(Math::Sat(vFogColor_.z)));
+    rasterData_.cFogColor.a = static_cast<uint8_t>(ToUNORM8(Sat(vFogColor_.w)));
+    rasterData_.cFogColor.r = static_cast<uint8_t>(ToUNORM8(Sat(vFogColor_.x)));
+    rasterData_.cFogColor.g = static_cast<uint8_t>(ToUNORM8(Sat(vFogColor_.y)));
+    rasterData_.cFogColor.b = static_cast<uint8_t>(ToUNORM8(Sat(vFogColor_.z)));
     dirtyFlags_.FogColor = 0;
   }
+
+#ifdef DUMP_FRAME
+  void dumpPrimitives(uint32_t i0, uint32_t i1, uint32_t i2);
+#endif
 
   PolygonOffset polygonOffset_;
   floatf fLineWidth_;

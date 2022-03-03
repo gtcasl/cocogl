@@ -499,7 +499,7 @@ GLenum GenericRasterOp::initialize() {
 
   auto rasterFlags = rasterID_.Flags;
 
-  colorStride_ = Format::GetInfo(rasterFlags.ColorFormat).BytePerPixel;
+  colorStride_ = Format::GetInfo((ePixelFormat)rasterFlags.ColorFormat).BytePerPixel;
 
   // Select depth function
   if (rasterFlags.DepthTest || rasterFlags.StencilTest) {
@@ -559,7 +559,7 @@ void GenericRasterOp::selectDepthStencilFunc() {
   }
 
   depthStencilStride_ =
-      Format::GetInfo(rasterFlags.DepthStencilFormat).BytePerPixel;
+      Format::GetInfo((ePixelFormat)rasterFlags.DepthStencilFormat).BytePerPixel;
 
   if (rasterFlags.StencilTest) {
     int index = rasterStates.StencilFunc;
@@ -738,7 +738,7 @@ ColorARGB GenericRasterOp::getSamplerColor(uint32_t unit,
   default:
     __no_default;
   case FILTER_NONE: {
-    if (fJ > Math::One<fixed16>()) {
+    if (fJ > One<fixed16>()) {
       color = (samplers_[unit].pfnGetTexelColorMin)(sampler.pMipLevels[0], fU, fV);
     } else {
       color = (samplers_[unit].pfnGetTexelColorMag)(sampler.pMipLevels[0], fU, fV);
@@ -746,8 +746,8 @@ ColorARGB GenericRasterOp::getSamplerColor(uint32_t unit,
     break;
   }
   case FILTER_NEAREST: {
-    if (fJ > Math::One<fixed16>()) {
-      auto mipLevel = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+    if (fJ > One<fixed16>()) {
+      auto mipLevel = std::min<int>(iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
       color = (samplers_[unit].pfnGetTexelColorMin)(sampler.pMipLevels[mipLevel], fU, fV);
     } else {
       color = (samplers_[unit].pfnGetTexelColorMag)(sampler.pMipLevels[0], fU, fV);
@@ -756,18 +756,18 @@ ColorARGB GenericRasterOp::getSamplerColor(uint32_t unit,
   }
 
   case FILTER_LINEAR: {
-    if (fJ > Math::One<fixed16>()) {
-      auto mipLevel0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+    if (fJ > One<fixed16>()) {
+      auto mipLevel0 = std::min<int>(iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
       auto mipLevel1 = std::min<int>(mipLevel0 + 1, sampler.MaxMipLevel);
       auto mipLerp = (fJ.data() >> (mipLevel0 + 8)) - fixed8::ONE;
 
       auto c1 = (samplers_[unit].pfnGetTexelColorMin)(sampler.pMipLevels[mipLevel0], fU, fV);
       auto c2 = (samplers_[unit].pfnGetTexelColorMin)(sampler.pMipLevels[mipLevel1], fU, fV);
 
-      color.r = Math::Lerp8(c1.r, c2.r, mipLerp);
-      color.g = Math::Lerp8(c1.g, c2.g, mipLerp);
-      color.b = Math::Lerp8(c1.b, c2.b, mipLerp);
-      color.a = Math::Lerp8(c1.a, c2.a, mipLerp);
+      color.r = Lerp8(c1.r, c2.r, mipLerp);
+      color.g = Lerp8(c1.g, c2.g, mipLerp);
+      color.b = Lerp8(c1.b, c2.b, mipLerp);
+      color.a = Lerp8(c1.a, c2.a, mipLerp);
     } else {
       color = (samplers_[unit].pfnGetTexelColorMag)(sampler.pMipLevels[0], fU, fV);
     }

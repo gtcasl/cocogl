@@ -232,7 +232,7 @@ template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline uint32_t GetTexelColorPtN(const SurfaceDesc &surface, 
                                  fixedRX fU,
                                  fixedRX fV) {
-  auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(surface.getBits());
+  auto pBits = reinterpret_cast<const typename TFormatInfo<(ePixelFormat)Format>::TYPE *>(surface.getBits());
   uint32_t logWidth  = surface.getLogWidth();
   uint32_t logHeight = surface.getLogHeight();
 
@@ -256,10 +256,10 @@ template <uint32_t Format, uint32_t AddressU, uint32_t AddressV>
 inline NColor<Format> GetTexelColorLnX(const SurfaceDesc &surface,
                                        fixedRX fU, 
                                        fixedRX fV) {
-  auto lerpBits = TFormatInfo<Format>::LERP;
+  auto lerpBits = TFormatInfo<(ePixelFormat)Format>::LERP;
   auto lerpMask = (1 << lerpBits) - 1;
   
-  auto pBits = reinterpret_cast<const typename TFormatInfo<Format>::TYPE *>(surface.getBits());
+  auto pBits = reinterpret_cast<const typename TFormatInfo<(ePixelFormat)Format>::TYPE *>(surface.getBits());
   uint32_t logWidth  = surface.getLogWidth();
   uint32_t logHeight = surface.getLogHeight();
 
@@ -351,7 +351,7 @@ inline uint32_t GetMipFilterN(const Sampler &sampler,
       return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[0], fU, fV);
     } else {      
-      if (fJ > Math::One<fixed16>()) {
+      if (fJ > One<fixed16>()) {
         return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[0], fU, fV);
       } else {
@@ -363,13 +363,13 @@ inline uint32_t GetMipFilterN(const Sampler &sampler,
 
   if constexpr (MipFilter == FILTER_NEAREST) {
     if constexpr (MinFilter == MagFilter) {
-      fJ = std::max<fixed16>(fJ, Math::One<fixed16>());
-      uint32_t l = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+      fJ = std::max<fixed16>(fJ, One<fixed16>());
+      uint32_t l = std::min<int>(iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
       return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[l], fU, fV);
     } else {
-      if (fJ > Math::One<fixed16>()) {
-        uint32_t l = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+      if (fJ > One<fixed16>()) {
+        uint32_t l = std::min<int>(iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
         return GetMinFilterN<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[l], fU, fV);
       } else {
@@ -380,23 +380,23 @@ inline uint32_t GetMipFilterN(const Sampler &sampler,
   }
 
   if constexpr (MipFilter == FILTER_LINEAR) {
-    auto lerpBits = TFormatInfo<Format>::LERP;
+    auto lerpBits = TFormatInfo<(ePixelFormat)Format>::LERP;
     auto lerpMask = (1 << lerpBits) - 1;
     if constexpr (MinFilter == MagFilter) {
-      fJ = std::max<fixed16>(fJ, Math::One<fixed16>());
-      uint32_t l0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+      fJ = std::max<fixed16>(fJ, One<fixed16>());
+      uint32_t l0 = std::min<int>(iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
       uint32_t l1 = std::min<int>(l0 + 1, sampler.MaxMipLevel);
-      uint32_t f  = (fJ.data() - (1 << (l0 + fixed16::FRAC))) >> (l0 + fixed16::FRAC - TFormatInfo<Format>::LERP);
+      uint32_t f  = (fJ.data() - (1 << (l0 + fixed16::FRAC))) >> (l0 + fixed16::FRAC - TFormatInfo<(ePixelFormat)Format>::LERP);
       auto c0 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[l0], fU, fV);
       auto c1 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
           sampler.pMipLevels[l1], fU, fV);
       return c0.Lerp(c1, f);
     } else {
-      if (fJ > Math::One<fixed16>()) {
-        uint32_t l0 = std::min<int>(Math::iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
+      if (fJ > One<fixed16>()) {
+        uint32_t l0 = std::min<int>(iLog2(fJ.data()) - fixed16::FRAC, sampler.MaxMipLevel);
         uint32_t l1 = std::min<int>(l0 + 1, sampler.MaxMipLevel);
-        uint32_t f  = (fJ.data() - (1 << (l0 + fixed16::FRAC))) >> (l0 + fixed16::FRAC - TFormatInfo<Format>::LERP);
+        uint32_t f  = (fJ.data() - (1 << (l0 + fixed16::FRAC))) >> (l0 + fixed16::FRAC - TFormatInfo<(ePixelFormat)Format>::LERP);
         auto c0 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
             sampler.pMipLevels[l0], fU, fV);
         auto c1 = GetMinFilterX<MinFilter, Format, AddressU, AddressV>(
@@ -419,11 +419,11 @@ ColorARGB GetTexEnvColorA(const ColorARGB &cColor, const ColorARGB &cTexture,
   ColorARGB ret(cColor);
 
   if constexpr (EnvMode == ENVMODE_ADD) {
-    ret.a = Math::Mul8(cColor.a, cTexture.a);
+    ret.a = Mul8(cColor.a, cTexture.a);
   }
 
   if constexpr (EnvMode == ENVMODE_BLEND) {
-    ret.a = Math::Mul8(cColor.a, cTexture.a);
+    ret.a = Mul8(cColor.a, cTexture.a);
   }
 
   if constexpr (EnvMode == ENVMODE_REPLACE) {
@@ -431,7 +431,7 @@ ColorARGB GetTexEnvColorA(const ColorARGB &cColor, const ColorARGB &cTexture,
   }
 
   if constexpr (EnvMode == ENVMODE_MODULATE) {
-    ret.a = Math::Mul8(cColor.a, cTexture.a);
+    ret.a = Mul8(cColor.a, cTexture.a);
   }
 
   if constexpr (EnvMode == ENVMODE_DECAL) {
@@ -447,15 +447,15 @@ ColorARGB GetTexEnvColorRGB(const ColorARGB &cColor, const ColorARGB &cTexture,
 
   if constexpr (EnvMode == ENVMODE_ADD) {
     __unused(cEnvColor);
-    ret.r = Math::Add8(cColor.r, cTexture.r);
-    ret.g = Math::Add8(cColor.g, cTexture.g);
-    ret.b = Math::Add8(cColor.b, cTexture.b);
+    ret.r = Add8(cColor.r, cTexture.r);
+    ret.g = Add8(cColor.g, cTexture.g);
+    ret.b = Add8(cColor.b, cTexture.b);
   }
 
   if constexpr (EnvMode == ENVMODE_BLEND) {
-    ret.r = Math::Lerp8(cColor.r, cEnvColor.r, cTexture.r);
-    ret.g = Math::Lerp8(cColor.g, cEnvColor.g, cTexture.g);
-    ret.b = Math::Lerp8(cColor.b, cEnvColor.b, cTexture.b);
+    ret.r = Lerp8(cColor.r, cEnvColor.r, cTexture.r);
+    ret.g = Lerp8(cColor.g, cEnvColor.g, cTexture.g);
+    ret.b = Lerp8(cColor.b, cEnvColor.b, cTexture.b);
   }
 
   if constexpr (EnvMode == ENVMODE_REPLACE) {
@@ -467,9 +467,9 @@ ColorARGB GetTexEnvColorRGB(const ColorARGB &cColor, const ColorARGB &cTexture,
 
   if constexpr (EnvMode == ENVMODE_MODULATE) {
     __unused(cEnvColor);
-    ret.r = Math::Mul8(cColor.r, cTexture.r);
-    ret.g = Math::Mul8(cColor.g, cTexture.g);
-    ret.b = Math::Mul8(cColor.b, cTexture.b);
+    ret.r = Mul8(cColor.r, cTexture.r);
+    ret.g = Mul8(cColor.g, cTexture.g);
+    ret.b = Mul8(cColor.b, cTexture.b);
   }
 
   if constexpr (EnvMode == ENVMODE_DECAL) {
@@ -490,17 +490,17 @@ ColorARGB GetTexEnvColorARGB(const ColorARGB &cColor,
 
   if constexpr (EnvMode == ENVMODE_ADD) {
     __unused(cEnvColor);
-    ret.r = Math::Add8(cColor.r, cTexture.r);
-    ret.g = Math::Add8(cColor.g, cTexture.g);
-    ret.b = Math::Add8(cColor.b, cTexture.b);
-    ret.a = Math::Mul8(cColor.a, cTexture.a);
+    ret.r = Add8(cColor.r, cTexture.r);
+    ret.g = Add8(cColor.g, cTexture.g);
+    ret.b = Add8(cColor.b, cTexture.b);
+    ret.a = Mul8(cColor.a, cTexture.a);
   }
 
   if constexpr (EnvMode == ENVMODE_BLEND) {
-    ret.r = Math::Lerp8(cColor.r, cEnvColor.r, cTexture.r);
-    ret.g = Math::Lerp8(cColor.g, cEnvColor.g, cTexture.g);
-    ret.b = Math::Lerp8(cColor.b, cEnvColor.b, cTexture.b);
-    ret.a = Math::Mul8(cColor.a, cTexture.a);
+    ret.r = Lerp8(cColor.r, cEnvColor.r, cTexture.r);
+    ret.g = Lerp8(cColor.g, cEnvColor.g, cTexture.g);
+    ret.b = Lerp8(cColor.b, cEnvColor.b, cTexture.b);
+    ret.a = Mul8(cColor.a, cTexture.a);
   }
 
   if constexpr (EnvMode == ENVMODE_REPLACE) {
@@ -513,17 +513,17 @@ ColorARGB GetTexEnvColorARGB(const ColorARGB &cColor,
 
   if constexpr (EnvMode == ENVMODE_MODULATE) {
     __unused(cEnvColor);
-    ret.r = Math::Mul8(cColor.r, cTexture.r);
-    ret.g = Math::Mul8(cColor.g, cTexture.g);
-    ret.b = Math::Mul8(cColor.b, cTexture.b);
-    ret.a = Math::Mul8(cColor.a, cTexture.a);
+    ret.r = Mul8(cColor.r, cTexture.r);
+    ret.g = Mul8(cColor.g, cTexture.g);
+    ret.b = Mul8(cColor.b, cTexture.b);
+    ret.a = Mul8(cColor.a, cTexture.a);
   }
 
   if constexpr (EnvMode == ENVMODE_DECAL) {
     __unused(cEnvColor);
-    ret.r = Math::Lerp8(cColor.r, cTexture.r, cTexture.a);
-    ret.g = Math::Lerp8(cColor.g, cTexture.g, cTexture.a);
-    ret.b = Math::Lerp8(cColor.b, cTexture.b, cTexture.a);
+    ret.r = Lerp8(cColor.r, cTexture.r, cTexture.a);
+    ret.g = Lerp8(cColor.g, cTexture.g, cTexture.a);
+    ret.b = Lerp8(cColor.b, cTexture.b, cTexture.a);
     ret.a = cTexture.a;
   }
 
@@ -556,82 +556,82 @@ ColorARGB GetBlendCoeff(const ColorARGB &cColor,
   if constexpr (BlendOp == BLEND_SRC_COLOR) {
     __unused(cDst);
 
-    ret.r = Math::Mul8(cColor.r, cSrc.r);
-    ret.g = Math::Mul8(cColor.g, cSrc.g);
-    ret.b = Math::Mul8(cColor.b, cSrc.b);
-    ret.a = Math::Mul8(cColor.a, cSrc.a);
+    ret.r = Mul8(cColor.r, cSrc.r);
+    ret.g = Mul8(cColor.g, cSrc.g);
+    ret.b = Mul8(cColor.b, cSrc.b);
+    ret.a = Mul8(cColor.a, cSrc.a);
   }
 
   if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_COLOR) {
     __unused(cDst);
 
-    ret.r = Math::Mul8(cColor.r, 0xff - cSrc.r);
-    ret.g = Math::Mul8(cColor.g, 0xff - cSrc.g);
-    ret.b = Math::Mul8(cColor.b, 0xff - cSrc.b);
-    ret.a = Math::Mul8(cColor.a, 0xff - cSrc.a);
+    ret.r = Mul8(cColor.r, 0xff - cSrc.r);
+    ret.g = Mul8(cColor.g, 0xff - cSrc.g);
+    ret.b = Mul8(cColor.b, 0xff - cSrc.b);
+    ret.a = Mul8(cColor.a, 0xff - cSrc.a);
   }
 
   if constexpr (BlendOp == BLEND_SRC_ALPHA) {
     __unused(cDst);
 
-    ret.r = Math::Mul8(cColor.r, cSrc.a);
-    ret.g = Math::Mul8(cColor.g, cSrc.a);
-    ret.b = Math::Mul8(cColor.b, cSrc.a);
-    ret.a = Math::Mul8(cColor.a, cSrc.a);
+    ret.r = Mul8(cColor.r, cSrc.a);
+    ret.g = Mul8(cColor.g, cSrc.a);
+    ret.b = Mul8(cColor.b, cSrc.a);
+    ret.a = Mul8(cColor.a, cSrc.a);
   }
 
   if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
     __unused(cDst);
 
     int invAlpha = 0xff - cSrc.a;
-    ret.r = Math::Mul8(cColor.r, invAlpha);
-    ret.g = Math::Mul8(cColor.g, invAlpha);
-    ret.b = Math::Mul8(cColor.b, invAlpha);
-    ret.a = Math::Mul8(cColor.a, invAlpha);
+    ret.r = Mul8(cColor.r, invAlpha);
+    ret.g = Mul8(cColor.g, invAlpha);
+    ret.b = Mul8(cColor.b, invAlpha);
+    ret.a = Mul8(cColor.a, invAlpha);
   }
 
   if constexpr (BlendOp == BLEND_DST_ALPHA) {
     __unused(cSrc);
 
-    ret.r = Math::Mul8(cColor.r, cDst.a);
-    ret.g = Math::Mul8(cColor.g, cDst.a);
-    ret.b = Math::Mul8(cColor.b, cDst.a);
-    ret.a = Math::Mul8(cColor.a, cDst.a);
+    ret.r = Mul8(cColor.r, cDst.a);
+    ret.g = Mul8(cColor.g, cDst.a);
+    ret.b = Mul8(cColor.b, cDst.a);
+    ret.a = Mul8(cColor.a, cDst.a);
   }
 
   if constexpr (BlendOp == BLEND_ONE_MINUS_DST_ALPHA) {
     __unused(cSrc);
 
     int invAlpha = 0xff - cDst.a;
-    ret.r = Math::Mul8(cColor.r, invAlpha);
-    ret.g = Math::Mul8(cColor.g, invAlpha);
-    ret.b = Math::Mul8(cColor.b, invAlpha);
-    ret.a = Math::Mul8(cColor.a, invAlpha);
+    ret.r = Mul8(cColor.r, invAlpha);
+    ret.g = Mul8(cColor.g, invAlpha);
+    ret.b = Mul8(cColor.b, invAlpha);
+    ret.a = Mul8(cColor.a, invAlpha);
   }
 
   if constexpr (BlendOp == BLEND_DST_COLOR) {
     __unused(cSrc);
 
-    ret.r = Math::Mul8(cColor.r, cDst.r);
-    ret.g = Math::Mul8(cColor.g, cDst.g);
-    ret.b = Math::Mul8(cColor.b, cDst.b);
-    ret.a = Math::Mul8(cColor.a, cDst.a);
+    ret.r = Mul8(cColor.r, cDst.r);
+    ret.g = Mul8(cColor.g, cDst.g);
+    ret.b = Mul8(cColor.b, cDst.b);
+    ret.a = Mul8(cColor.a, cDst.a);
   }
 
   if constexpr (BlendOp == BLEND_ONE_MINUS_DST_COLOR) {
     __unused(cSrc);
 
-    ret.r = Math::Mul8(cColor.r, 0xff - cDst.r);
-    ret.g = Math::Mul8(cColor.g, 0xff - cDst.g);
-    ret.b = Math::Mul8(cColor.b, 0xff - cDst.b);
-    ret.a = Math::Mul8(cColor.a, 0xff - cDst.a);
+    ret.r = Mul8(cColor.r, 0xff - cDst.r);
+    ret.g = Mul8(cColor.g, 0xff - cDst.g);
+    ret.b = Mul8(cColor.b, 0xff - cDst.b);
+    ret.a = Mul8(cColor.a, 0xff - cDst.a);
   }
 
   if constexpr (BlendOp == BLEND_SRC_ALPHA_SATURATE) {
     auto factor = std::min<int>(cSrc.a, 0xff - cDst.a);
-    ret.r = Math::Mul8(cColor.r, factor);
-    ret.g = Math::Mul8(cColor.g, factor);
-    ret.b = Math::Mul8(cColor.b, factor);
+    ret.r = Mul8(cColor.r, factor);
+    ret.g = Mul8(cColor.g, factor);
+    ret.b = Mul8(cColor.b, factor);
   }
 
   return ret;

@@ -29,14 +29,14 @@ void GLContext::setClipPlane(GLenum plane, const VECTOR4 &equation) {
   }
 
   uint32_t index = (plane - GL_CLIP_PLANE0);
-  Math::Mul(&vClipPlanesES_[index], equation, mModelViewInvT_);
+  Mul(&vClipPlanesES_[index], equation, mModelViewInvT_);
 
   dirtyFlags_.ClipPlanesCS |= (1 << index);
 }
 
 void GLContext::setDepthRange(floatf zNear, floatf zFar) {
-  depthRange_.fNear = Math::Sat(zNear);
-  depthRange_.fFar = Math::Sat(zFar);
+  depthRange_.fNear = Sat(zNear);
+  depthRange_.fFar = Sat(zFar);
 
   dirtyFlags_.ScreenXform = 1;
 }

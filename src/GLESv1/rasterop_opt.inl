@@ -95,7 +95,7 @@ template <uint32_t EnvMode, uint32_t Format, bool NativeColor>
 ColorARGB GetTexEnvColor(const ColorARGB &cColor, uint32_t texture, const ColorARGB &cEnvColor) {
   ColorARGB ret;
 
-  typedef FormatSize<TFormatInfo<Format>> FormatSize;
+  typedef FormatSize<TFormatInfo<(ePixelFormat)(ePixelFormat)Format>> FormatSize;
   if constexpr (NativeColor) {
     if constexpr (EnvMode == ENVMODE_REPLACE) {
       if constexpr (FormatSize::RGB) {
@@ -194,13 +194,13 @@ private:
     }
 
     if constexpr (BlendOp == BLEND_SRC_ALPHA) {
-      uint32_t alpha = srcAlpha >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
+      uint32_t alpha = srcAlpha >> (8 - TFormatInfo<(ePixelFormat)FORMAT_R5G6B5>::LERP);
       const NColor<FORMAT_R5G6B5> c0(inColor);
       return c0.multiply(alpha);
     }
 
     if constexpr (BlendOp == BLEND_ONE_MINUS_SRC_ALPHA) {
-      uint32_t alpha = (0xff - srcAlpha) >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
+      uint32_t alpha = (0xff - srcAlpha) >> (8 - TFormatInfo<(ePixelFormat)FORMAT_R5G6B5>::LERP);
       const NColor<FORMAT_R5G6B5> c0(inColor);
       return c0.multiply(alpha);
     }
@@ -226,14 +226,14 @@ public:
       }
 
       if constexpr (AlphaBlendSrc) {
-        uint32_t alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
+        uint32_t alpha = cColor.a >> (8 - TFormatInfo<(ePixelFormat)FORMAT_R5G6B5>::LERP);
         const NColor<FORMAT_R5G6B5> c0(dstColor);
         const NColor<FORMAT_R5G6B5> c1(srcColor);
         return c0.lerp(c1, alpha);
       }
 
       if constexpr (AlphaBlendDst) {
-        uint32_t alpha = cColor.a >> (8 - TFormatInfo<FORMAT_R5G6B5>::LERP);
+        uint32_t alpha = cColor.a >> (8 - TFormatInfo<(ePixelFormat)FORMAT_R5G6B5>::LERP);
         const NColor<FORMAT_R5G6B5> c0(srcColor);
         const NColor<FORMAT_R5G6B5> c1(dstColor);
         return c0.lerp(c1, alpha);
@@ -252,10 +252,10 @@ public:
       GetBlendCoeff<BlendSrc>(&cSrcColor, cSrcColor, cDstColor);
       GetBlendCoeff<BlendDst>(&cDstColor, cSrcColor, cDstColor);
 
-      cSrcColor.r = Math::Add8(cSrcColor.r, cDstColor.r);
-      cSrcColor.g = Math::Add8(cSrcColor.g, cDstColor.g);
-      cSrcColor.b = Math::Add8(cSrcColor.b, cDstColor.b);
-      cSrcColor.a = Math::Add8(cSrcColor.a, cDstColor.a);
+      cSrcColor.r = Add8(cSrcColor.r, cDstColor.r);
+      cSrcColor.g = Add8(cSrcColor.g, cDstColor.g);
+      cSrcColor.b = Add8(cSrcColor.b, cDstColor.b);
+      cSrcColor.a = Add8(cSrcColor.a, cDstColor.a);
 
       return Format::ConvertTo<FORMAT_R5G6B5>(cSrcColor);
     }
@@ -266,7 +266,7 @@ public:
 
 template <uint32_t ColorFormat, uint32_t LogicFunc, bool ColorWriteMask>
 void DoWriteColor(uint32_t color, uint32_t dstColor, uint32_t writeMask, uint8_t *pCB) {
-  typedef TFormatInfo<ColorFormat> FormatInfo;
+  typedef TFormatInfo<(ePixelFormat)ColorFormat> FormatInfo;
 
   auto result = ApplyLogicOp<LogicFunc>(color, dstColor);
 
@@ -331,8 +331,8 @@ public:
     Tex1_MagFilter = __get_bitfield(Texture1, TEXTURESTATES::MAGFILTER),
     Tex1_EnvMode = __get_bitfield(Texture1, TEXTURESTATES::ENVMODE),
 
-    ColorStride = TFormatInfo<ColorFormat>::CBSIZE,
-    DepthStencilStride = TFormatInfo<DepthStencilFormat>::CBSIZE,
+    ColorStride = TFormatInfo<(ePixelFormat)ColorFormat>::CBSIZE,
+    DepthStencilStride = TFormatInfo<(ePixelFormat)DepthStencilFormat>::CBSIZE,
 
     Mip0 = ((TextureMips >> 0) & 0x1),
     Mip1 = ((TextureMips >> 1) & 0x1),
@@ -633,7 +633,7 @@ public:
 
         uint32_t color;
 
-        uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
+        uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<(ePixelFormat)ColorFormat>::TYPE *>(pCB);
 
         if constexpr (Blend) {
           // Execute pixel blend
@@ -744,8 +744,8 @@ public:
     Tex1_MagFilter = __get_bitfield(Texture1, TEXTURESTATES::MAGFILTER),
     Tex1_EnvMode = __get_bitfield(Texture1, TEXTURESTATES::ENVMODE),
 
-    ColorStride = TFormatInfo<ColorFormat>::CBSIZE,
-    DepthStencilStride = TFormatInfo<DepthStencilFormat>::CBSIZE,
+    ColorStride = TFormatInfo<(ePixelFormat)ColorFormat>::CBSIZE,
+    DepthStencilStride = TFormatInfo<(ePixelFormat)DepthStencilFormat>::CBSIZE,
 
     Mip0 = ((TextureMips >> 0) & 0x1),
     Mip1 = ((TextureMips >> 1) & 0x1),
@@ -943,7 +943,7 @@ public:
       }
     }
 
-    fixedW fW = Math::Inverse<fixedW>(fRhw);
+    fixedW fW = Inverse<fixedW>(fRhw);
     fixedW fW2;
 
     if constexpr (Mip0 || Mip1) {
@@ -997,7 +997,7 @@ public:
 
     do {
       auto blockWidth1 = std::min(width, MAX_BLOCK_SIZE);
-      auto log2width = Math::iLog2(blockWidth1);
+      auto log2width = iLog2(blockWidth1);
       auto blockWidth = 1 << log2width;
       width -= blockWidth;
       auto pCBEnd = pCB + blockWidth * ColorStride;
@@ -1008,7 +1008,7 @@ public:
 
       if (log2width) {
         fRhw += fRhwdA << log2width;
-        fixedW fWr = Math::Inverse<fixedW>(fRhw);
+        fixedW fWr = Inverse<fixedW>(fRhw);
 
         if constexpr (InterpolateMips) {
           fWr2 = fWr * fWr;
@@ -1148,7 +1148,7 @@ public:
 
           uint32_t color;
 
-          uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
+          uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<(ePixelFormat)ColorFormat>::TYPE *>(pCB);
 
           if constexpr (Blend) {
             // Execute pixel blend
@@ -1265,8 +1265,8 @@ public:
     Tex1_MagFilter = __get_bitfield(Texture1, TEXTURESTATES::MAGFILTER),
     Tex1_EnvMode = __get_bitfield(Texture1, TEXTURESTATES::ENVMODE),
 
-    ColorStride = TFormatInfo<ColorFormat>::CBSIZE,
-    DepthStencilStride = TFormatInfo<DepthStencilFormat>::CBSIZE,
+    ColorStride = TFormatInfo<(ePixelFormat)ColorFormat>::CBSIZE,
+    DepthStencilStride = TFormatInfo<(ePixelFormat)DepthStencilFormat>::CBSIZE,
 
     Mip0 = ((TextureMips >> 0) & 0x1),
     Mip1 = ((TextureMips >> 1) & 0x1),
@@ -1602,7 +1602,7 @@ public:
 
         uint32_t color;
 
-        auto dstColor = *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
+        auto dstColor = *reinterpret_cast<typename TFormatInfo<(ePixelFormat)ColorFormat>::TYPE *>(pCB);
 
         if constexpr (Blend) {
           // Execute pixel blend
@@ -1701,8 +1701,8 @@ public:
     Tex1_MagFilter = __get_bitfield(Texture1, TEXTURESTATES::MAGFILTER),
     Tex1_EnvMode = __get_bitfield(Texture1, TEXTURESTATES::ENVMODE),
 
-    ColorStride = TFormatInfo<ColorFormat>::CBSIZE,
-    DepthStencilStride = TFormatInfo<DepthStencilFormat>::CBSIZE,
+    ColorStride = TFormatInfo<(ePixelFormat)ColorFormat>::CBSIZE,
+    DepthStencilStride = TFormatInfo<(ePixelFormat)DepthStencilFormat>::CBSIZE,
 
     Mip0 = ((TextureMips >> 0) & 0x1),
     Mip1 = ((TextureMips >> 1) & 0x1),
@@ -1998,7 +1998,7 @@ public:
 
       fRhw += fRhwdA * offset;
 
-      fixedW fW = Math::Inverse<fixedW>(fRhw);
+      fixedW fW = Inverse<fixedW>(fRhw);
       fixedW fW2;
 
       if constexpr (Mip0 || Mip1) {
@@ -2048,13 +2048,13 @@ public:
 
       do {
         auto blockWidth1 = std::min(width, MAX_BLOCK_SIZE);
-        auto log2width = Math::iLog2(blockWidth1);
+        auto log2width = iLog2(blockWidth1);
         auto blockWidth = 1 << log2width;
         width -= blockWidth;
         auto pCBEnd = pCB + blockWidth * ColorStride;
 
         fRhw += fRhwdA << log2width;
-        auto fWr = Math::Inverse<fixedW>(fRhw);
+        auto fWr = Inverse<fixedW>(fRhw);
         fixedW fWr2;
 
         if constexpr (InterpolateMips) {
@@ -2137,7 +2137,7 @@ public:
 
           uint32_t color;
 
-          uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<ColorFormat>::TYPE *>(pCB);
+          uint32_t dstColor = *reinterpret_cast<typename TFormatInfo<(ePixelFormat)ColorFormat>::TYPE *>(pCB);
 
           if constexpr (Blend) {
             // Execute pixel blend

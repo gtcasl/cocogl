@@ -76,13 +76,13 @@ void GLContext::loadMatrix(const MATRIX44 &matrix) {
 
 void GLContext::frustum(floatf left, floatf right, floatf bottom, floatf top,
                         floatf zNear, floatf zFar) {
-  if (zNear < Math::Zero<floatf>()) {
+  if (zNear < Zero<floatf>()) {
     __glError(GL_INVALID_VALUE,
               "GLContext::frustum() failed, zNear should not be negative.\r\n");
     return;
   }
 
-  if (zFar < Math::Zero<floatf>()) {
+  if (zFar < Zero<floatf>()) {
     __glError(GL_INVALID_VALUE,
               "GLContext::frustum() failed, zFar should not be negative.\r\n");
     return;
@@ -102,40 +102,40 @@ void GLContext::frustum(floatf left, floatf right, floatf bottom, floatf top,
   }
 
   MATRIX44 matTmp;
-  Math::Frustum(&matTmp, left, right, bottom, top, zNear, zFar);
+  Frustum(&matTmp, left, right, bottom, top, zNear, zFar);
   this->multiply(matTmp);
 }
 
 void GLContext::ortho(floatf left, floatf right, floatf bottom, floatf top,
                       floatf zNear, floatf zFar) {
   MATRIX44 matTmp;
-  Math::Ortho(&matTmp, left, right, bottom, top, zNear, zFar);
+  Ortho(&matTmp, left, right, bottom, top, zNear, zFar);
   this->multiply(matTmp);
 }
 
 void GLContext::scale(floatf x, floatf y, floatf z) {
   MATRIX44 matTmp;
-  Math::Scale(&matTmp, x, y, z);
+  Scale(&matTmp, x, y, z);
   this->multiply(matTmp);
 }
 
 void GLContext::translate(floatf x, floatf y, floatf z) {
   MATRIX44 matrix, matTmp;
-  Math::Translate(&matrix, x, y, z);
-  Math::Mul(&matTmp, pMatrixStack_->getMatrix(), matrix);
+  Translate(&matrix, x, y, z);
+  Mul(&matTmp, pMatrixStack_->getMatrix(), matrix);
   pMatrixStack_->setMatrix(matTmp);
   this->updateMatrixDirtyFlags();
 }
 
 void GLContext::rotate(floatf angle, floatf x, floatf y, floatf z) {
   MATRIX44 matTmp;
-  Math::Rotate(&matTmp, Math::DegToRad(angle), x, y, z);
+  Rotate(&matTmp, DegToRad(angle), x, y, z);
   this->multiply(matTmp);
 }
 
 void GLContext::multiply(const MATRIX44 &matrix) {
   MATRIX44 matTmp;
-  Math::Mul(&matTmp, pMatrixStack_->getMatrix(), matrix);
+  Mul(&matTmp, pMatrixStack_->getMatrix(), matrix);
   pMatrixStack_->setMatrix(matTmp);
   this->updateMatrixDirtyFlags();
 }

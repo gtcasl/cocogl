@@ -133,7 +133,7 @@ inline void DecodeVertex(D *pOut, const uint8_t *pbIn) {
     pOut->x = static_cast<floatf>(pIn->x);
   } else {
     if constexpr (D::DIM >= 1) {
-      pOut->x = Math::Zero<floatf>();
+      pOut->x = Zero<floatf>();
     }
   }
 
@@ -141,7 +141,7 @@ inline void DecodeVertex(D *pOut, const uint8_t *pbIn) {
     pOut->y = static_cast<floatf>(pIn->y);
   } else {
     if constexpr (D::DIM >= 2) {
-      pOut->y = Math::Zero<floatf>();
+      pOut->y = Zero<floatf>();
     }
   }
 
@@ -149,7 +149,7 @@ inline void DecodeVertex(D *pOut, const uint8_t *pbIn) {
     pOut->z = static_cast<floatf>(pIn->z);
   } else {
     if constexpr (D::DIM >= 3) {
-      pOut->z = Math::Zero<floatf>();
+      pOut->z = Zero<floatf>();
     }
   }
 
@@ -157,7 +157,7 @@ inline void DecodeVertex(D *pOut, const uint8_t *pbIn) {
     pOut->w = static_cast<floatf>(pIn->w);
   } else {
     if constexpr (D::DIM >= 4) {
-      pOut->w = Math::One<floatf>();
+      pOut->w = One<floatf>();
     }
   }
 }
@@ -177,10 +177,10 @@ DecodeVertex<VECTOR4, VertexData<VERTEX_RGBA>>(VECTOR4 *pOut,
   assert(pOut);
   assert(pbIn);
 
-  pOut->x = Math::FromUNORM8<floatf>(pbIn[0]);
-  pOut->y = Math::FromUNORM8<floatf>(pbIn[1]);
-  pOut->z = Math::FromUNORM8<floatf>(pbIn[2]);
-  pOut->w = Math::FromUNORM8<floatf>(pbIn[3]);
+  pOut->x = FromUNORM8<floatf>(pbIn[0]);
+  pOut->y = FromUNORM8<floatf>(pbIn[1]);
+  pOut->z = FromUNORM8<floatf>(pbIn[2]);
+  pOut->w = FromUNORM8<floatf>(pbIn[3]);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -232,11 +232,11 @@ inline void TNL::processLightingOneSided(uint32_t count) {
                       &vNormal, pbNormal + i * normalStride);
 
       // Transform the normal to world space
-      Math::Mul(&vNormal, vNormal, mModelViewInvT_);
+      Mul(&vNormal, vNormal, mModelViewInvT_);
 
       // Normalize the normal
       if (TNLFlags_.Normalize) {
-        Math::Normalize(&vNormal);
+        Normalize(&vNormal);
       }
     }
 
@@ -266,16 +266,16 @@ inline void TNL::processLightingOneSided(uint32_t count) {
     }
 
     // Clamp the front color
-    vResult.x = Math::Sat(vResult.x);
-    vResult.y = Math::Sat(vResult.y);
-    vResult.z = Math::Sat(vResult.z);
-    vResult.w = Math::Sat(vResult.w);
+    vResult.x = Sat(vResult.x);
+    vResult.y = Sat(vResult.y);
+    vResult.z = Sat(vResult.z);
+    vResult.w = Sat(vResult.w);
 
     // Set the front color
-    pcFrontColors[i].r = static_cast<uint8_t>(Math::ToUNORM8(vResult.x));
-    pcFrontColors[i].g = static_cast<uint8_t>(Math::ToUNORM8(vResult.y));
-    pcFrontColors[i].b = static_cast<uint8_t>(Math::ToUNORM8(vResult.z));
-    pcFrontColors[i].a = static_cast<uint8_t>(Math::ToUNORM8(vResult.w));
+    pcFrontColors[i].r = static_cast<uint8_t>(ToUNORM8(vResult.x));
+    pcFrontColors[i].g = static_cast<uint8_t>(ToUNORM8(vResult.y));
+    pcFrontColors[i].b = static_cast<uint8_t>(ToUNORM8(vResult.z));
+    pcFrontColors[i].a = static_cast<uint8_t>(ToUNORM8(vResult.w));
   }
 }
 
@@ -318,11 +318,11 @@ inline void TNL::processLightingTwoSided(uint32_t count) {
                       &vNormal, pbNormal + i * normalStride);
 
       // Transform the normal to world space
-      Math::Mul(&vNormal, vNormal, mModelViewInvT_);
+      Mul(&vNormal, vNormal, mModelViewInvT_);
 
       // Normalize the normal
       if (TNLFlags_.Normalize) {
-        Math::Normalize(&vNormal);
+        Normalize(&vNormal);
       }
     }
 
@@ -354,28 +354,28 @@ inline void TNL::processLightingTwoSided(uint32_t count) {
     }
 
     // Clamp the front color
-    vResults[0].x = Math::Sat(vResults[0].x);
-    vResults[0].y = Math::Sat(vResults[0].y);
-    vResults[0].z = Math::Sat(vResults[0].z);
-    vResults[0].w = Math::Sat(vResults[0].w);
+    vResults[0].x = Sat(vResults[0].x);
+    vResults[0].y = Sat(vResults[0].y);
+    vResults[0].z = Sat(vResults[0].z);
+    vResults[0].w = Sat(vResults[0].w);
 
     // Clamp the back color
-    vResults[1].x = Math::Sat(vResults[1].x);
-    vResults[1].y = Math::Sat(vResults[1].y);
-    vResults[1].z = Math::Sat(vResults[1].z);
-    vResults[1].w = Math::Sat(vResults[1].w);
+    vResults[1].x = Sat(vResults[1].x);
+    vResults[1].y = Sat(vResults[1].y);
+    vResults[1].z = Sat(vResults[1].z);
+    vResults[1].w = Sat(vResults[1].w);
 
     // Set the front color
-    pcFrontColors[i].r = static_cast<uint8_t>(Math::ToUNORM8(vResults[0].x));
-    pcFrontColors[i].g = static_cast<uint8_t>(Math::ToUNORM8(vResults[0].y));
-    pcFrontColors[i].b = static_cast<uint8_t>(Math::ToUNORM8(vResults[0].z));
-    pcFrontColors[i].a = static_cast<uint8_t>(Math::ToUNORM8(vResults[0].w));
+    pcFrontColors[i].r = static_cast<uint8_t>(ToUNORM8(vResults[0].x));
+    pcFrontColors[i].g = static_cast<uint8_t>(ToUNORM8(vResults[0].y));
+    pcFrontColors[i].b = static_cast<uint8_t>(ToUNORM8(vResults[0].z));
+    pcFrontColors[i].a = static_cast<uint8_t>(ToUNORM8(vResults[0].w));
 
     // Set the back color
-    pcBackColors[i].r = static_cast<uint8_t>(Math::ToUNORM8(vResults[1].x));
-    pcBackColors[i].g = static_cast<uint8_t>(Math::ToUNORM8(vResults[1].y));
-    pcBackColors[i].b = static_cast<uint8_t>(Math::ToUNORM8(vResults[1].z));
-    pcBackColors[i].a = static_cast<uint8_t>(Math::ToUNORM8(vResults[1].w));
+    pcBackColors[i].r = static_cast<uint8_t>(ToUNORM8(vResults[1].x));
+    pcBackColors[i].g = static_cast<uint8_t>(ToUNORM8(vResults[1].y));
+    pcBackColors[i].b = static_cast<uint8_t>(ToUNORM8(vResults[1].z));
+    pcBackColors[i].a = static_cast<uint8_t>(ToUNORM8(vResults[1].w));
   }
 }
 
@@ -392,16 +392,16 @@ void TNL::processVertexColor(uint32_t count) {
                                                     pbIn + i * stride);
 
     // Clamp the color
-    vColor.x = Math::Sat(vColor.x);
-    vColor.y = Math::Sat(vColor.y);
-    vColor.z = Math::Sat(vColor.z);
-    vColor.w = Math::Sat(vColor.w);
+    vColor.x = Sat(vColor.x);
+    vColor.y = Sat(vColor.y);
+    vColor.z = Sat(vColor.z);
+    vColor.w = Sat(vColor.w);
 
     // Set the front color
-    pcFrontColors[i].r = static_cast<uint8_t>(Math::ToUNORM8(vColor.x));
-    pcFrontColors[i].g = static_cast<uint8_t>(Math::ToUNORM8(vColor.y));
-    pcFrontColors[i].b = static_cast<uint8_t>(Math::ToUNORM8(vColor.z));
-    pcFrontColors[i].a = static_cast<uint8_t>(Math::ToUNORM8(vColor.w));
+    pcFrontColors[i].r = static_cast<uint8_t>(ToUNORM8(vColor.x));
+    pcFrontColors[i].g = static_cast<uint8_t>(ToUNORM8(vColor.y));
+    pcFrontColors[i].b = static_cast<uint8_t>(ToUNORM8(vColor.z));
+    pcFrontColors[i].a = static_cast<uint8_t>(ToUNORM8(vColor.w));
   }
 }
 
@@ -420,13 +420,13 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count)
                     VertexData<VertexFormat>>(&vIn, pbIn + i * stride);
 
     if constexpr (Transform) {
-      Math::Mul(&vIn, vIn, transform);
+      Mul(&vIn, vIn, transform);
     }
 
     if constexpr (VertexData<VertexFormat>::Output::DIM >= 4) {
-      if (!Math::IsAlmostZero(vIn.w - Math::One<floatf>()) 
-       && !Math::IsAlmostZero(vIn.w)) {
-        auto fInvW = Math::Inverse<floatf>(vIn.w);
+      if (!IsAlmostZero(vIn.w - One<floatf>()) 
+       && !IsAlmostZero(vIn.w)) {
+        auto fInvW = Inverse<floatf>(vIn.w);
         vIn.x *= fInvW;
         vIn.y *= fInvW;
       }
@@ -448,8 +448,8 @@ void TNL::processPointSize(uint32_t count) {
     pvEyePos = reinterpret_cast<VECTOR3 *>(pbVertexData_[VERTEX_EYEPOS]);
   } else {
     fInvAtt = vAttenuation.x;
-    if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
-      fInvAtt = Math::RSqrt(fInvAtt);
+    if (!IsAlmostZero(fInvAtt - One<floatf>())) {
+      fInvAtt = RSqrt(fInvAtt);
     }
   }
 
@@ -464,14 +464,14 @@ void TNL::processPointSize(uint32_t count) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fInvAtt = vAttenuation.z * fEyeDist * fEyeDist +
                      vAttenuation.y * fEyeDist + vAttenuation.x;
-      if (!Math::IsAlmostZero(fInvAtt - Math::One<floatf>())) {
-        vPointSize.x *= Math::RSqrt(fInvAtt);
+      if (!IsAlmostZero(fInvAtt - One<floatf>())) {
+        vPointSize.x *= RSqrt(fInvAtt);
       }
     } else {
       vPointSize.x *= fInvAtt;
     }
 
-    pfPointSizes[i] = std::max(static_cast<fixed4>(vPointSize.x), Math::One<fixed4>());
+    pfPointSizes[i] = std::max(static_cast<fixed4>(vPointSize.x), One<fixed4>());
   }
 }
 
@@ -487,7 +487,7 @@ void TNL::processFog(uint32_t count) {
 
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
-      pfFogs[i] = Math::Sat(fFogRatio * (fFogEnd - fEyeDist));
+      pfFogs[i] = Sat(fFogRatio * (fFogEnd - fEyeDist));
     }
   }
   if constexpr (FogMode == FogExp) {
@@ -496,7 +496,7 @@ void TNL::processFog(uint32_t count) {
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fTmp = fEyeDist * fFogDensity;
-      pfFogs[i] = static_cast<floatRX>(Math::Sat(std::exp(-fTmp)));
+      pfFogs[i] = static_cast<floatRX>(Sat(std::exp(-fTmp)));
     }
   }
   if constexpr (FogMode == FogExp2) {
@@ -505,7 +505,7 @@ void TNL::processFog(uint32_t count) {
     for (uint32_t i = 0; i < count; ++i) {
       auto fEyeDist = std::abs(pvEyePos[i].z);
       auto fTmp = fEyeDist * fFogDensity;
-      pfFogs[i] = static_cast<floatRX>(Math::Sat(std::exp(-(fTmp * fTmp))));
+      pfFogs[i] = static_cast<floatRX>(Sat(std::exp(-(fTmp * fTmp))));
     }
   }
 }

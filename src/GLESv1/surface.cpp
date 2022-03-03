@@ -170,7 +170,7 @@ GLenum GLSurface::saveBitmap(const char *filename) {
     uint32_t bmiColors[3];
   } bmp_info;
 
-  uint8_t nBPP = Format::GetInfo(colorDesc_.Format).BytePerPixel;
+  uint8_t nBPP = Format::GetInfo((ePixelFormat)colorDesc_.Format).BytePerPixel;
 
   bmp_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
   bmp_info.bmiHeader.biWidth = colorDesc_.Width;
