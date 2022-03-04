@@ -569,9 +569,9 @@ Register *Rasterizer::applyPerspectiveTextureMipmapGradient(Register *pRegister,
         auto fB = static_cast<floatRX>(pCur[i].m[1]);
         auto fC = static_cast<floatRX>(pCur[i].m[2]);
 
-        auto fK1 = MulSub<float24>(fA, fRhwdB, fB, fRhwdA);
-        auto fK2 = MulSub<floatRX>(fA, fRhwdC, fRhwdA, fC);
-        auto fK3 = MulSub<floatRX>(fB, fRhwdC, fRhwdB, fC);
+        auto fK1 = Cross<float24>(fA, fRhwdB, fB, fRhwdA);
+        auto fK2 = Cross<floatRX>(fA, fRhwdC, fRhwdA, fC);
+        auto fK3 = Cross<floatRX>(fB, fRhwdC, fRhwdB, fC);
 
         for (uint32_t k = 0; k < 3; ++k) {
           auto fK1x = Mul<floatRX>(fK1, vScreenPos[k]->x);

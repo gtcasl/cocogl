@@ -431,7 +431,7 @@ void TNL::transformEyeSpace(uint32_t count) {
     }
   } else {
     for (uint32_t i = 0; i < count; ++i) {
-      pvEyePos[i].z = MulAdd(
+      pvEyePos[i].z = Dot<floatf>(
           pvWorldPos[i].x, matEyeXform._31, 
           pvWorldPos[i].y, matEyeXform._32,
           pvWorldPos[i].z, matEyeXform._33, 
