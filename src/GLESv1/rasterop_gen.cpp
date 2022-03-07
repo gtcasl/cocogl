@@ -674,7 +674,6 @@ bool GenericRasterOp::doStencilTest(const RasterData &rasterData,
   if (bStencilTest) {
     if ((pRasterOp->pfnDepthTest_)(depthValue, _depthValue)) {
       stencilOp = static_cast<eStencilOp>(rasterStates.StencilZPass);
-
       if (rasterFlags.DepthWrite) {
         writeMask |= 0xffff;
       }
