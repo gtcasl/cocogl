@@ -1340,13 +1340,13 @@ GL_API GLenum GL_APIENTRY __glReleaseTexImage(__GLSurface surface) {
   return GL_INVALID_VALUE;
 }
 
-GLenum __glSaveBitmap(__GLSurface surface, const char *filename) {
+GLenum __glSaveImage(__GLSurface surface, const char *filename) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   if (surface) {
     auto pSurface = g_driver.getObject<GLSurface *>(surface);
     if (pSurface) {
-      return pSurface->saveBitmap(filename);
+      return pSurface->saveImage(filename);
     }
   }
 

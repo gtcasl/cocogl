@@ -311,11 +311,10 @@ EGLint _EGLSurface::InitializeWND(EGLNativeWindowType hWnd) {
   pImage_ = image;
 
   colorDesc.Format = _EGLSurface::getColorFormat(image->bits_per_pixel);
-  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data) +
-                    image->bytes_per_line * (image->height - 1);
-  colorDesc.Width = image->width;
+  colorDesc.pBits  = reinterpret_cast<uint8_t*>(image->data);
+  colorDesc.Width  = image->width;
   colorDesc.Height = image->height;
-  colorDesc.Pitch = -image->bytes_per_line;
+  colorDesc.Pitch  = image->bytes_per_line;
 #endif
 
   width_ = colorDesc.Width;
@@ -399,11 +398,10 @@ EGLint _EGLSurface::InitializePXM(EGLNativePixmapType hPixmap) {
   pImage_ = image;
 
   colorDesc.Format = _EGLSurface::getColorFormat(image->bits_per_pixel);
-  colorDesc.pBits = reinterpret_cast<uint8_t *>(image->data) +
-                    image->bytes_per_line * (image->height - 1);  
-  colorDesc.Width = image->width;
+  colorDesc.pBits  = reinterpret_cast<uint8_t *>(image->data);
+  colorDesc.Width  = image->width;
   colorDesc.Height = image->height;
-  colorDesc.Pitch = -image->bytes_per_line;
+  colorDesc.Pitch  = image->bytes_per_line;
 
   memset(image->data, 0, image->bytes_per_line * image->height);
 #endif
@@ -856,6 +854,6 @@ void _EGLSurface::getPBufferDesc(GLSurfaceDesc *pSurfaceDesc) {
   pSurfaceDesc->Pitch  = width * (nBPP / 8);
 }
 
-HRESULT _EGLSurface::saveBitmap(const char *filename) {
-  return __glSaveBitmap(glSurface_, filename);
+HRESULT _EGLSurface::saveImage(const char *filename) {
+  return __glSaveImage(glSurface_, filename);
 }

@@ -34,7 +34,6 @@
 #include <math.hpp>
 #include <object.hpp>
 #include <handle.hpp>
-#include <bitmap.hpp>
 
 using namespace cocogfx;
 

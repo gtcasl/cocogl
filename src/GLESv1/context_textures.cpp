@@ -475,10 +475,10 @@ void GLContext::readPixels(GLint x, GLint y, GLsizei width, GLsizei height,
       char filePath[MAX_PATH];
       ::GetModuleFileName( nullptr, filePath, MAX_PATH );
       PathRemoveFileSpec( filePath );
-      _sntprintf( filePath, MAX_PATH, "%s%s%d.bmp", filePath,
+      _sntprintf( filePath, MAX_PATH, "%s%s%d.png", filePath,
   "CocoGLESv1_cm", s_fileno++ );
       __glLog( " - Read Surface bitmap dump: %s.\r\n", filePath );
-      pSurfRead_->saveBitmap( filePath );
+      pSurfRead_->saveImage( filePath );
   #endif*/
 }
 

@@ -15,6 +15,10 @@
 #include "stdafx.h"
 #include "surface.hpp"
 #include "surface.inl"
+#include <filesystem>
+#include "tga.hpp"
+#include "png.hpp"
+#include "bmp.hpp"
 
 GLSurface::GLSurface() {
   __profileAPI(" - %s()\n", __FUNCTION__);
@@ -157,94 +161,33 @@ GLenum GLSurface::initialize(const GLSurfaceDesc *pColorDesc,
   return GL_NO_ERROR;
 }
 
-GLenum GLSurface::saveBitmap(const char *filename) {
-  BITMAPFILEHEADER header;
-  header.bfSize = 0;
-  header.bfType = BF_TYPE;
-  header.bfReserved1 = 0;
-  header.bfReserved2 = 0;
-  header.bfOffBits = 0;
-
-  struct bmp_info_header_t {
-    BITMAPINFOHEADER bmiHeader;
-    uint32_t bmiColors[3];
-  } bmp_info;
-
-  uint8_t nBPP = Format::GetInfo((ePixelFormat)colorDesc_.Format).BytePerPixel;
-
-  bmp_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-  bmp_info.bmiHeader.biWidth = colorDesc_.Width;
-  bmp_info.bmiHeader.biHeight = colorDesc_.Height;
-  bmp_info.bmiHeader.biPlanes = 1;
-  bmp_info.bmiHeader.biXPelsPerMeter = 0;
-  bmp_info.bmiHeader.biYPelsPerMeter = 0;
-  bmp_info.bmiHeader.biClrUsed = 0;
-  bmp_info.bmiHeader.biClrImportant = 0;
-
-  uint32_t infoSize;
-
-  if (2 == nBPP) {
-    bmp_info.bmiHeader.biBitCount = 16;
-    bmp_info.bmiHeader.biCompression = BI_BITFIELDS;
-    bmp_info.bmiColors[0] = 0xF800;
-    bmp_info.bmiColors[1] = 0x07E0;
-    bmp_info.bmiColors[2] = 0x001F;
-    infoSize = sizeof(bmp_info_header_t);
-  }
-  if (3 == nBPP || 4 == nBPP) {
-    bmp_info.bmiHeader.biBitCount = 24;
-    bmp_info.bmiHeader.biCompression = BI_RGB;
-    infoSize = sizeof(BITMAPINFOHEADER);
-  } else {
-    return GL_INVALID_OPERATION;
-  }
-
-  bmp_info.bmiHeader.biSizeImage = colorDesc_.Height *
-                                   bmp_info.bmiHeader.biWidth *
-                                   (bmp_info.bmiHeader.biBitCount / 8);
-  header.bfOffBits = sizeof(BITMAPFILEHEADER) + infoSize;
-  header.bfSize = header.bfOffBits + bmp_info.bmiHeader.biSizeImage;
-
-  auto pBits = colorDesc_.pBits;
-  if (colorDesc_.Pitch < 0) {
-    bmp_info.bmiHeader.biHeight *= -1;
-    int32_t offset = colorDesc_.Pitch * (colorDesc_.Height - 1);
-    pBits += offset;
-  }
-
-  auto pFile = fopen(filename, "w");
-  if (nullptr == pFile) {
-    return GL_INVALID_OPERATION;
-  }
-
-  if (fwrite(&header, 1, sizeof(BITMAPFILEHEADER), pFile) !=
-      sizeof(BITMAPFILEHEADER)) {
-    fclose(pFile);
-    return GL_OUT_OF_MEMORY;
-  }
-
-  if (fwrite(&bmp_info, 1, infoSize, pFile) != infoSize) {
-    fclose(pFile);
-    return GL_OUT_OF_MEMORY;
-  }
-
-  if (4 == nBPP) {
-    for (uint32_t offset = 0; offset < bmp_info.bmiHeader.biSizeImage;
-         offset += 3) {
-      if (fwrite(pBits + (4 * (offset / 3)), 1, 3, pFile) != 3) {
-        fclose(pFile);
-        return GL_OUT_OF_MEMORY;
-      }
-    }
-  } else {
-    if (fwrite(pBits, 1, bmp_info.bmiHeader.biSizeImage, pFile) !=
-        bmp_info.bmiHeader.biSizeImage) {
-      fclose(pFile);
+GLenum GLSurface::saveImage(const char *filename) {
+  uint8_t bpp = Format::GetInfo((ePixelFormat)colorDesc_.Format).BytePerPixel;
+  auto ext = std::filesystem::path(filename).extension();
+  if (0 == ext.compare(".tga")) {
+    int ret = cocogfx::SaveTGA(filename, colorDesc_.pBits, colorDesc_.Width, colorDesc_.Height, bpp, colorDesc_.Pitch);
+    if (ret) {
+      __glLogError("SavePNG() failed, ret=%d\r\n", ret);
       return GL_OUT_OF_MEMORY;
     }
+  } else 
+  if (0 == ext.compare(".png")) {
+    int ret = cocogfx::SavePNG(filename, colorDesc_.pBits, colorDesc_.Width, colorDesc_.Height, bpp, colorDesc_.Pitch);
+    if (ret) {
+      __glLogError("SavePNG() failed, ret=%d\r\n", ret);
+      return GL_OUT_OF_MEMORY;
+    }
+  } else 
+  if (0 == ext.compare(".bmp")) {
+    int ret = cocogfx::SaveBMP(filename, colorDesc_.pBits, colorDesc_.Width, colorDesc_.Height, bpp, colorDesc_.Pitch);
+    if (ret) {
+      __glLogError("SaveBMP() failed, ret=%d\r\n", ret);
+      return GL_OUT_OF_MEMORY;
+    }
+  } else {
+    __glLogError("saveImage() failed, invalid file extension: %s\r\n", ext);
+    return GL_INVALID_OPERATION;
   }
-
-  fclose(pFile);
 
   return GL_NO_ERROR;
 }

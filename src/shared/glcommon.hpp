@@ -45,7 +45,7 @@ extern HRESULT __glCopyBuffers(const GLSurfaceDesc *pDstDesc,
                                const GLSurfaceDesc *pSrcDesc);
 extern HRESULT __glBindTexImage(__GLSurface surface, bool bGenMipMaps);
 extern HRESULT __glReleaseTexImage(__GLSurface surface);
-extern HRESULT __glSaveBitmap(__GLSurface surface, const char *filename);
+extern HRESULT __glSaveImage(__GLSurface surface, const char *filename);
 
 #ifdef __cplusplus
 }

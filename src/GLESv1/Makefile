@@ -1,7 +1,9 @@
 CXXFLAGS += -std=c++17 -fPIC -Wall -Wextra -pedantic -Wfatal-errors 
 CXXFLAGS += -I../shared -I../../include -I../../third_party/cocogfx/include
 
-LDFLAGS += -shared -L../shared -lshared -L../../third_party/cocogfx -lcocogfx
+LDFLAGS += -shared -L../shared -lshared -L../../third_party/cocogfx -lcocogfx -lpng -lz
+
+BIN_DIR = ../../bin
 
 # Debugigng
 ifdef DEBUG
@@ -21,16 +23,19 @@ SRCS = $(wildcard *.cpp)
 
 OBJS := $(SRCS:.cpp=.o)
 
-all: $(PROJECT)
+all: $(BIN_DIR) $(BIN_DIR)/$(PROJECT)
 
-$(PROJECT): $(OBJS)
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+$(BIN_DIR)/$(PROJECT): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 .depend: $(SRCS)
 	$(CXX) $(CXXFLAGS) -MM $^ > .depend;
 
 clean:
-	rm -rf *.so *.o .depend
+	rm -rf $(BIN_DIR)/$(PROJECT) *.o .depend
 
 ifneq ($(MAKECMDGOALS),clean)
     -include .depend

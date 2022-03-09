@@ -63,7 +63,7 @@ public:
 
   EGLint releaseTexBound();
 
-  HRESULT saveBitmap(const char *filename);
+  HRESULT saveImage(const char *filename);
 
   void present();
 

@@ -16,7 +16,6 @@
 
 #include "platform.hpp"
 #include "utils.hpp"
-#include "bitmap.hpp"
 #include "handle.hpp"
 #include "logger.hpp"
 #include "object.hpp"

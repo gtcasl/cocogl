@@ -386,9 +386,11 @@ void GLContext::setDrawSurface(GLSurface *pSurface) {
     this->setViewport(0, 0, colorDesc.Width, colorDesc.Height);
     this->setScissor(0, 0, colorDesc.Width, colorDesc.Height);
 
-    rasterData_.pColorBits = reinterpret_cast<uint8_t *>(colorDesc.pBits);
+    auto colorBPP = Format::GetInfo((ePixelFormat)colorDesc.Format).BytePerPixel;
+    rasterData_.pColorBits = reinterpret_cast<uint8_t *>(colorDesc.pBits) 
+                           + colorBPP * colorDesc.Width * (colorDesc.Height - 1);
     rasterData_.ColorFormat = colorDesc.Format;
-    rasterData_.ColorPitch = colorDesc.Pitch;
+    rasterData_.ColorPitch = -colorDesc.Pitch;
 
     GLSurfaceDesc depthStencilDesc;
     pSurface->getDepthStencilDesc(&depthStencilDesc);

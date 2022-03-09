@@ -1,9 +1,9 @@
-OPENGL_PATH ?= ../src/GLES_CM
+OPENGL_PATH ?= ../bin
 
 CXXFLAGS += -std=c++17 -Wall -Wextra -pedantic -Wfatal-errors 
 CXXFLAGS += -I../include
 
-LDFLAGS += -L../src/GLES_CM -lm `sdl2-config --cflags --libs` -lGLES_CM
+LDFLAGS += -L$(OPENGL_PATH) -lm `sdl2-config --cflags --libs` -lGLES_CM
 
 # Debugigng
 ifdef DEBUG

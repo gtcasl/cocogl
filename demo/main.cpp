@@ -122,6 +122,11 @@ int main(int argc, char **argv) {
   int loop = 1;
   SDL_Event event;
 
+  if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+		std::cout << "Error initializing SDL: " << SDL_GetError() << std::endl;
+		return -1;
+	} 
+
   auto glesWindow = SDL_CreateWindow("CocoGL Demo", SDL_WINDOWPOS_CENTERED,
                                      SDL_WINDOWPOS_CENTERED, width, height, 0);
 
@@ -190,6 +195,8 @@ int main(int argc, char **argv) {
   cleanup();
 
   SDL_DestroyWindow(glesWindow);
+
+	SDL_Quit();
 
   return 0;
 }
