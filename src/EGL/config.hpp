@@ -26,9 +26,7 @@ public:
                        EGLint red, 
                        EGLint green,
                        EGLint blue, 
-                       EGLint alpha, 
-                       EGLint depth, 
-                       EGLint stencil);
+                       EGLint alpha);
 
   EGLint getAttribute(EGLint name) const {
     assert((name >= ATTRIBUTES_FIRST) && (name <= ATTRIBUTES_LAST));
@@ -48,12 +46,7 @@ public:
 
 private:
 
-  _EGLConfig(EGLint red, 
-             EGLint green, 
-             EGLint blue, 
-             EGLint alpha, 
-             EGLint depth,
-             EGLint stencil);
+  _EGLConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha);
              
   ~_EGLConfig();
 

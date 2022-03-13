@@ -21,9 +21,7 @@ public:
   GLenum renderPrimitive(GLenum mode, uint32_t count);
 
   template <typename T>
-  GLenum renderIndexedPrimitive(GLenum mode, const T *pIndices, uint32_t count, uint32_t startVertex);
-
-  void postRender();
+  GLenum renderIndexedPrimitive(GLenum mode, const T *pIndices, uint32_t count, uint32_t startVertex);  
 
 protected:
 
@@ -133,6 +131,10 @@ protected:
 
   ~Rasterizer() {}
 
+  GLenum beginRender(GLenum mode, int first, uint32_t count);
+
+  void endRender();
+
   GLenum setupRasterStates(GLenum mode);
 
   bool generateRasterOp();
@@ -149,8 +151,7 @@ protected:
 
   bool cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
 
-  void rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2,
-                             uint32_t clipUnion);
+  void rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2, uint32_t clipUnion);
 
   void rasterClippedLine(uint32_t i0, uint32_t i1, uint32_t clipUnion);
 
@@ -159,7 +160,7 @@ protected:
 
   uint32_t clipTriangle(uint32_t plane, uint32_t nNumVertices, uint32_t *pSrc, uint32_t *pDst, uint32_t *pTmp);
 
-  void interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA, floatf fDistB, uint32_t i2);
+  void interpolateVertex(uint32_t dst, uint32_t i0, uint32_t i1, floatf fDistA, floatf fDistB);
 
   void rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2);
 
@@ -198,9 +199,12 @@ protected:
 
   Register *applyAffineTextureMipmapGradient(Register *pRegister);
 
-  Register *applyPerspectiveTextureMipmapGradient(
-      Register *pRegister, const TriangleGradient &g, const RDVECTOR &v0,
-      const RDVECTOR &v1, const RDVECTOR &v2, floatRW rhws[3]);
+  Register *applyPerspectiveTextureMipmapGradient(Register *pRegister, 
+                                                  const TriangleGradient &g, 
+                                                  const RDVECTOR &v0, 
+                                                  const RDVECTOR &v1, 
+                                                  const RDVECTOR &v2, 
+                                                  floatRW rhws[3]);
 
   Register *applyFogGradient(Register *pRegister,
                              const TriangleGradient &g, 
@@ -235,10 +239,6 @@ protected:
     rasterData_.cFogColor.b = static_cast<uint8_t>(ToUNORM8(Sat(vFogColor_.z)));
     dirtyFlags_.FogColor = 0;
   }
-
-#ifdef DUMP_FRAME
-  void dumpPrimitives(uint32_t i0, uint32_t i1, uint32_t i2);
-#endif
 
   PolygonOffset polygonOffset_;
   floatf fLineWidth_;

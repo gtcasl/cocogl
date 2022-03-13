@@ -20,8 +20,6 @@
 
 static _EGLDriver g_driver;
 
-#ifndef NDEBUG
-
 const char *SurfaceAttributeToString(EGLint attribute) {
   switch (attribute) {
   case EGL_CONFIG_ID:
@@ -73,8 +71,6 @@ const char *EngineToString(EGLint engine) {
 
   return "UNKNOWN";
 }
-
-#endif
 
 EGLAPI EGLint EGLAPIENTRY eglGetError() {
   __profileAPI(" - %s()\n", __FUNCTION__);

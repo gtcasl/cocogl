@@ -685,8 +685,8 @@ inline void GLContext::get(GLenum pname, T *pParams) {
     break;
 
   case GL_DEPTH_RANGE:
-    pParams[0] = static_cast<T>(depthRange_.fNear);
-    pParams[1] = static_cast<T>(depthRange_.fFar);
+    pParams[0] = static_cast<T>(viewport_.fNear);
+    pParams[1] = static_cast<T>(viewport_.fFar);
     break;
 
   case GL_POINT_SIZE:

@@ -15,10 +15,11 @@
 #pragma once
 
 template <eClipFlags ClipPlane>
-inline uint32_t Rasterizer::clipTriangle(uint32_t nNumVertices, uint32_t *pSrc,
-                                         uint32_t *pDst, uint32_t *pTmp) {
-  auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+inline uint32_t Rasterizer::clipTriangle(uint32_t nNumVertices, 
+                                         uint32_t *pSrc,
+                                         uint32_t *pDst, 
+                                         uint32_t *pTmp) {
+  auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
   int coord = ClipPlane >> 1;
   static constexpr bool Signed = (ClipPlane & 1) != 0;
@@ -47,7 +48,7 @@ inline uint32_t Rasterizer::clipTriangle(uint32_t nNumVertices, uint32_t *pSrc,
       }
 
       // Compute the intersecting vertex
-      this->interpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
+      this->interpolateVertex(iTmp, iVA, iVB, fDistA, fDistB);
 
       // Add the new vertex to the current list
       assert(nClipVertices < CLIP_BUFFER_SIZE);
@@ -71,7 +72,7 @@ inline uint32_t Rasterizer::clipTriangle(uint32_t nNumVertices, uint32_t *pSrc,
       }
 
       // Compute the intersecting vertex
-      this->interpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
+      this->interpolateVertex(iTmp, iVA, iVB, fDistA, fDistB);
 
       // Add the new vertex to the current list
       assert(nClipVertices < CLIP_BUFFER_SIZE);
@@ -85,7 +86,8 @@ inline uint32_t Rasterizer::clipTriangle(uint32_t nNumVertices, uint32_t *pSrc,
 }
 
 template <typename T>
-inline GLenum Rasterizer::renderIndexedPrimitive(GLenum mode, const T *pIndices,
+inline GLenum Rasterizer::renderIndexedPrimitive(GLenum mode, 
+                                                 const T *pIndices,
                                                  uint32_t count,
                                                  uint32_t startVertex) {
   assert(pIndices);

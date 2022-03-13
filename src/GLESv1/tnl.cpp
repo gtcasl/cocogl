@@ -292,49 +292,7 @@ void TNL::processVertices(uint32_t count) {
   if (flags.Fog) {
     (this->*pfnFog_)(count);
   }
-
-#ifdef DUMP_FRAME
-  // dump tranformed vertives
-  this->dumpVertices(count);
-#endif
 }
-
-#ifdef DUMP_FRAME
-void TNL::dumpVertices(uint32_t count) {  
-  if (frames_ != DUMP_FRAME)
-    return;
-
-  auto flags = TNLFlags_;
-  
-  auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
-  auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_); 
-
-  for (uint32_t i = 0; i < count; ++i) {
-    auto& vertex = pvScreenPos[i];  
-    
-    printf("*** Vertex: {");
-    printf("%f, %f, %f, %f", vertex.clipPos.x, vertex.clipPos.y, vertex.clipPos.z, vertex.clipPos.w);
-
-    if (flags.Color) {
-      auto& color = pcColors[i];
-      printf(", 0x%x", color.value);
-    } else {
-      printf(", 0xffffffff");
-    }
-
-    if (flags.TexCoords) {
-      auto vTexCoords = reinterpret_cast<TEXCOORD2 *>(pbVertexData_[VERTEX_TEXCOORD0]);
-      auto &uv = vTexCoords[i];   
-      printf(", %f", uv.m[0]);
-      printf(", %f", uv.m[1]);
-    } else {
-      printf(", 0.0f");
-      printf(", 0.0f");
-    }
-    printf("}\n");
-  }  
-}
-#endif
 
 uint32_t TNL::CalcClipFlags(const VECTOR4 &vPosition) {
   auto cx = vPosition.x;
@@ -414,9 +372,6 @@ void TNL::transformScreenSpace(RDVECTOR *pRDVertex,
       pRDVertex[i].z = fMinZ + MulRnd<floatRX>(pvClipPos[i].z, fScaleZ);
       pRDVertex[i].rhw = One<floatRW>();
     }
-
-    // save original clip-space position
-    pRDVertex[i].clipPos = pvClipPos[i];
   }
 }
 
@@ -484,7 +439,8 @@ void TNL::processColor(uint32_t count) {
   }
 }
 
-void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+void TNL::processLightsOneSided(VECTOR4 *pvOut, 
+                                const VECTOR3 &vEyePos,
                                 const VECTOR3 &vNormal,
                                 const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
@@ -572,7 +528,8 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+void TNL::processLightsOneSided(VECTOR4 *pvOut, 
+                                const VECTOR3 &vEyePos,
                                 const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;                      // Light vector
@@ -658,7 +615,8 @@ void TNL::processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+void TNL::processLightsTwoSided(VECTOR4 *pvOut, 
+                                const VECTOR3 &vEyePos,
                                 const VECTOR3 &vNormal,
                                 const VECTOR4 &vVertexColor) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
@@ -764,7 +722,8 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
+void TNL::processLightsTwoSided(VECTOR4 *pvOut, 
+                                const VECTOR3 &vEyePos,
                                 const VECTOR3 &vNormal) {
   for (auto *pLight = pActiveLights_; pLight; pLight = pLight->pNext) {
     VECTOR3 vL;                      // Light vector
@@ -868,7 +827,8 @@ void TNL::processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
   }
 }
 
-void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
+void TNL::processTexCoords(uint32_t dstIndex, 
+                           uint32_t srcIndex,
                            uint32_t count) {
   auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
       pbVertexData_[VERTEX_TEXCOORD0 + dstIndex]);
@@ -880,8 +840,8 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex,
   }
 
   for (uint32_t k = 0; k < count; ++k) {
-    pvTexCoords[k].m[0] = static_cast<floatRX>(vIn.x);
-    pvTexCoords[k].m[1] = static_cast<floatRX>(vIn.y);
+    pvTexCoords[k].u = static_cast<floatRX>(vIn.x);
+    pvTexCoords[k].v = static_cast<floatRX>(vIn.y);
   }  
 }
 
@@ -1134,8 +1094,8 @@ void TNL::updateScreenXform() {
   screenXform_.fMinY = static_cast<fixed4>((viewport_.top + viewport_.bottom) / 2);
   screenXform_.fScaleY = float4(viewport_.bottom - viewport_.top) / 2;
 
-  screenXform_.fMinZ = static_cast<floatRX>((depthRange_.fNear + depthRange_.fFar) / 2);
-  screenXform_.fScaleZ = (depthRange_.fFar - depthRange_.fNear) / 2;
+  screenXform_.fMinZ = static_cast<floatRX>((viewport_.fNear + viewport_.fFar) / 2);
+  screenXform_.fScaleZ = (viewport_.fFar - viewport_.fNear) / 2;
 
   dirtyFlags_.ScreenXform = 0;
 }

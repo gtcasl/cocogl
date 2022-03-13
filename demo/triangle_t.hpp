@@ -56,7 +56,7 @@ public:
     GLshort vertexArray[9] = {-25, -25, 0, 25, -25, 0, 0, 25, 0};
 
     // GLshort vertexArray[9] = { -80,-20,0,   -80,-80,0,     40,-20,0 };
-    GLubyte colorArray[12] = {255, 0, 0, 0, 0, 255, 0, 0, 0, 0, 255, 0};
+    GLubyte colorArray[12] = {255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255};
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();

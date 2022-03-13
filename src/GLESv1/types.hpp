@@ -80,172 +80,27 @@ enum eHANDLETYPE {
   HANDLE_TEXTURE = 6,
 };
 
-struct VECTOR2B {
-  enum { DIM = 2 };
-
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
-  union {
-    struct {
-      GLbyte x;
-      GLbyte y;
-    };
-    struct {
-      GLbyte m[DIM];
-    };
-  };
-  DISABLE_WARNING_POP
-
-  VECTOR2B(const VECTOR2B &rhs) {
-    this->x = rhs.x;
-    this->y = rhs.y;
-  }
-};
-
-struct VECTOR2S {
-  enum { DIM = 2 };
-
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
-  union {
-    struct {
-      GLshort x;
-      GLshort y;
-    };
-    struct {
-      GLshort m[DIM];
-    };
-  };
-  DISABLE_WARNING_POP
-
-  VECTOR2S(const VECTOR2S &rhs) {
-    this->x = rhs.x;
-    this->y = rhs.y;
-  }
-};
-
-struct VECTOR3B {
-  enum { DIM = 3 };
-
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
-  union {
-    struct {
-      GLbyte x;
-      GLbyte y;
-      GLbyte z;
-    };
-    struct {
-      GLbyte m[DIM];
-    };
-  };
-  DISABLE_WARNING_POP
-
-  VECTOR3B(const VECTOR3B &rhs) {
-    this->x = rhs.x;
-    this->y = rhs.y;
-    this->z = rhs.z;
-  }
-};
-
-struct VECTOR3S {
-  enum { DIM = 3 };
-
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
-  union {
-    struct {
-      GLshort x;
-      GLshort y;
-      GLshort z;
-    };
-    struct {
-      GLshort m[DIM];
-    };
-  };
-  DISABLE_WARNING_POP
-
-  VECTOR3S(const VECTOR3S &rhs) {
-    this->x = rhs.x;
-    this->y = rhs.y;
-    this->z = rhs.z;
-  }
-};
-
-struct VECTOR4B {
-  enum { DIM = 4 };
-
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
-  union {
-    struct {
-      GLbyte x;
-      GLbyte y;
-      GLbyte z;
-      GLbyte w;
-    };
-    struct {
-      GLbyte m[DIM];
-    };
-  };
-  DISABLE_WARNING_POP
-
-  VECTOR4B(const VECTOR4B &rhs) {
-    this->x = rhs.x;
-    this->y = rhs.y;
-    this->z = rhs.z;
-    this->w = rhs.w;
-  }
-};
-
-struct VECTOR4S {
-  enum { DIM = 4 };
-
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
-  union {
-    struct {
-      GLshort x;
-      GLshort y;
-      GLshort z;
-      GLshort w;
-    };
-    struct {
-      GLshort m[DIM];
-    };
-  };
-  DISABLE_WARNING_POP
-
-  VECTOR4S(const VECTOR4S &rhs) {
-    this->x = rhs.x;
-    this->y = rhs.y;
-    this->z = rhs.z;
-    this->w = rhs.w;
-  }
-};
-
 struct TEXCOORD2 {
   enum { DIM = 2 };
-  floatRX m[DIM];
+
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT
+  union {
+    struct {
+      floatRX u;
+      floatRX v;
+    };
+    struct {
+      floatRX m[DIM];
+    };
+  };
+DISABLE_WARNING_POP
 
   TEXCOORD2() {}
 
   TEXCOORD2(const TEXCOORD2 &rhs) {
-    this->m[0] = rhs.m[0];
-    this->m[1] = rhs.m[1];
-  }
-
-  auto &u() const {
-    return m[0];
-  }
-  auto &u() {
-    return m[0];
-  }
-  auto &v() const {
-    return m[1];
-  }
-  auto &v() {
-    return m[1];
+    this->u = rhs.u;
+    this->v = rhs.v;
   }
 };
 
@@ -291,13 +146,10 @@ enum eVertexFormat {
 };
 
 struct Viewport {
-  int Left;
-  int Top;
-  int Width;
-  int Height;
-};
-
-struct DepthRange {
+  int    left;
+  int    right;
+  int    top;
+  int    bottom;
   floatf fNear;
   floatf fFar;
 };
@@ -314,12 +166,10 @@ struct PolygonOffset {
 
 struct ScreenXform {
   fixed4 fMinX;
-  float4
- fScaleX;
+  float4 fScaleX;
 
   fixed4 fMinY;
-  float4
- fScaleY;
+  float4 fScaleY;
 
   floatRX fMinZ;
   floatf fScaleZ;
@@ -598,8 +448,6 @@ struct RDVECTOR {
   fixed4 y;
   floatRX z;
   floatRW rhw;
-  
-  VECTOR4 clipPos;
 
   RDVECTOR() {}
 };

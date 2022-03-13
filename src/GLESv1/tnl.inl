@@ -432,8 +432,8 @@ void TNL::processTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count)
       }
     }
 
-    pvTexCoords[i].m[0] = static_cast<floatRX>(vIn.x);
-    pvTexCoords[i].m[1] = static_cast<floatRX>(vIn.y);
+    pvTexCoords[i].u = static_cast<floatRX>(vIn.x);
+    pvTexCoords[i].v = static_cast<floatRX>(vIn.y);
   }
 }
 

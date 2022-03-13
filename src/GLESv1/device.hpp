@@ -21,6 +21,7 @@
 #include "texture.hpp"
 #include "vertarray.hpp"
 #include "rastdata.hpp"
+#include "frametrace.hpp"
 
 class Device : public Object {
 public:
@@ -118,8 +119,7 @@ protected:
   uint32_t clientActiveTexture_;
 
   Rect scissor_;
-  Rect viewport_;
-  DepthRange depthRange_;
+  Viewport viewport_;
 
   RASTERSTATES rasterStates_;
   VertexStates vertexStates_;
@@ -129,4 +129,8 @@ protected:
   DirtyLights dirtyLights_;
 
   uint64_t frames_;
+
+#ifdef FRAME_TRACE
+  FrameTrace frameTrace_;
+#endif
 };

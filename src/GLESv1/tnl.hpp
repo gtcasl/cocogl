@@ -106,8 +106,7 @@ protected:
 
   uint32_t calcUserClipFlags(uint32_t count);
 
-  void transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos,
-                            uint32_t count);
+  void transformScreenSpace(RDVECTOR *pRDVertex, const VECTOR4 *pvClipPos, uint32_t count);
 
   void transformEyeSpace(uint32_t count);
 
@@ -115,27 +114,17 @@ protected:
 
   void processColor(uint32_t count);
 
-  void processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                             const VECTOR3 &vNormal,
-                             const VECTOR4 &vVertexColor);
+  void processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos, const VECTOR3 &vNormal, const VECTOR4 &vVertexColor);
 
-  void processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                             const VECTOR3 &vNormal);
+  void processLightsOneSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos, const VECTOR3 &vNormal);
 
-  void processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                             const VECTOR3 &vNormal,
-                             const VECTOR4 &vVertexColor);
+  void processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos, const VECTOR3 &vNormal, const VECTOR4 &vVertexColor);
 
-  void processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos,
-                             const VECTOR3 &vNormal);
+  void processLightsTwoSided(VECTOR4 *pvOut, const VECTOR3 &vEyePos, const VECTOR3 &vNormal);
 
   void processTexCoords(uint32_t dstIndex, uint32_t srcIndex, uint32_t count);
 
   void updateMatrixDirtyFlags();
-
-#ifdef DUMP_FRAME
-  void dumpVertices(uint32_t count);
-#endif
 
   std::vector<uint8_t> vertexBuffer_;
 

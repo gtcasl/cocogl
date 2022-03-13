@@ -56,8 +56,9 @@ inline int CullSign(TFixed<T> x0, TFixed<T> y0, TFixed<T> w0, TFixed<T> x1,
 
 inline int CullSign(float x0, float y0, float w0, float x1, float y1, float w1,
                     float x2, float y2, float w2) {
-  float sign = (w0 * (x1 * y2 - x2 * y1) - w1 * (x0 * y2 - x2 * y0) +
-                w2 * (x0 * y1 - x1 * y0));
+  float sign = w0 * (x1 * y2 - x2 * y1) - 
+               w1 * (x0 * y2 - x2 * y0) +
+               w2 * (x0 * y1 - x1 * y0);
 
   if (sign < 0) {
     return -1;
@@ -74,8 +75,7 @@ bool Rasterizer::cullClipSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   CullStates cullStates = cullStates_;
 
   if (CULL_FRONT_AND_BACK != cullStates.CullFace) {
-    auto pvClipPos =
-        reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+    auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
     const VECTOR4 &v0 = pvClipPos[i0];
     const VECTOR4 &v1 = pvClipPos[i1];
     const VECTOR4 &v2 = pvClipPos[i2];
@@ -122,7 +122,7 @@ void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1, uint32_t clipUnion)
 
   auto iNext = clipVerticesBaseIndex_;
   auto iFrom = i0;
-  auto iTo = i1;
+  auto iTo   = i1;
 
   floatf fDistA, fDistB;
 
@@ -178,17 +178,15 @@ void Rasterizer::rasterClippedLine(uint32_t i0, uint32_t i1, uint32_t clipUnion)
       }
 
       if (fDistA >= Zero<floatf>()) {
-        if (fDistB >= Zero<floatf>()) {
+        if (fDistB >= Zero<floatf>())
           continue;
-        }
-
-        this->interpolateVertex(iTo, iFrom, fDistA, fDistB, iNext);
+        this->interpolateVertex(iNext, iTo, iFrom, fDistA, fDistB);
         iTo = iNext++;
       } else if (fDistB < Zero<floatf>()) {
         continue;
       }
 
-      this->interpolateVertex(iFrom, iTo, fDistB, fDistA, iNext);
+      this->interpolateVertex(iNext, iFrom, iTo, fDistB, fDistA);
       iFrom = iNext++;
     }
   }
@@ -231,33 +229,27 @@ void Rasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2, ui
         __no_default;
 
       case CLIP_LEFT:
-        nNumVertices = this->clipTriangle<CLIP_LEFT>(nNumVertices, pSrc, pDst,
-                                                     &iTmpVertices);
+        nNumVertices = this->clipTriangle<CLIP_LEFT>(nNumVertices, pSrc, pDst, &iTmpVertices);
         break;
 
       case CLIP_RIGHT:
-        nNumVertices = this->clipTriangle<CLIP_RIGHT>(nNumVertices, pSrc, pDst,
-                                                      &iTmpVertices);
+        nNumVertices = this->clipTriangle<CLIP_RIGHT>(nNumVertices, pSrc, pDst, &iTmpVertices);
         break;
 
       case CLIP_TOP:
-        nNumVertices = this->clipTriangle<CLIP_TOP>(nNumVertices, pSrc, pDst,
-                                                    &iTmpVertices);
+        nNumVertices = this->clipTriangle<CLIP_TOP>(nNumVertices, pSrc, pDst, &iTmpVertices);
         break;
 
       case CLIP_BOTTOM:
-        nNumVertices = this->clipTriangle<CLIP_BOTTOM>(nNumVertices, pSrc, pDst,
-                                                       &iTmpVertices);
+        nNumVertices = this->clipTriangle<CLIP_BOTTOM>(nNumVertices, pSrc, pDst, &iTmpVertices);
         break;
 
       case CLIP_FRONT:
-        nNumVertices = this->clipTriangle<CLIP_FRONT>(nNumVertices, pSrc, pDst,
-                                                      &iTmpVertices);
+        nNumVertices = this->clipTriangle<CLIP_FRONT>(nNumVertices, pSrc, pDst, &iTmpVertices);
         break;
 
       case CLIP_BACK:
-        nNumVertices = this->clipTriangle<CLIP_BACK>(nNumVertices, pSrc, pDst,
-                                                     &iTmpVertices);
+        nNumVertices = this->clipTriangle<CLIP_BACK>(nNumVertices, pSrc, pDst, &iTmpVertices);
         break;
 
       case CLIP_PLANE0:
@@ -297,11 +289,12 @@ void Rasterizer::rasterClippedTriangle(uint32_t i0, uint32_t i1, uint32_t i2, ui
   }
 }
 
-uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
-                                  uint32_t *pSrc, uint32_t *pDst,
+uint32_t Rasterizer::clipTriangle(uint32_t plane, 
+                                  uint32_t nNumVertices,
+                                  uint32_t *pSrc, 
+                                  uint32_t *pDst,
                                   uint32_t *pTmp) {
-  auto pvClipPos =
-      reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
+  auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
   floatf fDistA, fDistB;
 
@@ -331,7 +324,7 @@ uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
     }
 
     // Compute the intersecting vertex
-    this->interpolateVertex(iVA, iVB, fDistA, fDistB, iTmp);
+    this->interpolateVertex(iTmp, iVA, iVB, fDistA, fDistB);
 
     // Add the new vertex to the current list
     assert(nClipVertices < CLIP_BUFFER_SIZE);
@@ -343,8 +336,7 @@ uint32_t Rasterizer::clipTriangle(uint32_t plane, uint32_t nNumVertices,
   return nClipVertices;
 }
 
-void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
-                                   floatf fDistB, uint32_t i2) {
+void Rasterizer::interpolateVertex(uint32_t dst, uint32_t i0, uint32_t i1, floatf fDistA, floatf fDistB) {
   auto pwFlags = reinterpret_cast<uint16_t *>(pbVertexData_[VERTEX_FLAGS]);
   auto pvClipPos = reinterpret_cast<VECTOR4 *>(pbVertexData_[VERTEX_CLIPPOS]);
 
@@ -352,38 +344,34 @@ void Rasterizer::interpolateVertex(uint32_t i0, uint32_t i1, floatf fDistA,
   assert((factor >= Zero<float30>()) &&
          (factor <= One<float30>()));
 
-  pvClipPos[i2].x = Lerpf(pvClipPos[i0].x, pvClipPos[i1].x, factor);
-  pvClipPos[i2].y = Lerpf(pvClipPos[i0].y, pvClipPos[i1].y, factor);
-  pvClipPos[i2].z = Lerpf(pvClipPos[i0].z, pvClipPos[i1].z, factor);
-  pvClipPos[i2].w = Lerpf(pvClipPos[i0].w, pvClipPos[i1].w, factor);
+  pvClipPos[dst].x = Lerpf(pvClipPos[i0].x, pvClipPos[i1].x, factor);
+  pvClipPos[dst].y = Lerpf(pvClipPos[i0].y, pvClipPos[i1].y, factor);
+  pvClipPos[dst].z = Lerpf(pvClipPos[i0].z, pvClipPos[i1].z, factor);
+  pvClipPos[dst].w = Lerpf(pvClipPos[i0].w, pvClipPos[i1].w, factor);
 
   auto rasterFlags = rasterID_.Flags;
 
   if (rasterFlags.Color) {
     auto pcColors = reinterpret_cast<ColorARGB *>(pbVertexColor_);
-
-    pcColors[i2] =
-        ColorARGB(Lerp(pcColors[i0].a, pcColors[i1].a, factor),
-                  Lerp(pcColors[i0].r, pcColors[i1].r, factor),
-                  Lerp(pcColors[i0].g, pcColors[i1].g, factor),
-                  Lerp(pcColors[i0].b, pcColors[i1].b, factor));
+    pcColors[dst] = ColorARGB(Lerp(pcColors[i0].a, pcColors[i1].a, factor),
+                              Lerp(pcColors[i0].r, pcColors[i1].r, factor),
+                              Lerp(pcColors[i0].g, pcColors[i1].g, factor),
+                              Lerp(pcColors[i0].b, pcColors[i1].b, factor));
   }
 
   if (rasterFlags.NumTextures) {
     for (uint32_t i = 0, n = rasterFlags.NumTextures; i < n; ++i) {
       auto pvTexCoords = reinterpret_cast<TEXCOORD2 *>(
           pbVertexData_[VERTEX_TEXCOORD0 + i]);
-      pvTexCoords[i2].m[0] =
-          Lerpf(pvTexCoords[i0].m[0], pvTexCoords[i1].m[0], factor);
-      pvTexCoords[i2].m[1] =
-          Lerpf(pvTexCoords[i0].m[1], pvTexCoords[i1].m[1], factor);
+      pvTexCoords[dst].u = Lerpf(pvTexCoords[i0].u, pvTexCoords[i1].u, factor);
+      pvTexCoords[dst].v = Lerpf(pvTexCoords[i0].v, pvTexCoords[i1].v, factor);
     }
   }
 
   if (rasterFlags.Fog) {
     auto pfFogs = reinterpret_cast<floatRX *>(pbVertexData_[VERTEX_FOG]);
-    pfFogs[i2] = Lerpf(pfFogs[i0], pfFogs[i1], factor);
+    pfFogs[dst] = Lerpf(pfFogs[i0], pfFogs[i1], factor);
   }
 
-  pwFlags[i2] = 1;
+  pwFlags[dst] = 1;
 }

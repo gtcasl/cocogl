@@ -28,7 +28,6 @@ void GLContext::clearColor(floatf red, floatf green, floatf blue,
 
 void GLContext::clearDepth(floatf depth) {
   fClearDepth_ = depth;
-
   dirtyFlags_.ClearDepth = 1;
 }
 
@@ -99,6 +98,12 @@ void GLContext::clear(GLbitfield mask) {
     pSurfDraw_->clearStencil(clearStencil_, stencilWriteMask_, scissorRect_);
   }
 
+#ifdef FRAME_TRACE
+  if (frames_ == (FRAME_TRACE+1)) {
+    frameTrace_.save("frame.cgltrace");
+  }
+#endif
+
   // increment frames
   ++frames_;
 }
@@ -114,17 +119,10 @@ void GLContext::drawArrays(GLenum mode, GLint first, GLsizei count) {
     goto L_EXIT;
   }
 
-  // Setup the raster states
-  err = this->setupRasterStates(mode);
+  // Begin rendering
+  err = this->beginRender(mode, first, count);
   if (__glFailed(err)) {
-    __glLogError("Rasterizers::setupRasterStates() failed, err = %d.\r\n", err);
-    goto L_EXIT;
-  }
-
-  // Setup TNL states
-  err = this->setupTNLStates(mode, first, count);
-  if (__glFailed(err)) {
-    __glLogError("TNL::setupTNLStates() failed, err = %d.\r\n", err);
+    __glLogError("Rasterizers::beginRender() failed, err = %d.\r\n", err);
     goto L_EXIT;
   }
 
@@ -140,12 +138,11 @@ void GLContext::drawArrays(GLenum mode, GLint first, GLsizei count) {
 
 L_EXIT:
 
-  // CLose rendering
-  this->postRender();
+  // End rendering
+  this->endRender();
 }
 
-void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
-                             const GLvoid *pIndices) {
+void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *pIndices) {
   {
     GLenum err;
 
@@ -166,20 +163,13 @@ void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
       goto L_EXIT;
     }
 
-    // Setup the raster states
-    err = this->setupRasterStates(mode);
-    if (__glFailed(err)) {
-      __glLogError("Rasterizer::setupRasterStates() failed, err = %d.\r\n",
-                   err);
-      goto L_EXIT;
-    }
-
     uint32_t vertexCount = vmax - vmin + 1;
 
-    // Setup TNL states
-    err = this->setupTNLStates(mode, vmin, vertexCount);
+    // Begin rendering
+    err = this->beginRender(mode, vmin, vertexCount);
     if (__glFailed(err)) {
-      __glLogError("TNL::setupTNLStates() failed, err = %d.\r\n", err);
+      __glLogError("Rasterizer::beginRender() failed, err = %d.\r\n",
+                   err);
       goto L_EXIT;
     }
 
@@ -221,8 +211,8 @@ void GLContext::drawElements(GLenum mode, GLsizei count, GLenum type,
 
 L_EXIT:
 
-  // CLose rendering
-  this->postRender();
+  // End rendering
+  this->endRender();
 }
 
 void GLContext::flush() {

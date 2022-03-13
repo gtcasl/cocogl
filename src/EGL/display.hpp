@@ -68,8 +68,7 @@ private:
   
   ~_EGLDisplay();
 
-  EGLint createConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha,
-                      EGLint depth, EGLint stencil);
+  EGLint createConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha);
 
   HandleTable handles_;
   EGLNativeDisplayType hNative_;

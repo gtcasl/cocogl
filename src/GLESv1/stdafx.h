@@ -15,7 +15,7 @@
 
 #pragma once
 
-//#define DUMP_FRAME 1
+//#define FRAME_TRACE 1
 
 #include <list>
 #include <map>
@@ -146,6 +146,10 @@ typedef cocogfx::TVector2<floatf>   VECTOR2;
 typedef cocogfx::TVector3<floatf>   VECTOR3;
 typedef cocogfx::TVector4<floatf>   VECTOR4;
 typedef cocogfx::TMatrix44<floatf>  MATRIX44;
+
+#define FORMAT_A      FORMAT_A8
+#define FORMAT_RGB    FORMAT_R5G6B5
+#define FORMAT_ARGB   FORMAT_A8R8G8B8
 
 using namespace cocogfx;
 

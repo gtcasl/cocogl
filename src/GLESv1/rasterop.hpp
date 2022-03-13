@@ -441,7 +441,8 @@ ColorARGB GetTexEnvColorA(const ColorARGB &cColor, const ColorARGB &cTexture,
 }
 
 template <uint32_t EnvMode>
-ColorARGB GetTexEnvColorRGB(const ColorARGB &cColor, const ColorARGB &cTexture,
+ColorARGB GetTexEnvColorRGB(const ColorARGB &cColor, const 
+                            ColorARGB &cTexture,
                             const ColorARGB &cEnvColor) {
   ColorARGB ret(cColor);
 

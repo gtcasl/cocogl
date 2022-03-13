@@ -75,37 +75,13 @@ EGLint _EGLDisplay::initialize(EGLint *pMajor, EGLint *pMinor) {
 
   if (!isInitialized_) {
 #if defined(COCOGL_RASTER_R5G6B5)
-    err = this->createConfig(5, 6, 5, 0, 0, 0);
-    if (__eglFailed(err)) {
-      __eglLogError("createConfig() failed, err = %d.\r\n", err);
-      return err;
-    }
-
-    err = this->createConfig(5, 6, 5, 0, 16, 0);
-    if (__eglFailed(err)) {
-      __eglLogError("createConfig() failed, err = %d.\r\n", err);
-      return err;
-    }
-
-    err = this->createConfig(5, 6, 5, 0, 16, 8);
+    err = this->createConfig(5, 6, 5, 0);
     if (__eglFailed(err)) {
       __eglLogError("createConfig() failed, err = %d.\r\n", err);
       return err;
     }
 #elif defined(COCOGL_RASTER_A8R8G8B8)
-    err = this->createConfig(8, 8, 8, 8, 0, 0);
-    if (__eglFailed(err)) {
-      __eglLogError("createConfig() failed, err = %d.\r\n", err);
-      return err;
-    }
-
-    err = this->createConfig(8, 8, 8, 8, 16, 0);
-    if (__eglFailed(err)) {
-      __eglLogError("createConfig() failed, err = %d.\r\n", err);
-      return err;
-    }
-
-    err = this->createConfig(8, 8, 8, 8, 16, 8);
+    err = this->createConfig(8, 8, 8, 8);
     if (__eglFailed(err)) {
       __eglLogError("createConfig() failed, err = %d.\r\n", err);
       return err;
@@ -126,15 +102,14 @@ EGLint _EGLDisplay::initialize(EGLint *pMajor, EGLint *pMinor) {
   return EGL_SUCCESS;
 }
 
-EGLint _EGLDisplay::createConfig(EGLint red, EGLint green, EGLint blue,
-                                 EGLint alpha, EGLint depth, EGLint stencil) {
+EGLint _EGLDisplay::createConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha) {
   __profileAPI(" - %s()\n", __FUNCTION__);
 
   EGLint err;
   _EGLConfig *pConfig;
 
   // Create a new config object
-  err = _EGLConfig::Create(&pConfig, red, green, blue, alpha, depth, stencil);
+  err = _EGLConfig::Create(&pConfig, red, green, blue, alpha);
   if (__eglFailed(err)) {
     __eglLogError("_EGLConfig::Create() failed, err = %d.\r\n", err);
     return err;

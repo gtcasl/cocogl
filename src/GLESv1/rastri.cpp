@@ -41,20 +41,7 @@ void Rasterizer::drawTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
       }
     }
   }
-
-#ifdef DUMP_FRAME
-  this->dumpPrimitives(i0, i1, i2);
-#endif
 }
-
-#ifdef DUMP_FRAME
-void Rasterizer::dumpPrimitives(uint32_t i0, uint32_t i1, uint32_t i2) {
-  if (frames_ != DUMP_FRAME)
-    return;
-
-  printf("*** Primitive: {%d, %d, %d}\n", i0, i1, i2);
-}
-#endif
 
 bool Rasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   auto pvScreenPos = reinterpret_cast<RDVECTOR *>(pbVertexData_[VERTEX_SCREENPOS]);
@@ -71,14 +58,11 @@ bool Rasterizer::cullScreenSpaceTriangle(uint32_t i0, uint32_t i1, uint32_t i2) 
 
   auto cullStates = cullStates_;
   if (CULL_FRONT_AND_BACK != cullStates.CullFace) {
-    auto i8Sign = FastMul<fixed8>(i4dx10, i4dy20) -
-                  FastMul<fixed8>(i4dx20, i4dy10);
+    auto i8Sign = FastMul<fixed8>(i4dx10, i4dy20) - FastMul<fixed8>(i4dx20, i4dy10);
     if (CULL_BACK == cullStates.CullFace) {
-      culled = static_cast<uint32_t>(i8Sign < Zero<fixed8>()) ^
-               cullStates.FrontFace;
+      culled = static_cast<uint32_t>(i8Sign < Zero<fixed8>()) ^ cullStates.FrontFace;
     } else {
-      culled = static_cast<uint32_t>(i8Sign > Zero<fixed8>()) ^
-               cullStates.FrontFace;
+      culled = static_cast<uint32_t>(i8Sign > Zero<fixed8>()) ^ cullStates.FrontFace;
     }
   } else {
     culled = 1;
@@ -106,6 +90,12 @@ void Rasterizer::rasterTriangle(uint32_t i0, uint32_t i1, uint32_t i2) {
   // Setup triangle attributes  
   if (!this->setupTriangleAttributes(&g, i0, i1, i2))
     return;
+
+#ifdef FRAME_TRACE
+  if (frames_ == (FRAME_TRACE+1)) {
+    frameTrace_.capture(i0, i1, i2, pbVertexData_);
+  }
+#endif
 
 #ifdef COCOGL_RASTER_PROFILE
   auto start_time = std::chrono::high_resolution_clock::now();

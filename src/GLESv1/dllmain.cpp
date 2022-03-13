@@ -22,8 +22,6 @@
 Logger g_logger("CocoGL.log");
 static GLDriver g_driver;
 
-#ifndef NDEBUG
-
 const char *FuncToString(GLenum func) {
   switch (func) {
   case GL_NEVER:
@@ -1123,8 +1121,6 @@ const char *AttributeToString(GLenum pname) {
 
   return "UNKNOWN";
 }
-
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 

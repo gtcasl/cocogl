@@ -111,11 +111,11 @@ void Rasterizer::rasterPoint(uint32_t index) {
 
         pRegisters[0].m[0] = Zero<fixedRX>();
         pRegisters[0].m[1] = Zero<fixedRX>();
-        pRegisters[0].m[2] = static_cast<fixedRX>(vTexCoord.m[0]);
+        pRegisters[0].m[2] = static_cast<fixedRX>(vTexCoord.u);
 
         pRegisters[1].m[0] = Zero<fixedRX>();
         pRegisters[1].m[1] = Zero<fixedRX>();
-        pRegisters[1].m[2] = static_cast<fixedRX>(vTexCoord.m[1]);
+        pRegisters[1].m[2] = static_cast<fixedRX>(vTexCoord.v);
       }
 
       pRegisters += 2;

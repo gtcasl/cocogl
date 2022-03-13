@@ -241,7 +241,40 @@ bool Rasterizer::generateRasterOp() {
   return true;
 }
 
-void Rasterizer::postRender() {
+GLenum Rasterizer::beginRender(GLenum mode, int first, uint32_t count) {
+  GLenum err;
+
+  // Setup rasterizer states
+  err = this->setupRasterStates(mode);
+  if (__glFailed(err)) {
+    __glLogError("Rasterizers::setupRasterStates() failed, err = %d.\r\n", err);
+    return err;
+  }
+
+  // Setup TNL states
+  err = this->setupTNLStates(mode, first, count);
+  if (__glFailed(err)) {
+    __glLogError("TNL::setupTNLStates() failed, err = %d.\r\n", err);
+    return err;
+  }
+
+#ifdef FRAME_TRACE
+  if (frames_ == (FRAME_TRACE+1)) {
+    frameTrace_.beginTrace(rasterID_, rasterData_, viewport_);
+  }
+#endif
+
+  return GL_NO_ERROR;
+}
+
+void Rasterizer::endRender() {
+  
+#ifdef FRAME_TRACE
+  if (frames_ == (FRAME_TRACE+1)) {
+    frameTrace_.endTrace();
+  }
+#endif
+
   // Free the rasterop
   __safeRelease(rasterData_.pRasterOp);  
 }
