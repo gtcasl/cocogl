@@ -35,36 +35,38 @@ inline void GLContext::setLightParameter(GLenum light, GLenum pname,
   case GL_DIFFUSE:
   case GL_SPECULAR:
   case GL_POSITION: {
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ARRAY_BOUNDS
     VECTOR4 vParam(
       static_cast<floatf>(pParams[0]),
       static_cast<floatf>(pParams[1]),
       static_cast<floatf>(pParams[2]),
       static_cast<floatf>(pParams[3])
     );
-
+  DISABLE_WARNING_POP
     if (GL_POSITION == pname) {
       _light.Flags.DirectionalLight = IsAlmostZero(vParam.w) ? 1 : 0;
       Mul(&_light.vPosition, vParam, pMsModelView_->getMatrix());
     } else {
       _light.setColor(pname, vParam);
     }
-
     dirtyLights_.States[pname - GL_AMBIENT] |= (1 << index);
   }
 
   break;
 
   case GL_SPOT_DIRECTION: {
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ARRAY_BOUNDS
     VECTOR3 vParam(
       static_cast<floatf>(pParams[0]),
       static_cast<floatf>(pParams[1]),
       static_cast<floatf>(pParams[2])
     );
-
+  DISABLE_WARNING_POP
     if (dirtyFlags_.ModelViewInvT33) {
       this->updateModelViewInvT33();
     }
-
     Mul(&_light.vSpotDirection, vParam, mModelViewInvT_);
   }
 
@@ -136,10 +138,13 @@ inline void GLContext::setLightParameterModel(GLenum pname, const T *pParams) {
     break;
 
   case GL_LIGHT_MODEL_AMBIENT:
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ARRAY_BOUNDS
     vLightModelAmbient_.x = static_cast<floatf>(pParams[0]);
     vLightModelAmbient_.y = static_cast<floatf>(pParams[1]);
     vLightModelAmbient_.z = static_cast<floatf>(pParams[2]);
     vLightModelAmbient_.w = static_cast<floatf>(pParams[3]);
+  DISABLE_WARNING_POP
     dirtyFlags_.ScaledAmbient = 1;
     break;
 
@@ -175,11 +180,13 @@ inline void GLContext::setMaterial(GLenum face, GLenum pname,
     [[fallthrough]];
   case GL_SPECULAR:
   case GL_EMISSION: {
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ARRAY_BOUNDS
     vParam.x = static_cast<floatf>(pParams[0]);
     vParam.y = static_cast<floatf>(pParams[1]);
     vParam.z = static_cast<floatf>(pParams[2]);
     vParam.w = static_cast<floatf>(pParams[3]);
-
+  DISABLE_WARNING_POP
     if (GL_EMISSION == pname) {
       vMatEmissive_ = vParam;
     } else {
@@ -253,10 +260,13 @@ inline void GLContext::setFog(GLenum pname, const T *pParams) {
     break;
 
   case GL_FOG_COLOR:
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ARRAY_BOUNDS
     vFogColor_.x = static_cast<floatf>(pParams[0]);
     vFogColor_.y = static_cast<floatf>(pParams[1]);
     vFogColor_.z = static_cast<floatf>(pParams[2]);
     vFogColor_.w = static_cast<floatf>(pParams[3]);
+  DISABLE_WARNING_POP
     dirtyFlags_.FogColor = 1;
     break;
 

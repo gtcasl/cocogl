@@ -18,26 +18,26 @@ class _EGLDisplay;
 
 class _EGLSurface : public Object {
 public:
-  static EGLint CreateWND(_EGLSurface **ppSurface, 
+  static EGLint CreateWND(_EGLSurface **ppSurface,
                           _EGLDisplay *display,
-                          EGLint surfaceType, 
+                          EGLint surfaceType,
                           _EGLConfig *pConfig,
                           EGLNativeWindowType hWnd);
 
-  static EGLint CreatePXM(_EGLSurface **ppSurface, 
+  static EGLint CreatePXM(_EGLSurface **ppSurface,
                           _EGLDisplay *display,
-                          EGLint surfaceType, 
+                          EGLint surfaceType,
                           _EGLConfig *pConfig,
                           EGLNativePixmapType hPixmap);
 
-  static EGLint CreatePBF(_EGLSurface **ppSurface, 
+  static EGLint CreatePBF(_EGLSurface **ppSurface,
                           _EGLDisplay *display,
-                          EGLint surfaceType, 
-                          _EGLConfig *pConfig, 
+                          EGLint surfaceType,
+                          _EGLConfig *pConfig,
                           EGLint width,
-                          EGLint height, 
+                          EGLint height,
                           EGLint largestPBuffer,
-                          EGLint texTarget, 
+                          EGLint texTarget,
                           EGLint texFormat,
                           EGLint bGenMipMaps);
 
@@ -47,15 +47,15 @@ public:
 
   EGLint copyBuffer(EGLNativePixmapType hPixmap);
 
-  auto getConfig() const {
+  _EGLConfig* getConfig() const {
     return pConfig_;
   }
 
-  auto getType() const {
+  EGLint getType() const {
     return surfaceType_;
   }
 
-  auto getNativeData() const {
+  __GLSurface getNativeData() const {
     return glSurface_;
   }
 
@@ -82,14 +82,14 @@ private:
 
   EGLint InitializePXM(EGLNativePixmapType hPixmap);
 
-  EGLint InitializePBF(EGLint width,  
-                       EGLint height, 
+  EGLint InitializePBF(EGLint width,
+                       EGLint height,
                        EGLint largestPBuffer,
-                       EGLint texTarget, 
-                       EGLint texFormat, 
+                       EGLint texTarget,
+                       EGLint texFormat,
                        EGLint bGenMipMaps);
 
-  EGLint InitDepthStencil(uint32_t width, 
+  EGLint InitDepthStencil(uint32_t width,
                           uint32_t height,
                           GLSurfaceDesc *pSurfaceDesc);
 

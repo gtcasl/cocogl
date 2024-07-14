@@ -14,6 +14,8 @@
 //
 #pragma once
 
+#include <type_traits>
+
 void DbgPrintf(int level, const char *format, ...);
 
 ///////////////////////////////////////////////////////////////////////////////

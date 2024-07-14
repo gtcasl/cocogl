@@ -14,6 +14,7 @@
 //
 #include "stdafx.h"
 #include "handle.hpp"
+#include <stdlib.h>
 
 HandleTable::HandleTable()
   : capacity_(0)
@@ -67,8 +68,7 @@ HRESULT HandleTable::insert(uint32_t *phandle, void *pObject, uint8_t type) {
       return E_FAIL;
 
     // Reallocate the table's buffer
-    auto pEntries =
-        reinterpret_cast<Entry *>(realloc(entries_, newSize * sizeof(Entry)));
+    auto pEntries = reinterpret_cast<Entry *>(realloc(entries_, newSize * sizeof(Entry)));
     if (nullptr == pEntries) {
       return E_OUTOFMEMORY;
     }
@@ -246,6 +246,6 @@ void HandleTable::clear() {
     entries_ = nullptr;
   }
   activelist_ = nullptr;
-  capacity_ = 0;    
+  capacity_ = 0;
   size_ = 0;
 }

@@ -20,7 +20,7 @@ _EGLDisplay::_EGLDisplay(EGLNativeDisplayType hNative, bool isDefault) {
 
   hNative_ = hNative;
   isDefault_ = isDefault;
-  isInitialized_ = false;  
+  isInitialized_ = false;
 }
 
 _EGLDisplay::~_EGLDisplay() {
@@ -52,6 +52,10 @@ EGLint _EGLDisplay::Create(_EGLDisplay **ppDisplay, EGLNativeDisplayType display
 #elif defined(__linux__)
     display_id = XOpenDisplay(nullptr);
 #endif
+    if (display_id == 0) {
+      __eglLogError("EGLDisplay open failed, out of memory");
+      return EGL_BAD_ALLOC;
+    }
   }
 
   // Create a new display object
@@ -175,7 +179,7 @@ EGLint _EGLDisplay::queryString(const char **plpValue, EGLint name) {
 }
 
 EGLint _EGLDisplay::chooseConfig(const EGLint *pAttrib_list,
-                                 EGLConfig *pConfigs, 
+                                 EGLConfig *pConfigs,
                                  EGLint config_size,
                                  EGLint *pNum_config) {
   EGLint err;

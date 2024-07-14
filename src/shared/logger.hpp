@@ -33,7 +33,7 @@ public:
     indent_ = indent;
   }
 
-  auto getIndent() const {
+  uint32_t getIndent() const {
     return indent_;
   }
 

@@ -19,38 +19,38 @@ class _EGLSurface;
 
 class _EGLContext : public Object {
 public:
-  static EGLint Create(_EGLContext **ppContext, 
+  static EGLint Create(_EGLContext **ppContext,
                        _EGLDisplay *pDisplay,
-                       _EGLConfig *pConfig, 
+                       _EGLConfig *pConfig,
                        _EGLContext *pCtxShared);
 
   EGLint getAttribute(EGLint name, EGLint *pValue);
 
-  void setBindings(std::thread::id threadID, 
+  void setBindings(std::thread::id threadID,
                    _EGLSurface *pSurfDraw,
-                   _EGLSurface *pSurfRead);  
+                   _EGLSurface *pSurfRead);
 
-  auto getDisplay() const {
+  _EGLDisplay* getDisplay() const {
     return pDisplay_;
   }
 
-  auto getConfig() const {
+  _EGLConfig* getConfig() const {
     return pConfig_;
   }
 
-  auto getThreadID() const {
+  const std::thread::id& getThreadID() const {
     return threadID_;
   }
 
-  auto getDrawSurface() const {
+  _EGLSurface* getDrawSurface() const {
     return pSurfDraw_;
   }
 
-  auto getReadSurface() const {
+  _EGLSurface* getReadSurface() const {
     return pSurfRead_;
   }
 
-  auto getNativeData() const {
+  __GLContext getNativeData() const {
     return glContext_;
   }
 

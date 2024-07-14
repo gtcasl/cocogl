@@ -23,12 +23,12 @@ public:
 
   EGLint queryString(const char **plpValue, EGLint name);
 
-  EGLint chooseConfig(const EGLint *pAttrib_list, 
+  EGLint chooseConfig(const EGLint *pAttrib_list,
                       EGLConfig *pConfigs,
-                      EGLint config_size, 
+                      EGLint config_size,
                       EGLint *pNum_config);
 
-  auto getNativeHandle() const {
+  EGLNativeDisplayType getNativeHandle() const {
     return hNative_;
   }
 
@@ -65,7 +65,7 @@ public:
 
 private:
   _EGLDisplay(EGLNativeDisplayType hDC, bool isDefault);
-  
+
   ~_EGLDisplay();
 
   EGLint createConfig(EGLint red, EGLint green, EGLint blue, EGLint alpha);

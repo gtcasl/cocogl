@@ -152,6 +152,8 @@ inline void GLContext::setTexEnv(GLenum env, GLenum pname, const T *pParams) {
       break;
 
     case GL_TEXTURE_ENV_COLOR:
+    DISABLE_WARNING_PUSH
+    DISABLE_WARNING_ARRAY_BOUNDS
       texUnit.cEnvColor.b = static_cast<uint8_t>(
           ToUNORM8(Sat(static_cast<floatf>(pParams[0]))));
       texUnit.cEnvColor.g = static_cast<uint8_t>(
@@ -160,6 +162,7 @@ inline void GLContext::setTexEnv(GLenum env, GLenum pname, const T *pParams) {
           ToUNORM8(Sat(static_cast<floatf>(pParams[2]))));
       texUnit.cEnvColor.a = static_cast<uint8_t>(
           ToUNORM8(Sat(static_cast<floatf>(pParams[3]))));
+    DISABLE_WARNING_POP
       break;
     }
 
@@ -197,7 +200,10 @@ inline void GLContext::setPointParameter(GLenum pname, const T *pParams) {
   case GL_POINT_SIZE_MIN:
   case GL_POINT_SIZE_MAX:
   case GL_POINT_FADE_THRESHOLD_SIZE: {
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ARRAY_BOUNDS
     auto param = static_cast<floatf>(pParams[0]);
+  DISABLE_WARNING_POP
     if (param < Zero<floatf>()) {
       __glError(GL_INVALID_VALUE,
                 "GLContext::setPointParameter() failed, "
@@ -208,14 +214,15 @@ inline void GLContext::setPointParameter(GLenum pname, const T *pParams) {
 
     pointParams_.set(pname, param);
   }
-
   break;
 
   case GL_POINT_DISTANCE_ATTENUATION:
+  DISABLE_WARNING_PUSH
+  DISABLE_WARNING_ARRAY_BOUNDS
     pointParams_.vAttenuation.x = static_cast<floatf>(pParams[0]);
     pointParams_.vAttenuation.y = static_cast<floatf>(pParams[1]);
     pointParams_.vAttenuation.z = static_cast<floatf>(pParams[2]);
-
+  DISABLE_WARNING_POP
     break;
 
   default:

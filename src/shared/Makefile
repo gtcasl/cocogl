@@ -3,7 +3,7 @@ CXXFLAGS += -std=c++17 -fPIC -Wall -Wextra -pedantic -Wfatal-errors
 # Debugigng
 ifdef DEBUG
 	CXXFLAGS += -g -O0
-else    
+else
 	CXXFLAGS += -O2 -DNDEBUG
 endif
 

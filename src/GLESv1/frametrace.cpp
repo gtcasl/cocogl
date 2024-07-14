@@ -62,7 +62,6 @@ static void capture(CGLTrace::drawcall_t* drawcall, uint32_t index, uint8_t *pbV
 
 FrameTrace::FrameTrace() {
   trace_ = new CGLTrace();
-  trace_->version = 0;
 }
 
 FrameTrace::~FrameTrace() {
@@ -70,7 +69,7 @@ FrameTrace::~FrameTrace() {
 }
 
 void FrameTrace::beginTrace(const RASTERID& rasterid, const RasterData& rasterData, const Viewport& viewport) {
-  if (trace_->drawcalls.empty() 
+  if (trace_->drawcalls.empty()
    || !trace_->drawcalls.back().vertices.empty()) {
     trace_->drawcalls.emplace_back();
   }
@@ -81,10 +80,10 @@ void FrameTrace::beginTrace(const RASTERID& rasterid, const RasterData& rasterDa
   drawcall.states.color_writemask = rasterData.ColorWriteMask;
 
   drawcall.states.depth_test = rasterid.Flags.DepthTest;
-  drawcall.states.depth_format = (ePixelFormat)rasterData.DepthStencilFormat; 
-  drawcall.states.depth_writemask = rasterid.Flags.DepthWrite;  
+  drawcall.states.depth_format = (ePixelFormat)rasterData.DepthStencilFormat;
+  drawcall.states.depth_writemask = rasterid.Flags.DepthWrite;
   drawcall.states.depth_func = cocogfx::CGLTrace::ecompare(rasterid.States.DepthFunc);
-  
+
   drawcall.states.stencil_test = rasterid.Flags.StencilTest;
   drawcall.states.stencil_func = cocogfx::CGLTrace::ecompare(rasterid.States.StencilFunc);
   drawcall.states.stencil_zpass = cocogfx::CGLTrace::eStencilOp(rasterid.States.StencilZPass);
@@ -93,7 +92,7 @@ void FrameTrace::beginTrace(const RASTERID& rasterid, const RasterData& rasterDa
   drawcall.states.stencil_ref  = rasterData.StencilRef;
   drawcall.states.stencil_mask = rasterData.StencilMask;
   drawcall.states.stencil_writemask = rasterData.StencilWriteMask;
-  
+
   drawcall.states.texture_enabled   = (rasterid.Flags.NumTextures != 0);
 
   drawcall.states.texture_envcolor.b  = rasterData.Samplers[0].cEnvColor[0] / 255.0f;
@@ -120,7 +119,7 @@ void FrameTrace::beginTrace(const RASTERID& rasterid, const RasterData& rasterDa
 
   if (rasterid.Flags.NumTextures != 0) {
     auto& surface0 = rasterData.Samplers[0].pMipLevels[0];
-    
+
     CGLTrace::texture_t texture;
     texture.format = (ePixelFormat)surface0.getFormat();
     texture.width = surface0.getWidth();
@@ -141,13 +140,13 @@ void FrameTrace::beginTrace(const RASTERID& rasterid, const RasterData& rasterDa
     }
   }
 }
-    
+
 void FrameTrace::capture(uint32_t i0, uint32_t i1, uint32_t i2, uint8_t *pbVertexData[VERTEX_SIZE]) {
   auto& drawcall = trace_->drawcalls.back();
   ::capture(&drawcall, i0, pbVertexData);
   ::capture(&drawcall, i1, pbVertexData);
   ::capture(&drawcall, i2, pbVertexData);
-  drawcall.primitives.push_back({i0, i1, i2});  
+  drawcall.primitives.push_back({i0, i1, i2});
 }
 
 void FrameTrace::endTrace() {
@@ -159,7 +158,7 @@ int FrameTrace::load(const char* filename) {
 }
 
 int FrameTrace::save(const char* filename) {
-  if (!trace_->drawcalls.empty() 
+  if (!trace_->drawcalls.empty()
    && trace_->drawcalls.back().vertices.empty()) {
      trace_->drawcalls.pop_back();
   }

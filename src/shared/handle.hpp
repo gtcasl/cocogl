@@ -64,7 +64,7 @@ public:
     Entry *list_;
 
     friend class HandleTable;
-  };  
+  };
 
   HandleTable();
 
@@ -80,7 +80,7 @@ public:
 
   void optimize();
 
-  auto getEnumerator() {
+  Enumerator getEnumerator() {
     return Enumerator(activelist_);
   }
 
